@@ -1,0 +1,23 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< nil, .(X, X), true, false >)
+(SIGNATURES
+    rev :: [A] -> A
+    car :: [A] -> A
+    cdr :: [A] -> A
+    null :: [A] -> A
+    ++ :: [A x A] -> A)
+(RULES
+    rev(nil()) -> nil()
+    rev(.(x,y)) -> ++(rev(y)
+                     ,.(x,nil()))
+    car(.(x,y)) -> x
+    cdr(.(x,y)) -> y
+    null(nil()) -> true()
+    null(.(x,y)) -> false()
+    ++(nil(),y) -> y
+    ++(.(x,y),z) -> .(x,++(y,z)))

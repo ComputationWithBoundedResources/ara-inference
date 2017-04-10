@@ -1,0 +1,28 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x xs y z)
+(DATATYPES
+    A = µX.< 0, true, nil, false, cons(X, X), s(X) >)
+(SIGNATURES
+    times :: [A x A] -> A
+    generate :: [A x A] -> A
+    gen :: [A x A x A] -> A
+    if :: [A x A x A x A] -> A
+    sum :: [A] -> A
+    ge :: [A x A] -> A)
+(RULES
+    times(x,y) -> sum(generate(x,y))
+    generate(x,y) -> gen(x,y,0())
+    gen(x,y,z) -> if(ge(z,x),x,y,z)
+    if(true(),x,y,z) -> nil()
+    if(false(),x,y,z) -> cons(y
+                             ,gen(x,y,s(z)))
+    sum(nil()) -> 0()
+    sum(cons(0(),xs)) -> sum(xs)
+    sum(cons(s(x),xs)) ->
+      s(sum(cons(x,xs)))
+    ge(x,0()) -> true()
+    ge(0(),s(y)) -> false()
+    ge(s(x),s(y)) -> ge(x,y))

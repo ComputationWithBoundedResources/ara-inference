@@ -1,0 +1,536 @@
+% Created 2017-01-18 Wed 13:27
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Manuel Schneckenreither}
+\date{\textit{<2017-01-18 Wed>}}
+\title{Results 2017-01-18}
+\hypersetup{
+ pdfauthor={Manuel Schneckenreither},
+ pdftitle={Results 2017-01-18},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\section{{\bfseries\sffamily TODO} todo:t |:t}
+\label{sec:orgaba32bd}
+
+
+\section{With Additional Constraints}
+\label{sec:orgae34c2e}
+
+\subsection{Small Example DB}
+\label{sec:orga6b3083}
+
+\subsubsection{Linear}
+\label{sec:org7af6f6b}
+
+\$ sh runscript.sh -v1 -m1
+
+Folder: ./doc/examples/linear/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+addition.trs & 87 & 53 & 34 & 58.0 & Success\\
+append.trs & 51 & 53 & 56 & 53.3 & Success\\
+id.trs & 38 & 31 & 38 & 35.6 & Success\\
+list.trs & 87 & 100 & 98 & 95.0 & Success\\
+minus.trs & 56 & 35 & 28 & 39.6 & Success\\
+queue.trs & 341 & 393 & 348 & 360.6 & Success\\
+quotient.trs & 135 & 96 & 85 & 105.3 & Success\\
+reverse.trs & 50 & 47 & 37 & 44.6 & Success\\
+typed-div.trs & 121 & 134 & 106 & 120.3 & Success\\
+typed-flatten.trs & 107 & 88 & 86 & 93.6 & Success\\
+typed-jones1.trs & 45 & 49 & 55 & 49.6 & Success\\
+typed-jones2.trs & 31 & 29 & 37 & 32.3 & Success\\
+typed-jones4.trs & 85 & 86 & 60 & 77.0 & Success\\
+typed-jones6.trs & 98 & 117 & 101 & 105.3 & Success\\
+typed-rationalPotential.raml.trs & 95 & 82 & 77 & 84.6 & Success\\
+\hline
+\end{tabular}
+
+\end{center}
+
+Folder: ./doc/examples/quadratic/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+exp.trs & 115 & 98 & 98 & 103.6 & Failure\\
+infeasible.trs & 72 & 64 & 64 & 66.6 & Failure\\
+mult3.trs & 76 & 73 & 81 & 76.6 & Failure\\
+pairsp.trs & 162 & 159 & 162 & 161.0 & Failure\\
+reverse.trs & 124 & 131 & 122 & 125.6 & Failure\\
+typed-appendAll.raml.trs & 105 & 77 & 82 & 88.0 & Failure\\
+typed-bits.trs & 263 & 263 & 270 & 265.3 & Failure\\
+typed-dcquad.trs & 179 & 196 & 164 & 179.6 & Failure\\
+typed-exp.trs & 100 & 97 & 114 & 103.6 & Failure\\
+typed-isort.trs & 252 & 252 & 256 & 253.3 & Failure\\
+typed-jones5.trs & 82 & 124 & 94 & 100.0 & Failure\\
+typed-lcs-safe.trs & 2385 & 2196 & 2142 & 2241.0 & Failure\\
+typed-lcs.trs & 1753 & 1783 & 1737 & 1757.6 & Failure\\
+typed-minsort.raml.trs & 650 & 609 & 686 & 648.3 & Failure\\
+typed-pairs.trs & 215 & 181 & 211 & 202.3 & Failure\\
+typed-qbf.trs & 1264 & 1275 & 1250 & 1263.0 & Failure\\
+typed-quad.trs & 92 & 97 & 122 & 103.6 & Failure\\
+typed-quicksort-nat.trs & 329 & 335 & 295 & 319.6 & Failure\\
+typed-reverse.trs & 131 & 139 & 143 & 137.6 & Failure\\
+typed-sat.trs & 522 & 525 & 519 & 522.0 & Failure\\
+typed-shuffleshuffle.trs & 324 & 338 & 328 & 330.0 & Failure\\
+typed-shuffle.trs & 196 & 189 & 231 & 205.3 & Failure\\
+typed-subtrees.raml.trs & 82 & 79 & 102 & 87.6 & Failure\\
+\hline
+\end{tabular}
+
+\end{center}
+
+Folder: ./doc/examples/infeasible/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+mult1.trs & 72 & 75 & 77 & 74.6 & Failure\\
+mult2.trs & 80 & 87 & 83 & 83.3 & Failure\\
+multiplication.trs & 86 & 72 & 83 & 80.3 & Failure\\
+typed-clevermmult.raml.trs & 2844 & 2599 & 2631 & 2691.3 & Failure\\
+typed-cube.trs & 121 & 78 & 117 & 105.3 & Failure\\
+typed-exp2.trs & 151 & 155 & 131 & 145.6 & Failure\\
+typed-mult2.trs & 80 & 80 & 94 & 84.6 & Failure\\
+typed-mult.trs & 79 & 89 & 77 & 81.6 & Failure\\
+typed-prod2.trs & 140 & 151 & 148 & 146.3 & Failure\\
+typed-quicksort.trs & 964 & 982 & 1076 & 1007.3 & Failure\\
+typed-square.trs & 124 & 74 & 72 & 90.0 & Failure\\
+typed-tadd2.trs & 163 & 166 & 134 & 154.3 & Failure\\
+typed-tadd.trs & 126 & 134 & 169 & 143.0 & Failure\\
+\hline
+\end{tabular}
+
+\end{center}
+
+\pagebreak
+\subsubsection{Quadratic}
+\label{sec:org690873c}
+
+\$ sh runscript.sh -v2 -m2
+
+Folder: ./doc/examples/linear/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+addition.trs & 52 & 52 & 53 & 52.3 & Success\\
+append.trs & 93 & 81 & 85 & 86.3 & Success\\
+id.trs & 67 & 64 & 81 & 70.6 & Success\\
+list.trs & 170 & 184 & 152 & 168.6 & Success\\
+minus.trs & 61 & 53 & 49 & 54.3 & Success\\
+queue.trs & 926 & 900 & 933 & 919.6 & Success\\
+quotient.trs & 234 & 200 & 214 & 216.0 & Success\\
+reverse.trs & 96 & 96 & 94 & 95.3 & Success\\
+typed-div.trs & 301 & 352 & 385 & 346.0 & Success\\
+typed-flatten.trs & 223 & 203 & 212 & 212.6 & Success\\
+typed-jones1.trs & 91 & 100 & 120 & 103.6 & Success\\
+typed-jones2.trs & 68 & 92 & 79 & 79.6 & Success\\
+typed-jones4.trs & 123 & 117 & 169 & 136.3 & Success\\
+typed-jones6.trs & 254 & 229 & 260 & 247.6 & Success\\
+typed-rationalPotential.raml.trs & 213 & 210 & 225 & 216.0 & Success\\
+\hline
+\end{tabular}
+
+\end{center}
+
+Folder: ./doc/examples/quadratic/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+exp.trs & 1352 & 1386 & 1336 & 1358.0 & Failure\\
+infeasible.trs & 113 & 126 & 106 & 115.0 & Failure\\
+mult3.trs & 156 & 165 & 132 & 151.0 & Success\\
+pairsp.trs & 1288 & 1345 & 1301 & 1311.3 & Failure\\
+reverse.trs & 214 & 200 & 204 & 206.0 & Success\\
+typed-appendAll.raml.trs & 594 & 626 & 600 & 606.6 & Failure\\
+typed-bits.trs & 5662 & 5575 & 5644 & 5627.0 & Failure\\
+typed-dcquad.trs & 2129 & 2505 & 2121 & 2251.6 & Failure\\
+typed-exp.trs & 1350 & 1339 & 1379 & 1356.0 & Failure\\
+typed-isort.trs & 497 & 511 & 462 & 490.0 & Success\\
+typed-jones5.trs & 279 & 344 & 323 & 315.3 & Failure\\
+typed-lcs-safe.trs & 10226 & 10204 & 10391 & 10273.6 & Failure\\
+typed-lcs.trs & 7476 & 7446 & 7569 & 7497.0 & Failure\\
+typed-minsort.raml.trs & 60004 & 60003 & 60003 & 60003.3 & Timeout\\
+typed-pairs.trs & 576 & 606 & 442 & 541.3 & Success\\
+typed-qbf.trs & 4007 & 3959 & 3903 & 3956.3 & Failure\\
+typed-quad.trs & 276 & 339 & 268 & 294.3 & Failure\\
+typed-quicksort-nat.trs & 4625 & 4616 & 4622 & 4621.0 & Failure\\
+typed-reverse.trs & 262 & 230 & 232 & 241.3 & Success\\
+typed-sat.trs & 2171 & 2070 & 2033 & 2091.3 & Success\\
+typed-shuffleshuffle.trs & 12504 & 12742 & 12561 & 12602.3 & Failure\\
+typed-shuffle.trs & 1682 & 1664 & 1866 & 1737.3 & Failure\\
+typed-subtrees.raml.trs & 853 & 857 & 890 & 866.6 & Failure\\
+\hline
+\end{tabular}
+
+\end{center}
+
+Folder: ./doc/examples/infeasible/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+mult1.trs & 143 & 147 & 161 & 150.3 & Failure\\
+mult2.trs & 164 & 171 & 170 & 168.3 & Failure\\
+multiplication.trs & 176 & 151 & 173 & 166.6 & Failure\\
+typed-clevermmult.raml.trs & 7521 & 7332 & 7471 & 7441.3 & Failure\\
+typed-cube.trs & 157 & 150 & 196 & 167.6 & Failure\\
+typed-exp2.trs & 312 & 283 & 289 & 294.6 & Failure\\
+typed-mult2.trs & 155 & 156 & 158 & 156.3 & Failure\\
+typed-mult.trs & 164 & 142 & 151 & 152.3 & Failure\\
+typed-prod2.trs & 296 & 292 & 292 & 293.3 & Failure\\
+typed-quicksort.trs & 4334 & 4454 & 4308 & 4365.3 & Failure\\
+typed-square.trs & 163 & 149 & 184 & 165.3 & Failure\\
+typed-tadd2.trs & 322 & 344 & 317 & 327.6 & Failure\\
+typed-tadd.trs & 265 & 275 & 291 & 277.0 & Failure\\
+\hline
+\end{tabular}
+
+\end{center}
+
+\pagebreak
+\subsubsection{Cubic}
+\label{sec:org55ce190}
+
+\$ stack build \&\& sh runscript.sh -v3 -m3 ; printf "\a"
+
+Folder: ./doc/examples/linear/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+addition.trs & 105 & 126 & 121 & 117.3 & Success\\
+append.trs & 184 & 247 & 159 & 196.6 & Success\\
+id.trs & 110 & 120 & 109 & 113.0 & Success\\
+list.trs & 434 & 398 & 395 & 409.0 & Success\\
+minus.trs & 107 & 128 & 127 & 120.6 & Success\\
+queue.trs & 2452 & 2432 & 2455 & 2446.3 & Success\\
+quotient.trs & 469 & 461 & 573 & 501.0 & Success\\
+reverse.trs & 195 & 226 & 177 & 199.3 & Success\\
+typed-div.trs & 496 & 474 & 491 & 487.0 & Success\\
+typed-flatten.trs & 389 & 405 & 395 & 396.3 & Success\\
+typed-jones1.trs & 165 & 172 & 180 & 172.3 & Success\\
+typed-jones2.trs & 158 & 132 & 115 & 135.0 & Success\\
+typed-jones4.trs & 248 & 211 & 225 & 228.0 & Success\\
+typed-jones6.trs & 540 & 490 & 470 & 500.0 & Success\\
+typed-rationalPotential.raml.trs & 483 & 482 & 481 & 482.0 & Success\\
+\hline
+\end{tabular}
+
+\end{center}
+
+Folder: ./doc/examples/quadratic/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+exp.trs & 11071 & 11319 & 11252 & 11214.0 & Failure\\
+infeasible.trs & 201 & 177 & 201 & 193.0 & Failure\\
+mult3.trs & 260 & 389 & 281 & 310.0 & Success\\
+pairsp.trs & 1340 & 1455 & 1360 & 1385.0 & Success\\
+reverse.trs & 651 & 803 & 693 & 715.6 & Success\\
+typed-appendAll.raml.trs & 799 & 854 & 747 & 800.0 & Failure\\
+typed-bits.trs & 60003 & 60002 & 60003 & 60002.6 & Timeout\\
+typed-dcquad.trs & 18503 & 18447 & 18411 & 18453.6 & Failure\\
+typed-exp.trs & 10679 & 10759 & 10609 & 10682.3 & Failure\\
+typed-isort.trs & 1079 & 1105 & 1129 & 1104.3 & Success\\
+typed-jones5.trs & 983 & 1017 & 953 & 984.3 & Failure\\
+typed-lcs-safe.trs & 60005 & 60005 & 60004 & 60004.6 & Timeout\\
+typed-lcs.trs & 60004 & 60004 & 60004 & 60004.0 & Timeout\\
+typed-minsort.raml.trs & 60004 & 60004 & 60004 & 60004.0 & Timeout\\
+typed-pairs.trs & 1018 & 953 & 954 & 975.0 & Success\\
+typed-qbf.trs & 9287 & 9324 & 9250 & 9287.0 & Failure\\
+typed-quad.trs & 3606 & 3447 & 3432 & 3495.0 & Failure\\
+typed-quicksort-nat.trs & 60005 & 60003 & 60003 & 60003.6 & Timeout\\
+typed-reverse.trs & 511 & 535 & 533 & 526.3 & Success\\
+typed-sat.trs & 5347 & 5315 & 5389 & 5350.3 & Success\\
+typed-shuffleshuffle.trs & 60002 & 60003 & 60003 & 60002.6 & Timeout\\
+typed-shuffle.trs & 52301 & 52730 & 52814 & 52615.0 & Failure\\
+typed-subtrees.raml.trs & 7026 & 7264 & 7056 & 7115.3 & Failure\\
+\hline
+\end{tabular}
+
+\end{center}
+
+Folder: ./doc/examples/infeasible/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+mult1.trs & 268 & 311 & 261 & 280.0 & Failure\\
+mult2.trs & 246 & 280 & 265 & 263.6 & Failure\\
+multiplication.trs & 255 & 246 & 267 & 256.0 & Failure\\
+typed-clevermmult.raml.trs & 11297 & 11114 & 11480 & 11297.0 & Failure\\
+typed-cube.trs & 262 & 247 & 273 & 260.6 & Failure\\
+typed-exp2.trs & 534 & 573 & 568 & 558.3 & Failure\\
+typed-mult2.trs & 267 & 249 & 269 & 261.6 & Failure\\
+typed-mult.trs & 260 & 284 & 263 & 269.0 & Failure\\
+typed-prod2.trs & 503 & 520 & 542 & 521.6 & Failure\\
+typed-quicksort.trs & 21544 & 21341 & 21474 & 21453.0 & Failure\\
+typed-square.trs & 268 & 253 & 250 & 257.0 & Failure\\
+typed-tadd2.trs & 671 & 665 & 656 & 664.0 & Failure\\
+typed-tadd.trs & 591 & 616 & 625 & 610.6 & Failure\\
+\hline
+\end{tabular}
+
+\end{center}
+
+
+\section{Without Additional Constraints}
+\label{sec:org4878566}
+
+\subsection{Small Example DB}
+\label{sec:orgce757ba}
+
+\subsubsection{Linear}
+\label{sec:org989cefd}
+
+\$ sh runscript.sh -v1 -m1
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+addition.trs & 99 & 69 & 37 & 68.3 & Success\\
+append.trs & 55 & 61 & 93 & 69.6 & Success\\
+id.trs & 63 & 52 & 38 & 51.0 & Success\\
+list.trs & 127 & 120 & 126 & 124.3 & Success\\
+minus.trs & 43 & 54 & 64 & 53.6 & Success\\
+queue.trs & 410 & 395 & 399 & 401.3 & Success\\
+quotient.trs & 156 & 112 & 105 & 124.3 & Success\\
+reverse.trs & 94 & 74 & 75 & 81.0 & Success\\
+typed-div.trs & 158 & 138 & 109 & 135.0 & Success\\
+typed-flatten.trs & 132 & 112 & 127 & 123.6 & Success\\
+typed-jones1.trs & 45 & 50 & 76 & 57.0 & Success\\
+typed-jones2.trs & 45 & 33 & 35 & 37.6 & Success\\
+typed-jones4.trs & 95 & 91 & 96 & 94.0 & Success\\
+typed-jones6.trs & 139 & 143 & 148 & 143.3 & Success\\
+typed-rationalPotential.raml.trs & 145 & 177 & 232 & 184.6 & Success\\
+\hline
+\end{tabular}
+
+\end{center}
+
+Folder: ./doc/examples/quadratic/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+exp.trs & 126 & 194 & 158 & 159.3 & Failure\\
+infeasible.trs & 78 & 72 & 91 & 80.3 & Failure\\
+mult3.trs & 86 & 125 & 85 & 98.6 & Failure\\
+pairsp.trs & 218 & 209 & 193 & 206.6 & Failure\\
+reverse.trs & 170 & 140 & 138 & 149.3 & Failure\\
+typed-appendAll.raml.trs & 110 & 122 & 97 & 109.6 & Failure\\
+typed-bits.trs & 379 & 422 & 391 & 397.3 & Failure\\
+typed-dcquad.trs & 227 & 219 & 190 & 212.0 & Failure\\
+typed-exp.trs & 129 & 107 & 129 & 121.6 & Failure\\
+typed-isort.trs & 231 & 231 & 249 & 237.0 & Failure\\
+typed-jones5.trs & 144 & 152 & 95 & 130.3 & Failure\\
+typed-lcs-safe.trs & 4077 & 3993 & 3920 & 3996.6 & Failure\\
+typed-lcs.trs & 3119 & 3131 & 3231 & 3160.3 & Failure\\
+typed-minsort.raml.trs & 740 & 736 & 731 & 735.6 & Failure\\
+typed-pairs.trs & 204 & 175 & 206 & 195.0 & Failure\\
+typed-qbf.trs & 2703 & 2619 & 2569 & 2630.3 & Failure\\
+typed-quad.trs & 159 & 133 & 133 & 141.6 & Failure\\
+typed-quicksort-nat.trs & 407 & 380 & 377 & 388.0 & Failure\\
+typed-reverse.trs & 142 & 249 & 159 & 183.3 & Failure\\
+typed-sat.trs & 674 & 618 & 713 & 668.3 & Failure\\
+typed-shuffleshuffle.trs & 450 & 445 & 419 & 438.0 & Failure\\
+typed-shuffle.trs & 263 & 263 & 281 & 269.0 & Failure\\
+typed-subtrees.raml.trs & 137 & 93 & 98 & 109.3 & Failure\\
+\hline
+\end{tabular}
+
+\end{center}
+
+Folder: ./doc/examples/infeasible/
+
+\rule{\linewidth}{0.5pt}
+\begin{center}
+\begin{tabular}{lrrrrl}
+\hline
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+mult1.trs & 91 & 95 & 83 & 89.6 & Failure\\
+mult2.trs & 97 & 107 & 74 & 92.6 & Failure\\
+multiplication.trs & 102 & 114 & 94 & 103.3 & Failure\\
+typed-clevermmult.raml.trs & 2062 & 2061 & 2049 & 2057.3 & Failure\\
+typed-cube.trs & 101 & 95 & 154 & 116.6 & Failure\\
+typed-exp2.trs & 175 & 185 & 151 & 170.3 & Failure\\
+typed-mult2.trs & 100 & 147 & 131 & 126.0 & Failure\\
+typed-mult.trs & 112 & 125 & 147 & 128.0 & Failure\\
+typed-prod2.trs & 164 & 212 & 181 & 185.6 & Failure\\
+typed-quicksort.trs & 1441 & 1398 & 1446 & 1428.3 & Failure\\
+typed-square.trs & 143 & 147 & 101 & 130.3 & Failure\\
+typed-tadd2.trs & 182 & 172 & 331 & 228.3 & Failure\\
+typed-tadd.trs & 493 & 165 & 142 & 266.6 & Failure\\
+\hline
+\end{tabular}
+
+\end{center}
+
+\pagebreak
+
+\subsubsection{Quadratic}
+\label{sec:org01f0220}
+
+\$ stack build \&\& sh runscript.sh -v2 -m2 ; printf "\a"
+Folder: ./doc/examples/linear/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+addition.trs & 110 & 85 & 75 & 90.0 & Success\\
+append.trs & 119 & 114 & 105 & 112.6 & Success\\
+id.trs & 86 & 108 & 94 & 96.0 & Success\\
+list.trs & 242 & 241 & 242 & 241.6 & Success\\
+minus.trs & 86 & 106 & 84 & 92.0 & Success\\
+queue.trs & 1071 & 1278 & 1119 & 1156.0 & Success\\
+quotient.trs & 291 & 255 & 268 & 271.3 & Success\\
+reverse.trs & 208 & 110 & 126 & 148.0 & Success\\
+typed-div.trs & 285 & 325 & 296 & 302.0 & Success\\
+typed-flatten.trs & 271 & 276 & 242 & 263.0 & Success\\
+typed-jones1.trs & 101 & 119 & 168 & 129.3 & Success\\
+typed-jones2.trs & 70 & 92 & 92 & 84.6 & Success\\
+typed-jones4.trs & 165 & 169 & 159 & 164.3 & Success\\
+typed-jones6.trs & 276 & 324 & 285 & 295.0 & Success\\
+typed-rationalPotential.raml.trs & 306 & 291 & 330 & 309.0 & Success\\
+\end{tabular}
+
+\end{center}
+
+
+Folder: ./doc/examples/quadratic/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+exp.trs & 1316 & 1377 & 1372 & 1355.0 & Failure\\
+infeasible.trs & 127 & 137 & 113 & 125.6 & Failure\\
+mult3.trs & 176 & 174 & 165 & 171.6 & Success\\
+pairsp.trs & 1142 & 1137 & 1166 & 1148.3 & Failure\\
+reverse.trs & 279 & 297 & 331 & 302.3 & Success\\
+typed-appendAll.raml.trs & 683 & 615 & 618 & 638.6 & Failure\\
+typed-bits.trs & 4628 & 4707 & 4678 & 4671.0 & Failure\\
+typed-dcquad.trs & 2735 & 2767 & 2757 & 2753.0 & Failure\\
+typed-exp.trs & 1346 & 1341 & 1347 & 1344.6 & Failure\\
+typed-isort.trs & 645 & 631 & 595 & 623.6 & Success\\
+typed-jones5.trs & 357 & 377 & 325 & 353.0 & Failure\\
+typed-lcs-safe.trs & 60004 & - & - & 60004.00 & Timeout\\
+typed-lcs.trs & 37522 & 36572 & 35810 & 36634.6 & Failure\\
+typed-minsort.raml.trs & 668432 & - & - & 668432.00 & Timeout\\
+typed-pairs.trs & 492 & 497 & 479 & 489.3 & Success\\
+typed-qbf.trs & 5339 & 5006 & 5076 & 5140.3 & Failure\\
+typed-quad.trs & 368 & 344 & 333 & 348.3 & Failure\\
+typed-quicksort-nat.trs & 9327 & 9385 & 9374 & 9362.0 & Failure\\
+typed-reverse.trs & 308 & 276 & 263 & 282.3 & Success\\
+typed-sat.trs & 2394 & 2385 & 2486 & 2421.6 & Success\\
+typed-shuffleshuffle.trs & 17892 & 17870 & 17936 & 17899.3 & Failure\\
+typed-shuffle.trs & 4449 & 4503 & 4458 & 4470.0 & Failure\\
+typed-subtrees.raml.trs & 1599 & 1609 & 1575 & 1594.3 & Failure\\
+\end{tabular}
+
+\end{center}
+
+
+Folder: ./doc/examples/infeasible/
+
+\rule{\linewidth}{0.5pt}
+
+\begin{center}
+\begin{tabular}{lrrrrl}
+Example & 1 [ms] & 2 [ms] & 3 [ms] & Avg & RetVal\\
+\hline
+mult1.trs & 162 & 166 & 224 & 184.0 & Failure\\
+mult2.trs & 191 & 153 & 180 & 174.6 & Failure\\
+multiplication.trs & 191 & 187 & 184 & 187.3 & Failure\\
+typed-clevermmult.raml.trs & 4198 & 4182 & 4304 & 4228.0 & Failure\\
+typed-cube.trs & 153 & 169 & 197 & 173.0 & Failure\\
+typed-exp2.trs & 323 & 339 & 338 & 333.3 & Failure\\
+typed-mult2.trs & 228 & 211 & 186 & 208.3 & Failure\\
+typed-mult.trs & 162 & 200 & 157 & 173.0 & Failure\\
+typed-prod2.trs & 306 & 307 & 371 & 328.0 & Failure\\
+typed-quicksort.trs & 5759 & 5657 & 5642 & 5686.0 & Failure\\
+typed-square.trs & 150 & 194 & 158 & 167.3 & Failure\\
+typed-tadd2.trs & 360 & 346 & 352 & 352.6 & Failure\\
+typed-tadd.trs & 368 & 309 & 296 & 324.3 & Failure\\
+\end{tabular}
+
+\end{center}
+
+
+\pagebreak
+
+\subsubsection{Cubic}
+\label{sec:org6b12a28}
+\end{document}

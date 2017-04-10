@@ -1,0 +1,39 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    c x y z)
+(DATATYPES
+    A = µX.< 0, s(X), true, false >)
+(SIGNATURES
+    plus :: [A x A] -> A
+    times :: [A x A] -> A
+    exp :: [A x A] -> A
+    ge :: [A x A] -> A
+    tower :: [A x A] -> A
+    towerIter :: [A x A x A x A] -> A
+    help :: [A x A x A x A x A] -> A)
+(RULES
+    plus(0(),x) -> x
+    plus(s(x),y) -> s(plus(x,y))
+    times(0(),y) -> 0()
+    times(s(x),y) -> plus(y
+                         ,times(x,y))
+    exp(x,0()) -> s(0())
+    exp(x,s(y)) -> times(x,exp(x,y))
+    ge(x,0()) -> true()
+    ge(0(),s(x)) -> false()
+    ge(s(x),s(y)) -> ge(x,y)
+    tower(x,y) -> towerIter(0()
+                           ,x
+                           ,y
+                           ,s(0()))
+    towerIter(c,x,y,z) -> help(ge(c
+                                 ,x)
+                              ,c
+                              ,x
+                              ,y
+                              ,z)
+    help(true(),c,x,y,z) -> z
+    help(false(),c,x,y,z) ->
+      towerIter(s(c),x,y,exp(y,z)))

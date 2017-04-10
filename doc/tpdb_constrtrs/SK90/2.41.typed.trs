@@ -1,0 +1,19 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< nil, 0, g(X, X), s(X) >)
+(SIGNATURES
+    norm :: [A] -> A
+    f :: [A x A] -> A
+    rem :: [A x A] -> A)
+(RULES
+    norm(nil()) -> 0()
+    norm(g(x,y)) -> s(norm(x))
+    f(x,nil()) -> g(nil(),x)
+    f(x,g(y,z)) -> g(f(x,y),z)
+    rem(nil(),y) -> nil()
+    rem(g(x,y),0()) -> g(x,y)
+    rem(g(x,y),s(z)) -> rem(x,z))

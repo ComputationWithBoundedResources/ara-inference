@@ -1,0 +1,33 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    b c x y)
+(DATATYPES
+    A = µX.< 0, s(X), true, false >)
+(SIGNATURES
+    plus :: [A x A] -> A
+    lt :: [A x A] -> A
+    fib :: [A] -> A
+    fibiter :: [A x A x A x A] -> A
+    if :: [A x A x A x A x A] -> A)
+(RULES
+    plus(0(),y) -> y
+    plus(s(x),y) -> s(plus(x,y))
+    lt(0(),s(y)) -> true()
+    lt(x,0()) -> false()
+    lt(s(x),s(y)) -> lt(x,y)
+    fib(x) -> fibiter(x
+                     ,0()
+                     ,0()
+                     ,s(0()))
+    fibiter(b,c,x,y) -> if(lt(c,b)
+                          ,b
+                          ,c
+                          ,x
+                          ,y)
+    if(false(),b,c,x,y) -> x
+    if(true(),b,c,x,y) -> fibiter(b
+                                 ,s(c)
+                                 ,y
+                                 ,plus(x,y)))

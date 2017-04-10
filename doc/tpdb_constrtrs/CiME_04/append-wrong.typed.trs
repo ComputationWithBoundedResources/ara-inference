@@ -1,0 +1,24 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    l l1 l2 x)
+(DATATYPES
+    A = µX.< nil, true, cons(X, X), false >)
+(SIGNATURES
+    is_empty :: [A] -> A
+    hd :: [A] -> A
+    tl :: [A] -> A
+    append :: [A x A] -> A
+    ifappend :: [A x A x A] -> A)
+(RULES
+    is_empty(nil()) -> true()
+    is_empty(cons(x,l)) -> false()
+    hd(cons(x,l)) -> x
+    tl(cons(x,l)) -> cons(x,l)
+    append(l1,l2) -> ifappend(l1
+                             ,l2
+                             ,is_empty(l1))
+    ifappend(l1,l2,true()) -> l2
+    ifappend(l1,l2,false()) ->
+      cons(hd(l1),append(tl(l1),l2)))

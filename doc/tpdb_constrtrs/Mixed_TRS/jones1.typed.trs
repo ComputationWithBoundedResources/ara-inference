@@ -1,0 +1,15 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    a k ls x)
+(DATATYPES
+    A = µX.< empty, cons(X, X) >)
+(SIGNATURES
+    rev :: [A] -> A
+    r1 :: [A x A] -> A)
+(RULES
+    rev(ls) -> r1(ls,empty())
+    r1(empty(),a) -> a
+    r1(cons(x,k),a) -> r1(k
+                         ,cons(x,a)))

@@ -1,0 +1,18 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< true, false, nil, set(X), =(X, X), union(X, X) >)
+(SIGNATURES
+    or :: [A x A] -> A
+    mem :: [A x A] -> A)
+(RULES
+    or(true(),y) -> true()
+    or(x,true()) -> true()
+    or(false(),false()) -> false()
+    mem(x,nil()) -> false()
+    mem(x,set(y)) -> =(x,y)
+    mem(x,union(y,z)) -> or(mem(x,y)
+                           ,mem(x,z)))

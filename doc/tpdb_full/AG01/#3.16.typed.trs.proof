@@ -1,0 +1,19 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          plus(x,0()) -> x
+          plus(x,s(y)) -> s(plus(x,y))
+          plus(0(),x) -> x
+          plus(s(x),y) -> s(plus(x,y))
+          times(x,0()) -> 0()
+          times(x,s(y)) -> plus(times(x,y),x)
+      - Signature:
+          {plus/2,times/2} / {0/0,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {plus,times} and constructors {0,s}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

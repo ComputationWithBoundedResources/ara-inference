@@ -1,0 +1,26 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X Y Z)
+(DATATYPES
+    A = µX.< 0, s(X), nil, cons(X, X) >)
+(SIGNATURES
+    dbl :: [A] -> A
+    dbls :: [A] -> A
+    sel :: [A x A] -> A
+    indx :: [A x A] -> A
+    from :: [A] -> A)
+(RULES
+    dbl(0()) -> 0()
+    dbl(s(X)) -> s(s(dbl(X)))
+    dbls(nil()) -> nil()
+    dbls(cons(X,Y)) -> cons(dbl(X)
+                           ,dbls(Y))
+    sel(0(),cons(X,Y)) -> X
+    sel(s(X),cons(Y,Z)) -> sel(X,Z)
+    indx(nil(),X) -> nil()
+    indx(cons(X,Y),Z) -> cons(sel(X
+                                 ,Z)
+                             ,indx(Y,Z))
+    from(X) -> cons(X,from(s(X))))

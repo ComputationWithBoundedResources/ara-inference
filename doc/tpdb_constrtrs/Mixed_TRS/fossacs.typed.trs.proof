@@ -1,0 +1,17 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          addchild(node(y,ys),node(n,xs)) -> node(y,cons(node(n,xs),ys))
+          f(node(s(n),xs)) -> f(addchild(select(xs),node(n,xs)))
+          select(cons(ap,xs)) -> ap
+          select(cons(ap,xs)) -> select(xs)
+      - Signature:
+          {addchild/2,f/1,select/1} / {cons/2,node/2,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {addchild,f,select} and constructors {cons,node,s}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

@@ -1,0 +1,249 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    N V1 V2 X X1 X2 XS Y YS ZS)
+(DATATYPES
+    A = µX.< tt, n__natsFrom(X), n__s(X), n__nil, n__afterNth(X, X), n__cons(X, X), n__fst(X), n__snd(X), n__tail(X), n__take(X, X), n__0, n__head(X), n__sel(X, X), n__pair(X, X), n__splitAt(X, X) >)
+(SIGNATURES
+    U101 :: [A x A] -> A
+    U102 :: [A] -> A
+    U11 :: [A x A x A] -> A
+    U111 :: [A] -> A
+    U12 :: [A x A x A] -> A
+    U121 :: [A] -> A
+    U131 :: [A x A] -> A
+    U132 :: [A] -> A
+    U141 :: [A x A] -> A
+    U142 :: [A] -> A
+    U151 :: [A x A] -> A
+    U152 :: [A] -> A
+    U161 :: [A x A] -> A
+    U171 :: [A x A x A] -> A
+    U172 :: [A x A x A] -> A
+    U181 :: [A x A] -> A
+    U182 :: [A x A] -> A
+    U191 :: [A x A] -> A
+    U201 :: [A x A x A x A] -> A
+    U202 :: [A x A x A x A] -> A
+    U203 :: [A x A x A x A] -> A
+    U204 :: [A x A] -> A
+    U21 :: [A x A x A] -> A
+    U211 :: [A x A] -> A
+    U212 :: [A x A] -> A
+    U22 :: [A x A] -> A
+    U221 :: [A x A x A] -> A
+    U222 :: [A x A x A] -> A
+    U31 :: [A x A x A] -> A
+    U32 :: [A x A] -> A
+    U41 :: [A x A] -> A
+    U42 :: [A] -> A
+    U51 :: [A x A] -> A
+    U52 :: [A] -> A
+    U61 :: [A] -> A
+    U71 :: [A] -> A
+    U81 :: [A] -> A
+    U91 :: [A] -> A
+    afterNth :: [A x A] -> A
+    fst :: [A] -> A
+    head :: [A] -> A
+    isLNat :: [A] -> A
+    isNatural :: [A] -> A
+    isPLNat :: [A] -> A
+    natsFrom :: [A] -> A
+    sel :: [A x A] -> A
+    snd :: [A] -> A
+    splitAt :: [A x A] -> A
+    tail :: [A] -> A
+    take :: [A x A] -> A
+    s :: [A] -> A
+    nil :: [] -> A
+    cons :: [A x A] -> A
+    0 :: [] -> A
+    pair :: [A x A] -> A
+    activate :: [A] -> A)
+(RULES
+    U101(tt(),V2) ->
+      U102(isLNat(activate(V2)))
+    U102(tt()) -> tt()
+    U11(tt(),N,XS) ->
+      U12(isLNat(activate(XS))
+         ,activate(N)
+         ,activate(XS))
+    U111(tt()) -> tt()
+    U12(tt(),N,XS) ->
+      snd(splitAt(activate(N)
+                 ,activate(XS)))
+    U121(tt()) -> tt()
+    U131(tt(),V2) ->
+      U132(isLNat(activate(V2)))
+    U132(tt()) -> tt()
+    U141(tt(),V2) ->
+      U142(isLNat(activate(V2)))
+    U142(tt()) -> tt()
+    U151(tt(),V2) ->
+      U152(isLNat(activate(V2)))
+    U152(tt()) -> tt()
+    U161(tt(),N) -> cons(activate(N)
+                        ,n__natsFrom(n__s(activate(N))))
+    U171(tt(),N,XS) ->
+      U172(isLNat(activate(XS))
+          ,activate(N)
+          ,activate(XS))
+    U172(tt(),N,XS) ->
+      head(afterNth(activate(N)
+                   ,activate(XS)))
+    U181(tt(),Y) ->
+      U182(isLNat(activate(Y))
+          ,activate(Y))
+    U182(tt(),Y) -> activate(Y)
+    U191(tt(),XS) -> pair(nil()
+                         ,activate(XS))
+    U201(tt(),N,X,XS) ->
+      U202(isNatural(activate(X))
+          ,activate(N)
+          ,activate(X)
+          ,activate(XS))
+    U202(tt(),N,X,XS) ->
+      U203(isLNat(activate(XS))
+          ,activate(N)
+          ,activate(X)
+          ,activate(XS))
+    U203(tt(),N,X,XS) ->
+      U204(splitAt(activate(N)
+                  ,activate(XS))
+          ,activate(X))
+    U204(pair(YS,ZS),X) ->
+      pair(cons(activate(X),YS),ZS)
+    U21(tt(),X,Y) ->
+      U22(isLNat(activate(Y))
+         ,activate(X))
+    U211(tt(),XS) ->
+      U212(isLNat(activate(XS))
+          ,activate(XS))
+    U212(tt(),XS) -> activate(XS)
+    U22(tt(),X) -> activate(X)
+    U221(tt(),N,XS) ->
+      U222(isLNat(activate(XS))
+          ,activate(N)
+          ,activate(XS))
+    U222(tt(),N,XS) ->
+      fst(splitAt(activate(N)
+                 ,activate(XS)))
+    U31(tt(),N,XS) ->
+      U32(isLNat(activate(XS))
+         ,activate(N))
+    U32(tt(),N) -> activate(N)
+    U41(tt(),V2) ->
+      U42(isLNat(activate(V2)))
+    U42(tt()) -> tt()
+    U51(tt(),V2) ->
+      U52(isLNat(activate(V2)))
+    U52(tt()) -> tt()
+    U61(tt()) -> tt()
+    U71(tt()) -> tt()
+    U81(tt()) -> tt()
+    U91(tt()) -> tt()
+    afterNth(N,XS) ->
+      U11(isNatural(N),N,XS)
+    fst(pair(X,Y)) -> U21(isLNat(X)
+                         ,X
+                         ,Y)
+    head(cons(N,XS)) ->
+      U31(isNatural(N),N,activate(XS))
+    isLNat(n__nil()) -> tt()
+    isLNat(n__afterNth(V1,V2)) ->
+      U41(isNatural(activate(V1))
+         ,activate(V2))
+    isLNat(n__cons(V1,V2)) ->
+      U51(isNatural(activate(V1))
+         ,activate(V2))
+    isLNat(n__fst(V1)) ->
+      U61(isPLNat(activate(V1)))
+    isLNat(n__natsFrom(V1)) ->
+      U71(isNatural(activate(V1)))
+    isLNat(n__snd(V1)) ->
+      U81(isPLNat(activate(V1)))
+    isLNat(n__tail(V1)) ->
+      U91(isLNat(activate(V1)))
+    isLNat(n__take(V1,V2)) ->
+      U101(isNatural(activate(V1))
+          ,activate(V2))
+    isNatural(n__0()) -> tt()
+    isNatural(n__head(V1)) ->
+      U111(isLNat(activate(V1)))
+    isNatural(n__s(V1)) ->
+      U121(isNatural(activate(V1)))
+    isNatural(n__sel(V1,V2)) ->
+      U131(isNatural(activate(V1))
+          ,activate(V2))
+    isPLNat(n__pair(V1,V2)) ->
+      U141(isLNat(activate(V1))
+          ,activate(V2))
+    isPLNat(n__splitAt(V1,V2)) ->
+      U151(isNatural(activate(V1))
+          ,activate(V2))
+    natsFrom(N) -> U161(isNatural(N)
+                       ,N)
+    sel(N,XS) -> U171(isNatural(N)
+                     ,N
+                     ,XS)
+    snd(pair(X,Y)) -> U181(isLNat(X)
+                          ,Y)
+    splitAt(0(),XS) ->
+      U191(isLNat(XS),XS)
+    splitAt(s(N),cons(X,XS)) ->
+      U201(isNatural(N)
+          ,N
+          ,X
+          ,activate(XS))
+    tail(cons(N,XS)) ->
+      U211(isNatural(N),activate(XS))
+    take(N,XS) -> U221(isNatural(N)
+                      ,N
+                      ,XS)
+    natsFrom(X) -> n__natsFrom(X)
+    s(X) -> n__s(X)
+    nil() -> n__nil()
+    afterNth(X1,X2) ->
+      n__afterNth(X1,X2)
+    cons(X1,X2) -> n__cons(X1,X2)
+    fst(X) -> n__fst(X)
+    snd(X) -> n__snd(X)
+    tail(X) -> n__tail(X)
+    take(X1,X2) -> n__take(X1,X2)
+    0() -> n__0()
+    head(X) -> n__head(X)
+    sel(X1,X2) -> n__sel(X1,X2)
+    pair(X1,X2) -> n__pair(X1,X2)
+    splitAt(X1,X2) -> n__splitAt(X1
+                                ,X2)
+    activate(n__natsFrom(X)) ->
+      natsFrom(activate(X))
+    activate(n__s(X)) ->
+      s(activate(X))
+    activate(n__nil()) -> nil()
+    activate(n__afterNth(X1,X2)) ->
+      afterNth(activate(X1)
+              ,activate(X2))
+    activate(n__cons(X1,X2)) ->
+      cons(activate(X1),X2)
+    activate(n__fst(X)) ->
+      fst(activate(X))
+    activate(n__snd(X)) ->
+      snd(activate(X))
+    activate(n__tail(X)) ->
+      tail(activate(X))
+    activate(n__take(X1,X2)) ->
+      take(activate(X1),activate(X2))
+    activate(n__0()) -> 0()
+    activate(n__head(X)) ->
+      head(activate(X))
+    activate(n__sel(X1,X2)) ->
+      sel(activate(X1),activate(X2))
+    activate(n__pair(X1,X2)) ->
+      pair(activate(X1),activate(X2))
+    activate(n__splitAt(X1,X2)) ->
+      splitAt(activate(X1)
+             ,activate(X2))
+    activate(X) -> X)

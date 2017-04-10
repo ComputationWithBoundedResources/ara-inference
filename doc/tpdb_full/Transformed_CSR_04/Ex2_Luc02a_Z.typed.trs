@@ -1,0 +1,34 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    N X X1 X2 Y Z)
+(DATATYPES
+    A = µX.< cons(X, X), recip(X), n__terms(X), s(X), 0, nil, n__first(X, X) >)
+(SIGNATURES
+    terms :: [A] -> A
+    sqr :: [A] -> A
+    dbl :: [A] -> A
+    add :: [A x A] -> A
+    first :: [A x A] -> A
+    activate :: [A] -> A)
+(RULES
+    terms(N) -> cons(recip(sqr(N))
+                    ,n__terms(s(N)))
+    sqr(0()) -> 0()
+    sqr(s(X)) -> s(add(sqr(X)
+                      ,dbl(X)))
+    dbl(0()) -> 0()
+    dbl(s(X)) -> s(s(dbl(X)))
+    add(0(),X) -> X
+    add(s(X),Y) -> s(add(X,Y))
+    first(0(),X) -> nil()
+    first(s(X),cons(Y,Z)) -> cons(Y
+                                 ,n__first(X,activate(Z)))
+    terms(X) -> n__terms(X)
+    first(X1,X2) -> n__first(X1,X2)
+    activate(n__terms(X)) ->
+      terms(X)
+    activate(n__first(X1,X2)) ->
+      first(X1,X2)
+    activate(X) -> X)

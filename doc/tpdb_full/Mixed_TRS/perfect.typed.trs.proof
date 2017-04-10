@@ -1,0 +1,64 @@
+WORST_CASE(?,O(n^1))
+* Step 1: NaturalMI WORST_CASE(?,O(n^1))
+    + Considered Problem:
+        - Strict TRS:
+            f(0(),y,0(),u) -> true()
+            f(0(),y,s(z),u) -> false()
+            f(s(x),0(),z,u) -> f(x,u,minus(z,s(x)),u)
+            f(s(x),s(y),z,u) -> if(le(x,y),f(s(x),minus(y,x),z,u),f(x,u,z,u))
+            perfectp(0()) -> false()
+            perfectp(s(x)) -> f(x,s(0()),s(x),s(x))
+        - Signature:
+            {f/4,perfectp/1} / {0/0,false/0,if/3,le/2,minus/2,s/1,true/0}
+        - Obligation:
+            innermost runtime complexity wrt. defined symbols {f,perfectp} and constructors {0,false,if,le,minus,s,true}
+    + Applied Processor:
+        NaturalMI {miDimension = 1, miDegree = 1, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+    + Details:
+        We apply a matrix interpretation of kind constructor based matrix interpretation:
+        The following argument positions are considered usable:
+          uargs(if) = {3}
+        
+        Following symbols are considered usable:
+          {f,perfectp}
+        TcT has computed the following interpretation:
+                 p(0) = [2]                  
+                 p(f) = [2] x1 + [4] x3 + [1]
+             p(false) = [6]                  
+                p(if) = [1] x3 + [2]         
+                p(le) = [1] x2 + [8]         
+             p(minus) = [1] x1 + [0]         
+          p(perfectp) = [12] x1 + [1]        
+                 p(s) = [1] x1 + [2]         
+              p(true) = [0]                  
+        
+        Following rules are strictly oriented:
+          f(0(),y,0(),u) = [13]                                         
+                         > [0]                                          
+                         = true()                                       
+        
+         f(0(),y,s(z),u) = [4] z + [13]                                 
+                         > [6]                                          
+                         = false()                                      
+        
+         f(s(x),0(),z,u) = [2] x + [4] z + [5]                          
+                         > [2] x + [4] z + [1]                          
+                         = f(x,u,minus(z,s(x)),u)                       
+        
+        f(s(x),s(y),z,u) = [2] x + [4] z + [5]                          
+                         > [2] x + [4] z + [3]                          
+                         = if(le(x,y),f(s(x),minus(y,x),z,u),f(x,u,z,u))
+        
+           perfectp(0()) = [25]                                         
+                         > [6]                                          
+                         = false()                                      
+        
+          perfectp(s(x)) = [12] x + [25]                                
+                         > [6] x + [9]                                  
+                         = f(x,s(0()),s(x),s(x))                        
+        
+        
+        Following rules are (at-least) weakly oriented:
+        
+
+WORST_CASE(?,O(n^1))

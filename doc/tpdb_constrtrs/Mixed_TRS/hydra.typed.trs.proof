@@ -1,0 +1,17 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          copy(0(),y,z) -> f(z)
+          copy(s(x),y,z) -> copy(x,y,cons(f(y),z))
+          f(cons(f(cons(nil(),y)),z)) -> copy(n(),y,z)
+          f(cons(nil(),y)) -> y
+      - Signature:
+          {copy/3,f/1} / {0/0,cons/2,n/0,nil/0,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {copy,f} and constructors {0,cons,n,nil,s}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

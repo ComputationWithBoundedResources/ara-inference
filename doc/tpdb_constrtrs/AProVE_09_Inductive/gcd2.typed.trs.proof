@@ -1,0 +1,30 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          gcd(x,y) -> if1(ge(x,y),x,y)
+          ge(x,0()) -> true()
+          ge(0(),s(x)) -> false()
+          ge(s(x),s(y)) -> ge(x,y)
+          gt(0(),y) -> false()
+          gt(s(x),0()) -> true()
+          gt(s(x),s(y)) -> gt(x,y)
+          if(false(),x,y) -> 0()
+          if(true(),x,y) -> s(minus(x,y))
+          if1(false(),x,y) -> if3(gt(x,0()),x,y)
+          if1(true(),x,y) -> if2(gt(y,0()),x,y)
+          if2(false(),x,y) -> x
+          if2(true(),x,y) -> gcd(minus(x,y),y)
+          if3(false(),x,y) -> y
+          if3(true(),x,y) -> gcd(x,minus(y,x))
+          minus(s(x),y) -> if(gt(s(x),y),x,y)
+      - Signature:
+          {gcd/2,ge/2,gt/2,if/3,if1/3,if2/3,if3/3,minus/2} / {0/0,false/0,s/1,true/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {gcd,ge,gt,if,if1,if2,if3,minus} and constructors {0,false
+          ,s,true}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

@@ -1,0 +1,32 @@
+(VAR
+    acc l l1 l2 line ls m m1 m2 n x xs y ys)
+
+(DATATYPES a = µX. < nil, dd(X,X), 0, s(X) >
+ )
+
+(SIGNATURES
+   lineMult :: a x a x a -> a
+   mult :: a x a -> a
+   add :: a x a -> a
+   computeLine :: a x a x a -> a
+   matrixMult :: a x a -> a
+ )
+
+(RULES
+
+    lineMult(n,nil,l2) -> nil
+    lineMult(n,dd(x,xs), nil) -> dd(mult(x,n),lineMult(n,xs,nil))
+    lineMult(n,dd(x,xs), dd(y,ys)) -> dd(add(mult(x,n),y),lineMult(n,xs,ys))
+
+    computeLine(nil,m,acc) -> acc
+    computeLine(dd(x,xs),nil,acc) -> nil
+    computeLine(dd(x,xs),dd(l,ls),acc) -> computeLine(xs,ls,lineMult(x,l,acc))
+
+    matrixMult(nil,m2) -> nil
+    matrixMult(dd(l,ls),m2) -> dd(computeLine(l,m2,nil), matrixMult(ls,m2))
+
+    mult(0,y) -> 0
+    mult(s(x),y) -> add(y,mult(x,y))
+    add(0,y) -> y
+    add(s(x),y) -> s(add(x,y))
+)

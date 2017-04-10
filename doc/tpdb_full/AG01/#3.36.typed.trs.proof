@@ -1,0 +1,19 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          f(0()) -> s(0())
+          f(s(x)) -> minus(s(x),g(f(x)))
+          g(0()) -> 0()
+          g(s(x)) -> minus(s(x),f(g(x)))
+          minus(x,0()) -> x
+          minus(s(x),s(y)) -> minus(x,y)
+      - Signature:
+          {f/1,g/1,minus/2} / {0/0,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {f,g,minus} and constructors {0,s}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

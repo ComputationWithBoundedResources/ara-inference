@@ -1,0 +1,19 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x)
+(DATATYPES
+    A = µX.< true, 0, false, s(X) >)
+(SIGNATURES
+    cond :: [A x A] -> A
+    odd :: [A] -> A
+    p :: [A] -> A)
+(RULES
+    cond(true(),x) -> cond(odd(x)
+                          ,p(p(p(x))))
+    odd(0()) -> false()
+    odd(s(0())) -> true()
+    odd(s(s(x))) -> odd(x)
+    p(0()) -> 0()
+    p(s(x)) -> x)

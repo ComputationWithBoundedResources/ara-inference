@@ -1,0 +1,32 @@
+
+results-2017-01-18.tex,1009
+\section{{\bfseries\sffamily TODO} todo:t |:t}30,669
+\label{sec:orgaba32bd}sec:orgaba32bd31,716
+\section{With Additional Constraints}With34,741
+\label{sec:orgae34c2e}sec:orgae34c2e35,779
+\subsection{Small Example DB}Small37,803
+\label{sec:orga6b3083}sec:orga6b308338,833
+\subsubsection{Linear}Linear40,857
+\label{sec:org7af6f6b}sec:org7af6f6b41,880
+\subsubsection{Quadratic}Quadratic139,4226
+\label{sec:org690873c}sec:org690873c140,4252
+\subsubsection{Cubic}Cubic238,7717
+\label{sec:org55ce190}sec:org55ce190239,7739
+\section{Without Additional Constraints}Without337,11304
+\label{sec:org4878566}sec:org4878566338,11345
+\subsection{Small Example DB}Small340,11369
+\label{sec:orgce757ba}sec:orgce757ba341,11399
+\subsubsection{Linear}Linear343,11423
+\label{sec:org989cefd}sec:org989cefd344,11446
+\subsubsection{Quadratic}Quadratic438,14774
+\label{sec:org01f0220}sec:org01f0220439,14800
+\subsubsection{Cubic}Cubic534,18269
+\label{sec:org6b12a28}sec:org6b12a28535,18291
+
+results-2017-01-22.tex,242
+\section{Linear}Linear31,621
+\label{sec:org7ab2df8}sec:org7ab2df832,638
+\section{Quadratic}Quadratic217,8531
+\label{sec:org26cccfe}sec:org26cccfe218,8551
+\section{Cubic}Cubic403,16573
+\label{sec:org88a3ca5}sec:org88a3ca5404,16589

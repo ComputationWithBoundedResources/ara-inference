@@ -1,0 +1,44 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x xs y)
+(DATATYPES
+    A = µX.< 0, true, s(X), false, nil, cons(X, X) >)
+(SIGNATURES
+    le :: [A x A] -> A
+    eq :: [A x A] -> A
+    minsort :: [A] -> A
+    min :: [A] -> A
+    if1 :: [A x A x A x A] -> A
+    rm :: [A x A] -> A
+    if2 :: [A x A x A x A] -> A)
+(RULES
+    le(0(),y) -> true()
+    le(s(x),0()) -> false()
+    le(s(x),s(y)) -> le(x,y)
+    eq(0(),0()) -> true()
+    eq(0(),s(y)) -> false()
+    eq(s(x),0()) -> false()
+    eq(s(x),s(y)) -> eq(x,y)
+    minsort(nil()) -> nil()
+    minsort(cons(x,xs)) ->
+      cons(min(cons(x,xs))
+          ,minsort(rm(min(cons(x,xs))
+                     ,cons(x,xs))))
+    min(nil()) -> 0()
+    min(cons(x,nil())) -> x
+    min(cons(x,cons(y,xs))) ->
+      if1(le(x,y),x,y,xs)
+    if1(true(),x,y,xs) -> min(cons(x
+                                  ,xs))
+    if1(false(),x,y,xs) ->
+      min(cons(y,xs))
+    rm(x,nil()) -> nil()
+    rm(x,cons(y,xs)) -> if2(eq(x,y)
+                           ,x
+                           ,y
+                           ,xs)
+    if2(true(),x,y,xs) -> rm(x,xs)
+    if2(false(),x,y,xs) -> cons(y
+                               ,rm(x,xs)))

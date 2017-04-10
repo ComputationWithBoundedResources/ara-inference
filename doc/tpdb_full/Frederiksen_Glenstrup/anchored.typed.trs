@@ -1,0 +1,16 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x xs y)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil >)
+(SIGNATURES
+    anchored :: [A x A] -> A
+    goal :: [A x A] -> A)
+(RULES
+    anchored(Cons(x,xs),y) ->
+      anchored(xs
+              ,Cons(Cons(Nil(),Nil()),y))
+    anchored(Nil(),y) -> y
+    goal(x,y) -> anchored(x,y))

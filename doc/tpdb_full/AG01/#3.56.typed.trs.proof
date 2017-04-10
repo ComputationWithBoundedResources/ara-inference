@@ -1,0 +1,63 @@
+WORST_CASE(?,O(n^1))
+* Step 1: NaturalMI WORST_CASE(?,O(n^1))
+    + Considered Problem:
+        - Strict TRS:
+            f(x) -> x
+            f(c(s(x),y)) -> f(c(x,s(y)))
+            f(f(x)) -> f(d(f(x)))
+            g(c(x,s(y))) -> g(c(s(x),y))
+        - Signature:
+            {f/1,g/1} / {c/2,d/1,s/1}
+        - Obligation:
+            innermost runtime complexity wrt. defined symbols {f,g} and constructors {c,d,s}
+    + Applied Processor:
+        NaturalMI {miDimension = 2, miDegree = 2, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+    + Details:
+        We apply a matrix interpretation of kind constructor based matrix interpretation:
+        The following argument positions are considered usable:
+          none
+        
+        Following symbols are considered usable:
+          {f,g}
+        TcT has computed the following interpretation:
+          p(c) = [0 2] x1 + [0 0] x2 + [0]
+                 [0 0]      [0 1]      [0]
+          p(d) = [0]                      
+                 [1]                      
+          p(f) = [2 2] x1 + [1]           
+                 [3 1]      [2]           
+          p(g) = [0 4] x1 + [1]           
+                 [0 0]      [6]           
+          p(s) = [0 0] x1 + [0]           
+                 [0 1]      [2]           
+        
+        Following rules are strictly oriented:
+                f(x) = [2 2] x + [1]           
+                       [3 1]     [2]           
+                     > [1 0] x + [0]           
+                       [0 1]     [0]           
+                     = x                       
+        
+        f(c(s(x),y)) = [0 4] x + [0 2] y + [9] 
+                       [0 6]     [0 1]     [14]
+                     > [0 4] x + [0 2] y + [5] 
+                       [0 6]     [0 1]     [4] 
+                     = f(c(x,s(y)))            
+        
+             f(f(x)) = [10 6] x + [7]          
+                       [ 9 7]     [7]          
+                     > [3]                     
+                       [3]                     
+                     = f(d(f(x)))              
+        
+        g(c(x,s(y))) = [0 4] y + [9]           
+                       [0 0]     [6]           
+                     > [0 4] y + [1]           
+                       [0 0]     [6]           
+                     = g(c(s(x),y))            
+        
+        
+        Following rules are (at-least) weakly oriented:
+        
+
+WORST_CASE(?,O(n^1))

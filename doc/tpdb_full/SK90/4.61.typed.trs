@@ -1,0 +1,32 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< nil, .(X, X), if(X, X, X), <=(X, X), 0 >)
+(SIGNATURES
+    bsort :: [A] -> A
+    bubble :: [A] -> A
+    last :: [A] -> A
+    butlast :: [A] -> A)
+(RULES
+    bsort(nil()) -> nil()
+    bsort(.(x,y)) ->
+      last(.(bubble(.(x,y))
+            ,bsort(butlast(bubble(.(x
+                                   ,y))))))
+    bubble(nil()) -> nil()
+    bubble(.(x,nil())) -> .(x,nil())
+    bubble(.(x,.(y,z))) -> if(<=(x
+                                ,y)
+                             ,.(y,bubble(.(x,z)))
+                             ,.(x,bubble(.(y,z))))
+    last(nil()) -> 0()
+    last(.(x,nil())) -> x
+    last(.(x,.(y,z))) -> last(.(y
+                               ,z))
+    butlast(nil()) -> nil()
+    butlast(.(x,nil())) -> nil()
+    butlast(.(x,.(y,z))) -> .(x
+                             ,butlast(.(y,z))))

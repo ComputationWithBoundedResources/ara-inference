@@ -1,0 +1,463 @@
+
+* Linear
+
+./runscript.sh -v1
+Folder: ./doc/examples/tpdb/Frederiksen_Glenstrup/
+------------------------------
+
+| Example                  | 1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|--------------------------+--------+--------+--------+----------+---------|
+| ack.typed.trs            |    341 |    393 |    406 |    380.0 | Failure |
+| addlists.typed.trs       |    329 |    342 |    327 |    332.6 | Success |
+| add.typed.trs            |    138 |    100 |    114 |    117.3 | Success |
+| anchored.typed.trs       |     82 |    165 |     86 |    111.0 | Success |
+| append.typed.trs         |     55 |     44 |     60 |     53.0 | Success |
+| assrewrite.typed.trs     |    849 |    867 |    855 |    857.0 | Failure |
+| badd.typed.trs           |    131 |    101 |     97 |    109.6 | Failure |
+| binom.typed.trs          |    376 |    320 |    376 |    357.3 | Failure |
+| decrease.typed.trs       |   3437 |   3468 |   3050 |   3318.3 | Success |
+| disjconj.typed.trs       |    806 |    858 |    848 |    837.3 | Failure |
+| duplicate.typed.trs      |    170 |     99 |    111 |    126.6 | Success |
+| equal.typed.trs          |   3057 |   3109 |   3013 |   3059.6 | Failure |
+| evenodd.typed.trs        |     52 |     67 |     51 |     56.6 | Success |
+| fold.typed.trs           |    319 |    365 |    308 |    330.6 | Success |
+| game.typed.trs           |    324 |    362 |    326 |    337.3 | Success |
+| gcd2.typed.trs           |    496 |    566 |    510 |    524.0 | Success |
+| gcd.typed.trs            |    556 |    516 |    534 |    535.3 | Success |
+| increase.typed.trs       |   3311 |   3267 |   3255 |   3277.6 | Failure |
+| intlookup.typed.trs      |     97 |    223 |    161 |    160.3 | Failure |
+| int.typed.trs            |  60030 |      - |      - | 60030.00 | Timeout |
+| letexp.typed.trs         |     77 |     86 |     76 |     79.6 | Failure |
+| list.typed.trs           |     69 |     85 |     52 |     68.6 | Failure |
+| lte.typed.trs            |    258 |    228 |    255 |    247.0 | Failure |
+| map0.typed.trs           |    172 |    184 |    131 |    162.3 | Failure |
+| member.typed.trs         |    107 |     83 |     70 |     86.6 | Success |
+| mergelists.typed.trs     |    151 |     71 |    123 |    115.0 | Success |
+| mergesort.typed.trs      |    615 |    663 |    676 |    651.3 | Failure |
+| minsort.typed.trs        |    248 |    162 |    144 |    184.6 | Success |
+| mul_better.typed.trs     |    156 |    162 |    146 |    154.6 | Failure |
+| mul.typed.trs            |    171 |    160 |    130 |    153.6 | Failure |
+| naiverev.typed.trs       |    174 |    192 |    178 |    181.3 | Failure |
+| nestdec.typed.trs        |   4280 |   4086 |   4299 |   4221.6 | Failure |
+| nesteql.typed.trs        |    822 |    790 |    713 |    775.0 | Failure |
+| nestimeql.typed.trs      |   3322 |   3236 |   3360 |   3306.0 | Failure |
+| nestinc.typed.trs        |    903 |    509 |    617 |    676.3 | Failure |
+| nolexicord.typed.trs     |   3178 |   2926 |   2822 |   2975.3 | Failure |
+| ordered_better.typed.trs |     92 |     81 |     63 |     78.6 | Success |
+| ordered.typed.trs        |     76 |     90 |    102 |     89.3 | Success |
+| overlap.typed.trs        |     98 |     98 |    125 |    107.0 | Success |
+| parsexp.typed.trs        |   1471 |   1376 |   1486 |   1444.3 | Failure |
+| permute.typed.trs        |    488 |    533 |    449 |    490.0 | Failure |
+| power.typed.trs          |    258 |    248 |    242 |    249.3 | Failure |
+| quicksort.typed.trs      |    227 |    186 |    209 |    207.3 | Failure |
+| revapp.typed.trs         |     76 |     74 |     82 |     77.3 | Success |
+| select.typed.trs         |    330 |    306 |    267 |    301.0 | Failure |
+| shuffle.typed.trs        |    266 |    220 |    235 |    240.3 | Failure |
+| sp1.typed.trs            |    129 |    120 |    120 |    123.0 | Failure |
+| subsets.typed.trs        |    169 |    162 |    212 |    181.0 | Success |
+| thetrick.typed.trs       |   6432 |   6284 |   6560 |   6425.3 | Success |
+
+
+Folder: ./doc/examples/tpdb/Frederiksen_Others/
+------------------------------
+
+| Example                  | 1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|--------------------------+--------+--------+--------+----------+---------|
+| add.typed.trs            |     86 |    110 |     89 |     95.0 | Success |
+| assrewriteSize.typed.trs |    100 |    102 |     78 |     93.3 | Success |
+| boolprog.typed.trs       |   1242 |   1270 |   1341 |   1284.3 | Failure |
+| bubblesort.typed.trs     |    299 |    314 |    328 |    313.6 | Success |
+| deadcodeSize.typed.trs   |     34 |     42 |     25 |     33.6 | Failure |
+| div2.typed.trs           |    208 |    249 |    201 |    219.3 | Failure |
+| eq.typed.trs             |     66 |    127 |     62 |     85.0 | Success |
+| ex6.typed.trs            |    104 |    106 |     82 |     97.3 | Success |
+| fghSize.typed.trs        |    616 |    732 |    612 |    653.3 | Failure |
+| fgh.typed.trs            |    755 |    652 |    697 |    701.3 | Failure |
+| gexgcd2.typed.trs        |    122 |     75 |     82 |     93.0 | Success |
+| gexgcd.typed.trs         |    576 |    551 |    539 |    555.3 | Failure |
+| inssort_better.typed.trs |    189 |    213 |    172 |    191.3 | Success |
+| inssort.typed.trs        |    172 |    149 |    164 |    161.6 | Success |
+| match.typed.trs          |     73 |     87 |     71 |     77.0 | Success |
+| minsortSize.typed.trs    |    152 |    171 |    145 |    156.0 | Success |
+| ocall-safe.typed.trs     |    122 |    106 |    171 |    133.0 | Success |
+| ocall-unsafe.typed.trs   |    108 |    117 |    150 |    125.0 | Success |
+| oddeven.typed.trs        |     35 |     43 |     44 |     40.6 | Success |
+| permut.typed.trs         |     48 |     36 |     56 |     46.6 | Success |
+| power.typed.trs          |    212 |    219 |    227 |    219.3 | Failure |
+| quicksortPtime.typed.trs |    202 |    189 |    214 |    201.6 | Failure |
+| quicksortSize.typed.trs  |    210 |    195 |    192 |    199.0 | Failure |
+| reach.typed.trs          |    230 |    240 |    272 |    247.3 | Success |
+| rematch.typed.trs        |  60547 |      - |      - | 60547.00 | Timeout |
+| strmatch.typed.trs       |    231 |    284 |    251 |    255.3 | Success |
+| thetrickSize.typed.trs   |    243 |    245 |    216 |    234.6 | Success |
+
+
+Folder: ./doc/examples/tpdb/hoca/
+------------------------------
+
+| Example                | 1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|------------------------+--------+--------+--------+----------+---------|
+| dfs-flatten.typed.trs  |    125 |    132 |    114 |    123.6 | Success |
+| fib_llist.typed.trs    |  10783 |  11221 |  12026 |  11343.3 | Failure |
+| flatten.typed.trs      |    905 |    857 |    899 |    887.0 | Success |
+| foldsum.typed.trs      |    305 |    393 |    420 |    372.6 | Success |
+| id.typed.trs           |    114 |    147 |    178 |    146.3 | Success |
+| isort-fold.typed.trs   |    466 |    590 |    622 |    559.3 | Failure |
+| isort.typed.trs        |    368 |    308 |    300 |    325.3 | Failure |
+| mappplus.typed.trs     |    325 |    254 |    323 |    300.6 | Failure |
+| mergesort-dc.typed.trs |   3056 |   3162 |   3096 |   3104.6 | Failure |
+| mss.typed.trs          |   4083 |   3789 |   3948 |   3940.0 | Failure |
+| rev-dl.typed.trs       |    185 |    225 |    193 |    201.0 | Success |
+| rev-fletf.typed.trs    |    194 |    196 |    183 |    191.0 | Success |
+| rev-foldl.typed.trs    |     95 |    119 |    105 |    106.3 | Success |
+| rpm-lazy.typed.trs     |  60166 |      - |      - | 60166.00 | Timeout |
+| sum_sqs3.typed.trs     |    323 |    297 |    310 |    310.0 | Failure |
+| sum.typed.trs          |    156 |    111 |    161 |    142.6 | Success |
+
+
+Folder: ./doc/examples/tpdb/raML/
+------------------------------
+
+| Example                                 | 1 [ms] | 2 [ms] | 3 [ms] |    Avg | RetVal  |
+|-----------------------------------------+--------+--------+--------+--------+---------|
+| appendAll.raml.typed.trs                |    114 |    165 |    157 |  145.3 | Failure |
+| bfs.raml.typed.trs                      |    507 |    440 |    425 |  457.3 | Failure |
+| bft_mmult.raml.typed.trs                |    587 |    687 |    652 |  642.0 | Failure |
+| bitvectors.raml.typed.trs               |   1474 |   1441 |   1425 | 1446.6 | Failure |
+| clevermmult.raml.typed.trs              |    228 |    218 |    233 |  226.3 | Failure |
+| duplicates.raml.typed.trs               |    276 |    207 |    237 |  240.0 | Failure |
+| dyade.raml.typed.trs                    |    122 |    149 |    168 |  146.3 | Failure |
+| eratosthenes.raml.typed.trs             |    387 |    291 |    372 |  350.0 | Failure |
+| flatten.raml.typed.trs                  |    239 |    183 |    211 |  211.0 | Failure |
+| insertionsort.raml.typed.trs            |   1126 |   1120 |   1148 | 1131.3 | Failure |
+| listsort.raml.typed.trs                 |    362 |    278 |    275 |  305.0 | Failure |
+| longestCommonSubsequence.raml.typed.trs |   1830 |   1747 |   1826 | 1801.0 | Failure |
+| matrix.raml.typed.trs                   |   1979 |   1976 |   1912 | 1955.6 | Failure |
+| mergesort.raml.typed.trs                |   1466 |   1553 |   1534 | 1517.6 | Failure |
+| minsort.raml.typed.trs                  |    267 |    160 |    204 |  210.3 | Failure |
+| queue.raml.typed.trs                    |   1720 |   1748 |   1739 | 1735.6 | Failure |
+| quicksort.raml.typed.trs                |   1506 |   1341 |   1361 | 1402.6 | Failure |
+| rationalPotential.raml.typed.trs        |    149 |    240 |     96 |  161.6 | Success |
+| splitandsort.raml.typed.trs             |    739 |    708 |    783 |  743.3 | Failure |
+| subtrees.raml.typed.trs                 |    134 |     97 |    123 |  118.0 | Failure |
+
+
+Folder: ./doc/examples/tpdb/TCT_12/
+------------------------------
+
+| Example                  | 1 [ms] | 2 [ms] | 3 [ms] |    Avg | RetVal  |
+|--------------------------+--------+--------+--------+--------+---------|
+| polycounter-10.typed.trs |   5646 |   5626 |   5772 | 5681.3 | Failure |
+| polycounter-5.typed.trs  |    442 |    508 |    476 |  475.3 | Failure |
+| recursion-10.typed.trs   |   2601 |   2701 |   2620 | 2640.6 | Failure |
+| recursion-5.typed.trs    |    522 |    513 |    532 |  522.3 | Failure |
+| sat.typed.trs            |    670 |    774 |    747 |  730.3 | Failure |
+
+
+* Quadratic
+
+./runscript.sh -v2
+Folder: ./doc/examples/tpdb/Frederiksen_Glenstrup/
+------------------------------
+
+| Example                  |           1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|--------------------------+------------------+--------+--------+----------+---------|
+| ack.typed.trs            |             2655 |   2741 |   2665 |   2687.0 | Failure |
+| addlists.typed.trs       |              368 |    376 |    387 |    377.0 | Success |
+| add.typed.trs            |               95 |    123 |     96 |    104.6 | Success |
+| anchored.typed.trs       |              111 |    121 |    136 |    122.6 | Success |
+| append.typed.trs         |               49 |     73 |     61 |     61.0 | Success |
+| assrewrite.typed.trs     |             8537 |   8721 |   8783 |   8680.3 | Failure |
+| badd.typed.trs           |              361 |    259 |    313 |    311.0 | Failure |
+| binom.typed.trs          |             2103 |   2049 |   1965 |   2039.0 | Failure |
+| decrease.typed.trs       | ^[[A^?^?    3804 |   3046 |   3579 |   3476.3 | Success |
+| disjconj.typed.trs       |             3022 |   3016 |   3064 |   3034.0 | Failure |
+| duplicate.typed.trs      |              135 |    108 |     91 |    111.3 | Success |
+| equal.typed.trs          |            48140 |  46894 |  42059 |  45697.6 | Failure |
+| evenodd.typed.trs        |               93 |     43 |     44 |     60.0 | Success |
+| fold.typed.trs           |              249 |    257 |    241 |    249.0 | Success |
+| game.typed.trs           |              236 |    242 |    224 |    234.0 | Success |
+| gcd2.typed.trs           |              378 |    393 |    380 |    383.6 | Success |
+| gcd.typed.trs            |              384 |    425 |    392 |    400.3 | Success |
+| increase.typed.trs       |             5647 |   5623 |   5724 |   5664.6 | Failure |
+| intlookup.typed.trs      |              297 |    268 |    269 |    278.0 | Failure |
+| int.typed.trs            |            60010 |      - |      - | 60010.00 | Timeout |
+| letexp.typed.trs         |              100 |    100 |     94 |     98.0 | Failure |
+| list.typed.trs           |               91 |    129 |    129 |    116.3 | Failure |
+| lte.typed.trs            |             2278 |   2271 |   2261 |   2270.0 | Failure |
+| map0.typed.trs           |              329 |    331 |    350 |    336.6 | Failure |
+| member.typed.trs         |               82 |     85 |     62 |     76.3 | Success |
+| mergelists.typed.trs     |               65 |     71 |     58 |     64.6 | Success |
+| mergesort.typed.trs      |            57213 |  57499 |  57027 |  57246.3 | Failure |
+| minsort.typed.trs        |              118 |    124 |    117 |    119.6 | Success |
+| mul_better.typed.trs     |              352 |    331 |    349 |    344.0 | Success |
+| mul.typed.trs            |              293 |    357 |    312 |    320.6 | Success |
+| naiverev.typed.trs       |              331 |    384 |    353 |    356.0 | Success |
+| nestdec.typed.trs        |            22820 |  22893 |  22812 |  22841.6 | Failure |
+| nesteql.typed.trs        |             2640 |   2636 |   2605 |   2627.0 | Failure |
+| nestimeql.typed.trs      |             6048 |   6092 |   6117 |   6085.6 | Failure |
+| nestinc.typed.trs        |             1959 |   1977 |   1980 |   1972.0 | Failure |
+| nolexicord.typed.trs     |             4339 |   4359 |   4267 |   4321.6 | Failure |
+| ordered_better.typed.trs |               90 |     70 |     72 |     77.3 | Success |
+| ordered.typed.trs        |               69 |     91 |     78 |     79.3 | Success |
+| overlap.typed.trs        |              109 |     81 |     82 |     90.6 | Success |
+| parsexp.typed.trs        |             6271 |   6264 |   6329 |   6288.0 | Failure |
+| permute.typed.trs        |             2879 |   2866 |   2898 |   2881.0 | Failure |
+| power.typed.trs          |              644 |    619 |    620 |    627.6 | Failure |
+| quicksort.typed.trs      |             1860 |   1897 |   1902 |   1886.3 | Failure |
+| revapp.typed.trs         |               39 |     40 |     68 |     49.0 | Success |
+| select.typed.trs         |             1054 |   1088 |   1065 |   1069.0 | Failure |
+| shuffle.typed.trs        |             2709 |   2769 |   2708 |   2728.6 | Failure |
+| sp1.typed.trs            |              338 |    364 |    344 |    348.6 | Failure |
+| subsets.typed.trs        |              148 |    156 |    161 |    155.0 | Success |
+| thetrick.typed.trs       |             5108 |   5000 |   5080 |   5062.6 | Success |
+
+
+Folder: ./doc/examples/tpdb/Frederiksen_Others/
+------------------------------
+
+| Example                  | 1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|--------------------------+--------+--------+--------+----------+---------|
+| add.typed.trs            |     73 |     67 |     85 |     75.0 | Success |
+| assrewriteSize.typed.trs |     82 |     69 |     69 |     73.3 | Success |
+| boolprog.typed.trs       |   6263 |   6284 |   6257 |   6268.0 | Failure |
+| bubblesort.typed.trs     |    237 |    244 |    278 |    253.0 | Success |
+| deadcodeSize.typed.trs   |     44 |     43 |     46 |     44.3 | Failure |
+| div2.typed.trs           |  27222 |  27343 |  27308 |  27291.0 | Failure |
+| eq.typed.trs             |     77 |     63 |     50 |     63.3 | Success |
+| ex6.typed.trs            |     78 |     97 |     98 |     91.0 | Success |
+| fghSize.typed.trs        |   7587 |   7577 |   7581 |   7581.6 | Failure |
+| fgh.typed.trs            |   5288 |   5276 |   5257 |   5273.6 | Failure |
+| gexgcd2.typed.trs        |     51 |     96 |     70 |     72.3 | Success |
+| gexgcd.typed.trs         |   1327 |   1370 |   1312 |   1336.3 | Failure |
+| inssort_better.typed.trs |    150 |    179 |    188 |    172.3 | Success |
+| inssort.typed.trs        |    145 |    124 |    151 |    140.0 | Success |
+| match.typed.trs          |     62 |     61 |     59 |     60.6 | Success |
+| minsortSize.typed.trs    |    128 |    123 |    142 |    131.0 | Success |
+| ocall-safe.typed.trs     |     98 |    123 |    103 |    108.0 | Success |
+| ocall-unsafe.typed.trs   |     99 |    149 |     87 |    111.6 | Success |
+| oddeven.typed.trs        |     38 |     32 |     34 |     34.6 | Success |
+| permut.typed.trs         |     27 |     35 |     31 |     31.0 | Success |
+| power.typed.trs          |    655 |    667 |    670 |    664.0 | Failure |
+| quicksortPtime.typed.trs |  10204 |  10200 |  10165 |  10189.6 | Failure |
+| quicksortSize.typed.trs  |   1974 |   1957 |   1953 |   1961.3 | Failure |
+| reach.typed.trs          |    200 |    220 |    204 |    208.0 | Success |
+| rematch.typed.trs        |  60618 |      - |      - | 60618.00 | Timeout |
+| strmatch.typed.trs       |    240 |    236 |    245 |    240.3 | Success |
+| thetrickSize.typed.trs   |    204 |    228 |    205 |    212.3 | Success |
+
+
+Folder: ./doc/examples/tpdb/hoca/
+------------------------------
+
+| Example                | 1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|------------------------+--------+--------+--------+----------+---------|
+| dfs-flatten.typed.trs  |    126 |    107 |    117 |    116.6 | Success |
+| fib_llist.typed.trs    |  60002 |      - |      - | 60002.00 | Timeout |
+| flatten.typed.trs      |    596 |    625 |    606 |    609.0 | Success |
+| foldsum.typed.trs      |    212 |    235 |    243 |    230.0 | Success |
+| id.typed.trs           |     86 |     83 |     95 |     88.0 | Success |
+| isort-fold.typed.trs   |    997 |   1003 |   1013 |   1004.3 | Success |
+| isort.typed.trs        |    693 |    711 |    736 |    713.3 | Success |
+| mappplus.typed.trs     |   1243 |   1239 |   1265 |   1249.0 | Failure |
+| mergesort-dc.typed.trs |  60003 |      - |      - | 60003.00 | Timeout |
+| mss.typed.trs          |  60002 |      - |      - | 60002.00 | Timeout |
+| rev-dl.typed.trs       |    204 |    151 |    157 |    170.6 | Success |
+| rev-fletf.typed.trs    |    150 |    130 |    133 |    137.6 | Success |
+| rev-foldl.typed.trs    |     47 |     56 |     36 |     46.3 | Success |
+| rpm-lazy.typed.trs     |  60240 |      - |      - | 60240.00 | Timeout |
+| sum_sqs3.typed.trs     |    815 |    872 |    821 |    836.0 | Failure |
+| sum.typed.trs          |    126 |     94 |    103 |    107.6 | Success |
+
+
+Folder: ./doc/examples/tpdb/raML/
+------------------------------
+
+| Example                                 | 1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|-----------------------------------------+--------+--------+--------+----------+---------|
+| appendAll.raml.typed.trs                |    640 |    652 |    643 |    645.0 | Failure |
+| bfs.raml.typed.trs                      |  60002 |      - |      - | 60002.00 | Timeout |
+| bft_mmult.raml.typed.trs                |   1639 |   1670 |   1643 |   1650.6 | Failure |
+| bitvectors.raml.typed.trs               |  60002 |      - |      - | 60002.00 | Timeout |
+| clevermmult.raml.typed.trs              |    580 |    572 |    579 |    577.0 | Failure |
+| duplicates.raml.typed.trs               |   2261 |   2237 |   2250 |   2249.3 | Failure |
+| dyade.raml.typed.trs                    |    399 |    407 |    366 |    390.6 | Failure |
+| eratosthenes.raml.typed.trs             |   7667 |   7642 |   7692 |   7667.0 | Failure |
+| flatten.raml.typed.trs                  |   2233 |   2279 |   2245 |   2252.3 | Failure |
+| insertionsort.raml.typed.trs            |  47339 |  47744 |  47985 |  47689.3 | Failure |
+| listsort.raml.typed.trs                 |   6845 |   6862 |   6943 |   6883.3 | Failure |
+| longestCommonSubsequence.raml.typed.trs |  51182 |  51168 |  51378 |  51242.6 | Failure |
+| matrix.raml.typed.trs                   |   5056 |   5013 |   4989 |   5019.3 | Failure |
+| mergesort.raml.typed.trs                |   4868 |   4868 |   4988 |   4908.0 | Failure |
+| minsort.raml.typed.trs                  |   5832 |   5819 |   5847 |   5832.6 | Failure |
+| queue.raml.typed.trs                    |  60002 |      - |      - | 60002.00 | Timeout |
+| quicksort.raml.typed.trs                |  60002 |      - |      - | 60002.00 | Timeout |
+| rationalPotential.raml.typed.trs        |     88 |     96 |     97 |     93.6 | Success |
+| splitandsort.raml.typed.trs             |  60002 |      - |      - | 60002.00 | Timeout |
+| subtrees.raml.typed.trs                 |    898 |    840 |    898 |    878.6 | Failure |
+
+
+Folder: ./doc/examples/tpdb/TCT_12/
+------------------------------
+
+| Example                  | 1 [ms] | 2 [ms] | 3 [ms] |     Avg | RetVal  |
+|--------------------------+--------+--------+--------+---------+---------|
+| polycounter-10.typed.trs |  15982 |  16044 |  15802 | 15942.6 | Failure |
+| polycounter-5.typed.trs  |   1322 |   1287 |   1286 |  1298.3 | Failure |
+| recursion-10.typed.trs   |   6655 |   6655 |   6733 |  6681.0 | Failure |
+| recursion-5.typed.trs    |   1150 |   1173 |   1182 |  1168.3 | Failure |
+| sat.typed.trs            |   2390 |   2386 |   2365 |  2380.3 | Success |
+
+
+* Cubic
+
+./runscript.sh -v3
+Folder: ./doc/examples/tpdb/Frederiksen_Glenstrup/
+------------------------------
+
+| Example                  | 1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|--------------------------+--------+--------+--------+----------+---------|
+| ack.typed.trs            |  15270 |  14968 |  15099 |  15112.3 | Failure |
+| addlists.typed.trs       |    293 |    355 |    329 |    325.6 | Success |
+| add.typed.trs            |    132 |     93 |     98 |    107.6 | Success |
+| anchored.typed.trs       |    102 |     72 |     71 |     81.6 | Success |
+| append.typed.trs         |     64 |     45 |     52 |     53.6 | Success |
+| assrewrite.typed.trs     |  12844 |  13770 |  13475 |  13363.0 | Success |
+| badd.typed.trs           |    645 |    626 |    628 |    633.0 | Failure |
+| binom.typed.trs          |  24032 |  22960 |  22765 |  23252.3 | Failure |
+| decrease.typed.trs       |   2115 |   2138 |   2047 |   2100.0 | Success |
+| disjconj.typed.trs       |   7599 |   7729 |   7563 |   7630.3 | Failure |
+| duplicate.typed.trs      |     92 |     86 |     59 |     79.0 | Success |
+| equal.typed.trs          |  55693 |  56189 |  58073 |  56651.6 | Failure |
+| evenodd.typed.trs        |     48 |     48 |    121 |     72.3 | Success |
+| fold.typed.trs           |    246 |    252 |    307 |    268.3 | Success |
+| game.typed.trs           |    245 |    251 |    284 |    260.0 | Success |
+| gcd2.typed.trs           |    406 |    431 |    422 |    419.6 | Success |
+| gcd.typed.trs            |    472 |    397 |    404 |    424.3 | Success |
+| increase.typed.trs       |  60010 |      - |      - | 60010.00 | Timeout |
+| intlookup.typed.trs      |    799 |    792 |    846 |    812.3 | Failure |
+| int.typed.trs            |  60013 |      - |      - | 60013.00 | Timeout |
+| letexp.typed.trs         |    205 |    257 |    213 |    225.0 | Failure |
+| list.typed.trs           |    317 |    255 |    274 |    282.0 | Failure |
+| lte.typed.trs            |  29564 |  29439 |  29063 |  29355.3 | Failure |
+| map0.typed.trs           |    893 |    895 |    912 |    900.0 | Failure |
+| member.typed.trs         |     65 |     45 |    103 |     71.0 | Success |
+| mergelists.typed.trs     |     92 |     66 |     59 |     72.3 | Success |
+| mergesort.typed.trs      |  60003 |      - |      - | 60003.00 | Timeout |
+| minsort.typed.trs        |    201 |    148 |    134 |    161.0 | Success |
+| mul_better.typed.trs     |    374 |    383 |    424 |    393.6 | Success |
+| mul.typed.trs            |    356 |    302 |    359 |    339.0 | Success |
+| naiverev.typed.trs       |    352 |    399 |    390 |    380.3 | Success |
+| nestdec.typed.trs        |  60006 |      - |      - | 60006.00 | Timeout |
+| nesteql.typed.trs        |  21160 |  21212 |  21738 |  21370.0 | Failure |
+| nestimeql.typed.trs      |  60012 |      - |      - | 60012.00 | Timeout |
+| nestinc.typed.trs        |  60003 |      - |      - | 60003.00 | Timeout |
+| nolexicord.typed.trs     |  10466 |  10583 |  10698 |  10582.3 | Failure |
+| ordered_better.typed.trs |     71 |     74 |    119 |     88.0 | Success |
+| ordered.typed.trs        |     66 |     60 |     75 |     67.0 | Success |
+| overlap.typed.trs        |    106 |     96 |    115 |    105.6 | Success |
+| parsexp.typed.trs        |  60003 |      - |      - | 60003.00 | Timeout |
+| permute.typed.trs        |  60003 |      - |      - | 60003.00 | Timeout |
+| power.typed.trs          |   1896 |   2116 |   1903 |   1971.6 | Failure |
+| quicksort.typed.trs      |  27688 |  29579 |  28062 |  28443.0 | Failure |
+| revapp.typed.trs         |    112 |     67 |     59 |     79.3 | Success |
+| select.typed.trs         |   7934 |   7929 |   8516 |   8126.3 | Failure |
+| shuffle.typed.trs        |  39859 |  40241 |  40739 |  40279.6 | Failure |
+| sp1.typed.trs            |    993 |   1039 |   1097 |   1043.0 | Failure |
+| subsets.typed.trs        |    181 |    223 |    192 |    198.6 | Success |
+| thetrick.typed.trs       |   8269 |   8103 |   8630 |   8334.0 | Success |
+
+
+Folder: ./doc/examples/tpdb/Frederiksen_Others/
+------------------------------
+
+| Example                  | 1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|--------------------------+--------+--------+--------+----------+---------|
+| add.typed.trs            |     99 |     99 |     90 |     96.0 | Success |
+| assrewriteSize.typed.trs |    112 |     99 |     98 |    103.0 | Success |
+| boolprog.typed.trs       |  60003 |      - |      - | 60003.00 | Timeout |
+| bubblesort.typed.trs     |    336 |    309 |    312 |    319.0 | Success |
+| deadcodeSize.typed.trs   |     86 |     79 |     89 |     84.6 | Failure |
+| div2.typed.trs           |  35280 |  35697 |  35914 |  35630.3 | Failure |
+| eq.typed.trs             |    135 |    102 |     76 |    104.3 | Success |
+| ex6.typed.trs            |    107 |    103 |    139 |    116.3 | Success |
+| fghSize.typed.trs        |  60004 |      - |      - | 60004.00 | Timeout |
+| fgh.typed.trs            |  60006 |      - |      - | 60006.00 | Timeout |
+| gexgcd2.typed.trs        |     70 |    109 |     60 |     79.6 | Success |
+| gexgcd.typed.trs         |   3843 |   3957 |   3842 |   3880.6 | Failure |
+| inssort_better.typed.trs |    204 |    230 |    196 |    210.0 | Success |
+| inssort.typed.trs        |    164 |    167 |    149 |    160.0 | Success |
+| match.typed.trs          |     76 |     70 |     83 |     76.3 | Success |
+| minsortSize.typed.trs    |    121 |    178 |    158 |    152.3 | Success |
+| ocall-safe.typed.trs     |    117 |    207 |    182 |    168.6 | Success |
+| ocall-unsafe.typed.trs   |    187 |    115 |    128 |    143.3 | Success |
+| oddeven.typed.trs        |     43 |     37 |     50 |     43.3 | Success |
+| permut.typed.trs         |     44 |     36 |     28 |     36.0 | Success |
+| power.typed.trs          |   1898 |   1949 |   1929 |   1925.3 | Failure |
+| quicksortPtime.typed.trs |  39026 |  39515 |  41415 |  39985.3 | Failure |
+| quicksortSize.typed.trs  |  23387 |  25002 |  23744 |  24044.3 | Failure |
+| reach.typed.trs          |    295 |    286 |    289 |    290.0 | Success |
+| rematch.typed.trs        |  60308 |      - |      - | 60308.00 | Timeout |
+| strmatch.typed.trs       |    396 |    332 |    402 |    376.6 | Success |
+| thetrickSize.typed.trs   |    301 |    350 |    358 |    336.3 | Success |
+
+
+Folder: ./doc/examples/tpdb/hoca/
+------------------------------
+
+| Example                | 1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|------------------------+--------+--------+--------+----------+---------|
+| dfs-flatten.typed.trs  |    177 |    139 |    167 |    161.0 | Success |
+| fib_llist.typed.trs    |  60002 |      - |      - | 60002.00 | Timeout |
+| flatten.typed.trs      |    835 |    729 |    786 |    783.3 | Success |
+| foldsum.typed.trs      |    308 |    311 |    354 |    324.3 | Success |
+| id.typed.trs           |    103 |    114 |    157 |    124.6 | Success |
+| isort-fold.typed.trs   |   1280 |   1329 |   1339 |   1316.0 | Success |
+| isort.typed.trs        |    904 |    877 |    851 |    877.3 | Success |
+| mappplus.typed.trs     |   5437 |   5523 |   5585 |   5515.0 | Failure |
+| mergesort-dc.typed.trs |  60003 |      - |      - | 60003.00 | Timeout |
+| mss.typed.trs          |  60003 |      - |      - | 60003.00 | Timeout |
+| rev-dl.typed.trs       |    150 |    154 |    214 |    172.6 | Success |
+| rev-fletf.typed.trs    |    180 |    209 |    197 |    195.3 | Success |
+| rev-foldl.typed.trs    |     78 |     55 |     61 |     64.6 | Success |
+| rpm-lazy.typed.trs     |  60159 |      - |      - | 60159.00 | Timeout |
+| sum_sqs3.typed.trs     |   2648 |   2659 |   2681 |   2662.6 | Failure |
+| sum.typed.trs          |    153 |     97 |     94 |    114.6 | Success |
+
+
+Folder: ./doc/examples/tpdb/raML/
+------------------------------
+
+| Example                                 | 1 [ms] | 2 [ms] | 3 [ms] |      Avg | RetVal  |
+|-----------------------------------------+--------+--------+--------+----------+---------|
+| appendAll.raml.typed.trs                |   1525 |   1618 |   1610 |   1584.3 | Failure |
+| bfs.raml.typed.trs                      |  60002 |      - |      - | 60002.00 | Timeout |
+| bft_mmult.raml.typed.trs                |   5994 |   6027 |   6207 |   6076.0 | Failure |
+| bitvectors.raml.typed.trs               |  60002 |      - |      - | 60002.00 | Timeout |
+| clevermmult.raml.typed.trs              |   2052 |   1983 |   1950 |   1995.0 | Failure |
+| duplicates.raml.typed.trs               |  13213 |  12646 |  12781 |  12880.0 | Failure |
+| dyade.raml.typed.trs                    |   1119 |   1147 |   1121 |   1129.0 | Failure |
+| eratosthenes.raml.typed.trs             |  43442 |  42439 |  42312 |  42731.0 | Failure |
+| flatten.raml.typed.trs                  |   4954 |   5068 |   5460 |   5160.6 | Failure |
+| insertionsort.raml.typed.trs            |  60002 |      - |      - | 60002.00 | Timeout |
+| listsort.raml.typed.trs                 |  46949 |  48369 |  47308 |  47542.0 | Failure |
+| longestCommonSubsequence.raml.typed.trs |  60002 |      - |      - | 60002.00 | Timeout |
+| matrix.raml.typed.trs                   |  13502 |  13736 |  13748 |  13662.0 | Failure |
+| mergesort.raml.typed.trs                |  60002 |      - |      - | 60002.00 | Timeout |
+| minsort.raml.typed.trs                  |  58712 |  58959 |  58801 |  58824.0 | Failure |
+| queue.raml.typed.trs                    |  60003 |      - |      - | 60003.00 | Timeout |
+| quicksort.raml.typed.trs                |  60003 |      - |      - | 60003.00 | Timeout |
+| rationalPotential.raml.typed.trs        |     94 |    105 |     87 |     95.3 | Success |
+| splitandsort.raml.typed.trs             |  60002 |      - |      - | 60002.00 | Timeout |
+| subtrees.raml.typed.trs                 |   6245 |   6101 |   6285 |   6210.3 | Failure |
+
+
+Folder: ./doc/examples/tpdb/TCT_12/
+------------------------------
+
+| Example                  | 1 [ms] | 2 [ms] | 3 [ms] |     Avg | RetVal  |
+|--------------------------+--------+--------+--------+---------+---------|
+| polycounter-10.typed.trs |  50623 |  50849 |  50409 | 50627.0 | Failure |
+| polycounter-5.typed.trs  |   4465 |   4466 |   4459 |  4463.3 | Failure |
+| recursion-10.typed.trs   |  17811 |  17441 |  17557 | 17603.0 | Failure |
+| recursion-5.typed.trs    |   3178 |   3198 |   3203 |  3193.0 | Failure |

@@ -1,0 +1,27 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X Y)
+(DATATYPES
+    A = µX.< 0, true, s(X), false >)
+(SIGNATURES
+    le :: [A x A] -> A
+    minus :: [A x A] -> A
+    ifMinus :: [A x A x A] -> A
+    quot :: [A x A] -> A)
+(RULES
+    le(0(),Y) -> true()
+    le(s(X),0()) -> false()
+    le(s(X),s(Y)) -> le(X,Y)
+    minus(0(),Y) -> 0()
+    minus(s(X),Y) -> ifMinus(le(s(X)
+                               ,Y)
+                            ,s(X)
+                            ,Y)
+    ifMinus(true(),s(X),Y) -> 0()
+    ifMinus(false(),s(X),Y) ->
+      s(minus(X,Y))
+    quot(0(),s(Y)) -> 0()
+    quot(s(X),s(Y)) ->
+      s(quot(minus(X,Y),s(Y))))

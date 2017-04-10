@@ -1,0 +1,61 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< a, s(X), b(X, X) >)
+(SIGNATURES
+    f_0 :: [A] -> A
+    f_1 :: [A] -> A
+    g_1 :: [A x A] -> A
+    f_2 :: [A] -> A
+    g_2 :: [A x A] -> A
+    f_3 :: [A] -> A
+    g_3 :: [A x A] -> A
+    f_4 :: [A] -> A
+    g_4 :: [A x A] -> A
+    f_5 :: [A] -> A
+    g_5 :: [A x A] -> A
+    f_6 :: [A] -> A
+    g_6 :: [A x A] -> A
+    f_7 :: [A] -> A
+    g_7 :: [A x A] -> A
+    f_8 :: [A] -> A
+    g_8 :: [A x A] -> A
+    f_9 :: [A] -> A
+    g_9 :: [A x A] -> A
+    f_10 :: [A] -> A
+    g_10 :: [A x A] -> A)
+(RULES
+    f_0(x) -> a()
+    f_1(x) -> g_1(x,x)
+    g_1(s(x),y) -> b(f_0(y)
+                    ,g_1(x,y))
+    f_2(x) -> g_2(x,x)
+    g_2(s(x),y) -> b(f_1(y)
+                    ,g_2(x,y))
+    f_3(x) -> g_3(x,x)
+    g_3(s(x),y) -> b(f_2(y)
+                    ,g_3(x,y))
+    f_4(x) -> g_4(x,x)
+    g_4(s(x),y) -> b(f_3(y)
+                    ,g_4(x,y))
+    f_5(x) -> g_5(x,x)
+    g_5(s(x),y) -> b(f_4(y)
+                    ,g_5(x,y))
+    f_6(x) -> g_6(x,x)
+    g_6(s(x),y) -> b(f_5(y)
+                    ,g_6(x,y))
+    f_7(x) -> g_7(x,x)
+    g_7(s(x),y) -> b(f_6(y)
+                    ,g_7(x,y))
+    f_8(x) -> g_8(x,x)
+    g_8(s(x),y) -> b(f_7(y)
+                    ,g_8(x,y))
+    f_9(x) -> g_9(x,x)
+    g_9(s(x),y) -> b(f_8(y)
+                    ,g_9(x,y))
+    f_10(x) -> g_10(x,x)
+    g_10(s(x),y) -> b(f_9(y)
+                     ,g_10(x,y)))

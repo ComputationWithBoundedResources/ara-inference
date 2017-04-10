@@ -1,0 +1,44 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    L M N X Y)
+(DATATYPES
+    A = µX.< 0, true, s(X), false, nil, cons(X, X) >)
+(SIGNATURES
+    le :: [A x A] -> A
+    app :: [A x A] -> A
+    low :: [A x A] -> A
+    iflow :: [A x A x A] -> A
+    high :: [A x A] -> A
+    ifhigh :: [A x A x A] -> A
+    quicksort :: [A] -> A)
+(RULES
+    le(0(),Y) -> true()
+    le(s(X),0()) -> false()
+    le(s(X),s(Y)) -> le(X,Y)
+    app(nil(),Y) -> Y
+    app(cons(N,L),Y) -> cons(N
+                            ,app(L,Y))
+    low(N,nil()) -> nil()
+    low(N,cons(M,L)) -> iflow(le(M
+                                ,N)
+                             ,N
+                             ,cons(M,L))
+    iflow(true(),N,cons(M,L)) ->
+      cons(M,low(N,L))
+    iflow(false(),N,cons(M,L)) ->
+      low(N,L)
+    high(N,nil()) -> nil()
+    high(N,cons(M,L)) -> ifhigh(le(M
+                                  ,N)
+                               ,N
+                               ,cons(M,L))
+    ifhigh(true(),N,cons(M,L)) ->
+      high(N,L)
+    ifhigh(false(),N,cons(M,L)) ->
+      cons(M,high(N,L))
+    quicksort(nil()) -> nil()
+    quicksort(cons(N,L)) ->
+      app(quicksort(low(N,L))
+         ,cons(N,quicksort(high(N,L)))))

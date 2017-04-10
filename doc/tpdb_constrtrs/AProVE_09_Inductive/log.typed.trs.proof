@@ -1,0 +1,23 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          ge(x,0()) -> true()
+          ge(0(),s(x)) -> false()
+          ge(s(x),s(y)) -> ge(x,y)
+          half(x) -> if(ge(x,s(s(0()))),x)
+          if(false(),x) -> 0()
+          if(true(),x) -> s(half(p(p(x))))
+          log(0()) -> 0()
+          log(s(x)) -> s(log(half(s(x))))
+          p(0()) -> 0()
+          p(s(x)) -> x
+      - Signature:
+          {ge/2,half/1,if/2,log/1,p/1} / {0/0,false/0,s/1,true/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {ge,half,if,log,p} and constructors {0,false,s,true}
+  + Applied Processor:
+      NaturalMI {miDimension = 2, miDegree = 2, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

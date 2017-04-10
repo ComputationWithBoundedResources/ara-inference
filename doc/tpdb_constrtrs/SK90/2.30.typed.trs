@@ -1,0 +1,19 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< xor(X, X), true, and(X, X) >)
+(SIGNATURES
+    not :: [A] -> A
+    implies :: [A x A] -> A
+    or :: [A x A] -> A
+    = :: [A x A] -> A)
+(RULES
+    not(x) -> xor(x,true())
+    implies(x,y) -> xor(and(x,y)
+                       ,xor(x,true()))
+    or(x,y) -> xor(and(x,y)
+                  ,xor(x,y))
+    =(x,y) -> xor(x,xor(y,true())))

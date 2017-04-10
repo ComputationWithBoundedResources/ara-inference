@@ -1,0 +1,41 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    u x y z)
+(DATATYPES
+    A = µX.< 0, true, s(X), false, modZeroErro >)
+(SIGNATURES
+    le :: [A x A] -> A
+    mod :: [A x A] -> A
+    modIter :: [A x A x A x A] -> A
+    if :: [A x A x A x A x A] -> A
+    if2 :: [A x A x A x A x A] -> A)
+(RULES
+    le(0(),y) -> true()
+    le(s(x),0()) -> false()
+    le(s(x),s(y)) -> le(x,y)
+    mod(x,0()) -> modZeroErro()
+    mod(x,s(y)) -> modIter(x
+                          ,s(y)
+                          ,0()
+                          ,0())
+    modIter(x,s(y),z,u) -> if(le(x
+                                ,z)
+                             ,x
+                             ,s(y)
+                             ,z
+                             ,u)
+    if(true(),x,y,z,u) -> u
+    if(false(),x,y,z,u) -> if2(le(y
+                                 ,s(u))
+                              ,x
+                              ,y
+                              ,s(z)
+                              ,s(u))
+    if2(false(),x,y,z,u) ->
+      modIter(x,y,z,u)
+    if2(true(),x,y,z,u) -> modIter(x
+                                  ,y
+                                  ,z
+                                  ,0()))

@@ -1,0 +1,16 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X)
+(DATATYPES
+    A = µX.< f(X), a, g(X) >)
+(SIGNATURES
+    a__f :: [A] -> A
+    mark :: [A] -> A)
+(RULES
+    a__f(f(a())) -> a__f(g(f(a())))
+    mark(f(X)) -> a__f(mark(X))
+    mark(a()) -> a()
+    mark(g(X)) -> g(X)
+    a__f(X) -> f(X))

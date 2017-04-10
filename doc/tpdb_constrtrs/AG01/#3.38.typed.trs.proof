@@ -1,0 +1,20 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          rev(cons(x,l)) -> cons(rev1(x,l),rev2(x,l))
+          rev(nil()) -> nil()
+          rev1(x,cons(y,l)) -> rev1(y,l)
+          rev1(0(),nil()) -> 0()
+          rev1(s(x),nil()) -> s(x)
+          rev2(x,cons(y,l)) -> rev(cons(x,rev2(y,l)))
+          rev2(x,nil()) -> nil()
+      - Signature:
+          {rev/1,rev1/2,rev2/2} / {0/0,cons/2,nil/0,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {rev,rev1,rev2} and constructors {0,cons,nil,s}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

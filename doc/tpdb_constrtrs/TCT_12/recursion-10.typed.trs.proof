@@ -1,0 +1,36 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          f_0(x) -> a()
+          f_1(x) -> g_1(x,x)
+          f_10(x) -> g_10(x,x)
+          f_2(x) -> g_2(x,x)
+          f_3(x) -> g_3(x,x)
+          f_4(x) -> g_4(x,x)
+          f_5(x) -> g_5(x,x)
+          f_6(x) -> g_6(x,x)
+          f_7(x) -> g_7(x,x)
+          f_8(x) -> g_8(x,x)
+          f_9(x) -> g_9(x,x)
+          g_1(s(x),y) -> b(f_0(y),g_1(x,y))
+          g_10(s(x),y) -> b(f_9(y),g_10(x,y))
+          g_2(s(x),y) -> b(f_1(y),g_2(x,y))
+          g_3(s(x),y) -> b(f_2(y),g_3(x,y))
+          g_4(s(x),y) -> b(f_3(y),g_4(x,y))
+          g_5(s(x),y) -> b(f_4(y),g_5(x,y))
+          g_6(s(x),y) -> b(f_5(y),g_6(x,y))
+          g_7(s(x),y) -> b(f_6(y),g_7(x,y))
+          g_8(s(x),y) -> b(f_7(y),g_8(x,y))
+          g_9(s(x),y) -> b(f_8(y),g_9(x,y))
+      - Signature:
+          {f_0/1,f_1/1,f_10/1,f_2/1,f_3/1,f_4/1,f_5/1,f_6/1,f_7/1,f_8/1,f_9/1,g_1/2,g_10/2,g_2/2,g_3/2,g_4/2,g_5/2
+          ,g_6/2,g_7/2,g_8/2,g_9/2} / {a/0,b/2,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {f_0,f_1,f_10,f_2,f_3,f_4,f_5,f_6,f_7,f_8,f_9,g_1,g_10,g_2
+          ,g_3,g_4,g_5,g_6,g_7,g_8,g_9} and constructors {a,b,s}
+  + Applied Processor:
+      NaturalMI {miDimension = 2, miDegree = 2, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

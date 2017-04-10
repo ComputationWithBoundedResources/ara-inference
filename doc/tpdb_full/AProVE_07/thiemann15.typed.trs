@@ -1,0 +1,32 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< 0, s(X), true, false >)
+(SIGNATURES
+    half :: [A] -> A
+    inc :: [A] -> A
+    zero :: [A] -> A
+    p :: [A] -> A
+    bits :: [A] -> A
+    bitIter :: [A x A] -> A
+    if :: [A x A x A] -> A)
+(RULES
+    half(0()) -> 0()
+    half(s(0())) -> 0()
+    half(s(s(x))) -> s(half(x))
+    inc(0()) -> 0()
+    inc(s(x)) -> s(inc(x))
+    zero(0()) -> true()
+    zero(s(x)) -> false()
+    p(0()) -> 0()
+    p(s(x)) -> x
+    bits(x) -> bitIter(x,0())
+    bitIter(x,y) -> if(zero(x)
+                      ,x
+                      ,inc(y))
+    if(true(),x,y) -> p(y)
+    if(false(),x,y) ->
+      bitIter(half(x),y))

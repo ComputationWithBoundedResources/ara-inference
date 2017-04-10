@@ -1,0 +1,19 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X X1 Y Z)
+(DATATYPES
+    A = µX.< cons1(X, X), cons(X, X), n__from(X), s(X) >)
+(SIGNATURES
+    2nd :: [A] -> A
+    from :: [A] -> A
+    activate :: [A] -> A)
+(RULES
+    2nd(cons1(X,cons(Y,Z))) -> Y
+    2nd(cons(X,X1)) -> 2nd(cons1(X
+                                ,activate(X1)))
+    from(X) -> cons(X,n__from(s(X)))
+    from(X) -> n__from(X)
+    activate(n__from(X)) -> from(X)
+    activate(X) -> X)

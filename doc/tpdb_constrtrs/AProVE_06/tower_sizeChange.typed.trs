@@ -1,0 +1,27 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< a, s(X), 0, b >)
+(SIGNATURES
+    tower :: [A] -> A
+    f :: [A x A x A] -> A
+    exp :: [A] -> A
+    double :: [A] -> A
+    half :: [A] -> A)
+(RULES
+    tower(x) -> f(a(),x,s(0()))
+    f(a(),0(),y) -> y
+    f(a(),s(x),y) -> f(b(),y,s(x))
+    f(b(),y,x) -> f(a()
+                   ,half(x)
+                   ,exp(y))
+    exp(0()) -> s(0())
+    exp(s(x)) -> double(exp(x))
+    double(0()) -> 0()
+    double(s(x)) -> s(s(double(x)))
+    half(0()) -> double(0())
+    half(s(0())) -> half(0())
+    half(s(s(x))) -> s(half(x)))

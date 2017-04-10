@@ -1,0 +1,116 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    IL L M N V V1 V2 X X1 X2)
+(DATATYPES
+    A = µX.< n__zeros, tt, n__take(X, X), n__0, n__length(X), n__s(X), n__cons(X, X), n__nil >)
+(SIGNATURES
+    zeros :: [] -> A
+    U11 :: [A] -> A
+    U21 :: [A] -> A
+    U31 :: [A] -> A
+    U41 :: [A x A] -> A
+    U42 :: [A] -> A
+    U51 :: [A x A] -> A
+    U52 :: [A] -> A
+    U61 :: [A x A] -> A
+    U62 :: [A] -> A
+    U71 :: [A x A x A] -> A
+    U72 :: [A x A] -> A
+    U81 :: [A] -> A
+    U91 :: [A x A x A x A] -> A
+    U92 :: [A x A x A x A] -> A
+    U93 :: [A x A x A x A] -> A
+    isNat :: [A] -> A
+    isNatIList :: [A] -> A
+    isNatList :: [A] -> A
+    length :: [A] -> A
+    take :: [A x A] -> A
+    0 :: [] -> A
+    s :: [A] -> A
+    cons :: [A x A] -> A
+    nil :: [] -> A
+    activate :: [A] -> A)
+(RULES
+    zeros() -> cons(0(),n__zeros())
+    U11(tt()) -> tt()
+    U21(tt()) -> tt()
+    U31(tt()) -> tt()
+    U41(tt(),V2) ->
+      U42(isNatIList(activate(V2)))
+    U42(tt()) -> tt()
+    U51(tt(),V2) ->
+      U52(isNatList(activate(V2)))
+    U52(tt()) -> tt()
+    U61(tt(),V2) ->
+      U62(isNatIList(activate(V2)))
+    U62(tt()) -> tt()
+    U71(tt(),L,N) ->
+      U72(isNat(activate(N))
+         ,activate(L))
+    U72(tt(),L) ->
+      s(length(activate(L)))
+    U81(tt()) -> nil()
+    U91(tt(),IL,M,N) ->
+      U92(isNat(activate(M))
+         ,activate(IL)
+         ,activate(M)
+         ,activate(N))
+    U92(tt(),IL,M,N) ->
+      U93(isNat(activate(N))
+         ,activate(IL)
+         ,activate(M)
+         ,activate(N))
+    U93(tt(),IL,M,N) ->
+      cons(activate(N)
+          ,n__take(activate(M)
+                  ,activate(IL)))
+    isNat(n__0()) -> tt()
+    isNat(n__length(V1)) ->
+      U11(isNatList(activate(V1)))
+    isNat(n__s(V1)) ->
+      U21(isNat(activate(V1)))
+    isNatIList(V) ->
+      U31(isNatList(activate(V)))
+    isNatIList(n__zeros()) -> tt()
+    isNatIList(n__cons(V1,V2)) ->
+      U41(isNat(activate(V1))
+         ,activate(V2))
+    isNatList(n__nil()) -> tt()
+    isNatList(n__cons(V1,V2)) ->
+      U51(isNat(activate(V1))
+         ,activate(V2))
+    isNatList(n__take(V1,V2)) ->
+      U61(isNat(activate(V1))
+         ,activate(V2))
+    length(nil()) -> 0()
+    length(cons(N,L)) ->
+      U71(isNatList(activate(L))
+         ,activate(L)
+         ,N)
+    take(0(),IL) ->
+      U81(isNatIList(IL))
+    take(s(M),cons(N,IL)) ->
+      U91(isNatIList(activate(IL))
+         ,activate(IL)
+         ,M
+         ,N)
+    zeros() -> n__zeros()
+    take(X1,X2) -> n__take(X1,X2)
+    0() -> n__0()
+    length(X) -> n__length(X)
+    s(X) -> n__s(X)
+    cons(X1,X2) -> n__cons(X1,X2)
+    nil() -> n__nil()
+    activate(n__zeros()) -> zeros()
+    activate(n__take(X1,X2)) ->
+      take(X1,X2)
+    activate(n__0()) -> 0()
+    activate(n__length(X)) ->
+      length(X)
+    activate(n__s(X)) -> s(X)
+    activate(n__cons(X1,X2)) ->
+      cons(X1,X2)
+    activate(n__nil()) -> nil()
+    activate(X) -> X)

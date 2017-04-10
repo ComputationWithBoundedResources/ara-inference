@@ -1,0 +1,53 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X Y Z)
+(DATATYPES
+    A = < nil, tt >)
+(SIGNATURES
+    __ :: [A x A] -> A
+    U11 :: [A] -> A
+    U21 :: [A] -> A
+    U22 :: [A] -> A
+    U31 :: [A] -> A
+    U41 :: [A] -> A
+    U42 :: [A] -> A
+    U51 :: [A] -> A
+    U52 :: [A] -> A
+    U61 :: [A] -> A
+    U71 :: [A] -> A
+    U72 :: [A] -> A
+    U81 :: [A] -> A
+    isList :: [] -> A
+    isNeList :: [] -> A
+    isNePal :: [] -> A
+    isPal :: [] -> A
+    isQid :: [] -> A)
+(RULES
+    __(__(X,Y),Z) -> __(X,__(Y,Z))
+    __(X,nil()) -> X
+    __(nil(),X) -> X
+    U11(tt()) -> tt()
+    U21(tt()) -> U22(isList())
+    U22(tt()) -> tt()
+    U31(tt()) -> tt()
+    U41(tt()) -> U42(isNeList())
+    U42(tt()) -> tt()
+    U51(tt()) -> U52(isList())
+    U52(tt()) -> tt()
+    U61(tt()) -> tt()
+    U71(tt()) -> U72(isPal())
+    U72(tt()) -> tt()
+    U81(tt()) -> tt()
+    isList() -> U11(isNeList())
+    isList() -> tt()
+    isList() -> U21(isList())
+    isNeList() -> U31(isQid())
+    isNeList() -> U41(isList())
+    isNeList() -> U51(isNeList())
+    isNePal() -> U61(isQid())
+    isNePal() -> U71(isQid())
+    isPal() -> U81(isNePal())
+    isPal() -> tt()
+    isQid() -> tt())

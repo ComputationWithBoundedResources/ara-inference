@@ -1,0 +1,1 @@
+{"rOutcome":{"tag":"Success","contents":"MAYBE"},"rProblem":"/home/schnecki/Documents/Jobs/UIBK/CL/amortized-resource-analysis/inference/doc/tpdb_full/AProVE_09_Inductive/minsort.typed","rTime":1.40166,"rTool":{"tProcessor":[],"tName":"Mat","tArguments":["--complexity","rci","-s","matrices"],"tExtension":"trs","tCommand":"tct-amo"}}

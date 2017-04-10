@@ -1,0 +1,29 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    r x x' xs y)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil, S(X), 0, True, False >)
+(SIGNATURES
+    isort :: [A x A] -> A
+    insert :: [A x A] -> A
+    inssort :: [A] -> A
+    < :: [A x A] -> A
+    insert[Ite] :: [A x A x A] -> A)
+(RULES
+    isort(Cons(x,xs),r) -> isort(xs
+                                ,insert(x,r))
+    isort(Nil(),r) -> Nil()
+    insert(S(x),r) ->
+      insert[Ite](<(S(x),x),S(x),r)
+    inssort(xs) -> isort(xs,Nil())
+    <(S(x),S(y)) ->= <(x,y)
+    <(0(),S(y)) ->= True()
+    <(x,0()) ->= False()
+    insert[Ite](False()
+               ,x'
+               ,Cons(x,xs)) ->= Cons(x
+                                    ,insert(x',xs))
+    insert[Ite](True(),x,r) ->=
+      Cons(x,r))

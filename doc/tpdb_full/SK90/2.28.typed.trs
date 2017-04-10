@@ -1,0 +1,12 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< s(X) >)
+(SIGNATURES
+    dfib :: [A x A] -> A)
+(RULES
+    dfib(s(s(x)),y) -> dfib(s(x)
+                           ,dfib(x,y)))

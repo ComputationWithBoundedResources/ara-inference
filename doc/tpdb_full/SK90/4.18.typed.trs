@@ -1,0 +1,15 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< 0, s(X), if(X, X, X), <(X, X), -(X, X) >)
+(SIGNATURES
+    gcd :: [A x A] -> A)
+(RULES
+    gcd(x,0()) -> x
+    gcd(0(),y) -> y
+    gcd(s(x),s(y)) -> if(<(x,y)
+                        ,gcd(s(x),-(y,x))
+                        ,gcd(-(x,y),s(y))))

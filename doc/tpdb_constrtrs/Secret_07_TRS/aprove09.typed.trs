@@ -1,0 +1,56 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    b i j x y z)
+(DATATYPES
+    A = µX.< 0, true, divZeroError, false, s(X), c, d >)
+(SIGNATURES
+    div :: [A x A] -> A
+    div2 :: [A x A x A] -> A
+    if1 :: [A x A x A x A x A x A] -> A
+    if2 :: [A x A x A x A x A] -> A
+    inc :: [A] -> A
+    le :: [A x A] -> A
+    minus :: [A x A] -> A
+    plus :: [A x A] -> A
+    plusIter :: [A x A x A] -> A
+    ifPlus :: [A x A x A x A] -> A
+    a :: [] -> A)
+(RULES
+    div(x,y) -> div2(x,y,0())
+    div2(x,y,i) -> if1(le(y,0())
+                      ,le(y,x)
+                      ,x
+                      ,y
+                      ,plus(i,0())
+                      ,inc(i))
+    if1(true(),b,x,y,i,j) ->
+      divZeroError()
+    if1(false(),b,x,y,i,j) -> if2(b
+                                 ,x
+                                 ,y
+                                 ,i
+                                 ,j)
+    if2(true(),x,y,i,j) ->
+      div2(minus(x,y),y,j)
+    if2(false(),x,y,i,j) -> i
+    inc(0()) -> 0()
+    inc(s(i)) -> s(inc(i))
+    le(s(x),0()) -> false()
+    le(0(),y) -> true()
+    le(s(x),s(y)) -> le(x,y)
+    minus(x,0()) -> x
+    minus(0(),y) -> 0()
+    minus(s(x),s(y)) -> minus(x,y)
+    plus(x,y) -> plusIter(x,y,0())
+    plusIter(x,y,z) -> ifPlus(le(x
+                                ,z)
+                             ,x
+                             ,y
+                             ,z)
+    ifPlus(true(),x,y,z) -> y
+    ifPlus(false(),x,y,z) ->
+      plusIter(x,s(y),s(z))
+    a() -> c()
+    a() -> d())

@@ -1,0 +1,35 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          app(add(n,x),y) -> add(n,app(x,y))
+          app(nil(),y) -> y
+          eq(0(),0()) -> true()
+          eq(0(),s(x)) -> false()
+          eq(s(x),0()) -> false()
+          eq(s(x),s(y)) -> eq(x,y)
+          if_min(false(),add(n,add(m,x))) -> min(add(m,x))
+          if_min(true(),add(n,add(m,x))) -> min(add(n,x))
+          if_minsort(false(),add(n,x),y) -> minsort(x,add(n,y))
+          if_minsort(true(),add(n,x),y) -> add(n,minsort(app(rm(n,x),y),nil()))
+          if_rm(false(),n,add(m,x)) -> add(m,rm(n,x))
+          if_rm(true(),n,add(m,x)) -> rm(n,x)
+          le(0(),y) -> true()
+          le(s(x),0()) -> false()
+          le(s(x),s(y)) -> le(x,y)
+          min(add(n,add(m,x))) -> if_min(le(n,m),add(n,add(m,x)))
+          min(add(n,nil())) -> n
+          minsort(add(n,x),y) -> if_minsort(eq(n,min(add(n,x))),add(n,x),y)
+          minsort(nil(),nil()) -> nil()
+          rm(n,add(m,x)) -> if_rm(eq(n,m),n,add(m,x))
+          rm(n,nil()) -> nil()
+      - Signature:
+          {app/2,eq/2,if_min/2,if_minsort/3,if_rm/3,le/2,min/1,minsort/2,rm/2} / {0/0,add/2,false/0,nil/0,s/1,true/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {app,eq,if_min,if_minsort,if_rm,le,min,minsort
+          ,rm} and constructors {0,add,false,nil,s,true}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

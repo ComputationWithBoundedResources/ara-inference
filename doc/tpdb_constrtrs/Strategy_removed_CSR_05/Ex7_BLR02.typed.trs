@@ -1,0 +1,23 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    N X XS)
+(DATATYPES
+    A = µX.< cons(X, X), s(X), 0, nil >)
+(SIGNATURES
+    from :: [A] -> A
+    head :: [A] -> A
+    2nd :: [A] -> A
+    take :: [A x A] -> A
+    sel :: [A x A] -> A)
+(RULES
+    from(X) -> cons(X,from(s(X)))
+    head(cons(X,XS)) -> X
+    2nd(cons(X,XS)) -> head(XS)
+    take(0(),XS) -> nil()
+    take(s(N),cons(X,XS)) -> cons(X
+                                 ,take(N,XS))
+    sel(0(),cons(X,XS)) -> X
+    sel(s(N),cons(X,XS)) -> sel(N
+                               ,XS))

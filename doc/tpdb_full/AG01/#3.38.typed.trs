@@ -1,0 +1,21 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    l x y)
+(DATATYPES
+    A = µX.< nil, cons(X, X), 0, s(X) >)
+(SIGNATURES
+    rev :: [A] -> A
+    rev1 :: [A x A] -> A
+    rev2 :: [A x A] -> A)
+(RULES
+    rev(nil()) -> nil()
+    rev(cons(x,l)) -> cons(rev1(x,l)
+                          ,rev2(x,l))
+    rev1(0(),nil()) -> 0()
+    rev1(s(x),nil()) -> s(x)
+    rev1(x,cons(y,l)) -> rev1(y,l)
+    rev2(x,nil()) -> nil()
+    rev2(x,cons(y,l)) -> rev(cons(x
+                                 ,rev2(y,l))))

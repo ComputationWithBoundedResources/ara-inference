@@ -1,0 +1,24 @@
+(VAR x xs ys)
+
+(DATATYPES
+   Elem = < >
+   L = µX. < nil, cons(Elem,X) >
+ )
+
+(SIGNATURES
+   append :: L x L -> L
+   reverse :: L -> L
+ )
+
+(RULES
+  append(nil, ys)      -> ys
+  append(cons(x,xs), ys) -> cons(x,append(xs, ys))
+
+  reverse(nil)         -> nil
+  reverse(cons(x, xs)) -> append(reverse(xs),cons(x, nil))
+)
+
+(COMMENT
+
+
+)

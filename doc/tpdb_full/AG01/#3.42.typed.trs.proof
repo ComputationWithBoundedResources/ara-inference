@@ -1,0 +1,21 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          conv(0()) -> cons(nil(),0())
+          conv(s(x)) -> cons(conv(half(s(x))),lastbit(s(x)))
+          half(0()) -> 0()
+          half(s(0())) -> 0()
+          half(s(s(x))) -> s(half(x))
+          lastbit(0()) -> 0()
+          lastbit(s(0())) -> s(0())
+          lastbit(s(s(x))) -> lastbit(x)
+      - Signature:
+          {conv/1,half/1,lastbit/1} / {0/0,cons/2,nil/0,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {conv,half,lastbit} and constructors {0,cons,nil,s}
+  + Applied Processor:
+      NaturalPI {shape = Quadratic, restrict = NoRestrict, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

@@ -1,0 +1,52 @@
+WORST_CASE(?,O(n^1))
+* Step 1: NaturalMI WORST_CASE(?,O(n^1))
+    + Considered Problem:
+        - Strict TRS:
+            f(0()) -> s(0())
+            f(s(0())) -> s(0())
+            f(s(s(x))) -> f(f(s(x)))
+        - Signature:
+            {f/1} / {0/0,s/1}
+        - Obligation:
+            innermost runtime complexity wrt. defined symbols {f} and constructors {0,s}
+    + Applied Processor:
+        NaturalMI {miDimension = 2, miDegree = 2, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+    + Details:
+        We apply a matrix interpretation of kind constructor based matrix interpretation:
+        The following argument positions are considered usable:
+          uargs(f) = {1}
+        
+        Following symbols are considered usable:
+          {f}
+        TcT has computed the following interpretation:
+          p(0) = [8]           
+                 [0]           
+          p(f) = [1 0] x1 + [1]
+                 [0 0]      [8]
+          p(s) = [0 4] x1 + [0]
+                 [0 1]      [4]
+        
+        Following rules are strictly oriented:
+            f(0()) = [9]           
+                     [8]           
+                   > [0]           
+                     [4]           
+                   = s(0())        
+        
+         f(s(0())) = [1]           
+                     [8]           
+                   > [0]           
+                     [4]           
+                   = s(0())        
+        
+        f(s(s(x))) = [0 4] x + [17]
+                     [0 0]     [8] 
+                   > [0 4] x + [2] 
+                     [0 0]     [8] 
+                   = f(f(s(x)))    
+        
+        
+        Following rules are (at-least) weakly oriented:
+        
+
+WORST_CASE(?,O(n^1))

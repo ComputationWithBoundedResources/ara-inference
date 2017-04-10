@@ -1,0 +1,19 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< 0, s(X), true, false >)
+(SIGNATURES
+    lt :: [A x A] -> A
+    minus :: [A x A] -> A
+    help :: [A x A x A] -> A)
+(RULES
+    lt(0(),s(x)) -> true()
+    lt(x,0()) -> false()
+    lt(s(x),s(y)) -> lt(x,y)
+    minus(x,y) -> help(lt(y,x),x,y)
+    help(true(),x,y) -> s(minus(x
+                               ,s(y)))
+    help(false(),x,y) -> 0())

@@ -1,0 +1,15 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X Y)
+(DATATYPES
+    A = µX.< s(X), ackout(X), u22(X) >)
+(SIGNATURES
+    ackin :: [A x A] -> A
+    u21 :: [A x A] -> A)
+(RULES
+    ackin(s(X),s(Y)) ->
+      u21(ackin(s(X),Y),X)
+    u21(ackout(X),Y) -> u22(ackin(Y
+                                 ,X)))

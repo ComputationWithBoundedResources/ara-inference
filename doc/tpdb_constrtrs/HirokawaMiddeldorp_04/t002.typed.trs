@@ -1,0 +1,25 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< 0, true, s(X), false >)
+(SIGNATURES
+    leq :: [A x A] -> A
+    if :: [A x A x A] -> A
+    - :: [A x A] -> A
+    mod :: [A x A] -> A)
+(RULES
+    leq(0(),y) -> true()
+    leq(s(x),0()) -> false()
+    leq(s(x),s(y)) -> leq(x,y)
+    if(true(),x,y) -> x
+    if(false(),x,y) -> y
+    -(x,0()) -> x
+    -(s(x),s(y)) -> -(x,y)
+    mod(0(),y) -> 0()
+    mod(s(x),0()) -> 0()
+    mod(s(x),s(y)) -> if(leq(y,x)
+                        ,mod(-(s(x),s(y)),s(y))
+                        ,s(x)))

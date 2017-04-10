@@ -1,0 +1,23 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    N X Y)
+(DATATYPES
+    A = µX.< cons(X), recip(X), 0, s, nil >)
+(SIGNATURES
+    terms :: [A] -> A
+    sqr :: [A] -> A
+    dbl :: [A] -> A
+    add :: [A x A] -> A
+    first :: [A x A] -> A)
+(RULES
+    terms(N) -> cons(recip(sqr(N)))
+    sqr(0()) -> 0()
+    sqr(s()) -> s()
+    dbl(0()) -> 0()
+    dbl(s()) -> s()
+    add(0(),X) -> X
+    add(s(),Y) -> s()
+    first(0(),X) -> nil()
+    first(s(),cons(Y)) -> cons(Y))

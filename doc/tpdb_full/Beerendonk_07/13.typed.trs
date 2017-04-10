@@ -1,0 +1,30 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< true, 0, false, s(X) >)
+(SIGNATURES
+    cond1 :: [A x A x A] -> A
+    cond2 :: [A x A x A] -> A
+    gr :: [A x A] -> A
+    p :: [A] -> A)
+(RULES
+    cond1(true(),x,y) -> cond2(gr(x
+                                 ,y)
+                              ,x
+                              ,y)
+    cond2(true(),x,y) -> cond1(gr(x
+                                 ,0())
+                              ,y
+                              ,y)
+    cond2(false(),x,y) -> cond1(gr(x
+                                  ,0())
+                               ,p(x)
+                               ,y)
+    gr(0(),x) -> false()
+    gr(s(x),0()) -> true()
+    gr(s(x),s(y)) -> gr(x,y)
+    p(0()) -> 0()
+    p(s(x)) -> x)

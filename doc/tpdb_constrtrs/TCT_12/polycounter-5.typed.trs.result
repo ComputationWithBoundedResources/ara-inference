@@ -1,0 +1,1 @@
+{"rOutcome":{"tag":"Success","contents":"MAYBE"},"rProblem":"/home/schnecki/Documents/Jobs/UIBK/CL/amortized-resource-analysis/inference/doc/tpdb_full/TCT_12/polycounter-5.typed","rTime":1.66882,"rTool":{"tProcessor":[],"tName":"Poly","tArguments":["--complexity","rci","-s","polys"],"tExtension":"trs","tCommand":"tct-amo"}}

@@ -1,0 +1,23 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X Y)
+(DATATYPES
+    A = µX.< cons(X, X), 0, s(X) >)
+(SIGNATURES
+    nats :: [] -> A
+    zeros :: [] -> A
+    incr :: [A] -> A
+    adx :: [A] -> A
+    hd :: [A] -> A
+    tl :: [A] -> A)
+(RULES
+    nats() -> adx(zeros())
+    zeros() -> cons(0(),zeros())
+    incr(cons(X,Y)) -> cons(s(X)
+                           ,incr(Y))
+    adx(cons(X,Y)) -> incr(cons(X
+                               ,adx(Y)))
+    hd(cons(X,Y)) -> X
+    tl(cons(X,Y)) -> Y)

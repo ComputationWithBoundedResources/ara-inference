@@ -1,0 +1,29 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          assrewrite(exp) -> rewrite(exp)
+          first(Op(x,y)) -> x
+          first(Val(n)) -> Val(n)
+          isOp(Op(x,y)) -> True()
+          isOp(Val(n)) -> False()
+          rewrite(Op(x,y)) -> rw(x,y)
+          rewrite(Val(n)) -> Val(n)
+          rw(Op(x,y),c) -> rw[Let](Op(x,y),c,rewrite(x))
+          rw(Val(n),c) -> Op(Val(n),rewrite(c))
+          second(Op(x,y)) -> y
+      - Weak TRS:
+          rw[Let](Op(x,y),c,a1) -> rw[Let][Let](Op(x,y),c,a1,rewrite(y))
+          rw[Let][Let](ab,c,a1,b1) -> rw[Let][Let][Let](c,a1,b1,rewrite(c))
+          rw[Let][Let][Let](c,a1,b1,c1) -> rw(a1,Op(b1,c1))
+      - Signature:
+          {assrewrite/1,first/1,isOp/1,rewrite/1,rw/2,rw[Let]/3,rw[Let][Let]/4,rw[Let][Let][Let]/4
+          ,second/1} / {False/0,Op/2,True/0,Val/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {assrewrite,first,isOp,rewrite,rw,rw[Let],rw[Let][Let]
+          ,rw[Let][Let][Let],second} and constructors {False,Op,True,Val}
+  + Applied Processor:
+      NaturalPI {shape = Mixed 3, restrict = NoRestrict, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

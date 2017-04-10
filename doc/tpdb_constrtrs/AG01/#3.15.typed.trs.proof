@@ -1,0 +1,53 @@
+WORST_CASE(?,O(n^1))
+* Step 1: NaturalMI WORST_CASE(?,O(n^1))
+    + Considered Problem:
+        - Strict TRS:
+            average(x,s(s(s(y)))) -> s(average(s(x),y))
+            average(0(),0()) -> 0()
+            average(0(),s(0())) -> 0()
+            average(0(),s(s(0()))) -> s(0())
+            average(s(x),y) -> average(x,s(y))
+        - Signature:
+            {average/2} / {0/0,s/1}
+        - Obligation:
+            innermost runtime complexity wrt. defined symbols {average} and constructors {0,s}
+    + Applied Processor:
+        NaturalMI {miDimension = 1, miDegree = 1, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+    + Details:
+        We apply a matrix interpretation of kind constructor based matrix interpretation:
+        The following argument positions are considered usable:
+          uargs(s) = {1}
+        
+        Following symbols are considered usable:
+          {average}
+        TcT has computed the following interpretation:
+                p(0) = [2]                  
+          p(average) = [4] x1 + [2] x2 + [0]
+                p(s) = [1] x1 + [1]         
+        
+        Following rules are strictly oriented:
+         average(x,s(s(s(y)))) = [4] x + [2] y + [6]
+                               > [4] x + [2] y + [5]
+                               = s(average(s(x),y)) 
+        
+              average(0(),0()) = [12]               
+                               > [2]                
+                               = 0()                
+        
+           average(0(),s(0())) = [14]               
+                               > [2]                
+                               = 0()                
+        
+        average(0(),s(s(0()))) = [16]               
+                               > [3]                
+                               = s(0())             
+        
+               average(s(x),y) = [4] x + [2] y + [4]
+                               > [4] x + [2] y + [2]
+                               = average(x,s(y))    
+        
+        
+        Following rules are (at-least) weakly oriented:
+        
+
+WORST_CASE(?,O(n^1))

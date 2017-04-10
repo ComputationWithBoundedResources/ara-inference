@@ -1,0 +1,14 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< nil, .(X, X) >)
+(SIGNATURES
+    ++ :: [A x A] -> A)
+(RULES
+    ++(nil(),y) -> y
+    ++(x,nil()) -> x
+    ++(.(x,y),z) -> .(x,++(y,z))
+    ++(++(x,y),z) -> ++(x,++(y,z)))

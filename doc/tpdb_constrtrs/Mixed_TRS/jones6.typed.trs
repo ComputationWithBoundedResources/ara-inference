@@ -1,0 +1,16 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    a d k x)
+(DATATYPES
+    A = µX.< empty, cons(X, X) >)
+(SIGNATURES
+    f :: [A x A] -> A
+    g :: [A x A] -> A)
+(RULES
+    f(a,empty()) -> g(a,empty())
+    f(a,cons(x,k)) -> f(cons(x,a),k)
+    g(empty(),d) -> d
+    g(cons(x,k),d) -> g(k
+                       ,cons(x,d)))

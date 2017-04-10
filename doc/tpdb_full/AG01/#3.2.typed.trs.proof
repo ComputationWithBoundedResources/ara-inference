@@ -1,0 +1,18 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          minus(x,0()) -> x
+          minus(x,s(y)) -> pred(minus(x,y))
+          pred(s(x)) -> x
+          quot(0(),s(y)) -> 0()
+          quot(s(x),s(y)) -> s(quot(minus(x,y),s(y)))
+      - Signature:
+          {minus/2,pred/1,quot/2} / {0/0,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {minus,pred,quot} and constructors {0,s}
+  + Applied Processor:
+      NaturalPI {shape = Mixed 2, restrict = NoRestrict, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

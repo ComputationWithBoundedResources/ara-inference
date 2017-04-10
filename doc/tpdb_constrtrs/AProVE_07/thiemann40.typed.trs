@@ -1,0 +1,26 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< 0, false, s(X), true >)
+(SIGNATURES
+    nonZero :: [A] -> A
+    p :: [A] -> A
+    id_inc :: [A] -> A
+    random :: [A] -> A
+    rand :: [A x A] -> A
+    if :: [A x A x A] -> A)
+(RULES
+    nonZero(0()) -> false()
+    nonZero(s(x)) -> true()
+    p(0()) -> 0()
+    p(s(x)) -> x
+    id_inc(x) -> x
+    id_inc(x) -> s(x)
+    random(x) -> rand(x,0())
+    rand(x,y) -> if(nonZero(x),x,y)
+    if(false(),x,y) -> y
+    if(true(),x,y) -> rand(p(x)
+                          ,id_inc(y)))

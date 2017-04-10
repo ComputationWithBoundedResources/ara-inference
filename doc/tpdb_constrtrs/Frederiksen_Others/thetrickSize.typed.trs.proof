@@ -1,0 +1,116 @@
+WORST_CASE(?,O(n^1))
+* Step 1: NaturalMI WORST_CASE(?,O(n^1))
+    + Considered Problem:
+        - Strict TRS:
+            f(x,Cons(x',xs)) -> f[Ite][False][Ite](lt0(x,Cons(Nil(),Nil())),x,Cons(x',xs))
+            f(x,Nil()) -> Cons(Nil(),Cons(Nil(),Cons(Nil(),Cons(Nil(),Nil()))))
+            g(x,Cons(x',xs)) -> g[Ite][False][Ite](lt0(x,Cons(Nil(),Nil())),x,Cons(x',xs))
+            g(x,Nil()) -> Cons(Nil(),Cons(Nil(),Cons(Nil(),Cons(Nil(),Nil()))))
+            goal(x,y) -> Cons(f(x,y),Cons(g(x,y),Nil()))
+            lt0(x,Nil()) -> False()
+            lt0(Cons(x',xs'),Cons(x,xs)) -> lt0(xs',xs)
+            lt0(Nil(),Cons(x',xs)) -> True()
+            notEmpty(Cons(x,xs)) -> True()
+            notEmpty(Nil()) -> False()
+            number4(n) -> Cons(Nil(),Cons(Nil(),Cons(Nil(),Cons(Nil(),Nil()))))
+        - Weak TRS:
+            f[Ite][False][Ite](False(),Cons(x,xs),y) -> f(xs,Cons(Cons(Nil(),Nil()),y))
+            f[Ite][False][Ite](True(),x',Cons(x,xs)) -> f(x',xs)
+            g[Ite][False][Ite](False(),Cons(x,xs),y) -> g(xs,Cons(Cons(Nil(),Nil()),y))
+            g[Ite][False][Ite](True(),x',Cons(x,xs)) -> g(x',xs)
+        - Signature:
+            {f/2,f[Ite][False][Ite]/3,g/2,g[Ite][False][Ite]/3,goal/2,lt0/2,notEmpty/1,number4/1} / {Cons/2,False/0
+            ,Nil/0,True/0}
+        - Obligation:
+            innermost runtime complexity wrt. defined symbols {f,f[Ite][False][Ite],g,g[Ite][False][Ite],goal,lt0
+            ,notEmpty,number4} and constructors {Cons,False,Nil,True}
+    + Applied Processor:
+        NaturalMI {miDimension = 1, miDegree = 1, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+    + Details:
+        We apply a matrix interpretation of kind constructor based matrix interpretation:
+        The following argument positions are considered usable:
+          uargs(Cons) = {1,2},
+          uargs(f[Ite][False][Ite]) = {1},
+          uargs(g[Ite][False][Ite]) = {1}
+        
+        Following symbols are considered usable:
+          {f,f[Ite][False][Ite],g,g[Ite][False][Ite],goal,lt0,notEmpty,number4}
+        TcT has computed the following interpretation:
+                        p(Cons) = [1] x1 + [1] x2 + [1]         
+                       p(False) = [2]                           
+                         p(Nil) = [0]                           
+                        p(True) = [3]                           
+                           p(f) = [7] x1 + [2] x2 + [5]         
+          p(f[Ite][False][Ite]) = [1] x1 + [7] x2 + [2] x3 + [0]
+                           p(g) = [8] x1 + [2] x2 + [5]         
+          p(g[Ite][False][Ite]) = [1] x1 + [8] x2 + [2] x3 + [0]
+                        p(goal) = [15] x1 + [4] x2 + [13]       
+                         p(lt0) = [1] x2 + [3]                  
+                    p(notEmpty) = [13] x1 + [11]                
+                     p(number4) = [8] x1 + [8]                  
+        
+        Following rules are strictly oriented:
+                    f(x,Cons(x',xs)) = [7] x + [2] x' + [2] xs + [7]                             
+                                     > [7] x + [2] x' + [2] xs + [6]                             
+                                     = f[Ite][False][Ite](lt0(x,Cons(Nil(),Nil())),x,Cons(x',xs))
+        
+                          f(x,Nil()) = [7] x + [5]                                               
+                                     > [4]                                                       
+                                     = Cons(Nil(),Cons(Nil(),Cons(Nil(),Cons(Nil(),Nil()))))     
+        
+                    g(x,Cons(x',xs)) = [8] x + [2] x' + [2] xs + [7]                             
+                                     > [8] x + [2] x' + [2] xs + [6]                             
+                                     = g[Ite][False][Ite](lt0(x,Cons(Nil(),Nil())),x,Cons(x',xs))
+        
+                          g(x,Nil()) = [8] x + [5]                                               
+                                     > [4]                                                       
+                                     = Cons(Nil(),Cons(Nil(),Cons(Nil(),Cons(Nil(),Nil()))))     
+        
+                           goal(x,y) = [15] x + [4] y + [13]                                     
+                                     > [15] x + [4] y + [12]                                     
+                                     = Cons(f(x,y),Cons(g(x,y),Nil()))                           
+        
+                        lt0(x,Nil()) = [3]                                                       
+                                     > [2]                                                       
+                                     = False()                                                   
+        
+        lt0(Cons(x',xs'),Cons(x,xs)) = [1] x + [1] xs + [4]                                      
+                                     > [1] xs + [3]                                              
+                                     = lt0(xs',xs)                                               
+        
+              lt0(Nil(),Cons(x',xs)) = [1] x' + [1] xs + [4]                                     
+                                     > [3]                                                       
+                                     = True()                                                    
+        
+                notEmpty(Cons(x,xs)) = [13] x + [13] xs + [24]                                   
+                                     > [3]                                                       
+                                     = True()                                                    
+        
+                     notEmpty(Nil()) = [11]                                                      
+                                     > [2]                                                       
+                                     = False()                                                   
+        
+                          number4(n) = [8] n + [8]                                               
+                                     > [4]                                                       
+                                     = Cons(Nil(),Cons(Nil(),Cons(Nil(),Cons(Nil(),Nil()))))     
+        
+        
+        Following rules are (at-least) weakly oriented:
+        f[Ite][False][Ite](False(),Cons(x,xs),y) =  [7] x + [7] xs + [2] y + [9]   
+                                                 >= [7] xs + [2] y + [9]           
+                                                 =  f(xs,Cons(Cons(Nil(),Nil()),y))
+        
+        f[Ite][False][Ite](True(),x',Cons(x,xs)) =  [2] x + [7] x' + [2] xs + [5]  
+                                                 >= [7] x' + [2] xs + [5]          
+                                                 =  f(x',xs)                       
+        
+        g[Ite][False][Ite](False(),Cons(x,xs),y) =  [8] x + [8] xs + [2] y + [10]  
+                                                 >= [8] xs + [2] y + [9]           
+                                                 =  g(xs,Cons(Cons(Nil(),Nil()),y))
+        
+        g[Ite][False][Ite](True(),x',Cons(x,xs)) =  [2] x + [8] x' + [2] xs + [5]  
+                                                 >= [8] x' + [2] xs + [5]          
+                                                 =  g(x',xs)                       
+        
+
+WORST_CASE(?,O(n^1))

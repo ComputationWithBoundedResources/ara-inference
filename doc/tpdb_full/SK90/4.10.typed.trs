@@ -1,0 +1,16 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< otimes(X, X), 1, +(X, X), oplus(X, X) >)
+(SIGNATURES
+    * :: [A x A] -> A)
+(RULES
+    *(x,*(y,z)) -> *(otimes(x,y),z)
+    *(1(),y) -> y
+    *(+(x,y),z) -> oplus(*(x,z)
+                        ,*(y,z))
+    *(x,oplus(y,z)) -> oplus(*(x,y)
+                            ,*(x,z)))

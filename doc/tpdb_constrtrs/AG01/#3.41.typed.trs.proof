@@ -1,0 +1,68 @@
+WORST_CASE(?,O(n^3))
+* Step 1: NaturalMI WORST_CASE(?,O(n^3))
+    + Considered Problem:
+        - Strict TRS:
+            fac(0()) -> s(0())
+            fac(s(x)) -> times(s(x),fac(p(s(x))))
+            p(s(x)) -> x
+        - Signature:
+            {fac/1,p/1} / {0/0,s/1,times/2}
+        - Obligation:
+            innermost runtime complexity wrt. defined symbols {fac,p} and constructors {0,s,times}
+    + Applied Processor:
+        NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+    + Details:
+        We apply a matrix interpretation of kind constructor based matrix interpretation:
+        The following argument positions are considered usable:
+          uargs(fac) = {1},
+          uargs(times) = {2}
+        
+        Following symbols are considered usable:
+          {fac,p}
+        TcT has computed the following interpretation:
+              p(0) = [1]             
+                     [0]             
+                     [0]             
+            p(fac) = [4 0 2]      [4]
+                     [1 0 2] x1 + [1]
+                     [0 0 0]      [5]
+              p(p) = [1 0 0]      [2]
+                     [4 0 3] x1 + [0]
+                     [0 1 0]      [0]
+              p(s) = [1 1 2]      [0]
+                     [0 0 1] x1 + [0]
+                     [0 0 1]      [5]
+          p(times) = [1 0 0]      [0]
+                     [0 1 0] x2 + [7]
+                     [0 0 0]      [2]
+        
+        Following rules are strictly oriented:
+         fac(0()) = [8]                     
+                    [2]                     
+                    [5]                     
+                  > [1]                     
+                    [0]                     
+                    [5]                     
+                  = s(0())                  
+        
+        fac(s(x)) = [4 4 10]     [14]       
+                    [1 1  4] x + [11]       
+                    [0 0  0]     [5]        
+                  > [4 4 10]     [12]       
+                    [1 1  4] x + [10]       
+                    [0 0  0]     [2]        
+                  = times(s(x),fac(p(s(x))))
+        
+          p(s(x)) = [1 1  2]     [2]        
+                    [4 4 11] x + [15]       
+                    [0 0  1]     [0]        
+                  > [1 0 0]     [0]         
+                    [0 1 0] x + [0]         
+                    [0 0 1]     [0]         
+                  = x                       
+        
+        
+        Following rules are (at-least) weakly oriented:
+        
+
+WORST_CASE(?,O(n^3))

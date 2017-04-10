@@ -1,0 +1,15 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x)
+(DATATYPES
+    A = µX.< s(X), 0 >)
+(SIGNATURES
+    g :: [A] -> A
+    f :: [A] -> A)
+(RULES
+    g(s(x)) -> f(x)
+    f(0()) -> s(0())
+    f(s(x)) -> s(s(g(x)))
+    g(0()) -> 0())

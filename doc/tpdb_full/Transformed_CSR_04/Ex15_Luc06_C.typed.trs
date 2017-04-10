@@ -1,0 +1,25 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X)
+(DATATYPES
+    A = µX.< a, mark(X), ok(X) >)
+(SIGNATURES
+    active :: [A] -> A
+    g :: [A] -> A
+    proper :: [A] -> A
+    f :: [A] -> A
+    top :: [A] -> A)
+(RULES
+    active(f(f(a()))) ->
+      mark(f(g(f(a()))))
+    active(g(X)) -> g(active(X))
+    g(mark(X)) -> mark(g(X))
+    proper(f(X)) -> f(proper(X))
+    proper(a()) -> ok(a())
+    proper(g(X)) -> g(proper(X))
+    f(ok(X)) -> ok(f(X))
+    g(ok(X)) -> ok(g(X))
+    top(mark(X)) -> top(proper(X))
+    top(ok(X)) -> top(active(X)))

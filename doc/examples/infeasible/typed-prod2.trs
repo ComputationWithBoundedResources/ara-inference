@@ -1,0 +1,19 @@
+(VAR x y xs)
+
+(DATATYPES a = µX. < 0, s(X), nil, cons(X,X) >
+ )
+
+(SIGNATURES
+   add :: a x a -> a
+   mult :: a x a -> a
+   prod :: a -> a
+ )
+
+(RULES
+ add(0,y) -> y
+ add(s(x),y) -> s(add(x,y))
+ mult(0,y) -> 0
+ mult(s(x),y) -> add(mult(x,y),y)
+ prod(nil) -> nil
+ prod(cons(x,xs)) -> mult(prod(xs),x)
+)

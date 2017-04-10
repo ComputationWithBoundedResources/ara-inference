@@ -1,0 +1,25 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x x' xs y)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil >)
+(SIGNATURES
+    power :: [A x A] -> A
+    mult :: [A x A] -> A
+    add0 :: [A x A] -> A
+    goal :: [A x A] -> A)
+(RULES
+    power(x',Cons(x,xs)) -> mult(x'
+                                ,power(x',xs))
+    mult(x',Cons(x,xs)) -> add0(x'
+                               ,mult(x',xs))
+    add0(x',Cons(x,xs)) ->
+      Cons(Cons(Nil(),Nil())
+          ,add0(x',xs))
+    power(x,Nil()) -> Cons(Nil()
+                          ,Nil())
+    mult(x,Nil()) -> Nil()
+    add0(x,Nil()) -> x
+    goal(x,y) -> power(x,y))

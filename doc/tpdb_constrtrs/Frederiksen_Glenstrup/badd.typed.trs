@@ -1,0 +1,16 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x x' xs y)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil >)
+(SIGNATURES
+    badd :: [A x A] -> A
+    goal :: [A x A] -> A)
+(RULES
+    badd(x',Cons(x,xs)) ->
+      badd(Cons(Nil(),Nil())
+          ,badd(x',xs))
+    badd(x,Nil()) -> x
+    goal(x,y) -> badd(x,y))

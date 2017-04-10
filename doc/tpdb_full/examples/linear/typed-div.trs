@@ -1,0 +1,16 @@
+(VAR x y)
+
+(DATATYPES a = µX. < 0, s(X) >
+ )
+
+(SIGNATURES
+   minus :: a x a -> a
+   pc :: a x a -> a
+ )
+
+(RULES
+  minus(x, 0)       -> x
+  minus(s(x), s(y)) -> minus(x, y)
+  pc(0, s(y))     -> 0
+  pc(s(x), s(y)) -> s(pc(minus(x, y), s(y)))
+)

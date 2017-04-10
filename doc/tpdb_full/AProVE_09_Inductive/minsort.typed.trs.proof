@@ -1,0 +1,32 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          eq(0(),0()) -> true()
+          eq(0(),s(y)) -> false()
+          eq(s(x),0()) -> false()
+          eq(s(x),s(y)) -> eq(x,y)
+          if1(false(),x,y,xs) -> min(cons(y,xs))
+          if1(true(),x,y,xs) -> min(cons(x,xs))
+          if2(false(),x,y,xs) -> cons(y,rm(x,xs))
+          if2(true(),x,y,xs) -> rm(x,xs)
+          le(0(),y) -> true()
+          le(s(x),0()) -> false()
+          le(s(x),s(y)) -> le(x,y)
+          min(cons(x,cons(y,xs))) -> if1(le(x,y),x,y,xs)
+          min(cons(x,nil())) -> x
+          min(nil()) -> 0()
+          minsort(cons(x,xs)) -> cons(min(cons(x,xs)),minsort(rm(min(cons(x,xs)),cons(x,xs))))
+          minsort(nil()) -> nil()
+          rm(x,cons(y,xs)) -> if2(eq(x,y),x,y,xs)
+          rm(x,nil()) -> nil()
+      - Signature:
+          {eq/2,if1/4,if2/4,le/2,min/1,minsort/1,rm/2} / {0/0,cons/2,false/0,nil/0,s/1,true/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {eq,if1,if2,le,min,minsort,rm} and constructors {0,cons
+          ,false,nil,s,true}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

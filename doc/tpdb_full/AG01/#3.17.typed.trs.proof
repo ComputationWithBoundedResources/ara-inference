@@ -1,0 +1,21 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          app(l,nil()) -> l
+          app(cons(x,l),k) -> cons(x,app(l,k))
+          app(nil(),k) -> k
+          plus(0(),y) -> y
+          plus(s(x),y) -> s(plus(x,y))
+          sum(app(l,cons(x,cons(y,k)))) -> sum(app(l,sum(cons(x,cons(y,k)))))
+          sum(cons(x,cons(y,l))) -> sum(cons(plus(x,y),l))
+          sum(cons(x,nil())) -> cons(x,nil())
+      - Signature:
+          {app/2,plus/2,sum/1} / {0/0,cons/2,nil/0,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {app,plus,sum} and constructors {0,cons,nil,s}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

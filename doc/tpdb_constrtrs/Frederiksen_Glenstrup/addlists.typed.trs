@@ -1,0 +1,22 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x xs xs' ys)
+(DATATYPES
+    A = µX.< Cons(X, X), S(X), 0, Nil, True, False >)
+(SIGNATURES
+    addlist :: [A x A] -> A
+    notEmpty :: [A] -> A
+    goal :: [A x A] -> A)
+(RULES
+    addlist(Cons(x,xs')
+           ,Cons(S(0()),xs)) -> Cons(S(x)
+                                    ,addlist(xs',xs))
+    addlist(Cons(S(0()),xs')
+           ,Cons(x,xs)) -> Cons(S(x)
+                               ,addlist(xs',xs))
+    addlist(Nil(),ys) -> Nil()
+    notEmpty(Cons(x,xs)) -> True()
+    notEmpty(Nil()) -> False()
+    goal(xs,ys) -> addlist(xs,ys))

@@ -1,0 +1,16 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< nil, ++(X, X), u, v >)
+(SIGNATURES
+    merge :: [A x A] -> A)
+(RULES
+    merge(x,nil()) -> x
+    merge(nil(),y) -> y
+    merge(++(x,y),++(u(),v())) ->
+      ++(x,merge(y,++(u(),v())))
+    merge(++(x,y),++(u(),v())) ->
+      ++(u(),merge(++(x,y),v())))

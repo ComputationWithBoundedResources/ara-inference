@@ -1,0 +1,22 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x xs ys)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil, True, False >)
+(SIGNATURES
+    naiverev :: [A] -> A
+    app :: [A x A] -> A
+    notEmpty :: [A] -> A
+    goal :: [A] -> A)
+(RULES
+    naiverev(Cons(x,xs)) ->
+      app(naiverev(xs),Cons(x,Nil()))
+    app(Cons(x,xs),ys) -> Cons(x
+                              ,app(xs,ys))
+    notEmpty(Cons(x,xs)) -> True()
+    notEmpty(Nil()) -> False()
+    naiverev(Nil()) -> Nil()
+    app(Nil(),ys) -> ys
+    goal(xs) -> naiverev(xs))

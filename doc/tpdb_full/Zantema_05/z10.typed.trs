@@ -1,0 +1,19 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< lambda(X), p(X, X), 1, t, id >)
+(SIGNATURES
+    a :: [A x A] -> A)
+(RULES
+    a(lambda(x),y) -> lambda(a(x
+                              ,p(1(),a(y,t()))))
+    a(p(x,y),z) -> p(a(x,z),a(y,z))
+    a(a(x,y),z) -> a(x,a(y,z))
+    a(id(),x) -> x
+    a(1(),id()) -> 1()
+    a(t(),id()) -> t()
+    a(1(),p(x,y)) -> x
+    a(t(),p(x,y)) -> y)

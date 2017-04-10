@@ -1,0 +1,18 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< cons(X, X), nil, n, 0, s(X) >)
+(SIGNATURES
+    f :: [A] -> A
+    copy :: [A x A x A] -> A)
+(RULES
+    f(cons(nil(),y)) -> y
+    f(cons(f(cons(nil(),y)),z)) ->
+      copy(n(),y,z)
+    copy(0(),y,z) -> f(z)
+    copy(s(x),y,z) -> copy(x
+                          ,y
+                          ,cons(f(y),z)))

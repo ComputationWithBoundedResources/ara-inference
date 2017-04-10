@@ -1,0 +1,43 @@
+WORST_CASE(?,O(n^1))
+* Step 1: NaturalMI WORST_CASE(?,O(n^1))
+    + Considered Problem:
+        - Strict TRS:
+            p(m,n,s(r)) -> p(m,r,n)
+            p(m,0(),0()) -> m
+            p(m,s(n),0()) -> p(0(),n,m)
+        - Signature:
+            {p/3} / {0/0,s/1}
+        - Obligation:
+            innermost runtime complexity wrt. defined symbols {p} and constructors {0,s}
+    + Applied Processor:
+        NaturalMI {miDimension = 1, miDegree = 1, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+    + Details:
+        We apply a matrix interpretation of kind constructor based matrix interpretation:
+        The following argument positions are considered usable:
+          none
+        
+        Following symbols are considered usable:
+          {p}
+        TcT has computed the following interpretation:
+          p(0) = [2]                           
+          p(p) = [6] x1 + [4] x2 + [4] x3 + [8]
+          p(s) = [1] x1 + [2]                  
+        
+        Following rules are strictly oriented:
+          p(m,n,s(r)) = [6] m + [4] n + [4] r + [16]
+                      > [6] m + [4] n + [4] r + [8] 
+                      = p(m,r,n)                    
+        
+         p(m,0(),0()) = [6] m + [24]                
+                      > [1] m + [0]                 
+                      = m                           
+        
+        p(m,s(n),0()) = [6] m + [4] n + [24]        
+                      > [4] m + [4] n + [20]        
+                      = p(0(),n,m)                  
+        
+        
+        Following rules are (at-least) weakly oriented:
+        
+
+WORST_CASE(?,O(n^1))

@@ -1,0 +1,16 @@
+(VAR x y)
+
+(DATATYPES a = µX. < 0, s(X) >
+ )
+
+(SIGNATURES
+   add :: a x a -> a
+   mult :: a x a -> a
+ )
+
+(RULES
+   add(0,x) -> x
+   add(s(x),y) -> s(add(x,y))
+   mult(0,x) -> 0
+   mult(s(x),y) -> add(y,mult(x,y))
+)

@@ -1,0 +1,21 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          double(0()) -> 0()
+          double(s(x)) -> s(s(double(x)))
+          minus(x,0()) -> x
+          minus(s(x),s(y)) -> minus(x,y)
+          plus(0(),y) -> y
+          plus(s(x),y) -> plus(x,s(y))
+          plus(s(x),y) -> s(plus(x,y))
+          plus(s(x),y) -> s(plus(minus(x,y),double(y)))
+      - Signature:
+          {double/1,minus/2,plus/2} / {0/0,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {double,minus,plus} and constructors {0,s}
+  + Applied Processor:
+      NaturalPI {shape = Mixed 2, restrict = NoRestrict, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

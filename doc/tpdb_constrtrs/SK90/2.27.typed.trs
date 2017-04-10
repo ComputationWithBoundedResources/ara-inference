@@ -1,0 +1,25 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< 0, s(X), pair(X, X) >)
+(SIGNATURES
+    fib :: [A] -> A
+    g :: [A] -> A
+    sp :: [A] -> A
+    np :: [A] -> A
+    + :: [A x A] -> A)
+(RULES
+    fib(0()) -> 0()
+    fib(s(0())) -> s(0())
+    fib(s(s(0()))) -> s(0())
+    fib(s(s(x))) -> sp(g(x))
+    g(0()) -> pair(s(0()),0())
+    g(s(0())) -> pair(s(0()),s(0()))
+    g(s(x)) -> np(g(x))
+    sp(pair(x,y)) -> +(x,y)
+    np(pair(x,y)) -> pair(+(x,y),x)
+    +(x,0()) -> x
+    +(x,s(y)) -> s(+(x,y)))

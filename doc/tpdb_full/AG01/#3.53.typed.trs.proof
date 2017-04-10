@@ -1,0 +1,30 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          app(add(n,x),y) -> add(n,app(x,y))
+          app(nil(),y) -> y
+          concat(cons(u,v),y) -> cons(u,concat(v,y))
+          concat(leaf(),y) -> y
+          less_leaves(x,leaf()) -> false()
+          less_leaves(cons(u,v),cons(w,z)) -> less_leaves(concat(u,v),concat(w,z))
+          less_leaves(leaf(),cons(w,z)) -> true()
+          minus(x,0()) -> x
+          minus(s(x),s(y)) -> minus(x,y)
+          quot(0(),s(y)) -> 0()
+          quot(s(x),s(y)) -> s(quot(minus(x,y),s(y)))
+          reverse(add(n,x)) -> app(reverse(x),add(n,nil()))
+          reverse(nil()) -> nil()
+          shuffle(add(n,x)) -> add(n,shuffle(reverse(x)))
+          shuffle(nil()) -> nil()
+      - Signature:
+          {app/2,concat/2,less_leaves/2,minus/2,quot/2,reverse/1,shuffle/1} / {0/0,add/2,cons/2,false/0,leaf/0,nil/0
+          ,s/1,true/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {app,concat,less_leaves,minus,quot,reverse
+          ,shuffle} and constructors {0,add,cons,false,leaf,nil,s,true}
+  + Applied Processor:
+      NaturalMI {miDimension = 2, miDegree = 2, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

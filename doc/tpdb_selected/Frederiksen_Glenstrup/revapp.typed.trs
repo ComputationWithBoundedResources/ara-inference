@@ -1,0 +1,15 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    rest x xs ys)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil >)
+(SIGNATURES
+    revapp :: [A x A] -> A
+    goal :: [A x A] -> A)
+(RULES
+    revapp(Cons(x,xs),rest) ->
+      revapp(xs,Cons(x,rest))
+    revapp(Nil(),rest) -> rest
+    goal(xs,ys) -> revapp(xs,ys))

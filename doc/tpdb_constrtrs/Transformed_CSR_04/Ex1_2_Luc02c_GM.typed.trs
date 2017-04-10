@@ -1,0 +1,24 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X X1 X2 Y Z)
+(DATATYPES
+    A = µX.< cons(X, X), from(X), s(X), 2nd(X) >)
+(SIGNATURES
+    a__2nd :: [A] -> A
+    a__from :: [A] -> A
+    mark :: [A] -> A)
+(RULES
+    a__2nd(cons(X,cons(Y,Z))) ->
+      mark(Y)
+    a__from(X) -> cons(mark(X)
+                      ,from(s(X)))
+    mark(2nd(X)) -> a__2nd(mark(X))
+    mark(from(X)) ->
+      a__from(mark(X))
+    mark(cons(X1,X2)) ->
+      cons(mark(X1),X2)
+    mark(s(X)) -> s(mark(X))
+    a__2nd(X) -> 2nd(X)
+    a__from(X) -> from(X))

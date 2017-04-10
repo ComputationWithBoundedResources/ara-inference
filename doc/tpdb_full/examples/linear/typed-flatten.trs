@@ -1,0 +1,17 @@
+(VAR x xs ys)
+
+(DATATYPES a = µX. < nil, dd(X,X) >
+ )
+
+(SIGNATURES
+   @ :: a x a -> a
+   flatten :: a -> a
+ )
+
+(RULES
+  @(nil, xs)         -> xs
+  @(dd(x, xs), ys) -> dd(x, @(xs, ys))
+
+  flatten(nil) -> nil
+  flatten(dd(x,xs)) -> @(x,flatten(xs))
+)

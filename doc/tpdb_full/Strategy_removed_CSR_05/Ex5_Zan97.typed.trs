@@ -1,0 +1,14 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X Y)
+(DATATYPES
+    A = < c, true, false >)
+(SIGNATURES
+    f :: [A] -> A
+    if :: [A x A x A] -> A)
+(RULES
+    f(X) -> if(X,c(),f(true()))
+    if(true(),X,Y) -> X
+    if(false(),X,Y) -> Y)

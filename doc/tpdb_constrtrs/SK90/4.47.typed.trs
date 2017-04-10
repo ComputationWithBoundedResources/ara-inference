@@ -1,0 +1,18 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    )
+(DATATYPES
+    A = µX.< g(X, X), i(X, X, X), a, b, b', c, d, if(X, X, X), e, .(X, X), d', h(X, X) >)
+(SIGNATURES
+    f :: [A x A] -> A)
+(RULES
+    f(g(i(a(),b(),b'()),c()),d()) ->
+      if(e()
+        ,f(.(b(),c()),d'())
+        ,f(.(b'(),c()),d'()))
+    f(g(h(a(),b()),c()),d()) ->
+      if(e()
+        ,f(.(b(),g(h(a(),b()),c())),d())
+        ,f(c(),d'())))

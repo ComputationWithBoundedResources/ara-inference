@@ -1,0 +1,44 @@
+(VAR
+    x x' xs y)
+(DATATYPES
+    Nat = µX.< 0, S(X) >
+    L = µX.< Cons(Nat, X), Nil >
+    B = < True, False >)
+(SIGNATURES
+    bubblesort :: [L] -> L
+    bsort :: [Nat x L] -> L
+    len :: [L] -> Nat
+    bubble :: [Nat x L] -> L
+    + :: [Nat x Nat] -> Nat
+    < :: [Nat x Nat] -> B
+    bubble' :: [B x Nat x L] -> L)
+(RULES
+    bubblesort(xs) -> bsort(len(xs), xs)
+
+    bsort(0,xs) -> xs
+    bsort(S(x'),Cons(x,xs)) -> bsort(x',bubble(x,xs))
+
+    bubble(x,Nil) -> Cons(x,Nil)
+    bubble(x', Cons(x,xs)) -> bubble'(<(x',x), x', Cons(x,xs))
+
+    bubble'(True, x', Cons(x,xs)) ->= Cons(x', bubble(x,xs))
+    bubble'(False, x', Cons(x,xs)) ->= Cons(x, bubble(x',xs))
+
+    len(Cons(x,xs)) -> +(S(0), len(xs))
+    len(Nil) -> 0
+
+
+    +(x,S(0)) ->= S(x)
+    +(S(0),y) ->= S(y)
+
+    <(S(x),S(y)) ->= <(x,y)
+    <(0,S(y)) ->= True
+    <(x,0) ->= False
+
+    )
+
+(COMMENTS
+
+)
+
+

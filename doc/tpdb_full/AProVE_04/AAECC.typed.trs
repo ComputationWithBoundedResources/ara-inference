@@ -1,0 +1,62 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    h m n pid store t x)
+(DATATYPES
+    A = µX.< 0, nil, s(X), cons(X, X), true, false, f(X, X), self >)
+(SIGNATURES
+    fstsplit :: [A x A] -> A
+    sndsplit :: [A x A] -> A
+    empty :: [A] -> A
+    leq :: [A x A] -> A
+    length :: [A] -> A
+    app :: [A x A] -> A
+    map_f :: [A x A] -> A
+    process :: [A x A] -> A
+    if1 :: [A x A x A] -> A
+    if2 :: [A x A x A] -> A
+    if3 :: [A x A x A] -> A)
+(RULES
+    fstsplit(0(),x) -> nil()
+    fstsplit(s(n),nil()) -> nil()
+    fstsplit(s(n),cons(h,t)) ->
+      cons(h,fstsplit(n,t))
+    sndsplit(0(),x) -> x
+    sndsplit(s(n),nil()) -> nil()
+    sndsplit(s(n),cons(h,t)) ->
+      sndsplit(n,t)
+    empty(nil()) -> true()
+    empty(cons(h,t)) -> false()
+    leq(0(),m) -> true()
+    leq(s(n),0()) -> false()
+    leq(s(n),s(m)) -> leq(n,m)
+    length(nil()) -> 0()
+    length(cons(h,t)) ->
+      s(length(t))
+    app(nil(),x) -> x
+    app(cons(h,t),x) -> cons(h
+                            ,app(t,x))
+    map_f(pid,nil()) -> nil()
+    map_f(pid,cons(h,t)) ->
+      app(f(pid,h),map_f(pid,t))
+    process(store,m) -> if1(store
+                           ,m
+                           ,leq(m,length(store)))
+    if1(store,m,true()) -> if2(store
+                              ,m
+                              ,empty(fstsplit(m,store)))
+    if1(store,m,false()) ->
+      if3(store
+         ,m
+         ,empty(fstsplit(m
+                        ,app(map_f(self(),nil())
+                            ,store))))
+    if2(store,m,false()) ->
+      process(app(map_f(self(),nil())
+                 ,sndsplit(m,store))
+             ,m)
+    if3(store,m,false()) ->
+      process(sndsplit(m
+                      ,app(map_f(self(),nil()),store))
+             ,m))

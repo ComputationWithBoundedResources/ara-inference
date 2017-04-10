@@ -1,0 +1,22 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< 0, false, s(X), true, and(X, X), not(X), =(X, X), rem(X, X) >)
+(SIGNATURES
+    prime :: [A] -> A
+    prime1 :: [A x A] -> A
+    divp :: [A x A] -> A)
+(RULES
+    prime(0()) -> false()
+    prime(s(0())) -> false()
+    prime(s(s(x))) -> prime1(s(s(x))
+                            ,s(x))
+    prime1(x,0()) -> false()
+    prime1(x,s(0())) -> true()
+    prime1(x,s(s(y))) ->
+      and(not(divp(s(s(y)),x))
+         ,prime1(x,s(y)))
+    divp(x,y) -> =(rem(x,y),0()))

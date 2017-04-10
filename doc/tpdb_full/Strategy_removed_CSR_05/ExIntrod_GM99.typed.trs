@@ -1,0 +1,29 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X Y Z)
+(DATATYPES
+    A = µX.< s(X), 0, cons(X, X), true, false, divides(X, X) >)
+(SIGNATURES
+    primes :: [] -> A
+    from :: [A] -> A
+    head :: [A] -> A
+    tail :: [A] -> A
+    if :: [A x A x A] -> A
+    filter :: [A x A] -> A
+    sieve :: [A] -> A)
+(RULES
+    primes() ->
+      sieve(from(s(s(0()))))
+    from(X) -> cons(X,from(s(X)))
+    head(cons(X,Y)) -> X
+    tail(cons(X,Y)) -> Y
+    if(true(),X,Y) -> X
+    if(false(),X,Y) -> Y
+    filter(s(s(X)),cons(Y,Z)) ->
+      if(divides(s(s(X)),Y)
+        ,filter(s(s(X)),Z)
+        ,cons(Y,filter(X,sieve(Y))))
+    sieve(cons(X,Y)) -> cons(X
+                            ,filter(X,sieve(Y))))

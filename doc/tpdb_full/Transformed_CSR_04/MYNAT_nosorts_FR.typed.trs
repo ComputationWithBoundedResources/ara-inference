@@ -1,0 +1,19 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    M N X)
+(DATATYPES
+    A = µX.< tt, 0, s(X) >)
+(SIGNATURES
+    and :: [A x A] -> A
+    plus :: [A x A] -> A
+    x :: [A x A] -> A
+    activate :: [A] -> A)
+(RULES
+    and(tt(),X) -> activate(X)
+    plus(N,0()) -> N
+    plus(N,s(M)) -> s(plus(N,M))
+    x(N,0()) -> 0()
+    x(N,s(M)) -> plus(x(N,M),N)
+    activate(X) -> X)

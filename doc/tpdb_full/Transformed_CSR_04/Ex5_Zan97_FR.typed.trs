@@ -1,0 +1,24 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X Y)
+(DATATYPES
+    A = µX.< c, n__f(X), n__true, false >)
+(SIGNATURES
+    f :: [A] -> A
+    if :: [A x A x A] -> A
+    true :: [] -> A
+    activate :: [A] -> A)
+(RULES
+    f(X) -> if(X
+              ,c()
+              ,n__f(n__true()))
+    if(true(),X,Y) -> X
+    if(false(),X,Y) -> activate(Y)
+    f(X) -> n__f(X)
+    true() -> n__true()
+    activate(n__f(X)) ->
+      f(activate(X))
+    activate(n__true()) -> true()
+    activate(X) -> X)

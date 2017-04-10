@@ -1,0 +1,55 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    n x xs)
+(DATATYPES
+    A = µX.< Nil, Cons(X, X) >)
+(SIGNATURES
+    nesteql :: [A] -> A
+    eql :: [A] -> A
+    number17 :: [A] -> A
+    goal :: [A] -> A)
+(RULES
+    nesteql(Nil()) -> Cons(Nil()
+                          ,Cons(Nil()
+                               ,Cons(Nil()
+                                    ,Cons(Nil()
+                                         ,Cons(Nil()
+                                              ,Cons(Nil()
+                                                   ,Cons(Nil()
+                                                        ,Cons(Nil()
+                                                             ,Cons(Nil()
+                                                                  ,Cons(Nil()
+                                                                       ,Cons(Nil()
+                                                                            ,Cons(Nil()
+                                                                                 ,Cons(Nil()
+                                                                                      ,Cons(Nil()
+                                                                                           ,Cons(Nil()
+                                                                                                ,Cons(Nil()
+                                                                                                     ,Cons(Nil()
+                                                                                                          ,Nil())))))))))))))))))
+    nesteql(Cons(x,xs)) ->
+      nesteql(eql(Cons(x,xs)))
+    eql(Nil()) -> Nil()
+    eql(Cons(x,xs)) -> eql(Cons(x
+                               ,xs))
+    number17(n) -> Cons(Nil()
+                       ,Cons(Nil()
+                            ,Cons(Nil()
+                                 ,Cons(Nil()
+                                      ,Cons(Nil()
+                                           ,Cons(Nil()
+                                                ,Cons(Nil()
+                                                     ,Cons(Nil()
+                                                          ,Cons(Nil()
+                                                               ,Cons(Nil()
+                                                                    ,Cons(Nil()
+                                                                         ,Cons(Nil()
+                                                                              ,Cons(Nil()
+                                                                                   ,Cons(Nil()
+                                                                                        ,Cons(Nil()
+                                                                                             ,Cons(Nil()
+                                                                                                  ,Cons(Nil()
+                                                                                                       ,Nil())))))))))))))))))
+    goal(x) -> nesteql(x))

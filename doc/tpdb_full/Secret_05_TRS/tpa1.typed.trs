@@ -1,0 +1,25 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< 0, s(X) >)
+(SIGNATURES
+    min :: [A x A] -> A
+    max :: [A x A] -> A
+    - :: [A x A] -> A
+    gcd :: [A x A] -> A)
+(RULES
+    min(x,0()) -> 0()
+    min(0(),y) -> 0()
+    min(s(x),s(y)) -> s(min(x,y))
+    max(x,0()) -> x
+    max(0(),y) -> y
+    max(s(x),s(y)) -> s(max(x,y))
+    -(x,0()) -> x
+    -(s(x),s(y)) -> -(x,y)
+    gcd(s(x),s(y)) -> gcd(-(s(max(x
+                                 ,y))
+                           ,s(min(x,y)))
+                         ,s(min(x,y))))

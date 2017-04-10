@@ -1,0 +1,24 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          -(x,0()) -> x
+          -(s(x),s(y)) -> -(x,y)
+          gcd(0(),s(y)) -> s(y)
+          gcd(s(x),0()) -> s(x)
+          gcd(s(x),s(y)) -> gcd(-(s(max(x,y)),s(min(x,y))),s(min(x,y)))
+          max(x,0()) -> x
+          max(0(),y) -> y
+          max(s(x),s(y)) -> s(max(x,y))
+          min(x,0()) -> 0()
+          min(0(),y) -> 0()
+          min(s(x),s(y)) -> s(min(x,y))
+      - Signature:
+          {-/2,gcd/2,max/2,min/2} / {0/0,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {-,gcd,max,min} and constructors {0,s}
+  + Applied Processor:
+      NaturalMI {miDimension = 2, miDegree = 2, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

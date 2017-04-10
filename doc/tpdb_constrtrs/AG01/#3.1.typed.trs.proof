@@ -1,0 +1,50 @@
+WORST_CASE(?,O(n^1))
+* Step 1: NaturalMI WORST_CASE(?,O(n^1))
+    + Considered Problem:
+        - Strict TRS:
+            minus(x,0()) -> x
+            minus(s(x),s(y)) -> minus(x,y)
+            quot(0(),s(y)) -> 0()
+            quot(s(x),s(y)) -> s(quot(minus(x,y),s(y)))
+        - Signature:
+            {minus/2,quot/2} / {0/0,s/1}
+        - Obligation:
+            innermost runtime complexity wrt. defined symbols {minus,quot} and constructors {0,s}
+    + Applied Processor:
+        NaturalMI {miDimension = 1, miDegree = 1, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+    + Details:
+        We apply a matrix interpretation of kind constructor based matrix interpretation:
+        The following argument positions are considered usable:
+          uargs(quot) = {1},
+          uargs(s) = {1}
+        
+        Following symbols are considered usable:
+          {minus,quot}
+        TcT has computed the following interpretation:
+              p(0) = [1]         
+          p(minus) = [1] x1 + [1]
+           p(quot) = [2] x1 + [3]
+              p(s) = [1] x1 + [4]
+        
+        Following rules are strictly oriented:
+            minus(x,0()) = [1] x + [1]             
+                         > [1] x + [0]             
+                         = x                       
+        
+        minus(s(x),s(y)) = [1] x + [5]             
+                         > [1] x + [1]             
+                         = minus(x,y)              
+        
+          quot(0(),s(y)) = [5]                     
+                         > [1]                     
+                         = 0()                     
+        
+         quot(s(x),s(y)) = [2] x + [11]            
+                         > [2] x + [9]             
+                         = s(quot(minus(x,y),s(y)))
+        
+        
+        Following rules are (at-least) weakly oriented:
+        
+
+WORST_CASE(?,O(n^1))

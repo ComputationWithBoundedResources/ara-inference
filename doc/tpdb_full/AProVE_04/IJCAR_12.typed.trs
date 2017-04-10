@@ -1,0 +1,28 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< 0, s(X) >)
+(SIGNATURES
+    plus :: [A x A] -> A
+    times :: [A x A] -> A
+    div :: [A x A] -> A
+    quot :: [A x A x A] -> A)
+(RULES
+    plus(x,0()) -> x
+    plus(0(),y) -> y
+    plus(s(x),y) -> s(plus(x,y))
+    times(0(),y) -> 0()
+    times(s(0()),y) -> y
+    times(s(x),y) -> plus(y
+                         ,times(x,y))
+    div(0(),y) -> 0()
+    div(x,y) -> quot(x,y,y)
+    quot(0(),s(y),z) -> 0()
+    quot(s(x),s(y),z) -> quot(x,y,z)
+    quot(x,0(),s(z)) -> s(div(x
+                             ,s(z)))
+    div(div(x,y),z) -> div(x
+                          ,times(y,z)))

@@ -1,0 +1,260 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    M N V1 V2 X X1 X2 X3)
+(DATATYPES
+    A = µX.< tt, s(X), 0, plus(X, X), x(X, X), U101(X, X, X), U102(X, X, X), isNatKind(X), U103(X, X, X), isNat(X), U104(X, X, X), U11(X, X, X), U12(X, X, X), U13(X, X, X), U14(X, X, X), U15(X, X), U16(X), U21(X, X), U22(X, X), U23(X), U31(X, X, X), U32(X, X, X), U33(X, X, X), U34(X, X, X), U35(X, X), U36(X), U41(X, X), U42(X), U51(X), U61(X, X), U62(X), U71(X, X), U72(X, X), U81(X, X, X), U82(X, X, X), U83(X, X, X), U84(X, X, X), U91(X, X), U92(X) >)
+(SIGNATURES
+    a__U101 :: [A x A x A] -> A
+    a__U102 :: [A x A x A] -> A
+    a__U103 :: [A x A x A] -> A
+    a__U104 :: [A x A x A] -> A
+    a__U11 :: [A x A x A] -> A
+    a__U12 :: [A x A x A] -> A
+    a__U13 :: [A x A x A] -> A
+    a__U14 :: [A x A x A] -> A
+    a__U15 :: [A x A] -> A
+    a__U16 :: [A] -> A
+    a__U21 :: [A x A] -> A
+    a__U22 :: [A x A] -> A
+    a__U23 :: [A] -> A
+    a__U31 :: [A x A x A] -> A
+    a__U32 :: [A x A x A] -> A
+    a__U33 :: [A x A x A] -> A
+    a__U34 :: [A x A x A] -> A
+    a__U35 :: [A x A] -> A
+    a__U36 :: [A] -> A
+    a__U41 :: [A x A] -> A
+    a__U42 :: [A] -> A
+    a__U51 :: [A] -> A
+    a__U61 :: [A x A] -> A
+    a__U62 :: [A] -> A
+    a__U71 :: [A x A] -> A
+    a__U72 :: [A x A] -> A
+    a__U81 :: [A x A x A] -> A
+    a__U82 :: [A x A x A] -> A
+    a__U83 :: [A x A x A] -> A
+    a__U84 :: [A x A x A] -> A
+    a__U91 :: [A x A] -> A
+    a__U92 :: [A] -> A
+    a__isNat :: [A] -> A
+    a__isNatKind :: [A] -> A
+    a__plus :: [A x A] -> A
+    a__x :: [A x A] -> A
+    mark :: [A] -> A)
+(RULES
+    a__U101(tt(),M,N) ->
+      a__U102(a__isNatKind(M),M,N)
+    a__U102(tt(),M,N) ->
+      a__U103(a__isNat(N),M,N)
+    a__U103(tt(),M,N) ->
+      a__U104(a__isNatKind(N),M,N)
+    a__U104(tt(),M,N) ->
+      a__plus(a__x(mark(N),mark(M))
+             ,mark(N))
+    a__U11(tt(),V1,V2) ->
+      a__U12(a__isNatKind(V1),V1,V2)
+    a__U12(tt(),V1,V2) ->
+      a__U13(a__isNatKind(V2),V1,V2)
+    a__U13(tt(),V1,V2) ->
+      a__U14(a__isNatKind(V2),V1,V2)
+    a__U14(tt(),V1,V2) ->
+      a__U15(a__isNat(V1),V2)
+    a__U15(tt(),V2) ->
+      a__U16(a__isNat(V2))
+    a__U16(tt()) -> tt()
+    a__U21(tt(),V1) ->
+      a__U22(a__isNatKind(V1),V1)
+    a__U22(tt(),V1) ->
+      a__U23(a__isNat(V1))
+    a__U23(tt()) -> tt()
+    a__U31(tt(),V1,V2) ->
+      a__U32(a__isNatKind(V1),V1,V2)
+    a__U32(tt(),V1,V2) ->
+      a__U33(a__isNatKind(V2),V1,V2)
+    a__U33(tt(),V1,V2) ->
+      a__U34(a__isNatKind(V2),V1,V2)
+    a__U34(tt(),V1,V2) ->
+      a__U35(a__isNat(V1),V2)
+    a__U35(tt(),V2) ->
+      a__U36(a__isNat(V2))
+    a__U36(tt()) -> tt()
+    a__U41(tt(),V2) ->
+      a__U42(a__isNatKind(V2))
+    a__U42(tt()) -> tt()
+    a__U51(tt()) -> tt()
+    a__U61(tt(),V2) ->
+      a__U62(a__isNatKind(V2))
+    a__U62(tt()) -> tt()
+    a__U71(tt(),N) ->
+      a__U72(a__isNatKind(N),N)
+    a__U72(tt(),N) -> mark(N)
+    a__U81(tt(),M,N) ->
+      a__U82(a__isNatKind(M),M,N)
+    a__U82(tt(),M,N) ->
+      a__U83(a__isNat(N),M,N)
+    a__U83(tt(),M,N) ->
+      a__U84(a__isNatKind(N),M,N)
+    a__U84(tt(),M,N) ->
+      s(a__plus(mark(N),mark(M)))
+    a__U91(tt(),N) ->
+      a__U92(a__isNatKind(N))
+    a__U92(tt()) -> 0()
+    a__isNat(0()) -> tt()
+    a__isNat(plus(V1,V2)) ->
+      a__U11(a__isNatKind(V1),V1,V2)
+    a__isNat(s(V1)) ->
+      a__U21(a__isNatKind(V1),V1)
+    a__isNat(x(V1,V2)) ->
+      a__U31(a__isNatKind(V1),V1,V2)
+    a__isNatKind(0()) -> tt()
+    a__isNatKind(plus(V1,V2)) ->
+      a__U41(a__isNatKind(V1),V2)
+    a__isNatKind(s(V1)) ->
+      a__U51(a__isNatKind(V1))
+    a__isNatKind(x(V1,V2)) ->
+      a__U61(a__isNatKind(V1),V2)
+    a__plus(N,0()) ->
+      a__U71(a__isNat(N),N)
+    a__plus(N,s(M)) ->
+      a__U81(a__isNat(M),M,N)
+    a__x(N,0()) ->
+      a__U91(a__isNat(N),N)
+    a__x(N,s(M)) ->
+      a__U101(a__isNat(M),M,N)
+    mark(U101(X1,X2,X3)) ->
+      a__U101(mark(X1),X2,X3)
+    mark(U102(X1,X2,X3)) ->
+      a__U102(mark(X1),X2,X3)
+    mark(isNatKind(X)) ->
+      a__isNatKind(X)
+    mark(U103(X1,X2,X3)) ->
+      a__U103(mark(X1),X2,X3)
+    mark(isNat(X)) -> a__isNat(X)
+    mark(U104(X1,X2,X3)) ->
+      a__U104(mark(X1),X2,X3)
+    mark(plus(X1,X2)) ->
+      a__plus(mark(X1),mark(X2))
+    mark(x(X1,X2)) -> a__x(mark(X1)
+                          ,mark(X2))
+    mark(U11(X1,X2,X3)) ->
+      a__U11(mark(X1),X2,X3)
+    mark(U12(X1,X2,X3)) ->
+      a__U12(mark(X1),X2,X3)
+    mark(U13(X1,X2,X3)) ->
+      a__U13(mark(X1),X2,X3)
+    mark(U14(X1,X2,X3)) ->
+      a__U14(mark(X1),X2,X3)
+    mark(U15(X1,X2)) ->
+      a__U15(mark(X1),X2)
+    mark(U16(X)) -> a__U16(mark(X))
+    mark(U21(X1,X2)) ->
+      a__U21(mark(X1),X2)
+    mark(U22(X1,X2)) ->
+      a__U22(mark(X1),X2)
+    mark(U23(X)) -> a__U23(mark(X))
+    mark(U31(X1,X2,X3)) ->
+      a__U31(mark(X1),X2,X3)
+    mark(U32(X1,X2,X3)) ->
+      a__U32(mark(X1),X2,X3)
+    mark(U33(X1,X2,X3)) ->
+      a__U33(mark(X1),X2,X3)
+    mark(U34(X1,X2,X3)) ->
+      a__U34(mark(X1),X2,X3)
+    mark(U35(X1,X2)) ->
+      a__U35(mark(X1),X2)
+    mark(U36(X)) -> a__U36(mark(X))
+    mark(U41(X1,X2)) ->
+      a__U41(mark(X1),X2)
+    mark(U42(X)) -> a__U42(mark(X))
+    mark(U51(X)) -> a__U51(mark(X))
+    mark(U61(X1,X2)) ->
+      a__U61(mark(X1),X2)
+    mark(U62(X)) -> a__U62(mark(X))
+    mark(U71(X1,X2)) ->
+      a__U71(mark(X1),X2)
+    mark(U72(X1,X2)) ->
+      a__U72(mark(X1),X2)
+    mark(U81(X1,X2,X3)) ->
+      a__U81(mark(X1),X2,X3)
+    mark(U82(X1,X2,X3)) ->
+      a__U82(mark(X1),X2,X3)
+    mark(U83(X1,X2,X3)) ->
+      a__U83(mark(X1),X2,X3)
+    mark(U84(X1,X2,X3)) ->
+      a__U84(mark(X1),X2,X3)
+    mark(U91(X1,X2)) ->
+      a__U91(mark(X1),X2)
+    mark(U92(X)) -> a__U92(mark(X))
+    mark(tt()) -> tt()
+    mark(s(X)) -> s(mark(X))
+    mark(0()) -> 0()
+    a__U101(X1,X2,X3) -> U101(X1
+                             ,X2
+                             ,X3)
+    a__U102(X1,X2,X3) -> U102(X1
+                             ,X2
+                             ,X3)
+    a__isNatKind(X) -> isNatKind(X)
+    a__U103(X1,X2,X3) -> U103(X1
+                             ,X2
+                             ,X3)
+    a__isNat(X) -> isNat(X)
+    a__U104(X1,X2,X3) -> U104(X1
+                             ,X2
+                             ,X3)
+    a__plus(X1,X2) -> plus(X1,X2)
+    a__x(X1,X2) -> x(X1,X2)
+    a__U11(X1,X2,X3) -> U11(X1
+                           ,X2
+                           ,X3)
+    a__U12(X1,X2,X3) -> U12(X1
+                           ,X2
+                           ,X3)
+    a__U13(X1,X2,X3) -> U13(X1
+                           ,X2
+                           ,X3)
+    a__U14(X1,X2,X3) -> U14(X1
+                           ,X2
+                           ,X3)
+    a__U15(X1,X2) -> U15(X1,X2)
+    a__U16(X) -> U16(X)
+    a__U21(X1,X2) -> U21(X1,X2)
+    a__U22(X1,X2) -> U22(X1,X2)
+    a__U23(X) -> U23(X)
+    a__U31(X1,X2,X3) -> U31(X1
+                           ,X2
+                           ,X3)
+    a__U32(X1,X2,X3) -> U32(X1
+                           ,X2
+                           ,X3)
+    a__U33(X1,X2,X3) -> U33(X1
+                           ,X2
+                           ,X3)
+    a__U34(X1,X2,X3) -> U34(X1
+                           ,X2
+                           ,X3)
+    a__U35(X1,X2) -> U35(X1,X2)
+    a__U36(X) -> U36(X)
+    a__U41(X1,X2) -> U41(X1,X2)
+    a__U42(X) -> U42(X)
+    a__U51(X) -> U51(X)
+    a__U61(X1,X2) -> U61(X1,X2)
+    a__U62(X) -> U62(X)
+    a__U71(X1,X2) -> U71(X1,X2)
+    a__U72(X1,X2) -> U72(X1,X2)
+    a__U81(X1,X2,X3) -> U81(X1
+                           ,X2
+                           ,X3)
+    a__U82(X1,X2,X3) -> U82(X1
+                           ,X2
+                           ,X3)
+    a__U83(X1,X2,X3) -> U83(X1
+                           ,X2
+                           ,X3)
+    a__U84(X1,X2,X3) -> U84(X1
+                           ,X2
+                           ,X3)
+    a__U91(X1,X2) -> U91(X1,X2)
+    a__U92(X) -> U92(X))

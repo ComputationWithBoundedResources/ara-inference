@@ -1,0 +1,1 @@
+{"rOutcome":{"tag":"Success","contents":"WORST_CASE(?,O(n^1))"},"rProblem":"/home/schnecki/Documents/Jobs/UIBK/CL/amortized-resource-analysis/inference/doc/tpdb_full/Mixed_TRS/jones6.typed","rTime":0.228432,"rTool":{"tProcessor":[],"tName":"Mat","tArguments":["--complexity","rci","-s","matrices"],"tExtension":"trs","tCommand":"tct-amo"}}

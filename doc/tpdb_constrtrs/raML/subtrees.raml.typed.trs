@@ -1,0 +1,23 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    @l1 @l2 @t @t1 @t2 @x @xs)
+(DATATYPES
+    A = µX.< ::(X, X), nil, leaf, node(X, X, X) >)
+(SIGNATURES
+    append :: [A x A] -> A
+    append#1 :: [A x A] -> A
+    subtrees :: [A] -> A
+    subtrees#1 :: [A] -> A
+    subtrees#2 :: [A x A x A x A] -> A
+    subtrees#3 :: [A x A x A x A x A] -> A)
+(RULES
+    append(@l1,@l2) -> append#1(@l1 ,@l2)
+    append#1(::(@x,@xs),@l2) -> ::(@x,append(@xs,@l2))
+    append#1(nil(),@l2) -> @l2
+    subtrees(@t) -> subtrees#1(@t)
+    subtrees#1(leaf()) -> nil()
+    subtrees#1(node(@x,@t1,@t2)) -> subtrees#2(subtrees(@t1) ,@t1 ,@t2 ,@x)
+    subtrees#2(@l1,@t1,@t2,@x) -> subtrees#3(subtrees(@t2) ,@l1 ,@t1 ,@t2 ,@x)
+    subtrees#3(@l2 ,@l1 ,@t1 ,@t2 ,@x) -> ::(node(@x,@t1,@t2) ,append(@l1,@l2)))

@@ -1,0 +1,62 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    M N V1 V2 X X1 X2)
+(DATATYPES
+    A = µX.< tt, n__0, n__plus(X, X), n__isNat(X), n__s(X), n__x(X, X) >)
+(SIGNATURES
+    U11 :: [A x A] -> A
+    U21 :: [A x A x A] -> A
+    U31 :: [A] -> A
+    U41 :: [A x A x A] -> A
+    and :: [A x A] -> A
+    isNat :: [A] -> A
+    plus :: [A x A] -> A
+    x :: [A x A] -> A
+    0 :: [] -> A
+    s :: [A] -> A
+    activate :: [A] -> A)
+(RULES
+    U11(tt(),N) -> activate(N)
+    U21(tt(),M,N) ->
+      s(plus(activate(N),activate(M)))
+    U31(tt()) -> 0()
+    U41(tt(),M,N) ->
+      plus(x(activate(N),activate(M))
+          ,activate(N))
+    and(tt(),X) -> activate(X)
+    isNat(n__0()) -> tt()
+    isNat(n__plus(V1,V2)) ->
+      and(isNat(activate(V1))
+         ,n__isNat(activate(V2)))
+    isNat(n__s(V1)) ->
+      isNat(activate(V1))
+    isNat(n__x(V1,V2)) ->
+      and(isNat(activate(V1))
+         ,n__isNat(activate(V2)))
+    plus(N,0()) -> U11(isNat(N),N)
+    plus(N,s(M)) -> U21(and(isNat(M)
+                           ,n__isNat(N))
+                       ,M
+                       ,N)
+    x(N,0()) -> U31(isNat(N))
+    x(N,s(M)) -> U41(and(isNat(M)
+                        ,n__isNat(N))
+                    ,M
+                    ,N)
+    0() -> n__0()
+    plus(X1,X2) -> n__plus(X1,X2)
+    isNat(X) -> n__isNat(X)
+    s(X) -> n__s(X)
+    x(X1,X2) -> n__x(X1,X2)
+    activate(n__0()) -> 0()
+    activate(n__plus(X1,X2)) ->
+      plus(activate(X1),activate(X2))
+    activate(n__isNat(X)) ->
+      isNat(X)
+    activate(n__s(X)) ->
+      s(activate(X))
+    activate(n__x(X1,X2)) ->
+      x(activate(X1),activate(X2))
+    activate(X) -> X)

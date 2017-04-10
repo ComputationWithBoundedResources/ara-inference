@@ -1,0 +1,28 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X XS)
+(DATATYPES
+    A = µX.< cons(X, X), 0, n__incr(X), s(X) >)
+(SIGNATURES
+    nats :: [] -> A
+    pairs :: [] -> A
+    odds :: [] -> A
+    incr :: [A] -> A
+    head :: [A] -> A
+    tail :: [A] -> A
+    activate :: [A] -> A)
+(RULES
+    nats() -> cons(0()
+                  ,n__incr(nats()))
+    pairs() -> cons(0()
+                   ,n__incr(odds()))
+    odds() -> incr(pairs())
+    incr(cons(X,XS)) -> cons(s(X)
+                            ,n__incr(activate(XS)))
+    head(cons(X,XS)) -> X
+    tail(cons(X,XS)) -> activate(XS)
+    incr(X) -> n__incr(X)
+    activate(n__incr(X)) -> incr(X)
+    activate(X) -> X)

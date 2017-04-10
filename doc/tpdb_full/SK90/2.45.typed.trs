@@ -1,0 +1,18 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    u v x y z)
+(DATATYPES
+    A = µX.< nil, .(X, X), w, =(X, X), sum(X, X, X), carry(X, X, X), true >)
+(SIGNATURES
+    admit :: [A x A] -> A
+    cond :: [A x A] -> A)
+(RULES
+    admit(x,nil()) -> nil()
+    admit(x,.(u,.(v,.(w(),z)))) ->
+      cond(=(sum(x,u,v),w())
+          ,.(u
+            ,.(v
+              ,.(w(),admit(carry(x,u,v),z)))))
+    cond(true(),y) -> y)

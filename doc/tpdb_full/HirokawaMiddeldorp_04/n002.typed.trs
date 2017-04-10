@@ -1,0 +1,11 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x)
+(DATATYPES
+    A = <  >)
+(SIGNATURES
+    f :: [A] -> A)
+(RULES
+    f(x) -> f(x))

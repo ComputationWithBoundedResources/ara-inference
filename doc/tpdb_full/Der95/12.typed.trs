@@ -1,0 +1,20 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< or(X, X) >)
+(SIGNATURES
+    not :: [A] -> A
+    and :: [A x A] -> A)
+(RULES
+    not(not(x)) -> x
+    not(or(x,y)) -> and(not(x)
+                       ,not(y))
+    not(and(x,y)) -> or(not(x)
+                       ,not(y))
+    and(x,or(y,z)) -> or(and(x,y)
+                        ,and(x,z))
+    and(or(y,z),x) -> or(and(x,y)
+                        ,and(x,z)))

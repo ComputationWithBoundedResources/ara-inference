@@ -1,0 +1,21 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    L X XS Y YS)
+(DATATYPES
+    A = µX.< nil, cons(X) >)
+(SIGNATURES
+    app :: [A x A] -> A
+    from :: [A] -> A
+    zWadr :: [A x A] -> A
+    prefix :: [A] -> A)
+(RULES
+    app(nil(),YS) -> YS
+    app(cons(X),YS) -> cons(X)
+    from(X) -> cons(X)
+    zWadr(nil(),YS) -> nil()
+    zWadr(XS,nil()) -> nil()
+    zWadr(cons(X),cons(Y)) ->
+      cons(app(Y,cons(X)))
+    prefix(L) -> cons(nil()))

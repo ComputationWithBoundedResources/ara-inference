@@ -1,0 +1,44 @@
+(VAR f r x xs ys n)
+
+(DATATYPES
+  Nat = µX.< 0, s(X), errorHead>
+  unit = <unit>
+  L = µX.<nil, cons(Nat, X)>
+  Q = µX.<queue(L, L), errorTail >
+)
+
+(SIGNATURES
+  rev' :: L x L -> L
+  rev :: L -> L
+  empty :: Q
+  checkF :: Q -> Q
+  snoc :: Q x Nat -> Q
+  head :: Q -> Nat
+  tail :: Q -> Q
+  enq :: Nat -> Q
+)
+
+(RULES
+  rev'(nil,ys) -> ys
+  rev'(cons(x,xs),ys) -> rev'(xs,cons(x,ys))
+
+  rev(xs) -> rev'(xs,nil)
+
+  empty() -> queue(nil,nil)
+
+  checkF(queue(nil,r)) -> queue(rev(r),nil)
+  checkF(queue(cons(x,xs),r)) -> queue(cons(x,xs),r)
+
+  head(queue(nil,r)) -> errorHead
+  head(queue(cons(x,f),r)) -> x
+
+  tail(queue(nil,r)) -> errorTail
+  tail(queue(cons(x,f),r)) -> checkF(queue(f,r))
+
+  snoc(queue(f,r),x) -> checkF(queue(f,cons(x,r)))
+
+  enq(0) -> empty()
+  enq(s(n)) -> snoc(enq(n),n)
+
+
+)

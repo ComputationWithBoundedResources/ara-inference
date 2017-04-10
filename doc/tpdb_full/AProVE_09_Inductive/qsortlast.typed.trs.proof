@@ -1,0 +1,34 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          append(cons(x,xs),ys()) -> cons(x,append(xs,ys()))
+          append(nil(),ys()) -> ys()
+          filterhigh(n,cons(x,xs)) -> if2(ge(x,n),n,x,xs)
+          filterhigh(n,nil()) -> nil()
+          filterlow(n,cons(x,xs)) -> if1(ge(n,x),n,x,xs)
+          filterlow(n,nil()) -> nil()
+          ge(x,0()) -> true()
+          ge(0(),s(x)) -> false()
+          ge(s(x),s(y)) -> ge(x,y)
+          if1(false(),n,x,xs) -> cons(x,filterlow(n,xs))
+          if1(true(),n,x,xs) -> filterlow(n,xs)
+          if2(false(),n,x,xs) -> cons(x,filterhigh(n,xs))
+          if2(true(),n,x,xs) -> filterhigh(n,xs)
+          last(cons(x,cons(y,xs))) -> last(cons(y,xs))
+          last(cons(x,nil())) -> x
+          last(nil()) -> 0()
+          qsort(cons(x,xs)) -> append(qsort(filterlow(last(cons(x,xs)),cons(x,xs)))
+                                     ,cons(last(cons(x,xs)),qsort(filterhigh(last(cons(x,xs)),cons(x,xs)))))
+          qsort(nil()) -> nil()
+      - Signature:
+          {append/2,filterhigh/2,filterlow/2,ge/2,if1/4,if2/4,last/1,qsort/1} / {0/0,cons/2,false/0,nil/0,s/1,true/0
+          ,ys/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {append,filterhigh,filterlow,ge,if1,if2,last
+          ,qsort} and constructors {0,cons,false,nil,s,true,ys}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

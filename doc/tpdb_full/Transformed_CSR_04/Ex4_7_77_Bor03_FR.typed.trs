@@ -1,0 +1,17 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X XS)
+(DATATYPES
+    A = µX.< cons(X, X), 0, n__zeros >)
+(SIGNATURES
+    zeros :: [] -> A
+    tail :: [A] -> A
+    activate :: [A] -> A)
+(RULES
+    zeros() -> cons(0(),n__zeros())
+    tail(cons(X,XS)) -> activate(XS)
+    zeros() -> n__zeros()
+    activate(n__zeros()) -> zeros()
+    activate(X) -> X)

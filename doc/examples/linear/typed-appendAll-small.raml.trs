@@ -1,0 +1,36 @@
+(VAR l l1 l2 ls x xs)
+
+(DATATYPES
+
+   Nat = µX. < 0, s(X) >
+   l = µX. < cons(Nat,X), nil >
+   ll = µX. < cons(l,X), nil >
+
+)
+
+(SIGNATURES
+   append       :: l x l -> l
+   append#1     :: l x l -> l
+   appendAll    :: ll    -> l
+   appendAll#1  :: ll    -> l
+ )
+
+
+(RULES
+    append(l1,l2) -> append#1(l1,l2)
+    append#1(nil,l2) -> l2
+    append#1(cons(x,xs),l2) -> cons(x,append(xs,l2))
+
+    appendAll(l) -> appendAll#1(l)
+    appendAll#1(nil) -> nil
+    appendAll#1(cons(l1,ls)) -> append(l1,appendAll(ls))
+
+)
+
+
+(COMMENT
+
+
+)
+
+

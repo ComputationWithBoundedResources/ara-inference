@@ -1,0 +1,28 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    m n u v x y z)
+(DATATYPES
+    A = µX.< s(X), 0, true, false >)
+(SIGNATURES
+    div :: [A x A] -> A
+    d :: [A x A x A] -> A
+    cond :: [A x A x A x A] -> A
+    ge :: [A x A] -> A
+    plus :: [A x A] -> A)
+(RULES
+    div(x,s(y)) -> d(x,s(y),0())
+    d(x,s(y),z) -> cond(ge(x,z)
+                       ,x
+                       ,y
+                       ,z)
+    cond(true(),x,y,z) -> s(d(x
+                             ,s(y)
+                             ,plus(s(y),z)))
+    cond(false(),x,y,z) -> 0()
+    ge(u,0()) -> true()
+    ge(0(),s(v)) -> false()
+    ge(s(u),s(v)) -> ge(u,v)
+    plus(n,0()) -> n
+    plus(n,s(m)) -> s(plus(n,m)))

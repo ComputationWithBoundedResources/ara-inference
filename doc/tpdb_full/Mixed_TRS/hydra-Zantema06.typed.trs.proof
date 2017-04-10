@@ -1,0 +1,19 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          d(g(x,y),z) -> g(d(x,z),e(y))
+          d(g(0(),x),y) -> e(x)
+          d(g(g(0(),x),y),0()) -> e(y)
+          d(g(g(0(),x),y),s(z)) -> g(e(x),d(g(g(0(),x),y),z))
+          g(e(x),e(y)) -> e(g(x,y))
+          h(e(x),y) -> h(d(x,y),s(y))
+      - Signature:
+          {d/2,g/2,h/2} / {0/0,e/1,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {d,g,h} and constructors {0,e,s}
+  + Applied Processor:
+      NaturalMI {miDimension = 2, miDegree = 2, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

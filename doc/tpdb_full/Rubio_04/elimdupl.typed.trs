@@ -1,0 +1,28 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    M N X Y)
+(DATATYPES
+    A = µX.< 0, true, s(X), false, nil, add(X, X) >)
+(SIGNATURES
+    eq :: [A x A] -> A
+    rm :: [A x A] -> A
+    ifrm :: [A x A x A] -> A
+    purge :: [A] -> A)
+(RULES
+    eq(0(),0()) -> true()
+    eq(0(),s(X)) -> false()
+    eq(s(X),0()) -> false()
+    eq(s(X),s(Y)) -> eq(X,Y)
+    rm(N,nil()) -> nil()
+    rm(N,add(M,X)) -> ifrm(eq(N,M)
+                          ,N
+                          ,add(M,X))
+    ifrm(true(),N,add(M,X)) -> rm(N
+                                 ,X)
+    ifrm(false(),N,add(M,X)) ->
+      add(M,rm(N,X))
+    purge(nil()) -> nil()
+    purge(add(N,X)) -> add(N
+                          ,purge(rm(N,X))))

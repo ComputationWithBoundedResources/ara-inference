@@ -1,0 +1,58 @@
+(VAR t x xs l y ys l2 t1 t2)
+
+(DATATYPES
+  nat = µX.< 0, s(X) >
+  bool = <true, false>
+  tree = µX.< leaf, node(list,X,X) >
+  list = µX.< nil, cons(nat, X)>
+)
+
+(SIGNATURES
+  flattensort :: [tree] -> list
+  insertionsort :: [list] -> list
+  insert :: [nat x list] -> list
+  if :: [bool x list x list] -> list
+  if'insert :: [bool x nat x nat x list] -> list
+  leq :: [nat x nat] -> bool
+  lt :: [nat x nat] -> bool
+  flatten :: [tree] -> list
+  append :: [list x list] -> list
+)
+
+(COMMENTS
+
+  # do not use this
+  insert(x,nil) -> cons(x,nil)
+  insert(x,cons(y,ys)) -> if(lt(y,x), cons(y,insert(x,ys)), cons(x,cons(y,ys)))
+
+  if(true,x,y) ->= x
+  if(false,x,y) ->= y
+
+  lt(0,s(y)) ->= true
+  lt(x,0) ->= false
+  lt(s(x),s(y)) ->= lt(x,y)
+  # ####
+
+)
+
+(RULES
+  flattensort(t) -> insertionsort(flatten(t))
+
+
+  flatten(leaf) -> nil
+  flatten(node(l,t1,t2)) -> append(l,append(flatten(t1), flatten(t2)))
+
+  append(nil,l2) ->= l2
+  append(cons(x,xs),l2) ->= cons(x,append(xs,l2))
+
+  insertionsort(nil) -> nil
+  insertionsort(cons(x,xs)) -> insert(x,insertionsort(xs))
+  insert(x,nil)              -> cons(x,nil)
+  insert(x,cons(y,ys))       -> if'insert(leq(x,y), x, y, ys)
+  if'insert(true, x, y, ys)  -> cons(x,cons(y,ys))
+  if'insert(false, x, y, ys) -> cons(y,insert(x,ys))
+  leq(0,y)       ->= true
+  leq(s(x), 0)   ->= false
+  leq(s(x),s(y)) ->= leq(x,y)
+
+)

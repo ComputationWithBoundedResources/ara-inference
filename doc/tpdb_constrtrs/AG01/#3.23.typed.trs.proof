@@ -1,0 +1,15 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          f(0(),y) -> 0()
+          f(s(x),y) -> f(f(x,y),y)
+      - Signature:
+          {f/2} / {0/0,s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {f} and constructors {0,s}
+  + Applied Processor:
+      NaturalPI {shape = Mixed 3, restrict = NoRestrict, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

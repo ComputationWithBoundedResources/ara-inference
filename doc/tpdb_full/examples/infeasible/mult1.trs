@@ -1,0 +1,15 @@
+(COMMENT: 0(n^3), does not work with polynomial interpretations)
+(VAR x y)
+(DATATYPES
+  Nat = µX.< 0, s(X) >
+)
+(SIGNATURES
+  add :: Nat x Nat -> Nat
+  mult :: Nat x Nat -> Nat
+)
+(RULES
+  add(0,y) -> y
+  add(s(x),y) -> s(add(x,y))
+  mult(0,y) -> 0
+  mult(s(x),y) -> add(mult(x,y),y)
+)

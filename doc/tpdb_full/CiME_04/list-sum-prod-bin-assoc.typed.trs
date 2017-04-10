@@ -1,0 +1,31 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    l x y z)
+(DATATYPES
+    A = µX.< #, 1(X), nil, cons(X, X) >)
+(SIGNATURES
+    0 :: [A] -> A
+    + :: [A x A] -> A
+    * :: [A x A] -> A
+    sum :: [A] -> A
+    prod :: [A] -> A)
+(RULES
+    0(#()) -> #()
+    +(x,#()) -> x
+    +(#(),x) -> x
+    +(0(x),0(y)) -> 0(+(x,y))
+    +(0(x),1(y)) -> 1(+(x,y))
+    +(1(x),0(y)) -> 1(+(x,y))
+    +(1(x),1(y)) -> 0(+(+(x,y)
+                       ,1(#())))
+    +(+(x,y),z) -> +(x,+(y,z))
+    *(#(),x) -> #()
+    *(0(x),y) -> 0(*(x,y))
+    *(1(x),y) -> +(0(*(x,y)),y)
+    *(*(x,y),z) -> *(x,*(y,z))
+    sum(nil()) -> 0(#())
+    sum(cons(x,l)) -> +(x,sum(l))
+    prod(nil()) -> 1(#())
+    prod(cons(x,l)) -> *(x,prod(l)))

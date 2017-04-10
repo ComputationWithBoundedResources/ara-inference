@@ -1,0 +1,27 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          f(0(),y,0(),u) -> true()
+          f(0(),y,s(z),u) -> false()
+          f(s(x),0(),z,u) -> f(x,u,minus(z,s(x)),u)
+          f(s(x),s(y),z,u) -> if(le(x,y),f(s(x),minus(y,x),z,u),f(x,u,z,u))
+          if(false(),x,y) -> y
+          if(true(),x,y) -> x
+          le(0(),y) -> true()
+          le(s(x),0()) -> false()
+          le(s(x),s(y)) -> le(x,y)
+          minus(0(),y) -> 0()
+          minus(s(x),0()) -> s(x)
+          minus(s(x),s(y)) -> minus(x,y)
+          perfectp(0()) -> false()
+          perfectp(s(x)) -> f(x,s(0()),s(x),s(x))
+      - Signature:
+          {f/4,if/3,le/2,minus/2,perfectp/1} / {0/0,false/0,s/1,true/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {f,if,le,minus,perfectp} and constructors {0,false,s,true}
+  + Applied Processor:
+      NaturalMI {miDimension = 2, miDegree = 2, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

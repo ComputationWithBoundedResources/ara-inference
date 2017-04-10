@@ -1,0 +1,11 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< +(X, X) >)
+(SIGNATURES
+    * :: [A x A] -> A)
+(RULES
+    *(x,+(y,z)) -> +(*(x,y),*(x,z)))

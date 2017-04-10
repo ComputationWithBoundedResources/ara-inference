@@ -1,0 +1,22 @@
+(VAR n x y)
+
+(DATATYPES a = µX. < e, 0, a(X), s(X), b(X) >
+ )
+
+(SIGNATURES
+   lcs :: a x a -> a
+   max :: a x a x a -> a
+ )
+
+(RULES
+  lcs(e,y) -> 0
+  lcs(x,e) -> 0
+  lcs(a(x),a(y)) -> s(lcs(x,y))
+  lcs(b(x),b(y)) -> s(lcs(x,y))
+  lcs(a(x),b(y)) -> max(a(x),lcs(x,b(y)),lcs(a(x),y))
+  lcs(b(x),a(y)) -> max(b(x),lcs(x,a(y)),lcs(b(x),y))
+
+  max(n,x,0) -> 0
+  max(n, 0,y) -> 0
+  max(s(n),s(x),s(y)) -> max(n,x,y)
+)

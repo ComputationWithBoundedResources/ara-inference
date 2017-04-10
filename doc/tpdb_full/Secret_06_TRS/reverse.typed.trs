@@ -1,0 +1,36 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x xs y ys zs)
+(DATATYPES
+    A = µX.< nil, true, cons(X, X), false >)
+(SIGNATURES
+    isEmpty :: [A] -> A
+    last :: [A] -> A
+    dropLast :: [A] -> A
+    append :: [A x A] -> A
+    reverse :: [A] -> A
+    rev :: [A x A] -> A
+    if :: [A x A x A x A] -> A)
+(RULES
+    isEmpty(nil()) -> true()
+    isEmpty(cons(x,xs)) -> false()
+    last(cons(x,nil())) -> x
+    last(cons(x,cons(y,ys))) ->
+      last(cons(y,ys))
+    dropLast(nil()) -> nil()
+    dropLast(cons(x,nil())) -> nil()
+    dropLast(cons(x,cons(y,ys))) ->
+      cons(x,dropLast(cons(y,ys)))
+    append(nil(),ys) -> ys
+    append(cons(x,xs),ys) -> cons(x
+                                 ,append(xs,ys))
+    reverse(xs) -> rev(xs,nil())
+    rev(xs,ys) -> if(isEmpty(xs)
+                    ,dropLast(xs)
+                    ,append(ys,last(xs))
+                    ,ys)
+    if(true(),xs,ys,zs) -> zs
+    if(false(),xs,ys,zs) -> rev(xs
+                               ,ys))

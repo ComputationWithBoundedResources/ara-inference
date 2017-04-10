@@ -1,0 +1,15 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x xs y ys)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil >)
+(SIGNATURES
+    append :: [A x A] -> A
+    goal :: [A x A] -> A)
+(RULES
+    append(Cons(x,xs),ys) -> Cons(x
+                                 ,append(xs,ys))
+    append(Nil(),ys) -> ys
+    goal(x,y) -> append(x,y))

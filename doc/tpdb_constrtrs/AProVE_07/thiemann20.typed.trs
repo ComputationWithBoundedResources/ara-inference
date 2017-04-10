@@ -1,0 +1,31 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    sum x y z)
+(DATATYPES
+    A = µX.< 0, false, s(X), true >)
+(SIGNATURES
+    gt :: [A x A] -> A
+    plus :: [A x A] -> A
+    double :: [A] -> A
+    average :: [A x A] -> A
+    aver :: [A x A] -> A
+    if :: [A x A x A] -> A)
+(RULES
+    gt(0(),y) -> false()
+    gt(s(x),0()) -> true()
+    gt(s(x),s(y)) -> gt(x,y)
+    plus(0(),y) -> y
+    plus(s(x),y) -> s(plus(x,y))
+    double(0()) -> 0()
+    double(s(x)) -> s(s(double(x)))
+    average(x,y) -> aver(plus(x,y)
+                        ,0())
+    aver(sum,z) -> if(gt(sum
+                        ,double(z))
+                     ,sum
+                     ,z)
+    if(true(),sum,z) -> aver(sum
+                            ,s(z))
+    if(false(),sum,z) -> z)

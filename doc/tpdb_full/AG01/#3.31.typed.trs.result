@@ -1,0 +1,1 @@
+{"rOutcome":{"tag":"Success","contents":"MAYBE"},"rProblem":"/home/schnecki/Documents/Jobs/UIBK/CL/amortized-resource-analysis/inference/doc/tpdb_full/AG01/#3.31.typed","rTime":0.281674,"rTool":{"tProcessor":[],"tName":"Poly","tArguments":["--complexity","rci","-s","polys"],"tExtension":"trs","tCommand":"tct-amo"}}

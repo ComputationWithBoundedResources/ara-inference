@@ -1,0 +1,28 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< 0, s(X), true, false, 1, logZeroError >)
+(SIGNATURES
+    lt :: [A x A] -> A
+    logarithm :: [A] -> A
+    ifa :: [A x A] -> A
+    help :: [A x A] -> A
+    ifb :: [A x A x A] -> A
+    half :: [A] -> A)
+(RULES
+    lt(0(),s(x)) -> true()
+    lt(x,0()) -> false()
+    lt(s(x),s(y)) -> lt(x,y)
+    logarithm(x) -> ifa(lt(0(),x),x)
+    ifa(true(),x) -> help(x,1())
+    ifa(false(),x) -> logZeroError()
+    help(x,y) -> ifb(lt(y,x),x,y)
+    ifb(true(),x,y) -> help(half(x)
+                           ,s(y))
+    ifb(false(),x,y) -> y
+    half(0()) -> 0()
+    half(s(0())) -> 0()
+    half(s(s(x))) -> s(half(x)))

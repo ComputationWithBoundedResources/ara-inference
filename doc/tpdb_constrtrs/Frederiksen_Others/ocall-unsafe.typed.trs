@@ -1,0 +1,17 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< S(X), 0 >)
+(SIGNATURES
+    dbl :: [A x A] -> A
+    unsafe :: [A] -> A)
+(RULES
+    dbl(S(0()),S(0())) ->
+      S(S(S(S(0()))))
+    unsafe(S(x)) -> dbl(unsafe(x)
+                       ,0())
+    unsafe(0()) -> 0()
+    dbl(0(),y) -> y)

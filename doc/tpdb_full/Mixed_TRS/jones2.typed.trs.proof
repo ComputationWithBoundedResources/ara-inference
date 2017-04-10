@@ -1,0 +1,16 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          f(cons(x,k),l) -> g(k,l,cons(x,k))
+          f(empty(),l) -> l
+          g(a,b,c) -> f(a,cons(b,c))
+      - Signature:
+          {f/2,g/3} / {cons/2,empty/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {f,g} and constructors {cons,empty}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

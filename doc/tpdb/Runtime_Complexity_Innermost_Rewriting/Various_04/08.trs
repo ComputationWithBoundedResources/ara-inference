@@ -1,0 +1,27 @@
+(VAR w x x1 x2 x3 x4 y z )
+(STRATEGY INNERMOST)
+(RULES 
+        f1(a,x) -> g1(x,x)
+        f1(x,a) -> g2(x,x)
+        f2(a,x) -> g1(x,x)
+        f2(x,a) -> g2(x,x)
+        g1(a,x) -> h1(x)
+        g1(x,a) -> h2(x)
+        g2(a,x) -> h1(x)
+        g2(x,a) -> h2(x)
+        h1(a) -> i
+        h2(a) -> i
+        e1(h1(w),h2(w),x,y,z,w) -> e2(x,x,y,z,z,w)
+        e1(x1,x1,x,y,z,a) -> e5(x1,x,y,z)
+        e2(f1(w,w),x,y,z,f2(w,w),w) -> e3(x,y,x,y,y,z,y,z,x,y,z,w)
+        e2(x,x,y,z,z,a) -> e6(x,y,z)
+        e2(i,x,y,z,i,a) -> e6(x,y,z)
+        e3(x1,x1,x2,x2,x3,x3,x4,x4,x,y,z,w) -> e4(x1,x1,x2,x2,x3,x3,x4,x4,x,y,z,w)
+        e3(x,y,x,y,y,z,y,z,x,y,z,a) -> e6(x,y,z)
+        e4(g1(w,w),x1,g2(w,w),x1,g1(w,w),x1,g2(w,w),x1,x,y,z,w) -> e1(x1,x1,x,y,z,w)
+        e4(i,x1,i,x1,i,x1,i,x1,x,y,z,a) -> e5(x1,x,y,z)
+        e4(x,x,x,x,x,x,x,x,x,x,x,a) -> e6(x,x,x)
+        e5(i,x,y,z) -> e6(x,y,z)
+        
+)
+    

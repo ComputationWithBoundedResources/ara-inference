@@ -1,0 +1,84 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    m n x y z)
+(DATATYPES
+    A = µX.< true, false, s(X), 0, nil, cons(X, X), app(X, X), error, b, c >)
+(SIGNATURES
+    average :: [A x A] -> A
+    if :: [A x A x A] -> A
+    averIter :: [A x A x A] -> A
+    ifIter :: [A x A x A x A] -> A
+    append :: [A x A] -> A
+    low :: [A x A] -> A
+    if_low :: [A x A x A] -> A
+    high :: [A x A] -> A
+    if_high :: [A x A x A] -> A
+    quicksort :: [A] -> A
+    ifquick :: [A x A] -> A
+    plus :: [A x A] -> A
+    isempty :: [A] -> A
+    head :: [A] -> A
+    tail :: [A] -> A
+    ge :: [A x A] -> A
+    a :: [] -> A)
+(RULES
+    average(x,y) -> if(ge(x,y),x,y)
+    if(true(),x,y) -> averIter(y
+                              ,x
+                              ,y)
+    if(false(),x,y) -> averIter(x
+                               ,y
+                               ,x)
+    averIter(x,y,z) -> ifIter(ge(x
+                                ,y)
+                             ,x
+                             ,y
+                             ,z)
+    ifIter(true(),x,y,z) -> z
+    ifIter(false(),x,y,z) ->
+      averIter(plus(x,s(s(s(0()))))
+              ,plus(y,s(0()))
+              ,plus(z,s(0())))
+    append(nil(),y) -> y
+    append(cons(n,x),y) -> cons(n
+                               ,app(x,y))
+    low(n,nil()) -> nil()
+    low(n,cons(m,x)) -> if_low(ge(m
+                                 ,n)
+                              ,n
+                              ,cons(m,x))
+    if_low(false(),n,cons(m,x)) ->
+      cons(m,low(n,x))
+    if_low(true(),n,cons(m,x)) ->
+      low(n,x)
+    high(n,nil()) -> nil()
+    high(n,cons(m,x)) ->
+      if_high(ge(m,n),n,cons(m,x))
+    if_high(false(),n,cons(m,x)) ->
+      high(n,x)
+    if_high(true(),n,cons(m,x)) ->
+      cons(average(m,m),high(n,x))
+    quicksort(x) ->
+      ifquick(isempty(x),x)
+    ifquick(true(),x) -> nil()
+    ifquick(false(),x) ->
+      append(quicksort(low(head(x)
+                          ,tail(x)))
+            ,cons(tail(x)
+                 ,quicksort(high(head(x)
+                                ,tail(x)))))
+    plus(0(),y) -> y
+    plus(s(x),y) -> s(plus(x,y))
+    isempty(nil()) -> true()
+    isempty(cons(n,x)) -> false()
+    head(nil()) -> error()
+    head(cons(n,x)) -> n
+    tail(nil()) -> nil()
+    tail(cons(n,x)) -> x
+    ge(x,0()) -> true()
+    ge(0(),s(y)) -> false()
+    ge(s(x),s(y)) -> ge(x,y)
+    a() -> b()
+    a() -> c())

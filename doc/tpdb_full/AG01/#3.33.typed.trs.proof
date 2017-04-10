@@ -1,0 +1,61 @@
+WORST_CASE(?,O(n^1))
+* Step 1: NaturalMI WORST_CASE(?,O(n^1))
+    + Considered Problem:
+        - Strict TRS:
+            p(f(f(x))) -> q(f(g(x)))
+            p(g(g(x))) -> q(g(f(x)))
+            q(f(f(x))) -> p(f(g(x)))
+            q(g(g(x))) -> p(g(f(x)))
+        - Signature:
+            {p/1,q/1} / {f/1,g/1}
+        - Obligation:
+            innermost runtime complexity wrt. defined symbols {p,q} and constructors {f,g}
+    + Applied Processor:
+        NaturalMI {miDimension = 2, miDegree = 2, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+    + Details:
+        We apply a matrix interpretation of kind constructor based matrix interpretation:
+        The following argument positions are considered usable:
+          none
+        
+        Following symbols are considered usable:
+          {p,q}
+        TcT has computed the following interpretation:
+          p(f) = [0 1] x1 + [0]
+                 [0 0]      [1]
+          p(g) = [1 2] x1 + [3]
+                 [0 0]      [0]
+          p(p) = [2 0] x1 + [0]
+                 [0 3]      [4]
+          p(q) = [2 0] x1 + [0]
+                 [0 3]      [4]
+        
+        Following rules are strictly oriented:
+        p(f(f(x))) = [2]           
+                     [7]           
+                   > [0]           
+                     [7]           
+                   = q(f(g(x)))    
+        
+        p(g(g(x))) = [2 4] x + [12]
+                     [0 0]     [4] 
+                   > [0 2] x + [10]
+                     [0 0]     [4] 
+                   = q(g(f(x)))    
+        
+        q(f(f(x))) = [2]           
+                     [7]           
+                   > [0]           
+                     [7]           
+                   = p(f(g(x)))    
+        
+        q(g(g(x))) = [2 4] x + [12]
+                     [0 0]     [4] 
+                   > [0 2] x + [10]
+                     [0 0]     [4] 
+                   = p(g(f(x)))    
+        
+        
+        Following rules are (at-least) weakly oriented:
+        
+
+WORST_CASE(?,O(n^1))

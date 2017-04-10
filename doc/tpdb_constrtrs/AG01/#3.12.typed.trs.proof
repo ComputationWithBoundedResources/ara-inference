@@ -1,0 +1,19 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          app(add(n,x),y) -> add(n,app(x,y))
+          app(nil(),y) -> y
+          reverse(add(n,x)) -> app(reverse(x),add(n,nil()))
+          reverse(nil()) -> nil()
+          shuffle(add(n,x)) -> add(n,shuffle(reverse(x)))
+          shuffle(nil()) -> nil()
+      - Signature:
+          {app/2,reverse/1,shuffle/1} / {add/2,nil/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {app,reverse,shuffle} and constructors {add,nil}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

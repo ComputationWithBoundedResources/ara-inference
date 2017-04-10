@@ -1,0 +1,24 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< nil, .(X, X), ++(X, X), if(X, X, X), <=(X, X) >)
+(SIGNATURES
+    qsort :: [A] -> A
+    lowers :: [A x A] -> A
+    greaters :: [A x A] -> A)
+(RULES
+    qsort(nil()) -> nil()
+    qsort(.(x,y)) ->
+      ++(qsort(lowers(x,y))
+        ,.(x,qsort(greaters(x,y))))
+    lowers(x,nil()) -> nil()
+    lowers(x,.(y,z)) -> if(<=(y,x)
+                          ,.(y,lowers(x,z))
+                          ,lowers(x,z))
+    greaters(x,nil()) -> nil()
+    greaters(x,.(y,z)) -> if(<=(y,x)
+                            ,greaters(x,z)
+                            ,.(y,greaters(x,z))))

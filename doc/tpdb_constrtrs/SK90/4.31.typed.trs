@@ -1,0 +1,18 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< nil, .(X, X), if(X, X, X), =(X, X) >)
+(SIGNATURES
+    purge :: [A] -> A
+    remove :: [A x A] -> A)
+(RULES
+    purge(nil()) -> nil()
+    purge(.(x,y)) -> .(x
+                      ,purge(remove(x,y)))
+    remove(x,nil()) -> nil()
+    remove(x,.(y,z)) -> if(=(x,y)
+                          ,remove(x,z)
+                          ,.(y,remove(x,z))))

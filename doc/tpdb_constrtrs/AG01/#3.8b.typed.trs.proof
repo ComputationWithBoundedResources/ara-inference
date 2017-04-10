@@ -1,0 +1,25 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          if_minus(false(),s(x),y) -> s(minus(x,y))
+          if_minus(true(),s(x),y) -> 0()
+          le(0(),y) -> true()
+          le(s(x),0()) -> false()
+          le(s(x),s(y)) -> le(x,y)
+          log(s(0())) -> 0()
+          log(s(s(x))) -> s(log(s(quot(x,s(s(0()))))))
+          minus(0(),y) -> 0()
+          minus(s(x),y) -> if_minus(le(s(x),y),s(x),y)
+          quot(0(),s(y)) -> 0()
+          quot(s(x),s(y)) -> s(quot(minus(x,y),s(y)))
+      - Signature:
+          {if_minus/3,le/2,log/1,minus/2,quot/2} / {0/0,false/0,s/1,true/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {if_minus,le,log,minus,quot} and constructors {0,false,s
+          ,true}
+  + Applied Processor:
+      NaturalPI {shape = Mixed 3, restrict = NoRestrict, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

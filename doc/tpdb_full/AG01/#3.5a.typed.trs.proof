@@ -1,0 +1,25 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          if_mod(false(),s(x),s(y)) -> s(x)
+          if_mod(true(),s(x),s(y)) -> mod(minus(x,y),s(y))
+          le(0(),y) -> true()
+          le(s(x),0()) -> false()
+          le(s(x),s(y)) -> le(x,y)
+          minus(x,0()) -> x
+          minus(x,s(y)) -> pred(minus(x,y))
+          mod(0(),y) -> 0()
+          mod(s(x),0()) -> 0()
+          mod(s(x),s(y)) -> if_mod(le(y,x),s(x),s(y))
+          pred(s(x)) -> x
+      - Signature:
+          {if_mod/3,le/2,minus/2,mod/2,pred/1} / {0/0,false/0,s/1,true/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {if_mod,le,minus,mod,pred} and constructors {0,false,s
+          ,true}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

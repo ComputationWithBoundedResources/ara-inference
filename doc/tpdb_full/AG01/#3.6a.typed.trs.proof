@@ -1,0 +1,112 @@
+WORST_CASE(?,O(n^2))
+* Step 1: NaturalMI WORST_CASE(?,O(n^2))
+    + Considered Problem:
+        - Strict TRS:
+            gcd(0(),y) -> y
+            gcd(s(x),0()) -> s(x)
+            gcd(s(x),s(y)) -> if_gcd(le(y,x),s(x),s(y))
+            if_gcd(false(),s(x),s(y)) -> gcd(minus(y,x),s(x))
+            if_gcd(true(),s(x),s(y)) -> gcd(minus(x,y),s(y))
+            le(0(),y) -> true()
+            le(s(x),0()) -> false()
+            le(s(x),s(y)) -> le(x,y)
+            minus(x,0()) -> x
+            minus(s(x),s(y)) -> minus(x,y)
+        - Signature:
+            {gcd/2,if_gcd/3,le/2,minus/2} / {0/0,false/0,s/1,true/0}
+        - Obligation:
+            innermost runtime complexity wrt. defined symbols {gcd,if_gcd,le,minus} and constructors {0,false,s,true}
+    + Applied Processor:
+        NaturalMI {miDimension = 2, miDegree = 2, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+    + Details:
+        We apply a matrix interpretation of kind constructor based matrix interpretation:
+        The following argument positions are considered usable:
+          uargs(gcd) = {1},
+          uargs(if_gcd) = {1}
+        
+        Following symbols are considered usable:
+          {gcd,if_gcd,le,minus}
+        TcT has computed the following interpretation:
+               p(0) = [1]                                 
+                      [0]                                 
+           p(false) = [0]                                 
+                      [0]                                 
+             p(gcd) = [2 4] x1 + [2 0] x2 + [0]           
+                      [1 1]      [1 1]      [7]           
+          p(if_gcd) = [4 0] x1 + [2 0] x2 + [2 0] x3 + [1]
+                      [0 0]      [1 1]      [1 1]      [7]
+              p(le) = [0 1] x2 + [1]                      
+                      [0 4]      [0]                      
+           p(minus) = [1 0] x1 + [1]                      
+                      [0 2]      [0]                      
+               p(s) = [1 4] x1 + [1]                      
+                      [0 1]      [2]                      
+            p(true) = [0]                                 
+                      [0]                                 
+        
+        Following rules are strictly oriented:
+                       gcd(0(),y) = [2 0] y + [2]            
+                                    [1 1]     [8]            
+                                  > [1 0] y + [0]            
+                                    [0 1]     [0]            
+                                  = y                        
+        
+                    gcd(s(x),0()) = [2 12] x + [12]          
+                                    [1  5]     [11]          
+                                  > [1 4] x + [1]            
+                                    [0 1]     [2]            
+                                  = s(x)                     
+        
+                   gcd(s(x),s(y)) = [2 12] x + [2 8] y + [12]
+                                    [1  5]     [1 5]     [13]
+                                  > [2 12] x + [2 8] y + [9] 
+                                    [1  5]     [1 5]     [13]
+                                  = if_gcd(le(y,x),s(x),s(y))
+        
+        if_gcd(false(),s(x),s(y)) = [2 8] x + [2 8] y + [5]  
+                                    [1 5]     [1 5]     [13] 
+                                  > [2 8] x + [2 8] y + [4]  
+                                    [1 5]     [1 2]     [11] 
+                                  = gcd(minus(y,x),s(x))     
+        
+         if_gcd(true(),s(x),s(y)) = [2 8] x + [2 8] y + [5]  
+                                    [1 5]     [1 5]     [13] 
+                                  > [2 8] x + [2 8] y + [4]  
+                                    [1 2]     [1 5]     [11] 
+                                  = gcd(minus(x,y),s(y))     
+        
+                        le(0(),y) = [0 1] y + [1]            
+                                    [0 4]     [0]            
+                                  > [0]                      
+                                    [0]                      
+                                  = true()                   
+        
+                     le(s(x),0()) = [1]                      
+                                    [0]                      
+                                  > [0]                      
+                                    [0]                      
+                                  = false()                  
+        
+                    le(s(x),s(y)) = [0 1] y + [3]            
+                                    [0 4]     [8]            
+                                  > [0 1] y + [1]            
+                                    [0 4]     [0]            
+                                  = le(x,y)                  
+        
+                     minus(x,0()) = [1 0] x + [1]            
+                                    [0 2]     [0]            
+                                  > [1 0] x + [0]            
+                                    [0 1]     [0]            
+                                  = x                        
+        
+                 minus(s(x),s(y)) = [1 4] x + [2]            
+                                    [0 2]     [4]            
+                                  > [1 0] x + [1]            
+                                    [0 2]     [0]            
+                                  = minus(x,y)               
+        
+        
+        Following rules are (at-least) weakly oriented:
+        
+
+WORST_CASE(?,O(n^2))

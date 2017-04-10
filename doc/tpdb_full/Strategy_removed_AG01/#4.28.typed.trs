@@ -1,0 +1,17 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x)
+(DATATYPES
+    A = µX.< 0, s(X) >)
+(SIGNATURES
+    half :: [A] -> A
+    bits :: [A] -> A)
+(RULES
+    half(0()) -> 0()
+    half(s(0())) -> 0()
+    half(s(s(x))) -> s(half(x))
+    bits(0()) -> 0()
+    bits(s(x)) ->
+      s(bits(half(s(x)))))

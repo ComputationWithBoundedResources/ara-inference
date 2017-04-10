@@ -1,0 +1,12 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< not(X), band(X, X) >)
+(SIGNATURES
+    and :: [A x A x A] -> A)
+(RULES
+    and(not(not(x)),y,not(z)) ->
+      and(y,band(x,z),x))

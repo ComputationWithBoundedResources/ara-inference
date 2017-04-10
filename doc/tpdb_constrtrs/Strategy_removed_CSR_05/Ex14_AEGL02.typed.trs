@@ -1,0 +1,17 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    X Y)
+(DATATYPES
+    A = µX.< cons(X, X), s(X), nil, 0 >)
+(SIGNATURES
+    from :: [A] -> A
+    length :: [A] -> A
+    length1 :: [A] -> A)
+(RULES
+    from(X) -> cons(X,from(s(X)))
+    length(nil()) -> 0()
+    length(cons(X,Y)) ->
+      s(length1(Y))
+    length1(X) -> length(X))

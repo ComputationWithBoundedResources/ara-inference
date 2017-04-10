@@ -1,0 +1,14 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x)
+(DATATYPES
+    A = µX.< 0, s(X), +(X, X) >)
+(SIGNATURES
+    fib :: [A] -> A)
+(RULES
+    fib(0()) -> 0()
+    fib(s(0())) -> s(0())
+    fib(s(s(x))) -> +(fib(s(x))
+                     ,fib(x)))

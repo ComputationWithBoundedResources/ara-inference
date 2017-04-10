@@ -1,0 +1,22 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    N X XS Y)
+(DATATYPES
+    A = µX.< s(X), 0, cons(X, X) >)
+(SIGNATURES
+    fib :: [A] -> A
+    fib1 :: [A x A] -> A
+    add :: [A x A] -> A
+    sel :: [A x A] -> A)
+(RULES
+    fib(N) -> sel(N
+                 ,fib1(s(0()),s(0())))
+    fib1(X,Y) -> cons(X
+                     ,fib1(Y,add(X,Y)))
+    add(0(),X) -> X
+    add(s(X),Y) -> s(add(X,Y))
+    sel(0(),cons(X,XS)) -> X
+    sel(s(N),cons(X,XS)) -> sel(N
+                               ,XS))

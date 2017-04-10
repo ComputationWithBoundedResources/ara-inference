@@ -1,0 +1,1 @@
+{"rOutcome":{"tag":"Timeout","contents":[]},"rProblem":"/home/schnecki/Documents/Jobs/UIBK/CL/amortized-resource-analysis/inference/doc/tpdb_full/Mixed_TRS/minsort.typed","rTime":10.005992,"rTool":{"tProcessor":[],"tName":"Poly","tArguments":["--complexity","rci","-s","polys"],"tExtension":"trs","tCommand":"tct-amo"}}

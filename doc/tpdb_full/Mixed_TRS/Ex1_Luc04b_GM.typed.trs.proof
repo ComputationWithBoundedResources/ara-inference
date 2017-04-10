@@ -1,0 +1,37 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          a__head(X) -> head(X)
+          a__head(cons(X,XS)) -> mark(X)
+          a__incr(X) -> incr(X)
+          a__incr(cons(X,XS)) -> cons(s(mark(X)),incr(XS))
+          a__nats() -> cons(0(),incr(nats()))
+          a__nats() -> nats()
+          a__odds() -> a__incr(a__pairs())
+          a__odds() -> odds()
+          a__pairs() -> cons(0(),incr(odds()))
+          a__pairs() -> pairs()
+          a__tail(X) -> tail(X)
+          a__tail(cons(X,XS)) -> mark(XS)
+          mark(0()) -> 0()
+          mark(cons(X1,X2)) -> cons(mark(X1),X2)
+          mark(head(X)) -> a__head(mark(X))
+          mark(incr(X)) -> a__incr(mark(X))
+          mark(nats()) -> a__nats()
+          mark(nil()) -> nil()
+          mark(odds()) -> a__odds()
+          mark(pairs()) -> a__pairs()
+          mark(s(X)) -> s(mark(X))
+          mark(tail(X)) -> a__tail(mark(X))
+      - Signature:
+          {a__head/1,a__incr/1,a__nats/0,a__odds/0,a__pairs/0,a__tail/1,mark/1} / {0/0,cons/2,head/1,incr/1,nats/0
+          ,nil/0,odds/0,pairs/0,s/1,tail/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {a__head,a__incr,a__nats,a__odds,a__pairs,a__tail
+          ,mark} and constructors {0,cons,head,incr,nats,nil,odds,pairs,s,tail}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

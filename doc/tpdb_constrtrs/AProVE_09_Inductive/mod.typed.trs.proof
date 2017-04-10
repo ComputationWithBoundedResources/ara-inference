@@ -1,0 +1,27 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          gt(0(),y) -> false()
+          gt(s(x),0()) -> true()
+          gt(s(x),s(y)) -> gt(x,y)
+          if(false(),x,y) -> 0()
+          if(true(),x,y) -> s(minus(x,y))
+          if1(false(),x,y) -> mod(minus(x,y),y)
+          if1(true(),x,y) -> x
+          lt(x,0()) -> false()
+          lt(0(),s(x)) -> true()
+          lt(s(x),s(y)) -> lt(x,y)
+          minus(0(),y) -> 0()
+          minus(s(x),y) -> if(gt(s(x),y),x,y)
+          mod(x,0()) -> 0()
+          mod(x,s(y)) -> if1(lt(x,s(y)),x,s(y))
+      - Signature:
+          {gt/2,if/3,if1/3,lt/2,minus/2,mod/2} / {0/0,false/0,s/1,true/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {gt,if,if1,lt,minus,mod} and constructors {0,false,s,true}
+  + Applied Processor:
+      NaturalPI {shape = Mixed 3, restrict = NoRestrict, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

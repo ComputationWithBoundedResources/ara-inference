@@ -1,0 +1,15 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< not(X), or(X, X) >)
+(SIGNATURES
+    implies :: [A x A] -> A)
+(RULES
+    implies(not(x),y) -> or(x,y)
+    implies(not(x),or(y,z)) ->
+      implies(y,or(x,z))
+    implies(x,or(y,z)) -> or(y
+                            ,implies(x,z)))

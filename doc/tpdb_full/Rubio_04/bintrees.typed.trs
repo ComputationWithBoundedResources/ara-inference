@@ -1,0 +1,21 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    U V W X Y Z)
+(DATATYPES
+    A = µX.< leaf, cons(X, X), false, true >)
+(SIGNATURES
+    concat :: [A x A] -> A
+    lessleaves :: [A x A] -> A)
+(RULES
+    concat(leaf(),Y) -> Y
+    concat(cons(U,V),Y) -> cons(U
+                               ,concat(V,Y))
+    lessleaves(X,leaf()) -> false()
+    lessleaves(leaf(),cons(W,Z)) ->
+      true()
+    lessleaves(cons(U,V)
+              ,cons(W,Z)) ->
+      lessleaves(concat(U,V)
+                ,concat(W,Z)))

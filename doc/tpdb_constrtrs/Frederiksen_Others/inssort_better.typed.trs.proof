@@ -1,0 +1,25 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          insert(x,Nil()) -> Cons(x,Nil())
+          insert(x',Cons(x,xs)) -> insert[Ite][False][Ite](<(x',x),x',Cons(x,xs))
+          inssort(xs) -> isort(xs,Nil())
+          isort(Cons(x,xs),r) -> isort(xs,insert(x,r))
+          isort(Nil(),r) -> r
+      - Weak TRS:
+          <(x,0()) -> False()
+          <(0(),S(y)) -> True()
+          <(S(x),S(y)) -> <(x,y)
+          insert[Ite][False][Ite](False(),x',Cons(x,xs)) -> Cons(x,insert(x',xs))
+          insert[Ite][False][Ite](True(),x,r) -> Cons(x,r)
+      - Signature:
+          {</2,insert/2,insert[Ite][False][Ite]/3,inssort/1,isort/2} / {0/0,Cons/2,False/0,Nil/0,S/1,True/0}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {<,insert,insert[Ite][False][Ite],inssort
+          ,isort} and constructors {0,Cons,False,Nil,S,True}
+  + Applied Processor:
+      NaturalPI {shape = Mixed 3, restrict = NoRestrict, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

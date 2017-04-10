@@ -1,0 +1,27 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    u v x y)
+(DATATYPES
+    A = µX.< true, s(X), 0, false >)
+(SIGNATURES
+    minus :: [A x A] -> A
+    cond :: [A x A x A] -> A
+    min :: [A x A] -> A
+    equal :: [A x A] -> A)
+(RULES
+    minus(x,y) -> cond(equal(min(x
+                                ,y)
+                            ,y)
+                      ,x
+                      ,y)
+    cond(true(),x,y) -> s(minus(x
+                               ,s(y)))
+    min(0(),v) -> 0()
+    min(u,0()) -> 0()
+    min(s(u),s(v)) -> s(min(u,v))
+    equal(0(),0()) -> true()
+    equal(s(x),0()) -> false()
+    equal(0(),s(y)) -> false()
+    equal(s(x),s(y)) -> equal(x,y))

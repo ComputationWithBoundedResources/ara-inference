@@ -1,0 +1,29 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y)
+(DATATYPES
+    A = µX.< 0, true, s(X), false >)
+(SIGNATURES
+    even :: [A] -> A
+    half :: [A] -> A
+    plus :: [A x A] -> A
+    times :: [A x A] -> A
+    if_times :: [A x A x A] -> A)
+(RULES
+    even(0()) -> true()
+    even(s(0())) -> false()
+    even(s(s(x))) -> even(x)
+    half(0()) -> 0()
+    half(s(s(x))) -> s(half(x))
+    plus(0(),y) -> y
+    plus(s(x),y) -> s(plus(x,y))
+    times(0(),y) -> 0()
+    times(s(x),y) ->
+      if_times(even(s(x)),s(x),y)
+    if_times(true(),s(x),y) ->
+      plus(times(half(s(x)),y)
+          ,times(half(s(x)),y))
+    if_times(false(),s(x),y) ->
+      plus(y,times(x,y)))

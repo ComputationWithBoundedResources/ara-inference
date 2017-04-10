@@ -1,0 +1,34 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    b x y z)
+(DATATYPES
+    A = µX.< 0, true, s(X), false, div_by_zero >)
+(SIGNATURES
+    ge :: [A x A] -> A
+    minus :: [A x A] -> A
+    id_inc :: [A] -> A
+    quot :: [A x A] -> A
+    div :: [A x A x A] -> A
+    if :: [A x A x A x A x A] -> A)
+(RULES
+    ge(x,0()) -> true()
+    ge(0(),s(y)) -> false()
+    ge(s(x),s(y)) -> ge(x,y)
+    minus(x,0()) -> x
+    minus(0(),y) -> 0()
+    minus(s(x),s(y)) -> minus(x,y)
+    id_inc(x) -> x
+    id_inc(x) -> s(x)
+    quot(x,y) -> div(x,y,0())
+    div(x,y,z) -> if(ge(y,s(0()))
+                    ,ge(x,y)
+                    ,x
+                    ,y
+                    ,z)
+    if(false(),b,x,y,z) ->
+      div_by_zero()
+    if(true(),false(),x,y,z) -> z
+    if(true(),true(),x,y,z) ->
+      div(minus(x,y),y,id_inc(z)))

@@ -1,0 +1,52 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    N X XS Y YS ZS)
+(DATATYPES
+    A = µX.< tt, pair(X, X), cons(X, X), n__natsFrom(X), n__s(X), 0, nil >)
+(SIGNATURES
+    U11 :: [A x A x A x A] -> A
+    U12 :: [A x A] -> A
+    afterNth :: [A x A] -> A
+    and :: [A x A] -> A
+    fst :: [A] -> A
+    head :: [A] -> A
+    natsFrom :: [A] -> A
+    sel :: [A x A] -> A
+    snd :: [A] -> A
+    splitAt :: [A x A] -> A
+    tail :: [A] -> A
+    take :: [A x A] -> A
+    s :: [A] -> A
+    activate :: [A] -> A)
+(RULES
+    U11(tt(),N,X,XS) ->
+      U12(splitAt(activate(N)
+                 ,activate(XS))
+         ,activate(X))
+    U12(pair(YS,ZS),X) ->
+      pair(cons(activate(X),YS),ZS)
+    afterNth(N,XS) -> snd(splitAt(N
+                                 ,XS))
+    and(tt(),X) -> activate(X)
+    fst(pair(X,Y)) -> X
+    head(cons(N,XS)) -> N
+    natsFrom(N) -> cons(N
+                       ,n__natsFrom(n__s(N)))
+    sel(N,XS) -> head(afterNth(N
+                              ,XS))
+    snd(pair(X,Y)) -> Y
+    splitAt(0(),XS) -> pair(nil()
+                           ,XS)
+    splitAt(s(N),cons(X,XS)) ->
+      U11(tt(),N,X,activate(XS))
+    tail(cons(N,XS)) -> activate(XS)
+    take(N,XS) -> fst(splitAt(N,XS))
+    natsFrom(X) -> n__natsFrom(X)
+    s(X) -> n__s(X)
+    activate(n__natsFrom(X)) ->
+      natsFrom(activate(X))
+    activate(n__s(X)) ->
+      s(activate(X))
+    activate(X) -> X)

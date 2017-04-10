@@ -1,0 +1,47 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    IL L M N X X1 X2)
+(DATATYPES
+    A = µX.< cons(X, X), 0, n__zeros, tt, s(X), n__take(X, X), nil >)
+(SIGNATURES
+    zeros :: [] -> A
+    U11 :: [A x A] -> A
+    U12 :: [A x A] -> A
+    U21 :: [A x A x A x A] -> A
+    U22 :: [A x A x A x A] -> A
+    U23 :: [A x A x A x A] -> A
+    length :: [A] -> A
+    take :: [A x A] -> A
+    activate :: [A] -> A)
+(RULES
+    zeros() -> cons(0(),n__zeros())
+    U11(tt(),L) -> U12(tt()
+                      ,activate(L))
+    U12(tt(),L) ->
+      s(length(activate(L)))
+    U21(tt(),IL,M,N) -> U22(tt()
+                           ,activate(IL)
+                           ,activate(M)
+                           ,activate(N))
+    U22(tt(),IL,M,N) -> U23(tt()
+                           ,activate(IL)
+                           ,activate(M)
+                           ,activate(N))
+    U23(tt(),IL,M,N) ->
+      cons(activate(N)
+          ,n__take(activate(M)
+                  ,activate(IL)))
+    length(nil()) -> 0()
+    length(cons(N,L)) -> U11(tt()
+                            ,activate(L))
+    take(0(),IL) -> nil()
+    take(s(M),cons(N,IL)) ->
+      U21(tt(),activate(IL),M,N)
+    zeros() -> n__zeros()
+    take(X1,X2) -> n__take(X1,X2)
+    activate(n__zeros()) -> zeros()
+    activate(n__take(X1,X2)) ->
+      take(activate(X1),activate(X2))
+    activate(X) -> X)

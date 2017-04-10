@@ -1,0 +1,15 @@
+MAYBE
+* Step 1: Failure MAYBE
+  + Considered Problem:
+      - Strict TRS:
+          f(x,s(s(y))) -> f(y,x)
+          f(s(x),y) -> f(x,s(s(x)))
+      - Signature:
+          {f/2} / {s/1}
+      - Obligation:
+          innermost runtime complexity wrt. defined symbols {f} and constructors {s}
+  + Applied Processor:
+      NaturalMI {miDimension = 3, miDegree = 3, miKind = Algebraic, uargs = UArgs, urules = URules, selector = Nothing}
+  + Details:
+      Incompatible
+MAYBE

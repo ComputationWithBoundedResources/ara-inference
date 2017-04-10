@@ -1,0 +1,13 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x y z)
+(DATATYPES
+    A = µX.< big, s(X) >)
+(SIGNATURES
+    cons :: [A x A] -> A
+    inf :: [A] -> A)
+(RULES
+    cons(x,cons(y,z)) -> big()
+    inf(x) -> cons(x,inf(s(x))))

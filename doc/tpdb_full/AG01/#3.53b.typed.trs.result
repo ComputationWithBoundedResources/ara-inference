@@ -1,0 +1,1 @@
+{"rOutcome":{"tag":"Success","contents":"WORST_CASE(?,O(n^1))"},"rProblem":"/home/schnecki/Documents/Jobs/UIBK/CL/amortized-resource-analysis/inference/doc/tpdb_full/AG01/#3.53b.typed","rTime":0.317916,"rTool":{"tProcessor":[],"tName":"Mat","tArguments":["--complexity","rci","-s","matrices"],"tExtension":"trs","tCommand":"tct-amo"}}

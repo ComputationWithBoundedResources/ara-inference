@@ -1,0 +1,57 @@
+(VAR x xs y ys)
+
+(DATATYPES
+   a = < true, false, #false >
+   b = µX. < #0, #neg(X), #pos(X), #s(X) >
+   c = < pair(d,d) >
+   d = µX. < nil, dd(b,X) >
+   e = < #EQ, #GT, #LT >
+ )
+
+(SIGNATURES
+   lt :: b x b -> a
+   #compare :: b x b -> e
+   #cklt :: e -> a
+   merge :: d x d -> d
+   ifmerge :: a x b x d x b x d -> d
+   msplit :: d -> c
+   msplit' :: b x b x c -> c
+   mergesort :: d -> d
+   mergesort' :: c -> d
+ )
+
+(RULES
+    lt(x,y) -> #cklt(#compare(x,y))
+
+    merge(nil,ys)            -> ys
+    merge(dd(x,xs),nil)      -> dd(x,xs)
+    merge(dd(x,xs),dd(y,ys)) -> ifmerge(lt(x,y),x,xs,y,ys)
+    ifmerge(true,x,xs,y,ys)  -> dd(x,merge(xs,dd(y,ys)))
+    ifmerge(false,x,xs,y,ys) -> dd(y,merge(dd(x,xs),ys))
+
+    msplit(nil)             -> pair(nil,nil)
+    msplit(dd(x,nil))       -> pair(dd(x,nil),nil)
+    msplit(dd(x,dd(y,ys)))  -> msplit'(x,y,msplit(ys))
+    msplit'(x,y,pair(xs,ys)) -> pair(dd(x,xs),dd(y,ys))
+
+    mergesort(nil)            -> nil
+    mergesort(dd(x,nil))      -> dd(x,nil)
+    mergesort(dd(x,dd(y,ys))) -> mergesort'(msplit(dd(x,dd(y,ys))))
+    mergesort'(pair(xs,ys))   -> merge(mergesort(xs),mergesort(ys))
+
+    #cklt(#EQ) -> #false
+    #cklt(#GT) -> #false
+    #cklt(#LT) -> true
+    #compare(#0,#0) -> #EQ
+    #compare(#0,#neg(y)) -> #GT
+    #compare(#0,#pos(y)) -> #LT
+    #compare(#0,#s(y)) -> #LT
+    #compare(#neg(x),#0) -> #LT
+    #compare(#neg(x),#neg(y)) -> #compare(y,x)
+    #compare(#neg(x),#pos(y)) -> #LT
+    #compare(#pos(x),#0) -> #GT
+    #compare(#pos(x),#neg(y)) -> #GT
+    #compare(#pos(x),#pos(y)) -> #compare(x,y)
+    #compare(#s(x),#0) -> #GT
+    #compare(#s(x),#s(y)) -> #compare(x,y)
+)

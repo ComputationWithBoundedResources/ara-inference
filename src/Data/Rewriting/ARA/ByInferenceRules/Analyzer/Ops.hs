@@ -8,9 +8,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr  3 21:19:54 2017 (+0200)
+-- Last-Updated: Mon Apr 10 14:15:47 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2819
+--     Update #: 2821
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -55,10 +55,10 @@ import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.Prove
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.Exception
-import           Data.Rewriting.Datatype
-import           Data.Rewriting.Problem
-import           Data.Rewriting.Rule
-import           Data.Rewriting.Signature
+import           Data.Rewriting.Typed.Datatype
+import           Data.Rewriting.Typed.Problem
+import           Data.Rewriting.Typed.Rule
+import           Data.Rewriting.Typed.Signature
 
 #ifdef DEBUG
 import           Control.Monad                                              (when)

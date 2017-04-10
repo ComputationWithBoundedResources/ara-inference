@@ -2,7 +2,7 @@ flags: {}
 extra-package-dbs: []
 packages:
 - '.'
-- ../../term-rewriting-ext/
+- ../../tct/term-rewriting-ext/
 system-ghc: true
 extra-deps:
 - StateVar-1.1.0.4

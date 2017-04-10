@@ -7,9 +7,9 @@
 -- Created: Mon Sep 15 03:42:33 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Feb  5 14:44:14 2017 (+0100)
+-- Last-Updated: Mon Apr 10 14:14:16 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 172
+--     Update #: 173
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -53,7 +53,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.Prove
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.Constants
-import           Data.Rewriting.Problem
+import           Data.Rewriting.Typed.Problem
 
 #ifdef DEBUG
 import           Debug.Trace                                                    (trace)

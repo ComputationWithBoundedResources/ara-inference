@@ -7,9 +7,9 @@
 -- Created: Fri Oct 10 15:46:17 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Apr  2 18:37:48 2017 (+0200)
+-- Last-Updated: Mon Apr 10 14:14:11 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 102
+--     Update #: 103
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -49,8 +49,8 @@ import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.ARA.Pretty
-import           Data.Rewriting.Datatype
-import           Data.Rewriting.Signature
+import           Data.Rewriting.Typed.Datatype
+import           Data.Rewriting.Typed.Signature
 
 import           Control.Exception                                           (throw)
 import           Data.List                                                   (find)

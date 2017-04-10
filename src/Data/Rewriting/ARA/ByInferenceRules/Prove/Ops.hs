@@ -10,9 +10,9 @@
 -- Created: Fri Sep  5 15:21:41 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Feb 19 19:05:00 2017 (+0100)
+-- Last-Updated: Mon Apr 10 14:15:46 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1087
+--     Update #: 1089
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -60,10 +60,10 @@ module Data.Rewriting.ARA.ByInferenceRules.Prove.Ops
 import           Data.Rewriting.ARA.ByInferenceRules.Prove.Type
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.Constants
-import           Data.Rewriting.Datatype
-import           Data.Rewriting.Problem
-import           Data.Rewriting.Rule
-import           Data.Rewriting.Signature
+import           Data.Rewriting.Typed.Datatype
+import           Data.Rewriting.Typed.Problem
+import           Data.Rewriting.Typed.Rule
+import           Data.Rewriting.Typed.Signature
 
 import           Data.Maybe                                         (fromMaybe)
 import           Debug.Trace                                        (trace)

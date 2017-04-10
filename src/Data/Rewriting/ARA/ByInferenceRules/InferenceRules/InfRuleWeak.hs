@@ -7,9 +7,9 @@
 -- Created: Mon Sep 15 11:39:45 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Jan  3 11:24:51 2017 (+0100)
+-- Last-Updated: Mon Apr 10 14:16:40 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 106
+--     Update #: 107
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -53,7 +53,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.Prove
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Constants
-import           Data.Rewriting.Term                                                hiding
+import           Data.Rewriting.Typed.Term                                          hiding
                                                                                      (map)
 
 

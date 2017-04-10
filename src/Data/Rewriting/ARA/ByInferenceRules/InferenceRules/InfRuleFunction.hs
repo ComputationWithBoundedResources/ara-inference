@@ -7,9 +7,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Apr  2 18:51:35 2017 (+0200)
+-- Last-Updated: Mon Apr 10 14:15:46 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1202
+--     Update #: 1204
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -62,10 +62,10 @@ import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.ARA.Pretty
-import           Data.Rewriting.Problem
-import           Data.Rewriting.Rule
-import           Data.Rewriting.Signature
-import           Data.Rewriting.Term                                            hiding
+import           Data.Rewriting.Typed.Problem
+import           Data.Rewriting.Typed.Rule
+import           Data.Rewriting.Typed.Signature
+import           Data.Rewriting.Typed.Term                                      hiding
                                                                                  (map)
 
 import           Control.Arrow

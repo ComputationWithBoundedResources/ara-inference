@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 29
+--     Update #: 31
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -40,8 +40,8 @@ module Data.Rewriting.ARA.ByInferenceRules.Graph.Ops
 
 import           Data.Graph
 import           Data.Rewriting.ARA.ByInferenceRules.HelperFunctions
-import           Data.Rewriting.Problem
-import           Data.Rewriting.Rule
+import           Data.Rewriting.Typed.Problem
+import           Data.Rewriting.Typed.Rule
 
 import           Control.Arrow
 import           Data.Array

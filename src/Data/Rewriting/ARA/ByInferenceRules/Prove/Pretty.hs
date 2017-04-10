@@ -8,9 +8,9 @@
 -- Created: Tue Sep  9 15:15:02 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Jan 15 13:37:01 2017 (+0100)
+-- Last-Updated: Mon Apr 10 14:14:17 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 369
+--     Update #: 370
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -47,7 +47,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.Prove.Type
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Pretty
 import           Data.Rewriting.ARA.Pretty
-import           Data.Rewriting.Problem
+import           Data.Rewriting.Typed.Problem
 
 
 import           Data.List                                                    (intersperse)

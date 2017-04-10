@@ -8,9 +8,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Apr  8 12:10:00 2017 (+0200)
+-- Last-Updated: Mon Apr 10 14:14:39 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 920
+--     Update #: 921
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -77,9 +77,9 @@ import           Data.Rewriting.ARA.Constants                              (sepe
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.ARA.Exception.Pretty                       ()
 import           Data.Rewriting.ARA.Pretty
-import           Data.Rewriting.Problem
-import           Data.Rewriting.Rule
-import           Data.Rewriting.Signature
+import           Data.Rewriting.Typed.Problem
+import           Data.Rewriting.Typed.Rule
+import           Data.Rewriting.Typed.Signature
 
 import           Control.Arrow                                             hiding
                                                                             ((<+>))

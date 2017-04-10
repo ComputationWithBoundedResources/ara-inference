@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 110
+--     Update #: 111
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -51,7 +51,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode.Type
 import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
-import           Data.Rewriting.Term                                   hiding
+import           Data.Rewriting.Typed.Term                             hiding
                                                                         (map)
 
 

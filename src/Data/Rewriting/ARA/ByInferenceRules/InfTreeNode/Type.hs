@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 13:20:53 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Feb  5 13:59:29 2017 (+0100)
+-- Last-Updated: Mon Apr 10 14:15:08 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 91
+--     Update #: 92
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -47,7 +47,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 
 import           Data.Maybe
-import           Data.Rewriting.Term
+import           Data.Rewriting.Typed.Term
 
 data InfTreeNode = InfTreeNode
     { preConditions :: [(String, ADatatype Int)]                 -- ^ e.g. (x, r(0)).

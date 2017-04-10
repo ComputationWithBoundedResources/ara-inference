@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Apr  2 19:17:06 2017 (+0200)
+-- Last-Updated: Mon Apr 10 14:14:14 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 981
+--     Update #: 982
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -53,7 +53,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.Heuristic
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.ByInferenceRules.Data.Type
 import           Data.Rewriting.ARA.Exception
-import           Data.Rewriting.Signature
+import           Data.Rewriting.Typed.Signature
 
 
 import           Control.Arrow hiding ((+++))

@@ -1,0 +1,4 @@
+.cabal-sandbox/
+.stack-work/
+/TAGS
+/cabal.sandbox.config

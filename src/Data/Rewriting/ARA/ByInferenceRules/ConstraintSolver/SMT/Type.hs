@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Apr  2 19:11:14 2017 (+0200)
+-- Last-Updated: Mon Apr 10 14:14:13 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 84
+--     Update #: 85
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -47,7 +47,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Exception
-import           Data.Rewriting.Signature
+import           Data.Rewriting.Typed.Signature
 
 import           Control.Arrow
 import           Control.Exception                                          (throw)

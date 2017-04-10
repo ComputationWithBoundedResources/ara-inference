@@ -7,9 +7,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Apr  2 19:26:26 2017 (+0200)
+-- Last-Updated: Mon Apr 10 14:15:45 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 636
+--     Update #: 638
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -58,11 +58,11 @@ import           Data.Rewriting.ARA.ByInferenceRules.Prove
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
-import           Data.Rewriting.Datatype
-import           Data.Rewriting.Problem
-import           Data.Rewriting.Rule
-import           Data.Rewriting.Signature
-import           Data.Rewriting.Term
+import           Data.Rewriting.Typed.Datatype
+import           Data.Rewriting.Typed.Problem
+import           Data.Rewriting.Typed.Rule
+import           Data.Rewriting.Typed.Signature
+import           Data.Rewriting.Typed.Term
                                                                                      (isVar)
 
 import           Control.Arrow

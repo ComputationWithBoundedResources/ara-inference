@@ -7,9 +7,9 @@
 -- Created: Tue May 24 11:48:32 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr  3 11:59:25 2017 (+0200)
+-- Last-Updated: Mon Apr 10 14:14:14 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 270
+--     Update #: 271
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -53,7 +53,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Exception
-import           Data.Rewriting.Signature
+import           Data.Rewriting.Typed.Signature
 
 import           Control.Arrow
 import           Control.Exception                                             (throw)

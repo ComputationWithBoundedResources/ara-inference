@@ -7,9 +7,9 @@
 -- Created: Mon Sep 15 01:47:10 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Apr  2 18:06:31 2017 (+0200)
+-- Last-Updated: Mon Apr 10 14:15:46 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 408
+--     Update #: 410
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -65,10 +65,10 @@ import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
-import           Data.Rewriting.Datatype
-import           Data.Rewriting.Problem
-import           Data.Rewriting.Rule
-import           Data.Rewriting.Signature
+import           Data.Rewriting.Typed.Datatype
+import           Data.Rewriting.Typed.Problem
+import           Data.Rewriting.Typed.Rule
+import           Data.Rewriting.Typed.Signature
 
 #ifdef DEBUG
 import           Debug.Trace                                               (trace)

@@ -7,9 +7,9 @@
 -- Created: Wed Oct  1 16:02:50 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Dec 21 00:01:17 2016 (+0100)
+-- Last-Updated: Mon Apr 10 14:14:13 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 87
+--     Update #: 88
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -41,9 +41,9 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost.Type
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Type
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
-import           Data.Rewriting.Datatype
-import           Data.Rewriting.Problem
-import           Data.Rewriting.Signature
+import           Data.Rewriting.Typed.Datatype
+import           Data.Rewriting.Typed.Problem
+import           Data.Rewriting.Typed.Signature
 
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Ops
 

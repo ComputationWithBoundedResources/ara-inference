@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr  3 11:36:04 2017 (+0200)
+-- Last-Updated: Mon Apr 10 14:14:14 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1468
+--     Update #: 1469
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -59,7 +59,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Exception
-import           Data.Rewriting.Signature
+import           Data.Rewriting.Typed.Signature
 
 
 import           Control.Arrow                                                                  hiding

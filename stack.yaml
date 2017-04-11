@@ -2,7 +2,9 @@ flags: {}
 extra-package-dbs: []
 packages:
 - '.'
-- ../../tct/term-rewriting-ext/
+- location:
+    git: https://github.com/ComputationWithBoundedResources/term-rewriting-ext
+    commit: b70f6b2274848cd852a58ab20fedf65ace7997ae
 system-ghc: true
 extra-deps:
 - StateVar-1.1.0.4

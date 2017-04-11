@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:15:47 2017 (+0200)
+-- Last-Updated: Tue Apr 11 14:33:59 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1562
+--     Update #: 1573
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -47,6 +47,11 @@ module Data.Rewriting.ARA.ByInferenceRules.Analyzer.StartingProve
     )
     where
 
+import           Data.Rewriting.Typed.Datatype
+import           Data.Rewriting.Typed.Problem
+import           Data.Rewriting.Typed.Rule
+import           Data.Rewriting.Typed.Signature
+
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype
@@ -61,10 +66,6 @@ import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.ARA.Pretty
-import           Data.Rewriting.Typed.Datatype
-import           Data.Rewriting.Typed.Problem
-import           Data.Rewriting.Typed.Rule
-import           Data.Rewriting.Typed.Signature
 
 -- #ifdef DEBUG
 import           Debug.Trace                                                    (trace)
@@ -146,13 +147,15 @@ insertConstraints args pr =
         rulesStrict pr' = (strictRules . rules) (problem pr')
         rulesWeak pr' = (weakRules . rules) (problem pr')
 
-        accessor pr' = (infTreeNodesToProve pr', signatureMap pr', conditions pr')
-        updater pr' (n, s, c) = pr' { signatureMap = s,
-                                      infTreeNodesToProve = n,
-                                      conditions = c
+        accessor pr' = (infTreeNodesToProve pr', signatureMap pr'
+                       , conditions pr', lhsArgDefSyms pr')
+        updater pr' (n, s, c, noCf) = pr' { signatureMap = s
+                                          , infTreeNodesToProve = n
+                                          , conditions = c
+                                          , lhsArgDefSyms = noCf
                                     }
-        rls = (allRules . rules) (problem pr)
 
+        rls = (allRules . rules) (problem pr)
         fun = createInfTreeNodes (Left rls) False Nothing args dts sigs
 
 
@@ -194,9 +197,10 @@ createInfTreeNodes :: Either [Rule String String] Int
                    -> [DatatypeSig]
                    -> [SignatureSig]
                    -> Bool
-                   -> (Rule String String, ([InfTreeNode], ASigs, ACondition Int Int))
-                   -> (Rule String String, ([InfTreeNode], ASigs, ACondition Int Int))
-createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak (rule, (nodes, aSigs, conds)) =
+                   -> (Rule String String, ([InfTreeNode], ASigs, ACondition Int Int, [String]))
+                   -> (Rule String String, ([InfTreeNode], ASigs, ACondition Int Int, [String]))
+createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
+  (rule, (nodes, aSigs, conds, noCfDefSyms)) =
   -- trace ("aSigs': " ++ unlines (map (show . prettyAraSignature') aSigs'))
   -- trace ("pre: " ++ show pre)
   -- trace ("condsCtr: " ++ show condsCtr)
@@ -218,13 +222,14 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak (rule, (nodes, aSigs
              ] ++ chInfTreeNodes
   , aSigs'
   , conds'
+  , noCfDefSyms ++ noCfDefSyms'
   ))
 
   where fn = (\(Fun f _) -> f) (lhs rule)
         ch = (\(Fun _ ch') -> ch') (lhs rule)
 
 
-        isLeftLinear = all ((==1) . length) (group $ sort $ map fst pre)
+        -- isLeftLinear = all ((==1) . length) (group $ sort $ map fst pre)
 
         (preLinear,shareConds) =
           first reverse $
@@ -270,9 +275,9 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak (rule, (nodes, aSigs
         pre :: [(String, ADatatype Int)]
         aSigsCtr :: ASigs
         condsCtr :: ACondition Int Int
-        (pre,aSigsCtr,condsCtr,kis,chInfTreeNds,_) =
+        (pre,aSigsCtr,condsCtr,kis,chInfTreeNds,noCfDefSyms',_) =
           foldl (getVarsWithDt ruleStr fromRuleOrGrpNr True isCf args sigs)
-          ([],[],ACondition [] [] [],[],[],startCtrSigNr)
+          ([],[],ACondition [] [] [],[],[],[],startCtrSigNr)
           (zip3 ch params dts)
         params = map (\(a,b) -> sigRefParam isCf a aSigNr b) (zip dts [0..])
         dts = map fst (lhsSig sig)
@@ -293,18 +298,19 @@ getVarsWithDt :: String
               -> ArgumentOptions
               -> [SignatureSig]
               -> ([(String, ADatatype Int)], ASigs,ACondition Int Int
-                 , [ACostCondition Int],[InfTreeNode], Int)
+                 , [ACostCondition Int],[InfTreeNode], [String], Int)
               -> (Term String String, ADatatype Int, String)
               -> ([(String, ADatatype Int)], ASigs,ACondition Int Int
-                , [ACostCondition Int],[InfTreeNode], Int)
-getVarsWithDt _ _ _ _ _ _ (accPre,accSigs,accConds,csts,infTreeNds,sigNr) (Var v, dtN, dt) =
-  (accPre ++ [(v, dtN)], accSigs,accConds,csts,infTreeNds,sigNr)
-getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs (accPre,accSigs,accConds,csts,infTreeNds,sigNr)
-  inp@(Fun f ch,dtN,dt) =
+                , [ACostCondition Int],[InfTreeNode], [String], Int)
+getVarsWithDt _ _ _ _ _ _ (accPre,accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr) (Var v, dtN, dt) =
+  (accPre ++ [(v, dtN)], accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr)
+getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs
+  (accPre,accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr) (Fun f ch,dtN,dt) =
   foldl
   (getVarsWithDt ruleStr ruleGrpNr False isCf args sigs)
   (accPre, accSigs `mappend` [aSig],accConds `addConditions` nConds,csts++nCsts,
-  take (length infTreeNds-1) infTreeNds++nInfTreeNds,sigNr+1)
+    take (length infTreeNds-1) infTreeNds++nInfTreeNds,
+    noCfDefSyms ++ [f | not (isCtr sig)],sigNr+1)
   (zip3 ch dt' dts)
 
           where dt' = map (\(a,b) -> sigRefParam isCf a sigNr b) (zip dts [0..])

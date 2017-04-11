@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 111
+--     Update #: 114
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -125,8 +125,8 @@ putValuesInDt :: ASigs
               -> [Data Vector]
               -> ADatatype Vector
               -> ADatatype Vector
-putValuesInDt sigs cfsigs vals (ActualCost isCf dt cst) = ActualCost isCf dt cst
-putValuesInDt sigs cfsigs vals (SigRefVar dt n)    = ActualCost False dt (ACost $ getValueNr vals n)
+putValuesInDt _ _ _ (ActualCost isCf dt cst) = ActualCost isCf dt cst
+putValuesInDt _ _ vals (SigRefVar dt n)    = ActualCost False dt (ACost $ getValueNr vals n)
 putValuesInDt sigs cfsigs vals x =
   ActualCost fromCf dt (ACost $ getValueNr vals $ show x)
   where (fromCf, dt) = (\(ActualCost isCf x _) -> (isCf,x)) $ fetchSigValue sigs cfsigs x

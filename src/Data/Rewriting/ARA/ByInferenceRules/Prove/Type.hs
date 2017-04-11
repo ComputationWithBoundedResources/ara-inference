@@ -7,9 +7,9 @@
 -- Created: Fri Sep  5 08:52:29 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Jan  3 11:25:46 2017 (+0100)
+-- Last-Updated: Tue Apr 11 14:34:03 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 247
+--     Update #: 252
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -59,6 +59,7 @@ data Prove = Prove
     , signatureMap        :: ASigs
     , conditions          :: ACondition Int Int
     , varNr               :: Int
+    , lhsArgDefSyms       :: [String]
     } deriving (Show)
 
 

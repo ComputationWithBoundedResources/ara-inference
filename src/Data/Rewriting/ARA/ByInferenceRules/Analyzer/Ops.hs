@@ -8,9 +8,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:15:47 2017 (+0200)
+-- Last-Updated: Tue Apr 11 14:33:59 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2821
+--     Update #: 2825
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -188,7 +188,7 @@ convertProblem prob' =
 startingProve :: ArgumentOptions -> ProblemSig -> Prove
 startingProve args prob' =
   (insertConstraints args . updateDatatypesChildCost . createCtrSig) prove0
-  where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] []) 0
+  where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] []) 0 []
 
 -- | This function takes a list of proves and checks it for the finished and
 --   successful proves. It either returns a successful prove, or fails.
@@ -196,8 +196,8 @@ getSolution    :: (Monad m) => [Prove] -> m Prove
 getSolution [] = fail "No prove was found."
 getSolution (p:ps) =
     case p of
-      Prove [] _ _ _ _ _ _ _ -> return p
-      _                      -> getSolution ps
+      Prove [] _ _ _ _ _ _ _ _ -> return p
+      _                        -> getSolution ps
 
 
 --

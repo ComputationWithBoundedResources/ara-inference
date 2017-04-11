@@ -7,9 +7,9 @@
 -- Created: Wed Sep 17 09:05:42 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:15:45 2017 (+0200)
+-- Last-Updated: Tue Apr 11 14:34:10 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 393
+--     Update #: 398
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,16 +66,16 @@ printWhen' True  p = (p $+$ empty $+$ )
 infixr 5 `printWhen'`
 
 
-prettyAraProblem :: ProblemSig -> Doc
-prettyAraProblem prob =
-    printWhen' (sterms /= AllTerms) (block "STARTTERM" $ text "CONSTRUCTOR-BASED")
-    $ printWhen' (strat /= Full) (block "STRATEGY" $ ppStrat strat)
-    $ maybeblock "THEORY" theory ppTheories
-    $+$ empty $+$ block "VAR" (ppTexts $ variables prob)
-    $+$ empty $+$ maybeblock "DATATYPES" datatypes ppDatatypes
-    $+$ empty $+$ maybeblock "SIGNATURES" signatures ppSigs
-    $+$ empty $+$ block "RULES" (ppRules $ rules prob)
-    $+$ empty $+$ maybeblock "COMMENT" comment text
+prettyAraProblem ::  ProblemSig -> Doc
+prettyAraProblem prob = undefined
+    -- printWhen' (sterms /= AllTerms) (block "STARTTERM" $ text "CONSTRUCTOR-BASED")
+    -- $ printWhen' (strat /= Full) (block "STRATEGY" $ ppStrat strat)
+    -- $ maybeblock "THEORY" theory ppTheories
+    -- $+$ empty $+$ block "VAR" (ppTexts $ variables prob)
+    -- $+$ empty $+$ maybeblock "DATATYPES" datatypes ppDatatypes
+    -- $+$ empty $+$ maybeblock "SIGNATURES" signatures ppSigs
+    -- $+$ empty $+$ block "RULES" (ppRules $ rules prob)
+    -- $+$ empty $+$ maybeblock "COMMENT" comment text
 
   where block n pp = parens $ hang empty 3 $ text n $+$ empty $+$ pp
         maybeblock n f fpp = case f prob of

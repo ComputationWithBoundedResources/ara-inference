@@ -4,7 +4,7 @@ packages:
 - '.'
 - location:
     git: https://github.com/ComputationWithBoundedResources/term-rewriting-ext
-    commit: b70f6b2274848cd852a58ab20fedf65ace7997ae
+    commit: df5dd6777ae4ff04d04047f880da18daf50a8383
 system-ghc: true
 extra-deps:
 - StateVar-1.1.0.4

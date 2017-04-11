@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:01 2017 (+0200)
+-- Last-Updated: Tue Apr 11 15:01:30 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 87
+--     Update #: 91
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -92,6 +92,9 @@ replList' = -- map (T.pack *** T.pack)
         replList = [ ("#", "_HASHTAG_")
                    , (":", "_COLON_")
                    , ("+", "_PLUS_")
+                   , ("*", "_TIMES_")
+                   , ("/", "_DIV_")
+                   , ("\\", "_BS_")
                    , ("'", "_PRIME_")
                    , (";", "_SEMICOLON_")
                    , ("[", "_LBRA_")

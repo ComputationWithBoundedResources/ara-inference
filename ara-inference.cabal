@@ -103,7 +103,8 @@ library
 executable ara-inference-exe
   hs-source-dirs:      app
   main-is:             Main.hs
-  ghc-options:         -threaded -Wall -fno-warn-orphans -fno-spec-constr-count -rtsopts -with-rtsopts=-N
+  ghc-options:         -threaded -fno-warn-orphans -fno-spec-constr-count -rtsopts -with-rtsopts=-N
+  -- ghc-options:         -threaded -Wall -fno-warn-orphans -fno-spec-constr-count -rtsopts -with-rtsopts=-N
   build-depends:       base >=4.8
                      , ara-inference
                      , term-rewriting-ext

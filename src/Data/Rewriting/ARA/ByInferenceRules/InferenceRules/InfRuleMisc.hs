@@ -7,9 +7,9 @@
 -- Created: Mon Sep 15 01:47:10 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:05 2017 (+0200)
+-- Last-Updated: Tue Apr 11 20:16:30 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 412
+--     Update #: 416
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -78,8 +78,8 @@ import           Control.Exception                                         (thro
 import           Data.List                                                 (find)
 import           Data.Maybe                                                (fromJust,
                                                                             fromMaybe)
+import           Debug.Trace
 import           Text.PrettyPrint
-
 
 -- | This function takes two Integer values as input parameters. The first one
 --   is the input parameter for the old value, which needs to be kept track of
@@ -87,7 +87,9 @@ import           Text.PrettyPrint
 --   variables to generate. The return value is a tuple, containing the new
 --   variable counter and the variables.
 getNewVariableName :: Int -> Int -> (Int, [String])
-getNewVariableName oldV num =
+getNewVariableName oldV num
+  | num < 1 = (oldV, [])
+  | otherwise =
     (oldV + num, strs start num)
     where
       start = oldV

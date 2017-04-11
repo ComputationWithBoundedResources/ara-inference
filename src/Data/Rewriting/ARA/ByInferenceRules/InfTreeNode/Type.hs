@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 13:20:53 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:07 2017 (+0200)
+-- Last-Updated: Tue Apr 11 19:01:39 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 95
+--     Update #: 97
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -57,7 +57,7 @@ data InfTreeNode = InfTreeNode
     -- ^ functionName, isChildInfTreeNode (constructors), cstsOfRoot,
     -- signatureNrOfRoot, isCostFreeDerivationBranch, Maybe idxOfCfSig
     , history       :: [(Int, String, InfTreeNodeView)]          -- ^ history of the context
-    } deriving (Eq)
+    } deriving (Eq,Show)
 
 
 data InfTreeNodeView = InfTreeNodeView
@@ -78,11 +78,11 @@ data FunSig = FunSig
               deriving (Eq)
 
 
-instance Show InfTreeNode where
-    show (InfTreeNode pre c post _ history') =
-         showListWithSep show pre ", "++ " |-" ++ show c ++
-                             "- " ++ show post ++ "\n\n\t"
-                             ++ showListWithSep show history' "\n\t"
+-- instance Show InfTreeNode where
+--     show (InfTreeNode pre c post _ history') =
+--          showListWithSep show pre ", "++ " |-" ++ show c ++
+--                              "- " ++ show post ++ "\n\n\t"
+--                              ++ showListWithSep show history' "\n\t"
 
 instance Show InfTreeNodeView where
   show (InfTreeNodeLeafEmpty)= ""

@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:33:59 2017 (+0200)
+-- Last-Updated: Tue Apr 11 20:17:05 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1573
+--     Update #: 1656
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -104,7 +104,8 @@ convertDt (Just x) = Just $ map convertDt' x
 
 
 createCtrSig    :: Prove -> Prove
-createCtrSig = mapDatatypes const accessor updater createCtrSig'
+createCtrSig =
+  mapDatatypes const accessor updater createCtrSig'
  where accessor = accessorMaybe signatures . problem
        updater p x =
          -- trace ("oldSigs: " ++ show (signatures (problem p)))
@@ -139,6 +140,7 @@ createCtrSig' x@(Datatype dt ctrs, acc) =
 
 insertConstraints :: ArgumentOptions -> Prove -> Prove
 insertConstraints args pr =
+
   mapProveAsB rulesWeak const accessor updater (fun True) $
   mapProveAsB rulesStrict const accessor updater (fun False) pr
 
@@ -148,19 +150,21 @@ insertConstraints args pr =
         rulesWeak pr' = (weakRules . rules) (problem pr')
 
         accessor pr' = (infTreeNodesToProve pr', signatureMap pr'
-                       , conditions pr', lhsArgDefSyms pr')
-        updater pr' (n, s, c, noCf) = pr' { signatureMap = s
-                                          , infTreeNodesToProve = n
-                                          , conditions = c
-                                          , lhsArgDefSyms = noCf
-                                    }
+                       , conditions pr', varNr pr', lhsArgDefSyms pr')
+        updater pr' (n, s, c, nr, noCf) = pr' { signatureMap = s
+                                              , infTreeNodesToProve = n
+                                              , conditions = c
+                                              , lhsArgDefSyms = noCf
+                                              , varNr = nr
+                                              }
 
         rls = (allRules . rules) (problem pr)
         fun = createInfTreeNodes (Left rls) False Nothing args dts sigs
 
 
 updateDatatypesChildCost :: Prove -> Prove
-updateDatatypesChildCost p = p { problem = prob {datatypes = res }}
+updateDatatypesChildCost p =
+  p { problem = prob {datatypes = res }}
   where fun = updateDatatypeChildCost sigs
         sigs = fromMaybe [] (signatures prob)
         prob = problem p
@@ -197,10 +201,10 @@ createInfTreeNodes :: Either [Rule String String] Int
                    -> [DatatypeSig]
                    -> [SignatureSig]
                    -> Bool
-                   -> (Rule String String, ([InfTreeNode], ASigs, ACondition Int Int, [String]))
-                   -> (Rule String String, ([InfTreeNode], ASigs, ACondition Int Int, [String]))
+                   -> (Rule String String, ([InfTreeNode], ASigs, ACondition Int Int, Int, [String]))
+                   -> (Rule String String, ([InfTreeNode], ASigs, ACondition Int Int, Int, [String]))
 createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
-  (rule, (nodes, aSigs, conds, noCfDefSyms)) =
+  (rule, (nodes, aSigs, conds, nr, noCfDefSyms)) =
   -- trace ("aSigs': " ++ unlines (map (show . prettyAraSignature') aSigs'))
   -- trace ("pre: " ++ show pre)
   -- trace ("condsCtr: " ++ show condsCtr)
@@ -208,9 +212,9 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
   -- trace ("isCf: " ++ show isCf)
   -- trace ("chInfTreeNodes: " ++ show chInfTreeNodes)
   -- trace ("rule: " ++ show rule) $
+  -- trace ("nr': " ++ show nr')
+  -- trace ("varNameKs: " ++ show (varNameKs :: [String]))
   -- trace ("pre: " ++ show pre)
-  -- trace ("isLeftLinear: " ++ show isLeftLinear)
-  -- undefined
 
   (undefined,
    (nodes ++ [InfTreeNode
@@ -222,33 +226,13 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
              ] ++ chInfTreeNodes
   , aSigs'
   , conds'
+  , nr'
   , noCfDefSyms ++ noCfDefSyms'
   ))
 
   where fn = (\(Fun f _) -> f) (lhs rule)
         ch = (\(Fun _ ch') -> ch') (lhs rule)
 
-
-        -- isLeftLinear = all ((==1) . length) (group $ sort $ map fst pre)
-
-        (preLinear,shareConds) =
-          first reverse $
-          foldl mergeMultiple ([],[]) (groupBy ((==) `on` fst) $
-                                       sortBy (compare `on` fst) pre)
-          where mergeMultiple (preLin, shares) [x] = (x:preLin,shares)
-                mergeMultiple (preLin, shares) xs@(x:rest)
-                  | any (/= getDt (snd x)) (map (getDt.snd) rest) =
-                    throw $ FatalException $
-                    "Non-linear lhs over different types are not allowed: " ++
-                    show (fst x) ++ " of types " ++ show (map snd xs)
-                  | otherwise =
-                  let varName = "ipvar_ll_sigIdx" ++ show aSigNr ++ "_" ++ fst x ++
-                        if isCf then "_cf" else ""
-                      var = SigRefVar (getDt (snd x)) varName
-                      list = map snd xs
-                      shareCond = (var, Eq, list)
-                      -- shareCond = (list, Eq, [var])
-                  in ((fst x, var):preLin, shareCond:shares)
 
         ruleStr = show (prettyRule
                         (L.pretty (L.text $ if weak
@@ -264,10 +248,12 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         sig = getDefSymSignatureByName' sigs fn
         dt = fst (rhsSig sig)
         aSig = (sig2ASig isCf args sig, fromRuleOrGrpNr, "createInfTreeNodes")
+        (nrKs, varNameKs) = getNewVariableName nr (length ch)
+        varsKs = map AVariableCondition varNameKs
 
         fromRuleOrGrpNr = case rlsGrpNr of
           Left rls -> snd $ fromJust $ find ((== rule) . fst) (zip rls [1..])
-          Right nr -> nr
+          Right n  -> n
 
         chInfTreeNodes = map (\(InfTreeNode _ a b c d) ->
                                 InfTreeNode pre a b c d) chInfTreeNds
@@ -278,7 +264,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         (pre,aSigsCtr,condsCtr,kis,chInfTreeNds,noCfDefSyms',_) =
           foldl (getVarsWithDt ruleStr fromRuleOrGrpNr True isCf args sigs)
           ([],[],ACondition [] [] [],[],[],[],startCtrSigNr)
-          (zip3 ch params dts)
+          (zip4 ch params dts varsKs)
         params = map (\(a,b) -> sigRefParam isCf a aSigNr b) (zip dts [0..])
         dts = map fst (lhsSig sig)
 
@@ -288,8 +274,24 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
                  `addConditions` condsCtr
         -- conds' = conds { dtConditions = dtConditions conds ++ shareConds}
         --          `addConditions` condsCtr
-        csts = sigRefCst isCf aSigNr : [ACostValue (-1) | not weak] ++ kis
+        csts = sigRefCst isCf aSigNr : [ACostValue (-1) | not weak] ++ varsKs
 
+        (preLinear,shareConds,nr') =
+          (\(a,b,c) -> (reverse a, b, c)) $
+          foldl mergeMultiple ([],[],nrKs) (groupBy ((==) `on` fst) $
+                                          sortBy (compare `on` fst) pre)
+          where mergeMultiple (preLin, shares, nrI) [x] = (x:preLin,shares, nrI)
+                mergeMultiple (preLin, shares, nrI) xs@(x:rest)
+                  | any (/= getDt (snd x)) (map (getDt.snd) rest) =
+                    throw $ FatalException $
+                    "Non-linear lhs over different types are not allowed: " ++
+                    show (fst x) ++ " of types " ++ show (map snd xs)
+                  | otherwise =
+                    let (nrO,[varName]) = getNewVariableName nrI 1
+                        var = SigRefVar (getDt (snd x)) varName
+                        list = map snd xs
+                        shareCond = (var, Eq, list)
+                    in ((fst x, var):preLin, shareCond:shares,nrO)
 
 getVarsWithDt :: String
               -> Int
@@ -299,19 +301,24 @@ getVarsWithDt :: String
               -> [SignatureSig]
               -> ([(String, ADatatype Int)], ASigs,ACondition Int Int
                  , [ACostCondition Int],[InfTreeNode], [String], Int)
-              -> (Term String String, ADatatype Int, String)
+              -> (Term String String, ADatatype Int, String, ACostCondition Int)
               -> ([(String, ADatatype Int)], ASigs,ACondition Int Int
                 , [ACostCondition Int],[InfTreeNode], [String], Int)
-getVarsWithDt _ _ _ _ _ _ (accPre,accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr) (Var v, dtN, dt) =
-  (accPre ++ [(v, dtN)], accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr)
+getVarsWithDt _ _ isRoot _ _ _ (accPre,accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr)
+  (Var v, dtN, dt, kVar) =
+  (accPre ++ [(v, dtN)], accSigs,accConds `addConditions` nConds,csts,infTreeNds
+  ,noCfDefSyms,sigNr)
+
+  where nConds = ACondition [([kVar],Eq,[ACostValue 0]) | isRoot ] [] []
+
 getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs
-  (accPre,accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr) (Fun f ch,dtN,dt) =
+  (accPre,accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr) (Fun f ch,dtN,dt,kVar) =
   foldl
   (getVarsWithDt ruleStr ruleGrpNr False isCf args sigs)
   (accPre, accSigs `mappend` [aSig],accConds `addConditions` nConds,csts++nCsts,
     take (length infTreeNds-1) infTreeNds++nInfTreeNds,
     noCfDefSyms ++ [f | not (isCtr sig)],sigNr+1)
-  (zip3 ch dt' dts)
+  (zip4 ch dt' dts (repeat $ AVariableCondition undefined)) -- not to be used!
 
           where dt' = map (\(a,b) -> sigRefParam isCf a sigNr b) (zip dts [0..])
                 sig = getSignatureByNameAndType' sigs f dt
@@ -324,13 +331,10 @@ getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs
                   [InfTreeNode
                     undefined -- need to be replaced after collecting them (which
                     -- must happen in the calling function)
-                    [sigRefCst isCf sigNr]
+                    [kVar]
                     (Just (Fun f ch, dtN))
                     (f,ruleStr, True,[sigRefCst isCf sigNr], sigNr,Nothing)
                     [] | isRoot ]
-                addCosts csts' (InfTreeNode _ csts t i x) =
-                  InfTreeNode undefined (csts++csts') t i x
-                curInfTreeNode = last infTreeNds
 
 
 addConditions :: ACondition a b -> ACondition a b -> ACondition a b

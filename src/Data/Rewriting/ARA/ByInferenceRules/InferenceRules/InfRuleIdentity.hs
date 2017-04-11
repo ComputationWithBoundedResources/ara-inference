@@ -7,9 +7,9 @@
 -- Created: Mon Sep 15 03:42:33 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:05 2017 (+0200)
+-- Last-Updated: Tue Apr 11 18:20:55 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 175
+--     Update #: 178
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -62,17 +62,18 @@ import           Debug.Trace                                                    
 -- | The identity inference rule.
 identity :: (ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, InfTreeNode)
          -> [(ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, [InfTreeNode])]
-identity (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post) fn his) =
+identity (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
+           i@(_,_,isCtrDeriv,_,_,_) his) =
 
   [(prob, cfsigs, asigs, nr, nConds
-   , [ InfTreeNode [] [] Nothing fn (his ++ [(fst3 (last his) + 1, "identity",
+   , [ InfTreeNode [] [] Nothing i (his ++ [(fst3 (last his) + 1, "identity",
                                               InfTreeNodeLeafEmpty)])])
   | fst pre == funName ]
 
     where condDt :: [([ADatatype Int], Comparison, [ADatatype Int])]
-          condDt = [([snd pre], Geq, [snd post])]
+          condDt = [([snd pre], if isCtrDeriv then Eq else Geq, [snd post])]
           condCst :: [([ACostCondition Int], Comparison, [ACostCondition Int])]
-          condCst = [(cst, Geq, [ACostValue 0])]
+          condCst = [(cst, if isCtrDeriv then Eq else Geq, [ACostValue 0])]
           nConds = ACondition (costCondition conds ++ condCst) (dtConditions conds ++ condDt)
                       (shareConditions conds)
           funName = termName (fst post)

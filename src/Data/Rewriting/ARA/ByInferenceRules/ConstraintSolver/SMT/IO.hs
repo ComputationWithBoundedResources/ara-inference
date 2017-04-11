@@ -8,9 +8,9 @@
 -- Created: Sun May 22 19:14:44 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 16:22:26 2017 (+0200)
+-- Last-Updated: Tue Apr 11 20:58:46 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 323
+--     Update #: 326
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -168,7 +168,7 @@ solveSMTProblem shift keepFiles tempDir = do
 
 
 smtSolveResult :: Parser [(String, Int)]
-smtSolveResult = unkown <|> unsolveable <|> solution <|> parseError
+smtSolveResult = unkown <|> unsolveable <|> solution <|> timeout <|> parseError
 
 
 parseError :: Parser a
@@ -184,6 +184,12 @@ unsolveable :: Parser a
 unsolveable = do
   _ <- string "unsat"
   fail "The smt problem could not be solved (was unsat)."
+
+
+timeout :: Parser a
+timeout = do
+  _ <- string "timeout"
+  throw $ TimeoutException "The smt solver ran in a timeout."
 
 
 solution :: Parser [(String, Int)]

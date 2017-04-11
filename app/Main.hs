@@ -8,9 +8,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 16:21:50 2017 (+0200)
+-- Last-Updated: Tue Apr 11 20:57:53 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 929
+--     Update #: 930
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -248,6 +248,9 @@ main =
                   putStrLn txt
                 WarningException txt -> do
                   putStrLn "MAYBE"
+                  putStrLn txt
+                TimeoutException txt -> do
+                  putStrLn "TIMEOUT"
                   putStrLn txt
                 FatalException txt -> do
                   putStr "ERROR:"

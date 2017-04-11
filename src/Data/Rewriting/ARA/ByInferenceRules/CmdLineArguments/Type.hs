@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:19:36 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:02 2017 (+0200)
+-- Last-Updated: Tue Apr 11 20:44:52 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 76
+--     Update #: 78
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -52,6 +52,7 @@ data ArgumentOptions = ArgumentOptions
     , shift            :: Bool
     , allowLowerSCC    :: Bool
     , lowerbound       :: Bool
+    , timeout          :: Maybe Int
     } deriving (Show, Eq)
 
 

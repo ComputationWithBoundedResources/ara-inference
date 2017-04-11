@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:01 2017 (+0200)
+-- Last-Updated: Tue Apr 11 20:52:32 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1471
+--     Update #: 1472
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -89,11 +89,12 @@ import           Text.PrettyPrint                                               
                                                                                                  (empty)
 
 
-use :: SMTProblem
+use :: Maybe Int -> SMTProblem
 use = z3
 
-z3 :: SMTProblem
-z3 = emptySMTProblem "z3" ["-smt2"]
+z3 :: Maybe Int -> SMTProblem
+z3 timeo = emptySMTProblem "z3" (["-T:" `T.append` T.pack (show $ fromJust timeo)
+                                 | isJust timeo ] ++ ["-smt2"])
 
 emptySMTProblem :: T.Text -> [T.Text] -> SMTProblem
 emptySMTProblem name args = SMTProblem S.empty [] [] [] M.empty name args undefined
@@ -112,7 +113,7 @@ solveProblem ops probSigs conds aSigs cfSigs = do
   let minNrVec = minVectorLength ops
   let eqZero = concatMap constantToZero
                (zip [0..] (map fst3 aSigs) ++ zip [0..] (map fst3 cfSigs))
-  let prob0 = execState (addEqZeroConstraints eqZero) use
+  let prob0 = execState (addEqZeroConstraints eqZero) (use (timeout ops))
   let vecLens = [minNrVec..maxNrVec]
   when (maxNrVec < 1 || maxNrVec > maximumVectorLength)
     (throw $ FatalException $

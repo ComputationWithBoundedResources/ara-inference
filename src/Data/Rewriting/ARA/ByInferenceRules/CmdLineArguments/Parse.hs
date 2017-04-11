@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:01 2017 (+0200)
+-- Last-Updated: Tue Apr 11 20:53:37 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 242
+--     Update #: 249
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,6 +66,7 @@ defaultOptions = ArgumentOptions {
                  , shift = False
                  , allowLowerSCC = False
                  , lowerbound = False
+                 , timeout = Nothing
                  }
 
 -- |This function defines the options, the function to be called, when
@@ -132,6 +133,13 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
             opts { separateBaseCtr = not (separateBaseCtr opts) } ))
    "Use different base vectors for the constructors of cost free (cf) and non-cf signatures [Default: Disabled]."
 
+  , Option ['t'] ["timeout"]
+   (ReqArg (\str opts -> do
+               let readRes = reads str :: [(Int, String)]
+               if null readRes
+                 then return opts
+                 else return (opts { timeout = Just $ fst (head readRes) })) "INT")
+    "Set a Timeout for the SMT solver."
   ]
 
 

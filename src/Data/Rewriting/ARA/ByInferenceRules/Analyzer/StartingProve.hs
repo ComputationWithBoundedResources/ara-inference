@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 20:17:05 2017 (+0200)
+-- Last-Updated: Wed Apr 12 12:33:02 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1656
+--     Update #: 1658
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -316,8 +316,7 @@ getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs
   foldl
   (getVarsWithDt ruleStr ruleGrpNr False isCf args sigs)
   (accPre, accSigs `mappend` [aSig],accConds `addConditions` nConds,csts++nCsts,
-    take (length infTreeNds-1) infTreeNds++nInfTreeNds,
-    noCfDefSyms ++ [f | not (isCtr sig)],sigNr+1)
+    infTreeNds++nInfTreeNds, noCfDefSyms ++ [f | not (isCtr sig)],sigNr+1)
   (zip4 ch dt' dts (repeat $ AVariableCondition undefined)) -- not to be used!
 
           where dt' = map (\(a,b) -> sigRefParam isCf a sigNr b) (zip dts [0..])

@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Apr 13 09:07:15 2017 (+0200)
+-- Last-Updated: Thu Apr 13 20:49:05 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1473
+--     Update #: 1479
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -330,7 +330,8 @@ shiftConstraints recCtrs nonRecCtrs (nr, Signature (n,_,_,isCf) [] _) = []
 shiftConstraints recCtrs nonRecCtrs sig@(nr, Signature (n,_,True,isCf) lhs rhs)
   | null (lhsSig (snd sig)) = []
   | forceInterl && length lhsDts < 2 =
-      throw $ FatalException "Not enough parameter types for interleaving!"
+      throw $ FatalException $
+      "Not enough parameter types for interleaving! Constructor: " ++ n
   | length lhsCount == 1 =
     [(zipWith (curry toShiftPar) [0..] lhsBools,
                              (sigRefCst isCf nr, Diamond (sigRefRet isCf "" nr)))]

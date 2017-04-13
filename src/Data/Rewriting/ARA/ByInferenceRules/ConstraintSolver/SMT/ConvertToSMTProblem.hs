@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:00 2017 (+0200)
+-- Last-Updated: Thu Apr 13 09:27:41 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 984
+--     Update #: 994
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -399,10 +399,14 @@ addHeuristics vecLen = mapM_ addHeuristics'
         addHeur (this, Interleaving other1 other2) = do
           let fun (acc,p1,p2) t
                 | length p1 + length p2 <= vecLen =
-                  (acc ++ [(head p1, Eq, "0"), (head p2,Eq,"0")], tail p1, tail p2)
+                    (acc ++ [(head p1, Eq, "0")] ++ [(head p2, Eq, "0")] , tail p1, tail p2)
                 | length p1 >= length p2 = (acc ++ [(t, Eq, head p1)],tail p1,p2)
                 | otherwise = (acc ++ [(t, Eq, head p2)],p1,tail p2)
-          assertions <>= fst3 (foldl fun ([],other1,other2) this)
+              (asserts1,restP1,restP2) = foldl fun ([],other1,other2) this
+
+          assertions <>= asserts1                                    -- set interleaving
+          assertions <>= map (\x -> (x, Eq, "0")) (restP1 ++ restP2) -- set rest to 0
+
           vars <>=+ other1 ++ other2 ++ this
         addHeur (this, Zero) = do
           assertions <>= map (\x -> (x, Eq, "0")) this

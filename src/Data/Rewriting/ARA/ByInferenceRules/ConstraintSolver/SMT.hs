@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 13:57:29 2017 (+0200)
+-- Last-Updated: Fri Apr 14 14:13:02 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1511
+--     Update #: 1514
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -92,8 +92,15 @@ import           Text.ParserCombinators.Parsec                                  
 import           Text.PrettyPrint                                                               hiding
                                                                                                  (empty)
 
-use :: T.Text -> Maybe Int -> SMTProblem
-use = minismt
+use :: ArgumentOptions -> SMTProblem
+use args =
+  case smtSolver args of
+    Z3      -> z3 logic timeo
+    MiniSMT -> minismt logic timeo
+  where  logic
+           | shift args = "QF_LIA"
+           | otherwise = "QF_NIA"
+         timeo= timeout args
 
 z3 :: T.Text -> Maybe Int -> SMTProblem
 z3 logic timeo =
@@ -134,12 +141,9 @@ solveProblem ops probSigs conds aSigs cfSigs = do
 
   let maxNrVec = maxVectorLength ops
   let minNrVec = minVectorLength ops
-  let logic
-        | shift ops = "QF_LIA"
-        | otherwise = "QF_NIA"
   let eqZero = concatMap constantToZero
                (zip [0..] (map fst3 aSigs) ++ zip [0..] (map fst3 cfSigs))
-  let prob0 = execState (addEqZeroConstraints eqZero) (use logic (timeout ops))
+  let prob0 = execState (addEqZeroConstraints eqZero) (use ops)
   let vecLens = [minNrVec..maxNrVec]
   when (maxNrVec < 1 || maxNrVec > maximumVectorLength)
     (throw $ FatalException $

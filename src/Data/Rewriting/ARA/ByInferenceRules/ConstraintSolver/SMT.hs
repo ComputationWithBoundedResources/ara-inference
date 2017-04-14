@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 13:38:52 2017 (+0200)
+-- Last-Updated: Fri Apr 14 13:57:29 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1510
+--     Update #: 1511
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -105,7 +105,7 @@ z3 logic timeo =
 minismt :: T.Text -> Maybe Int -> SMTProblem
 minismt logic timeo =
   emptySMTProblem "minismt" logic declareAsFun False
-  (["-t" `T.append` T.pack (show $ fromJust timeo) | isJust timeo ] ++ ["-v2", "-m", "-neg"])
+  (["-t " `T.append` T.pack (show $ fromJust timeo) | isJust timeo ] ++ ["-v2", "-m", "-neg"])
   parseMinismt
 
 

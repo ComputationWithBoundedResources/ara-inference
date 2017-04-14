@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 11
+--     Update #: 14
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -65,7 +65,7 @@ import           Text.ParserCombinators.Parsec                                  
 import           Debug.Trace
 
 parseMinismt :: Parser [(String, Int)]
-parseMinismt = unkown <|> unsolveable <|> solutionMinismt <|> timeout <|> parseError
+parseMinismt = unkown <|> try unsolveable <|> solutionMinismt <|> timeoutMinismt <|> parseError
 
 parseZ3 :: Parser [(String, Int)]
 parseZ3 = unkown <|> unsolveable <|> solutionZ3 <|> timeout <|> parseError
@@ -84,10 +84,14 @@ unsolveable = do
   _ <- string "unsat"
   fail "The smt problem could not be solved (was unsat)."
 
-
 timeout :: Parser a
 timeout = do
   _ <- string "timeout"
+  throw $ TimeoutException "The smt solver ran in a timeout."
+
+timeoutMinismt :: Parser a
+timeoutMinismt = do
+  _ <- string "unusual termination"
   throw $ TimeoutException "The smt solver ran in a timeout."
 
 solutionMinismt :: Parser [(String, Int)]

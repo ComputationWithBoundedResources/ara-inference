@@ -1,0 +1,16 @@
+(VAR x)
+
+(DATATYPES
+  B = < true >
+)
+
+(SIGNATURES
+  eq :: B x B -> B
+)
+
+
+(RULES
+
+  eq(x,x) -> true
+
+)

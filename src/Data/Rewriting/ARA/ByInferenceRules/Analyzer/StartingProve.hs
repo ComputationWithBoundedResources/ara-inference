@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:15:47 2017 (+0200)
+-- Last-Updated: Fri Apr 14 17:17:39 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1562
+--     Update #: 1566
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -203,7 +203,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak (rule, (nodes, aSigs
   -- trace ("csts: " ++ show csts)
   -- trace ("isCf: " ++ show isCf)
   -- trace ("chInfTreeNodes: " ++ show chInfTreeNodes)
-  -- trace ("rule: " ++ show rule) $
+  -- trace (if isNothing mSigIdx then "rule: " ++ show rule else "") $
   -- trace ("pre: " ++ show pre)
   -- trace ("isLeftLinear: " ++ show isLeftLinear)
   -- undefined
@@ -223,6 +223,11 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak (rule, (nodes, aSigs
   where fn = (\(Fun f _) -> f) (lhs rule)
         ch = (\(Fun _ ch') -> ch') (lhs rule)
 
+        useVariableInsteadOfNeg1
+          | isJust (findStrictRules args) && isNothing mSigIdx = True
+          | otherwise = False
+
+        ()
 
         isLeftLinear = all ((==1) . length) (group $ sort $ map fst pre)
 
@@ -283,7 +288,10 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak (rule, (nodes, aSigs
                  `addConditions` condsCtr
         -- conds' = conds { dtConditions = dtConditions conds ++ shareConds}
         --          `addConditions` condsCtr
-        csts = sigRefCst isCf aSigNr : [ACostValue (-1) | not weak] ++ kis
+        csts = sigRefCst isCf aSigNr :
+               [ACostValue (-1) | not weak] ++
+               [ACostValue (-1) | not weak] ++
+               kis
 
 
 getVarsWithDt :: String

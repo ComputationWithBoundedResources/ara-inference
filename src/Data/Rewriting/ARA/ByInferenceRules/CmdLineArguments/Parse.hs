@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Mar 14 13:41:06 2017 (+0100)
+-- Last-Updated: Fri Apr 14 16:56:25 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 240
+--     Update #: 251
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,6 +66,7 @@ defaultOptions = ArgumentOptions {
                  , shift = False
                  , allowLowerSCC = False
                  , lowerbound = False
+                 , findStrictRules = Nothing
                  }
 
 -- |This function defines the options, the function to be called, when
@@ -113,6 +114,18 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
                  then return (opts { minVectorLength = 1 })
                  else return (opts { minVectorLength = fst $ head readRes })) "INT")
     "Minimum length of vectors to use [Default: 1]."
+
+  , Option ['f'] ["find-strict"]
+   (OptArg (\mStr opts -> do
+               case mStr of
+                 Nothing -> return $ opts { findStrictRules = Just 1 }
+                 Just str -> do
+                   let nr = reads str :: [(Int, String)]
+                   if null nr
+                     then throw $ FatalException "Cannot parse argument of -f/--find-strict!"
+                     else return (opts { findStrictRules = Just $ fst (head nr) })) "INT")
+    "Minimum length of vectors to use [Default: Disabled, when enabled with no argument, 1 is used]."
+
 
   , Option ['i'] ["inference-tree"]
    (NoArg (\opts -> return $ opts { printInfTree = True } ))

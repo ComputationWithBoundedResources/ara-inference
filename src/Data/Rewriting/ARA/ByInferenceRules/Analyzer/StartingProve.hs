@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 19:20:14 2017 (+0200)
+-- Last-Updated: Fri Apr 14 19:31:03 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1590
+--     Update #: 1591
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -235,7 +235,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         ch = (\(Fun _ ch') -> ch') (lhs rule)
 
         useVariableInsteadOfNeg1
-          | isJust (findStrictRules args) && isNothing mSigIdx = True
+          | isJust (findStrictRules args) && isNothing mSigIdx && not weak = True
           | otherwise = False
 
         (nrMin1, varMin1)

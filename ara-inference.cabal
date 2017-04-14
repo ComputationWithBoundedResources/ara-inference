@@ -41,6 +41,7 @@ library
                      , Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver
                      , Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.Inserts
                      , Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT
+                     , Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT.ParseSolutions
                      , Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT.ConvertSolutionToData
                      , Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT.ConvertToSMTProblem
                      , Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT.IO

@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 15:01:30 2017 (+0200)
+-- Last-Updated: Fri Apr 14 13:27:42 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 91
+--     Update #: 104
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -57,9 +57,17 @@ import qualified Data.Map                                                   as M
 import           Data.Maybe
 import qualified Data.Set                                                   as S
 import qualified Data.Text                                                  as T
+import           Text.Parsec
+import           Text.Parsec.Prim
+import           Text.ParserCombinators.Parsec                              hiding
+                                                                             (try)
+
 
 data SMTProblem = SMTProblem
-                  { _vars           :: S.Set T.Text -- [T.Text]
+                  { _logic          :: T.Text
+                  , _constDeclFun   :: T.Text -> T.Text
+                  , _getValueDirective :: Bool
+                  , _vars           :: S.Set T.Text -- [T.Text]
                   , _assertions     :: [(T.Text, Comparison, T.Text)]
                   , _assertionsStr  :: [T.Text]
                   , _ifs            :: [([(T.Text, T.Text)], [(T.Text,T.Text)])]
@@ -67,13 +75,14 @@ data SMTProblem = SMTProblem
                   , _values         :: M.Map T.Text Int
                   , _programName    :: T.Text
                   , _programOptions :: [T.Text]
-                  , _parseFunction  :: T.Text -> ([Data Int], [Data Vector])
+                  , _parseFunction  :: Parser [(String, Int)]
                   }
 makeLenses ''SMTProblem
 
 instance Show SMTProblem where
-  show (SMTProblem vars ass assstr ifs vals n o _) =
-    "Vars: " ++ show vars ++ "\nAssertions: "
+  show (SMTProblem l _ _ vars ass assstr ifs vals n o _) =
+    "Logic: " ++ show l ++
+    "\nVars: " ++ show vars ++ "\nAssertions: "
     ++ show ass ++ "\nAssertion-T.Texts: " ++ show assstr ++
     "\nIf-Assertions: " ++ show ifs ++ "\nValues: " ++ show vals ++
     "\nProgram call: " ++ T.unpack n ++ " " ++ T.unpack (T.unwords o)

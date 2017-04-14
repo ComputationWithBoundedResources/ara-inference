@@ -7,9 +7,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:15:45 2017 (+0200)
+-- Last-Updated: Tue Apr 11 14:34:04 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 638
+--     Update #: 643
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -56,6 +56,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleMisc
 import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.Prove
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
+import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.Typed.Datatype
@@ -143,6 +144,7 @@ composition (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc
           where
             funParNodeParams :: [(String, ADatatype Int)]
             funParNodeParams = zip strVarsNode (zipWith SigRefVar (map fst $ lhsSig sig) strVarsNode)
+            funParNodeCsts :: [ACostCondition a]
             funParNodeCsts = [AVariableCondition (head strVarsCost)]
             funParNodeFunc = Just (Fun f varsNode, dt)
 

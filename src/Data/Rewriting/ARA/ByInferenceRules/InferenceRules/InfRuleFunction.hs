@@ -7,9 +7,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:15:46 2017 (+0200)
+-- Last-Updated: Tue Apr 11 20:17:42 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1204
+--     Update #: 1228
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -86,12 +86,13 @@ import           Debug.Trace
 -- | This includes 3 different types of function applications:
 -- 1. Application of non-cost free types.
 -- 2. Application of cost-free types.
--- 3. Application for the constructor well-typedness inference (using Eq instead of Geq).
+-- 3. Application for the arguments of well-typedness (using Eq instead of Geq).
 function :: ArgumentOptions
          -> [(String,Integer)]
+         -> [String]
          -> (ProblemSig,  CfSigs, ASigs, Int, ACondition Int Int, InfTreeNode)
          -> [(ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, [InfTreeNode])]
-function args reachability (prob, cfsigs, asigs, nr, conds,
+function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
                InfTreeNode pre cst (Just (Fun f fc, dt))
                i@(fn,ruleStr,isCtrDeriv,startCsts,sigNr,mCfSigIdx) his) =
 
@@ -113,10 +114,9 @@ function args reachability (prob, cfsigs, asigs, nr, conds,
         varsRhs = concatMap getTermVars fc
 
         allRls = allRules (rules prob)
-        funName (Fun f _) = f
-        funName _         = error "Lhs root symbol must be a function"
+        funName (Fun f' _) = f'
+        funName _          = error "Lhs root symbol must be a function"
 
-        nrsPerInfTree = length pre + 2
         fRules = filter (\r -> funName (lhs r) == f) allRls
 
 
@@ -125,12 +125,13 @@ function args reachability (prob, cfsigs, asigs, nr, conds,
           | allowLowerSCC args = sigSCCNr f <= sigSCCNr fn
           | otherwise = sigSCCNr f == sigSCCNr fn
 
-
+        isInNoCfDefSyms = f `elem` noCfDefSyms
         isCfBranch = isJust mCfSigIdx
         mCfSigLst | isJust mCfSigIdx = mCfSigIdx
                   | otherwise = Just []
         nonCfHasCfBranches = not (isConstructor f) && not isCtrDeriv &&
-                             not isCfBranch && (f == fn || isInSCCOfStartSig)
+                             not isCfBranch && (f == fn || isInSCCOfStartSig) &&
+                             not isInNoCfDefSyms
         cfBranchNeedSig = isCfBranch && (f /= fn || isInSCCOfStartSig)
         newSigToASig = not isCfBranch && (isConstructor f || f /= fn)
         newDefFunSigToASig = newSigToASig && not (isConstructor f)
@@ -142,50 +143,43 @@ function args reachability (prob, cfsigs, asigs, nr, conds,
 
         emptyACond = ACondition [] [] []
 
-        (cfsigs',infTreesCf,conds'')
-          | not newSigToCfSig = (cfsigs, [], emptyACond)
+        (cfsigs',infTreesCf,conds'',nr')
+          | not newSigToCfSig = (cfsigs, [], emptyACond,nr)
           | otherwise =
             foldl
-            (\(curCfSigs,curInfTrees,curConds) (rule@(Rule (Fun f ch) rhs)) ->
+            (\(curCfSigs,curInfTrees,curConds,nrIn) (rule@(Rule (Fun f ch) rhs)) ->
               let dts = fromMaybe [] (datatypes prob)
                   sigs = fromMaybe [] (signatures prob)
-                  (_, (infTreeNds,newCfSigs,conds')) =
-                    -- trace ("cfSigIdx: " ++ show cfSigIdx)
-                     createInfTreeNodes (Right cfGrp) True (Just cfSigIdx) args dts sigs True
-                     (rule, ([],curCfSigs,emptyACond))
+                  (_, (infTreeNds,newCfSigs,conds',nrO,_)) =
+                    createInfTreeNodes (Right cfGrp) True (Just cfSigIdx) args dts sigs True
+                    (rule, ([],curCfSigs,emptyACond,nrIn,[]))
 
-                  setCfHistory (InfTreeNode pre cst post (_,_,ch,cstRoot,_,lst) _) =
+                  setCfHistory (InfTreeNode pre cst post (_,_,ctrDer,cstRoot,_,lst) _) =
                     InfTreeNode pre cst post
-                    (fn,ruleStr,ch,cstRoot,sigNr, lst)
+                    (fn,ruleStr,ctrDer,cstRoot,sigNr, lst)
                     (his ++ [(fst3 (last his) + 1, "function cf"
                              , InfTreeNodeView (map (second toADatatypeVector) pre)
                                (map toACostConditionVector cst)
                                (second toADatatypeVector (fromJust post)))])
 
-                  setCfOrigin (InfTreeNode pre cst post (_,_,ch,cstRoot,_,_) his) =
+                  setCfOrigin (InfTreeNode pre cst post (_,_,ctrDer,cstRoot,_,_) his) =
                     InfTreeNode pre cst post
-                    (fn,ruleStr,ch,cstRoot,sigNr,Just ((f,cfSigIdx):) <*> mCfSigLst) his
+                    (fn,ruleStr,ctrDer,cstRoot,sigNr,Just ((f,cfSigIdx):) <*> mCfSigLst) his
               in
-                -- trace ("infTreeNds: " ++ show infTreeNds)
-                -- trace ("conds'" ++ show conds')
-                -- trace ("newCfSigs: " ++ show (drop (length curCfSigs) $ zip [0..] newCfSigs))
-                (newCfSigs
-                 ,curInfTrees ++
-                  (setCfHistory.setCfOrigin) (head infTreeNds) :
-                  map setCfOrigin (tail infTreeNds)
-                 ,curConds `addConditions` conds')
+                -- trace ("nInftrees: " ++ show ((setCfHistory.setCfOrigin) (head infTreeNds) :
+                --   map setCfOrigin (tail infTreeNds)))
 
-            ) (cfsigs ++ [(sig2ASig True args sig,cfGrp,"new cfSigs")],[],emptyACond) fRules
+                (newCfSigs
+                 ,curInfTrees ++ (setCfHistory.setCfOrigin) (head infTreeNds) :
+                   map setCfOrigin (tail infTreeNds)
+                 , curConds `addConditions` conds'
+                 , nrO)
+
+            ) (cfsigs ++ [(sig2ASig True args sig,cfGrp,"new cfSigs")],[],emptyACond,nr) fRules
 
         cfSigIdx
           | newSigToCfSig = length cfsigs
-          | otherwise = snd $ -- trace ("asdf: " ++ show newSigToCfSig ++
-                              --       "\n(nonCfHasCfBranches: " ++ show nonCfHasCfBranches ++
-                              --       "\nisCfBranch: " ++ show isCfBranch ++
-                              --       "\n(isCfBranch && f /= fn): " ++ show (isCfBranch && f /= fn) ++
-                              --       "\nnot recursiveCfDeriv: " ++ show (not recursiveCfDeriv) ++
-                              --        "\n"++ show mCfSigIdx++ "\n" ++ f)
-                        head (filter ((==f) . fst) (fromJust mCfSigIdx))
+          | otherwise = snd $ head (filter ((==f) . fst) (fromJust mCfSigIdx))
 
         cfGrp
           | not isCfBranch = maximum ((-1) : map snd3 cfsigs)+1
@@ -211,8 +205,8 @@ function args reachability (prob, cfsigs, asigs, nr, conds,
         baseSig = fromJust $ find ((== f) . fst4 . lhsRootSym . fst3 . snd) (zip [0..] asigs)
         baseSigNr = fst baseSig
 
-        cfBaseSig = find ((== f) . fst4 . lhsRootSym . fst3 . snd) (zip [0..] cfsigs)
-        cfBaseSigNr = fmap fst cfBaseSig
+        -- cfBaseSig = find ((== f) . fst4 . lhsRootSym . fst3 . snd) (zip [0..] cfsigs)
+        -- cfBaseSigNr = fmap fst cfBaseSig
 
         nPre :: [ADatatype Int]
         nPre = map (\(a,b) -> sigRefParam isCfBranch a asigIdx b) (zip dtsChld [0..])
@@ -233,9 +227,9 @@ function args reachability (prob, cfsigs, asigs, nr, conds,
 
 
         -- create new variable c for costs
-        (nr', nCVar)
-          | isCfBranch || nonCfHasCfBranches = getNewVariableName nr 1
-          | otherwise = (nr, [])
+        -- (nr', nCVar)
+        --   | not isCtrDeriv && (isCfBranch || nonCfHasCfBranches) = getNewVariableName nr 1
+        --   | otherwise = (nr, [])
 
         conds' = conds { costCondition = costCondition conds ++ newCstCond
                                          ++ costCondition conds''
@@ -245,25 +239,22 @@ function args reachability (prob, cfsigs, asigs, nr, conds,
                                            ++ shareConditions conds''
                        }
 
-        -- sigRefCst | isCfBranch = SigRefCstCf
-        --           | otherwise = SigRefCst
-        -- sigRefParam | isCfBranch = SigRefParamCf
-        --             | otherwise = SigRefParam
-        -- sigRefRet | isCfBranch = SigRefRetCf
-        --           | otherwise = SigRefRet
 
         newCstCond =
           -- ensure the costs are not growing too much
           [(cst, if isCtrDeriv then Eq else Geq
             , sigRefCst isCfBranch asigIdx :
-             [SigRefCstCf cfSigIdx | nonCfHasCfBranches] ++
-              fmap AVariableCondition nCVar)] ++
+             [SigRefCstCf cfSigIdx | nonCfHasCfBranches] -- ++
+              -- fmap AVariableCondition nCVar
+            )] ++
           [ ([SigRefCst asigIdx], Eq, [SigRefCst baseSigNr]) | newDefFunSigToASig ]
 
         newDtCond =
-          zipWith (\r n -> ([snd r], Geq, sigRefParam isCfBranch "" asigIdx n:
+          zipWith (\r n -> ([snd r], if isCtrDeriv then Eq else Geq
+                           , sigRefParam isCfBranch "" asigIdx n :
                             [SigRefParamCf "" cfSigIdx n | nonCfHasCfBranches])) preSorted [0..]
-          ++ [(sigRefRet isCfBranch "" asigIdx : [SigRefRetCf "" cfSigIdx | nonCfHasCfBranches], Geq, [dt])]
+          ++ [(sigRefRet isCfBranch "" asigIdx : [SigRefRetCf "" cfSigIdx | nonCfHasCfBranches]
+              , if isCtrDeriv then Eq else Geq, [dt])]
           ++ concatMap (\x ->
                            [([SigRefParam "" asigIdx x], Eq,
                              [SigRefParam "" baseSigNr x])
@@ -290,7 +281,7 @@ function args reachability (prob, cfsigs, asigs, nr, conds,
                           (SigRefRetCf "" cfSigIdx)
                          else Nothing))]
 
-function _ _ _ = []
+function _ _ _ _ = []
 
 --
 -- InfRuleFunction.hs ends here

@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:14:14 2017 (+0200)
+-- Last-Updated: Fri Apr 14 14:13:02 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1469
+--     Update #: 1514
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -45,6 +45,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.Inserts
 import           Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT.ConvertSolutionToData
 import           Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT.ConvertToSMTProblem
 import           Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT.IO
+import           Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT.ParseSolutions
 import           Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT.Type
 
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition
@@ -85,18 +86,48 @@ import qualified Data.Set                                                       
 
 import qualified Data.Text                                                                      as T
 import           Debug.Trace
+import           Text.Parsec.Prim
+import           Text.ParserCombinators.Parsec                                                  hiding
+                                                                                                 (try)
 import           Text.PrettyPrint                                                               hiding
                                                                                                  (empty)
 
+use :: ArgumentOptions -> SMTProblem
+use args =
+  case smtSolver args of
+    Z3      -> z3 logic timeo
+    MiniSMT -> minismt logic timeo
+  where  logic
+           | shift args = "QF_LIA"
+           | otherwise = "QF_NIA"
+         timeo= timeout args
 
-use :: SMTProblem
-use = z3
+z3 :: T.Text -> Maybe Int -> SMTProblem
+z3 logic timeo =
+  emptySMTProblem "z3" logic declareAsConst True
+  (["-T:" `T.append` T.pack (show $ fromJust timeo) | isJust timeo ] ++ ["-smt2"])
+  parseZ3
 
-z3 :: SMTProblem
-z3 = emptySMTProblem "z3" ["-smt2"]
 
-emptySMTProblem :: T.Text -> [T.Text] -> SMTProblem
-emptySMTProblem name args = SMTProblem S.empty [] [] [] M.empty name args undefined
+minismt :: T.Text -> Maybe Int -> SMTProblem
+minismt logic timeo =
+  emptySMTProblem "minismt" logic declareAsFun False
+  (["-t " `T.append` T.pack (show $ fromJust timeo) | isJust timeo ] ++ ["-v2", "-m", "-neg"])
+  parseMinismt
+
+
+emptySMTProblem :: T.Text
+                -> T.Text
+                -> (T.Text -> T.Text)
+                -> Bool
+                -> [T.Text]
+                -> Parser [(String, Int)]
+                -> SMTProblem
+emptySMTProblem name logic declFun getVals args parser =
+  SMTProblem logic declFun getVals S.empty [] [] [] M.empty name args parser
+
+declareAsConst n = "(declare-const " +++ n +++ " Int)\n"
+declareAsFun n = "(declare-fun " +++ n +++ " () Int)\n"
 
 
 solveProblem :: ArgumentOptions
@@ -112,7 +143,7 @@ solveProblem ops probSigs conds aSigs cfSigs = do
   let minNrVec = minVectorLength ops
   let eqZero = concatMap constantToZero
                (zip [0..] (map fst3 aSigs) ++ zip [0..] (map fst3 cfSigs))
-  let prob0 = execState (addEqZeroConstraints eqZero) use
+  let prob0 = execState (addEqZeroConstraints eqZero) (use ops)
   let vecLens = [minNrVec..maxNrVec]
   when (maxNrVec < 1 || maxNrVec > maximumVectorLength)
     (throw $ FatalException $
@@ -140,10 +171,10 @@ baseCtrSigDefFun f x y = fst4 (lhsRootSym x) `f` fst4 (lhsRootSym y) &&
                          getDt (rhsSig x) `f` getDt (rhsSig y)
 
 
-solveProblem' :: (Show a, Show a1) =>
+solveProblem' :: (Num a, Ord a, Show a, Show a1) =>
                 ArgumentOptions
               -> [SignatureSig]
-              -> ACondition a1 a
+              -> ACondition a a1
               -> ASigs
               -> CfSigs
               -> Int
@@ -329,7 +360,8 @@ shiftConstraints recCtrs nonRecCtrs (nr, Signature (n,_,_,isCf) [] _) = []
 shiftConstraints recCtrs nonRecCtrs sig@(nr, Signature (n,_,True,isCf) lhs rhs)
   | null (lhsSig (snd sig)) = []
   | forceInterl && length lhsDts < 2 =
-      throw $ FatalException "Not enough parameter types for interleaving!"
+      throw $ FatalException $
+      "Not enough parameter types for interleaving! Constructor: " ++ n
   | length lhsCount == 1 =
     [(zipWith (curry toShiftPar) [0..] lhsBools,
                              (sigRefCst isCf nr, Diamond (sigRefRet isCf "" nr)))]

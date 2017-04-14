@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 17:35:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:14:16 2017 (+0200)
+-- Last-Updated: Tue Apr 11 18:19:51 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 418
+--     Update #: 421
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -80,7 +80,8 @@ import           Debug.Trace                                                    
 
 share :: (ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, InfTreeNode)
          -> [(ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, [InfTreeNode])]
-share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt)) fn his) =
+share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
+        i@(_,_,isCtrDeriv,_,_,_) his) =
   -- trace ("share")
 
   -- trace ("pre:" ++ show groupedPre)
@@ -106,7 +107,7 @@ share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
     -- trace ("pre: " ++ show pre)
     -- trace ("pre': " ++ show pre')
 
-  [ (prob, cfsigs, asigs, nr', conds', [InfTreeNode (concat pre') cst (Just (post', dt)) fn his'])
+  [ (prob, cfsigs, asigs, nr', conds', [InfTreeNode (concat pre') cst (Just (post', dt)) i his'])
   | any ((>1) . length) varPostGroups
   ]
 
@@ -142,7 +143,9 @@ share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
                     -> ((String, ADatatype Int), [(String, ADatatype Int)])
                     -> [(ADatatype Int, Comparison, [ADatatype Int])]
         shareConds' acc (_, [_]) = acc
-        shareConds' acc (preDt, postDts) = acc ++ [(snd preDt, Geq, map snd postDts)]
+        shareConds' acc (preDt, postDts) = acc ++ [(snd preDt
+                                                   , if isCtrDeriv then Eq else Geq
+                                                   , map snd postDts)]
 
         origPreOrd ((a,_),_)=
           snd $

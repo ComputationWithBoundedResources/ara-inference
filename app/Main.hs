@@ -8,9 +8,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:14:39 2017 (+0200)
+-- Last-Updated: Tue Apr 11 20:57:53 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 921
+--     Update #: 930
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -76,6 +76,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.Constants                              (seperatorDoc)
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.ARA.Exception.Pretty                       ()
+import           Data.Rewriting.ARA.InferTypes
 import           Data.Rewriting.ARA.Pretty
 import           Data.Rewriting.Typed.Problem
 import           Data.Rewriting.Typed.Rule
@@ -109,7 +110,12 @@ main =
             "Minumum vector length was greater than maximum vector length." )
 
 
-         prob <- parseFileIO (filePath args)
+         probFile <- parseFileIO (filePath args)
+
+         -- if no types given, infer them
+         let prob = if isNothing (datatypes probFile) || isNothing (signatures probFile)
+               then inferTypesAndSignature probFile
+               else probFile
 
          -- Find out SCCs
          let reachability = analyzeReachability prob
@@ -242,6 +248,9 @@ main =
                   putStrLn txt
                 WarningException txt -> do
                   putStrLn "MAYBE"
+                  putStrLn txt
+                TimeoutException txt -> do
+                  putStrLn "TIMEOUT"
                   putStrLn txt
                 FatalException txt -> do
                   putStr "ERROR:"

@@ -1,23 +1,23 @@
 #!/bin/bash
 
 # COMMAND="./dist/build/inference-exe/inference-exe $@ "
-PROG="./.stack-work/dist/x86_64-linux/Cabal-1.24.0.0/build/inference-exe/inference-exe"
+PROG="./.stack-work/dist/x86_64-linux/Cabal-1.24.0.0/build/ara-inference-exe/ara-inference-exe"
 COMMAND="$PROG $@ "
 TIMES=1
-# FOLDERS=" ./doc/examples/"
+FOLDERS=" ./doc/examples/"
 # FOLDERS=" ./doc/examples/linear "
 # FOLDERS=" ./doc/tpdb_full/"
 # FOLDERS=" ./doc/tpdb_full/raML/"
 # FOLDERS=" ./doc/tpdb_constrtrs/"
 # FOLDERS="./doc/examples/linear/ ./doc/examples/quadratic/ "
-FOLDERS="./doc/examples/linear/ ./doc/examples/quadratic/ ./doc/examples/infeasible/"
+# FOLDERS="./doc/examples/linear/ ./doc/examples/quadratic/ ./doc/examples/infeasible/"
 # FOLDERS="./doc/examples/tpdb/Frederiksen_Glenstrup/ ./doc/examples/tpdb/Frederiksen_Others/ ./doc/examples/tpdb/hoca/ ./doc/examples/tpdb/raML/ ./doc/examples/tpdb/TCT_12/"
 
 # tct-trs -s "matrices :to 3" --complexity rci doc/examples/quadratic/pairsp.trs
 # poly strategie
 
 COLWIDTH=10
-TIMEOUT=60
+TIMEOUT=10
 
 function displayUsage {
     echo -e -n "Usage:\n$0 [arguments to analyse program]"

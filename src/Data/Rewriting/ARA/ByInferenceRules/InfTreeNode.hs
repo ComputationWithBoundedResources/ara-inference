@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 13:20:02 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Feb 18 21:06:46 2015 (+0100)
+-- Last-Updated: Tue Apr 11 14:34:02 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 5
+--     Update #: 7
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -43,9 +43,9 @@ module Data.Rewriting.ARA.ByInferenceRules.InfTreeNode
     where
 
 
+import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode.Ops
 import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode.Type
-import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode.Ops
 
 --
 -- InfTreeNode.hs ends here

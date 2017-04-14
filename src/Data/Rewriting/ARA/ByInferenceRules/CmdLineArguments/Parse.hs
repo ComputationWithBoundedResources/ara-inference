@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 16:56:25 2017 (+0200)
+-- Last-Updated: Fri Apr 14 17:18:58 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 251
+--     Update #: 253
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,6 +66,8 @@ defaultOptions = ArgumentOptions {
                  , shift = False
                  , allowLowerSCC = False
                  , lowerbound = False
+                 , timeout = Nothing
+                 , smtSolver = Z3
                  , findStrictRules = Nothing
                  }
 
@@ -98,6 +100,15 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
   , Option ['l'] ["lowerbound"]
    (NoArg (\opts -> return $ opts { lowerbound = True } ))
    "Search for best case lowerbound instead of upperbound."
+
+  , Option ['s'] ["smt"]
+   (ReqArg (\str opts -> return $
+              case str of
+                "minismt" -> opts { smtSolver = MiniSMT }
+                "z3"      -> opts { smtSolver = Z3 }
+                _         -> opts) "[z3|minismt]")
+     "Set the SMT solver. Must be one of 'z3', 'minismt'. (Default: Z3)."
+
 
   , Option ['v'] ["max-vector-length"]
    (ReqArg (\str opts -> do
@@ -140,11 +151,18 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
             opts { uniqueConstrFuns = not (uniqueConstrFuns opts) } ))
    "Toggle constraints to gain unique function signatures [Default: Disabled]."
 
-  , Option ['s'] ["separate-base-ctr"]
+  , Option [] ["separate-base-ctr"]
    (NoArg (\opts -> return $
             opts { separateBaseCtr = not (separateBaseCtr opts) } ))
    "Use different base vectors for the constructors of cost free (cf) and non-cf signatures [Default: Disabled]."
 
+  , Option ['t'] ["timeout"]
+   (ReqArg (\str opts -> do
+               let readRes = reads str :: [(Int, String)]
+               if null readRes
+                 then return opts
+                 else return (opts { timeout = Just $ fst (head readRes) })) "INT")
+    "Set a Timeout for the SMT solver."
   ]
 
 

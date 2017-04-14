@@ -7,9 +7,9 @@
 -- Created: Wed Sep 17 09:05:42 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:15:45 2017 (+0200)
+-- Last-Updated: Tue Apr 11 16:43:45 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 393
+--     Update #: 399
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,7 +66,7 @@ printWhen' True  p = (p $+$ empty $+$ )
 infixr 5 `printWhen'`
 
 
-prettyAraProblem :: ProblemSig -> Doc
+prettyAraProblem ::  ProblemSig -> Doc
 prettyAraProblem prob =
     printWhen' (sterms /= AllTerms) (block "STARTTERM" $ text "CONSTRUCTOR-BASED")
     $ printWhen' (strat /= Full) (block "STRATEGY" $ ppStrat strat)

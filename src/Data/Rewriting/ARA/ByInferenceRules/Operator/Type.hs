@@ -7,9 +7,9 @@
 -- Created: Fri Sep  5 09:06:31 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Dec 16 21:08:22 2014 (+0100)
+-- Last-Updated: Tue Apr 11 14:33:58 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 14
+--     Update #: 16
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -57,8 +57,8 @@ data Comparison = Eq | Geq -- | Leq | Times | Plus | Minus | Exp
                 deriving (Eq)
 
 instance Show Comparison where
-    show Eq    = "="
-    show Geq   = ">="
+    show Eq  = "="
+    show Geq = ">="
     -- show Gt    = ">"
     -- show Lt    = "<"
     -- show Leq   = "<="

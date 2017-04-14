@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 10:40:25 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri May 27 10:46:22 2016 (+0200)
+-- Last-Updated: Tue Apr 11 20:57:27 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 59
+--     Update #: 65
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -54,6 +54,7 @@ data ProgException = ShowTextOnly String
                    | WarningException String
                    | FatalException String
                    | ParseException String
+                   | TimeoutException String
                    | UnsolveableException String
                    | SemanticException String
                        deriving (Typeable)
@@ -70,6 +71,7 @@ instance Show ProgException where
     show (FatalException x)       = exceptionPrefixFatal ++ x
     show (ParseException x)       = exceptionPrefixParse ++ x
     show (UnsolveableException x) = exceptionPrefixUnsolveable ++ x
+    show (TimeoutException x)     = exceptionPrefixTimeout ++ x
 
 
 -----------------------------------------------------------------------------
@@ -89,6 +91,9 @@ exceptionPrefixSemantic = "Semantic Error:"
 
 exceptionPrefixUnsolveable :: [Char]
 exceptionPrefixUnsolveable = "Problem unsolvable:"
+
+exceptionPrefixTimeout :: [Char]
+exceptionPrefixTimeout = "Timeout: "
 
 --
 -- Exception.hs ends here

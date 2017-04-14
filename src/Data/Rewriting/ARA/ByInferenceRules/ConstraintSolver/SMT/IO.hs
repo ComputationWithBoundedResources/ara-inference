@@ -8,9 +8,9 @@
 -- Created: Sun May 22 19:14:44 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Apr  2 11:15:45 2017 (+0200)
+-- Last-Updated: Fri Apr 14 13:36:48 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 319
+--     Update #: 348
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -64,36 +64,36 @@ import           Text.ParserCombinators.Parsec                                  
 
 import           Debug.Trace
 
--- (set-logic QF_LIA)
--- (declare-const x19 Int)
--- (declare-const x20 Int)
--- (declare-const x22 Int)
--- (declare-const x12 Int)
--- (declare-const x15 Int)
--- (assert (>= x19 0))
--- (assert (>= x20 0))
--- (assert (>= x22 0))
--- (assert (>= x12 0))
--- (assert (>= x15 0))
--- (assert (>= x19 x22))
--- (assert (>= (+ x22 (+ x12 x20)) (+ x15 2)))
--- (assert (> x15 (+ x20 x19)))
--- (check-sat)
--- (get-value (x19 x20 x22 x12 x15))
 
+getLogic :: StateT SMTProblem IO T.Text
+getLogic = do
+  l <- gets (^. logic)
+  return $ "(set-logic " +++ l +++ ")\n"
+
+-- funDefs :: T.Text
+-- funDefs = "(define-fun max ((x Int) (y Int)) Int (ite (< x y) y x))\n"
 
 intro :: Bool -> T.Text
 intro shift
   | shift = "(set-logic QF_LIA)\n(define-fun max ((x Int) (y Int)) Int (ite (< x y) y x))\n"
   | otherwise = "(set-logic QF_NIA)\n(define-fun max ((x Int) (y Int)) Int (ite (< x y) y x))\n"
-  -- "(set-logic QF_LIA)\n"
 
-outro :: [T.Text] -> T.Text
-outro vars = "(check-sat)\n(get-value (" +++ T.unwords vars +++ "))"
--- outro vars = "(check-sat-using (then qe smt))\n(get-value (" ++ unwords vars ++ "))"
+outro :: T.Text
+outro = "(check-sat)\n"
 
-varsDecl :: [T.Text] -> T.Text
-varsDecl = T.concat . map (\n -> "(declare-const " +++ n +++ " Int)\n")
+getValues :: StateT SMTProblem IO T.Text
+getValues = do
+  getValsNeeded <- gets (^. getValueDirective)
+  vs <- fmap S.elems (gets (^. vars))
+  if getValsNeeded
+    then return $ "(get-value (" +++ T.unwords vs +++ "))\n"
+    else return ""
+
+getDecls :: StateT SMTProblem IO T.Text
+getDecls = do
+  declFun <- gets (^. constDeclFun)
+  vs <- fmap S.elems (gets (^. vars))
+  return $ T.concat (map declFun vs)
 
 fromComp :: Comparison -> T.Text
 fromComp Eq  = "="
@@ -102,7 +102,7 @@ fromComp Geq = ">="
 assertVarsGeq0 :: [T.Text] -> T.Text
 assertVarsGeq0 vars =
   T.concat (map (\n -> "(assert (>= " +++ n +++ " 0))\n") vars)
-  -- `T.append`
+  -- +++
   -- T.concat (map (\n -> "(assert (<= " +++ n +++ " 20))\n") vars)
 
 asserts :: [(T.Text, Comparison, T.Text)] -> T.Text
@@ -130,13 +130,17 @@ toAndList conds =
 solveSMTProblem :: Bool -> Bool -> FilePath -> StateT SMTProblem IO (M.Map String Int)
 solveSMTProblem shift keepFiles tempDir = do
 
-  vs <- fmap S.elems (gets (^. vars))
   ass <- gets (^. assertions)
   assStr <- gets (^. assertionsStr)
   ifs <- gets (^. ifs)
+  log <- getLogic
+  decls <- getDecls
+  vs <- fmap S.elems (gets (^. vars))
+  getVals <- getValues
 
-  let txt = intro shift +++ varsDecl vs +++ assertVarsGeq0 vs +++ ifAsserts ifs +++
-        asserts ass +++ assertsStr assStr +++ outro vs
+
+  let txt = log +++ decls +++ assertVarsGeq0 vs +++ ifAsserts ifs +++
+            asserts ass +++ assertsStr assStr +++ outro +++ getVals
 
   -- create the temporary files
   (pName, pHandle) <- liftIO (openTempFile tempDir "SMTP")
@@ -161,64 +165,11 @@ solveSMTProblem shift keepFiles tempDir = do
   unless keepFiles
     (liftIO (void (Cmd.system ("rm " ++ pName  ++ " "  ++ sName ))))
 
+  solParser <- gets (^. parseFunction)
 
-  case parse smtSolveResult sName solStr of
+  case parse solParser sName solStr of
     Left err -> fail (show err)
     Right xs -> return (M.fromList xs)
-
-
-smtSolveResult :: Parser [(String, Int)]
-smtSolveResult = unkown <|> unsolveable <|> solution <|> parseError
-
-
-parseError :: Parser a
-parseError = throw $ ParseException "Could not parse solution. Programming error."
-
-unkown :: Parser a
-unkown = do
-  _ <- try (string "unknown")
-  parserFail "The smt solver returned 'unkown'."
-
-
-unsolveable :: Parser a
-unsolveable = do
-  _ <- string "unsat"
-  fail "The smt problem could not be solved (was unsat)."
-
-
-solution :: Parser [(String, Int)]
-solution = do
-  _ <- string "sat" >> spaces
-  _ <- char '('
-  v <- many varMap
-  _ <- char ')' >> spaces
-  _ <- eof
-  return v
-
-varMap :: Parser (String, Int)
-varMap = do
-  _ <- spaces >> char '('
-  n <- name
-  _ <- spaces
-  v <- int
-  _ <- char ')' >> spaces
-  return (n, v)
-
-name :: Parser String
-name = do
-  l <- letter
-  r <- many (alphaNum <|> char '_' <|> char '\'')
-  return $ l:r
-
-
-int :: Parser Int
-int = do
-  ds <- (do
-          nr <- char '-'
-          d <- many digit
-          return (nr:d)
-        ) <|> many digit
-  return (read ds :: Int)
 
 
 --

@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:19:36 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 16:54:46 2017 (+0200)
+-- Last-Updated: Fri Apr 14 17:19:29 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 76
+--     Update #: 77
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -36,7 +36,11 @@
 
 module Data.Rewriting.ARA.ByInferenceRules.CmdLineArguments.Type
     ( ArgumentOptions (..)
+    , SMTSolver (..)
     ) where
+
+data SMTSolver = Z3 | MiniSMT
+  deriving (Show, Eq)
 
 data ArgumentOptions = ArgumentOptions
     { filePath         :: FilePath
@@ -52,6 +56,8 @@ data ArgumentOptions = ArgumentOptions
     , shift            :: Bool
     , allowLowerSCC    :: Bool
     , lowerbound       :: Bool
+    , timeout          :: Maybe Int
+    , smtSolver        :: SMTSolver
     , findStrictRules  :: Maybe Int
     } deriving (Show, Eq)
 

@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 10 14:14:14 2017 (+0200)
+-- Last-Updated: Fri Apr 14 13:18:36 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 982
+--     Update #: 1041
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -84,7 +84,7 @@ infix 4 <>=+
 field <>=+ strs = field %= (\x -> foldl (flip S.insert) x strs)
 
 
-addEqZeroConstraints :: (Show a, MonadState SMTProblem m) =>
+addEqZeroConstraints :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
                        [ACostCondition a]
                      -> m ()
 addEqZeroConstraints eqZero = do
@@ -92,7 +92,7 @@ addEqZeroConstraints eqZero = do
   mapM_ (\x -> addConstraint (head (fromCostCond x), Eq, "0")) eqZero
 
 
-addUniqueSigConstraints :: (Monad m, Show a) =>
+addUniqueSigConstraints :: (Num a, Ord a, Monad m, Show a) =>
                           Int
                         -> [((ADatatype a, ADatatype a)
                           , [(ADatatype a, ADatatype a)]
@@ -217,14 +217,16 @@ fromCostCondM (SigRefCst nr) = ["k" +++ T.pack (show nr)]
 fromCostCondM (SigRefCstCf nr) = ["k_cf" +++ T.pack (show nr)]
 fromCostCondM (ACostValue _) = [] -- numbers like: -1
 
-fromCostCond :: Show a => ACostCondition a -> [T.Text]
+fromCostCond :: (Num a, Ord a, Show a) => ACostCondition a -> [T.Text]
 fromCostCond (AVariableCondition str) = [T.pack str]
 fromCostCond (SigRefCst nr) = ["k" +++ T.pack (show nr)]
 fromCostCond (SigRefCstCf nr) = ["k_cf" +++ T.pack (show nr)]
-fromCostCond (ACostValue nr) = [T.pack (show nr)]
+fromCostCond (ACostValue nr)
+  | nr < 0 = ["(- 0 " +++ T.pack (show (abs nr)) +++ ")"]
+  | otherwise   = [T.pack (show nr)]
 
 
-addCostConditions :: (Show a, Monad m) =>
+addCostConditions :: (Num a, Ord a, Show a, Monad m) =>
                     Int
                   -> [([ACostCondition a], Comparison, [ACostCondition a])]
                   -> StateT SMTProblem m ()
@@ -329,13 +331,27 @@ addConstructorGrowthConstraints vecLen = mapM_ addConstructorGrowthConstraints'
           -- trace ("w+ri >= ui: " ++ show (wRiVars,Geq,uis))
           addConstraintBy id (wRiVars,Geq,uis)
 
+          -- (ite x1 > x2 AND x1>x3 AND x1>x4 then x1
+          -- else if x2 > x3 AND x2>x4  then x2
+          -- else if x3 > x4 then x3 else x4
 
-          let wsMaxFun = fromListByFun "(max " return ws
+          -- (ite (and (and (> x1 x2) (> x1 x3)) (> x1 x4)) x1
+          --      (...))
+
+
+          let maxList (x:xs) = maxList' x xs
+              maxList' x [] = x
+              maxList' x xs@(y:ys) =
+                let lst = map (\y -> ("(> " +++ x +++ " " +++ y +++ ")")) xs
+                    ifQ = (T.concat $ fromListByFun "(and " return lst)
+                in "(ite " +++ ifQ +++ " " +++ x +++ " " +++ maxList' y ys +++ ")"
+
+          let wsMaxFun = maxList ws
               wsMaxV = baseVarI +++ "wsmax"
-              wsMaxConstr = "(= " +++ wsMaxV +++ " " +++ T.concat wsMaxFun +++ ")"
-          let riMaxFun = fromListByFun "(max " return ris
+              wsMaxConstr = "(= " +++ wsMaxV +++ " " +++ wsMaxFun +++ ")"
+          let riMaxFun = maxList ris
               riMaxV = baseVarI +++ "rimax"
-              riMaxConstr = "(= " +++ riMaxV +++ " " +++ T.concat riMaxFun +++ ")"
+              riMaxConstr = "(= " +++ riMaxV +++ " " +++ riMaxFun +++ ")"
 
           -- fetch the maximum
           -- trace ("wsMaxConstr: " ++ show wsMaxConstr)
@@ -399,10 +415,14 @@ addHeuristics vecLen = mapM_ addHeuristics'
         addHeur (this, Interleaving other1 other2) = do
           let fun (acc,p1,p2) t
                 | length p1 + length p2 <= vecLen =
-                  (acc ++ [(head p1, Eq, "0"), (head p2,Eq,"0")], tail p1, tail p2)
+                    (acc ++ [(head p1, Eq, "0")] ++ [(head p2, Eq, "0")] , tail p1, tail p2)
                 | length p1 >= length p2 = (acc ++ [(t, Eq, head p1)],tail p1,p2)
                 | otherwise = (acc ++ [(t, Eq, head p2)],p1,tail p2)
-          assertions <>= fst3 (foldl fun ([],other1,other2) this)
+              (asserts1,restP1,restP2) = foldl fun ([],other1,other2) this
+
+          assertions <>= asserts1                                    -- set interleaving
+          assertions <>= map (\x -> (x, Eq, "0")) (restP1 ++ restP2) -- set rest to 0
+
           vars <>=+ other1 ++ other2 ++ this
         addHeur (this, Zero) = do
           assertions <>= map (\x -> (x, Eq, "0")) this

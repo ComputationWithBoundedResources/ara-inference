@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 13:18:36 2017 (+0200)
+-- Last-Updated: Fri Apr 14 18:54:35 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1041
+--     Update #: 1057
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -91,6 +91,18 @@ addEqZeroConstraints eqZero = do
   mapM_ (addVars . fromCostCond) eqZero
   mapM_ (\x -> addConstraint (head (fromCostCond x), Eq, "0")) eqZero
 
+
+addFindStrictRulesConstraint :: (Num a, Ord a, Monad m, Show a) =>
+                          Int
+                        -> [ACostCondition a]
+                        -> StateT SMTProblem m ()
+addFindStrictRulesConstraint _ [] = return ()
+addFindStrictRulesConstraint minNr csts = do
+  assertions <>= [("(- 0 " +++ T.pack (show minNr) +++ ")", Geq, head $ fromListBy fromCostCond csts)]
+  let minVarBound x = "(or (= 0 " +++ xName +++ ") (= 0 (+ 1 " +++ xName +++ ")))"
+        where xName = head $ fromCostCond x
+  assertionsStr <>= fmap minVarBound csts
+  varsDeclOnly <>=+ fmap (head . fromCostCond) csts
 
 addUniqueSigConstraints :: (Num a, Ord a, Monad m, Show a) =>
                           Int

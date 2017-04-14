@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 14:13:02 2017 (+0200)
+-- Last-Updated: Fri Apr 14 18:32:11 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1514
+--     Update #: 1537
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -112,7 +112,7 @@ z3 logic timeo =
 minismt :: T.Text -> Maybe Int -> SMTProblem
 minismt logic timeo =
   emptySMTProblem "minismt" logic declareAsFun False
-  (["-t " `T.append` T.pack (show $ fromJust timeo) | isJust timeo ] ++ ["-v2", "-m", "-neg"])
+  (["-t " `T.append` T.pack (show $ fromJust timeo) | isJust timeo ] ++ ["-v2", "-m"]) -- , "-neg"])
   parseMinismt
 
 
@@ -124,7 +124,7 @@ emptySMTProblem :: T.Text
                 -> Parser [(String, Int)]
                 -> SMTProblem
 emptySMTProblem name logic declFun getVals args parser =
-  SMTProblem logic declFun getVals S.empty [] [] [] M.empty name args parser
+  SMTProblem logic declFun getVals S.empty S.empty [] [] [] M.empty name args parser
 
 declareAsConst n = "(declare-const " +++ n +++ " Int)\n"
 declareAsFun n = "(declare-fun " +++ n +++ " () Int)\n"
@@ -135,8 +135,8 @@ solveProblem :: ArgumentOptions
              -> ACondition Int Int
              -> ASigs
              -> CfSigs
-             -> IO ([ASignatureSig], [ASignatureSig], [Data Int], [Data Vector]
-                  , [ASignatureSig], [ASignatureSig], Int)
+             -> IO ([ASignatureSig], [ASignatureSig], [Data Int], M.Map String Vector
+                  , [ASignatureSig], [ASignatureSig], Int, ([Int],[Int]))
 solveProblem ops probSigs conds aSigs cfSigs = do
 
   let maxNrVec = maxVectorLength ops
@@ -181,10 +181,11 @@ solveProblem' :: (Num a, Ord a, Show a, Show a1) =>
               -> StateT SMTProblem IO ([ASignatureSig]
                                      , [ASignatureSig]
                                      , [Data Int]
-                                     , [Data Vector]
+                                     , M.Map String Vector
                                      , [ASignatureSig]
                                      , [ASignatureSig]
-                                     , Int)
+                                     , Int
+                                     , ([Int],[Int]))
 solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
 
   let aSigs = map fst3 aSigsTxt
@@ -195,6 +196,11 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
   addCostConditions vecLen (costCondition conds)
   addDtConditions vecLen (dtConditions conds)
   addShareConditions vecLen (shareConditions conds)
+
+  when (isJust $ findStrictRules ops) $ do
+    let nr = fromJust (findStrictRules ops)
+    addFindStrictRulesConstraint nr (snd <$> minus1Vars conds)
+
 
   unless (shift ops) $ do
     -- multiplication-constraints (ctr must be linear combination of base ctr)
@@ -269,13 +275,26 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
              filter (thd4 . lhsRootSym) cfSigs
         else []
 
+  let m = M.fromList $ map (\(Data l v) -> (l,v)) solVars
+
+  let min1VarsList = fmap (second (\(AVariableCondition x) -> x)) (minus1Vars conds)
+  let retFindStrict
+        | isNothing (findStrictRules ops) = ([],[])
+        | otherwise =
+          let lst = fmap (second (`getValueFromMap` m)) min1VarsList
+              strict = map fst $ filter ((<0).snd) lst
+              weak = map fst $ filter ((==0).snd) lst
+          in (strict,weak)
+
+
   return ( insertIntoSigs aSigs solVars
          , insertIntoSigs cfSigs solVars
          , solVarsNs
-         , solVars
-         , insertIntoSigsCtr ops probSigs vecLen ctrSigs solVars
-         , insertIntoSigsCtr ops probSigs vecLen cfCtrSigs solVars
-         , vecLen)
+         , m
+         , insertIntoSigsCtr ops probSigs vecLen ctrSigs m
+         , insertIntoSigsCtr ops probSigs vecLen cfCtrSigs m
+         , vecLen
+         , retFindStrict)
 
 
 constantToZero :: (Int, Signature (t1, t2, Bool,Bool) t) -> [ACostCondition Int]

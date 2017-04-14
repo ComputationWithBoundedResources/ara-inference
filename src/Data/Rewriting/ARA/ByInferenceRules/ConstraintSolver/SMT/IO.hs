@@ -8,9 +8,9 @@
 -- Created: Sun May 22 19:14:44 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 13:36:48 2017 (+0200)
+-- Last-Updated: Fri Apr 14 18:46:45 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 348
+--     Update #: 353
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -85,15 +85,17 @@ getValues :: StateT SMTProblem IO T.Text
 getValues = do
   getValsNeeded <- gets (^. getValueDirective)
   vs <- fmap S.elems (gets (^. vars))
+  vs' <- fmap S.elems (gets (^. varsDeclOnly))
   if getValsNeeded
-    then return $ "(get-value (" +++ T.unwords vs +++ "))\n"
+    then return $ "(get-value (" +++ T.unwords (vs ++ vs') +++ "))\n"
     else return ""
 
 getDecls :: StateT SMTProblem IO T.Text
 getDecls = do
   declFun <- gets (^. constDeclFun)
   vs <- fmap S.elems (gets (^. vars))
-  return $ T.concat (map declFun vs)
+  vs' <- fmap S.elems (gets (^. varsDeclOnly))
+  return $ T.concat (map declFun (vs ++ vs'))
 
 fromComp :: Comparison -> T.Text
 fromComp Eq  = "="
@@ -126,9 +128,19 @@ toAndList conds =
   where condEq = map (\(bl, br) -> "(= " +++ bl +++ " " +++ br +++ ")") conds
         bef = T.concat $ map (const "(and ") [1..length condEq-1]
 
+dropDeclOnlyVarsFromVars :: StateT SMTProblem IO ()
+dropDeclOnlyVarsFromVars = do
+  vs' <- gets (^. varsDeclOnly)
+  vs <-  gets (^. vars)
+  let diff = S.difference vs vs'
+  vars .= diff
+
 
 solveSMTProblem :: Bool -> Bool -> FilePath -> StateT SMTProblem IO (M.Map String Int)
 solveSMTProblem shift keepFiles tempDir = do
+
+  -- ensure to drop double listed vars. We expect vars being a superset of varsDeclOnly
+  dropDeclOnlyVarsFromVars
 
   ass <- gets (^. assertions)
   assStr <- gets (^. assertionsStr)

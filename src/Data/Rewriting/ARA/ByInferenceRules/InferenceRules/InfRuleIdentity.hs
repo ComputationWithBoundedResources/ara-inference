@@ -7,9 +7,9 @@
 -- Created: Mon Sep 15 03:42:33 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 18:20:55 2017 (+0200)
+-- Last-Updated: Fri Apr 14 17:47:45 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 178
+--     Update #: 179
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -75,7 +75,7 @@ identity (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
           condCst :: [([ACostCondition Int], Comparison, [ACostCondition Int])]
           condCst = [(cst, if isCtrDeriv then Eq else Geq, [ACostValue 0])]
           nConds = ACondition (costCondition conds ++ condCst) (dtConditions conds ++ condDt)
-                      (shareConditions conds)
+                      (shareConditions conds) (minus1Vars conds)
           funName = termName (fst post)
 identity _ = []
 

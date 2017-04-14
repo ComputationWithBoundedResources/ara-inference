@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 15
+--     Update #: 19
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -138,11 +138,17 @@ name = do
 
 int :: Parser Int
 int = do
-  ds <- (do
-          nr <- char '-'
-          d <- many digit
-          return (nr:d)
-        ) <|> many digit
+  ds <- (do _ <- char '('
+            _ <- char '-' >> spaces
+            nr <- many digit
+            _ <- char ')'
+            return ('-':nr))
+        <|>
+        (do  _<- char '-'
+             nr <- many digit
+             return ('-':nr))
+        <|>
+        many digit
   return (read ds :: Int)
 
 

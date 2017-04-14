@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 17:20:37 2017 (+0200)
+-- Last-Updated: Fri Apr 14 18:54:47 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1567
+--     Update #: 1589
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -238,7 +238,11 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
           | isJust (findStrictRules args) && isNothing mSigIdx = True
           | otherwise = False
 
-        ()
+        (nrMin1, varMin1)
+          | useVariableInsteadOfNeg1 = getNewVariableName nr 1
+          | otherwise = (nr, [])
+
+        varMin1Conds = fmap AVariableCondition varMin1
 
         ruleStr = show (prettyRule
                         (L.pretty (L.text $ if weak
@@ -254,7 +258,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         sig = getDefSymSignatureByName' sigs fn
         dt = fst (rhsSig sig)
         aSig = (sig2ASig isCf args sig, fromRuleOrGrpNr, "createInfTreeNodes")
-        (nrKs, varNameKs) = getNewVariableName nr (length ch)
+        (nrKs, varNameKs) = getNewVariableName nrMin1 (length ch)
         varsKs = map AVariableCondition varNameKs
 
         fromRuleOrGrpNr = case rlsGrpNr of
@@ -269,22 +273,23 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         condsCtr :: ACondition Int Int
         (pre,aSigsCtr,condsCtr,kis,chInfTreeNds,noCfDefSyms',_) =
           foldl (getVarsWithDt ruleStr fromRuleOrGrpNr True isCf args sigs)
-          ([],[],ACondition [] [] [],[],[],[],startCtrSigNr)
+          ([],[],ACondition [] [] [] [],[],[],[],startCtrSigNr)
           (zip4 ch params dts varsKs)
         params = map (\(a,b) -> sigRefParam isCf a aSigNr b) (zip dts [0..])
         dts = map fst (lhsSig sig)
 
 
         aSigs' = aSigs ++ [ aSig | isNothing mSigIdx ] ++ aSigsCtr
-        conds' = conds { shareConditions = shareConditions conds ++ shareConds}
+        conds' = conds { shareConditions = shareConditions conds ++ shareConds
+                       , minus1Vars = minus1Vars conds ++
+                                      fmap (\x -> (fromRuleOrGrpNr,x)) varMin1Conds
+                       }
                  `addConditions` condsCtr
-        -- conds' = conds { dtConditions = dtConditions conds ++ shareConds}
-        --          `addConditions` condsCtr
+
         csts = sigRefCst isCf aSigNr :
-               [ACostValue (-1) | not weak] ++
-               -- [ACostValue (-1) | not weak] ++
-               kis
-        csts = sigRefCst isCf aSigNr : [ACostValue (-1) | not weak] ++ varsKs
+          [ACostValue (-1) | not weak && not useVariableInsteadOfNeg1] ++
+          varMin1Conds ++
+          varsKs
 
         (preLinear,shareConds,nr') =
           (\(a,b,c) -> (reverse a, b, c)) $
@@ -319,7 +324,7 @@ getVarsWithDt _ _ isRoot _ _ _ (accPre,accSigs,accConds,csts,infTreeNds,noCfDefS
   (accPre ++ [(v, dtN)], accSigs,accConds `addConditions` nConds,csts,infTreeNds
   ,noCfDefSyms,sigNr)
 
-  where nConds = ACondition [([kVar],Eq,[ACostValue 0]) | isRoot ] [] []
+  where nConds = ACondition [([kVar],Eq,[ACostValue 0]) | isRoot ] [] [] []
 
 getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs
   (accPre,accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr) (Fun f ch,dtN,dt,kVar) =
@@ -334,7 +339,7 @@ getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs
                 isCtr (Signature (_,_,c,_) _ _) = c
                 dts = map fst (lhsSig sig)
                 aSig = (sig2ASig isCf args sig, ruleGrpNr, "getVarsWithDt")
-                nConds = ACondition [] [([dtN], Eq, [sigRefRet isCf dt sigNr])] []
+                nConds = ACondition [] [([dtN], Eq, [sigRefRet isCf dt sigNr])] [] []
                 nCsts = [sigRefCst isCf sigNr | isRoot]
                 nInfTreeNds =
                   [InfTreeNode
@@ -352,7 +357,7 @@ addConditions conds condsNew =
   (costCondition conds ++ costCondition condsNew)
   (dtConditions conds ++ dtConditions condsNew)
   (shareConditions conds ++ shareConditions condsNew)
-
+  (minus1Vars conds ++ minus1Vars condsNew)
 
 --
 -- StartingProve.hs ends here

@@ -8,9 +8,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:33:59 2017 (+0200)
+-- Last-Updated: Fri Apr 14 17:48:35 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2825
+--     Update #: 2828
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -88,7 +88,9 @@ analyzeProblem args reachability prob =
                                        (costCondition cond0 ++ map snd3 linearBaseConds)
                                        (dtConditions cond0 ++ map fst3 linearBaseConds ++
                                         concatMap thd3 linearBaseConds)
-                                       (shareConditions cond0) }
+                                       (shareConditions cond0)
+                                       (minus1Vars cond0)
+                        }
 
                linearBaseConds :: [(([ADatatype Int], Comparison, [ADatatype Int])
                                    ,([ACostCondition Int], Comparison, [ACostCondition Int])
@@ -188,7 +190,7 @@ convertProblem prob' =
 startingProve :: ArgumentOptions -> ProblemSig -> Prove
 startingProve args prob' =
   (insertConstraints args . updateDatatypesChildCost . createCtrSig) prove0
-  where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] []) 0 []
+  where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] [] []) 0 []
 
 -- | This function takes a list of proves and checks it for the finished and
 --   successful proves. It either returns a successful prove, or fails.

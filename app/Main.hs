@@ -8,9 +8,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 20:57:53 2017 (+0200)
+-- Last-Updated: Fri Apr 14 18:35:39 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 930
+--     Update #: 938
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -88,9 +88,7 @@ import qualified Control.Exception                                         as E
 import           Control.Monad.State
 import           Data.Function
 import           Data.List
-import           Data.Maybe                                                (fromJust,
-                                                                            fromMaybe,
-                                                                            isNothing)
+import           Data.Maybe
 import           System.Exit                                               (exitFailure)
 import           Text.PrettyPrint
 
@@ -138,7 +136,7 @@ main =
 
 
          -- Solve datatype constraints
-         (sigs, cfSigs, valsNs, vals, baseCtrs, cfBaseCtrs, bigO) <-
+         (sigs, cfSigs, valsNs, vals, baseCtrs, cfBaseCtrs, bigO, (strictRls, weakRls)) <-
            solveProblem args (fromJust probSig) cond (signatureMap prove) (costFreeSigs prove)
 
 
@@ -239,6 +237,10 @@ main =
                             then cfBaseCtrs
                             else sortBy (compare `on` fst4 . lhsRootSym) (nub cfBaseCtrs))))
                     <> line)
+
+         when (isJust $ findStrictRules args) $ do
+           putStrLn $ "Strict Rules: " ++ show strictRls
+           putStrLn $ "Weak Rules" ++ show weakRls
 
 
          ) (\e ->

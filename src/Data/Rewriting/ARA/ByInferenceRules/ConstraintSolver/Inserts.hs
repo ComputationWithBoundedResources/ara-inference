@@ -7,9 +7,9 @@
 -- Created: Tue May 24 13:30:55 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:01 2017 (+0200)
+-- Last-Updated: Fri Apr 14 18:27:17 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 110
+--     Update #: 114
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -37,6 +37,7 @@
 module Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.Inserts
     ( insertIntoSigs
     , insertIntoSigsCtr
+    , getValueFromMap
     ) where
 
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition
@@ -104,11 +105,11 @@ insertIntoSigsCtr :: ArgumentOptions
                   -> [SignatureSig]
                   -> Int
                   -> [ASignatureSig]
-                  -> [Data Vector]
+                  -> M.Map String Vector
                   -> [ASignatureSig]
-insertIntoSigsCtr args sigs vecLen acc dt =
+insertIntoSigsCtr args sigs vecLen acc m =
   concatMap (insertIntoSigCtr args sigs vecLen m) acc
-  where m = M.fromList $ map (\(Data l v) -> (l,v)) dt
+
 
 insertIntoSigCtr :: ArgumentOptions
                  -> [SignatureSig]

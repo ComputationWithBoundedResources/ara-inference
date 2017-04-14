@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 23:24:12 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:09 2017 (+0200)
+-- Last-Updated: Fri Apr 14 17:50:12 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 76
+--     Update #: 78
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -52,6 +52,7 @@ data ACondition a b = ACondition
               { costCondition   :: [([ACostCondition a], Comparison, [ACostCondition a])] -- ^
               , dtConditions    :: [([ADatatype b], Comparison, [ADatatype b])] -- ^
               , shareConditions :: [(ADatatype b, Comparison, [ADatatype b])] -- ^
+              , minus1Vars :: [(Int, ACostCondition a)]
               } deriving (Show, Eq)
 
 data ACostCondition a = AVariableCondition String

@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 114
+--     Update #: 117
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -57,25 +57,26 @@ import           Data.Rewriting.Typed.Term                             hiding
 
 import           Control.Lens
 import           Data.List                                             (find)
+import qualified Data.Map                                              as M
 import           Debug.Trace
 
 putValuesInInfTreeView :: ASigs
                        -> CfSigs
-                       -> [Data Vector]
+                       -> M.Map String Vector
                        -> [[InfTreeNodeView]]
                        -> [[InfTreeNodeView]]
 putValuesInInfTreeView sigs cfsigs vals = map (putValuesInInfTreeView' sigs cfsigs vals)
 
 putValuesInInfTreeView' :: ASigs
                         -> CfSigs
-                        -> [Data Vector]
+                        -> M.Map String Vector
                         -> [InfTreeNodeView]
                         -> [InfTreeNodeView]
 putValuesInInfTreeView' sigs cfsigs vals = map (putValuesInInfTreeNodeView sigs cfsigs vals)
 
 putValuesInInfTreeNodeView :: ASigs
                            -> CfSigs
-                           -> [Data Vector]
+                           -> M.Map String Vector
                            -> InfTreeNodeView
                            -> InfTreeNodeView
 putValuesInInfTreeNodeView sigs cfsigs vs (InfTreeNodeView pre csts post) =
@@ -91,12 +92,12 @@ putValuesInInfTreeNodeView _ _ _ InfTreeNodeLeafEmpty = InfTreeNodeLeafEmpty
 
 putValuesInPre :: ASigs
                -> CfSigs
-               -> [Data Vector]
+               -> M.Map String Vector
                -> (String, ADatatype Vector)
                -> (String, ADatatype Vector)
 putValuesInPre sigs cfsigs vs (n, dt)   = (n, putValuesInDt sigs cfsigs vs dt)
 
-putValuesInCst :: [Data Vector] -> ACostCondition Vector -> ACostCondition Vector
+putValuesInCst :: M.Map String Vector -> ACostCondition Vector -> ACostCondition Vector
 putValuesInCst vals (AVariableCondition n) = ACostValue (getValueNr vals n)
 putValuesInCst vals (SigRefCst nr) = ACostValue (getValueNr vals n)
   where n = "k(" ++ show nr ++ ")"
@@ -106,7 +107,7 @@ putValuesInCst vals (ACostValue x) = ACostValue x
 
 putValuesInPost :: ASigs
                 -> CfSigs
-                -> [Data Vector]
+                -> M.Map String Vector
                 -> (Term String String, ADatatype Vector)
                 -> (Term String String, ADatatype Vector)
 putValuesInPost sigs cfsigs vs (t, dt) = (t, putValuesInDt sigs cfsigs vs dt)
@@ -114,7 +115,7 @@ putValuesInPost sigs cfsigs vs (t, dt) = (t, putValuesInDt sigs cfsigs vs dt)
 
 putValuesInPostLeaf :: ASigs
                     -> CfSigs
-                    -> [Data Vector]
+                    -> M.Map String Vector
                     -> ADatatype Vector
                     -> ADatatype Vector
 putValuesInPostLeaf = putValuesInDt
@@ -122,7 +123,7 @@ putValuesInPostLeaf = putValuesInDt
 
 putValuesInDt :: ASigs
               -> CfSigs
-              -> [Data Vector]
+              -> M.Map String Vector
               -> ADatatype Vector
               -> ADatatype Vector
 putValuesInDt _ _ _ (ActualCost isCf dt cst) = ActualCost isCf dt cst
@@ -132,11 +133,8 @@ putValuesInDt sigs cfsigs vals x =
   where (fromCf, dt) = (\(ActualCost isCf x _) -> (isCf,x)) $ fetchSigValue sigs cfsigs x
 
 
-getValueNr :: [Data Vector] -> String -> Vector
-getValueNr vals label =
-  case find ((== label) . view lab) vals of
-    Nothing          -> 0
-    Just (Data _ nr) -> nr
+getValueNr :: M.Map String Vector -> String -> Vector
+getValueNr vals label = M.findWithDefault 0 label vals
 
 
 -- putValuesInACost                   :: [Data Int] -> ACost Int -> ACost Int

@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 13:27:42 2017 (+0200)
+-- Last-Updated: Fri Apr 14 18:19:14 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 104
+--     Update #: 108
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -67,11 +67,11 @@ data SMTProblem = SMTProblem
                   { _logic          :: T.Text
                   , _constDeclFun   :: T.Text -> T.Text
                   , _getValueDirective :: Bool
-                  , _vars           :: S.Set T.Text -- [T.Text]
+                  , _vars           :: S.Set T.Text
+                  , _varsDeclOnly :: S.Set T.Text
                   , _assertions     :: [(T.Text, Comparison, T.Text)]
                   , _assertionsStr  :: [T.Text]
                   , _ifs            :: [([(T.Text, T.Text)], [(T.Text,T.Text)])]
-                  -- , _ifsComp        :: [([(T.Text, Comparison, T.Text)])]
                   , _values         :: M.Map T.Text Int
                   , _programName    :: T.Text
                   , _programOptions :: [T.Text]
@@ -80,9 +80,10 @@ data SMTProblem = SMTProblem
 makeLenses ''SMTProblem
 
 instance Show SMTProblem where
-  show (SMTProblem l _ _ vars ass assstr ifs vals n o _) =
+  show (SMTProblem l _ _ vars varsDecl ass assstr ifs vals n o _) =
     "Logic: " ++ show l ++
-    "\nVars: " ++ show vars ++ "\nAssertions: "
+    "\nVars: " ++ show vars ++ "\nVars (decls only): " ++ show varsDecl
+    ++ "\nAssertions: "
     ++ show ass ++ "\nAssertion-T.Texts: " ++ show assstr ++
     "\nIf-Assertions: " ++ show ifs ++ "\nValues: " ++ show vals ++
     "\nProgram call: " ++ T.unpack n ++ " " ++ T.unpack (T.unwords o)

@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 18:54:47 2017 (+0200)
+-- Last-Updated: Fri Apr 14 19:20:14 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1589
+--     Update #: 1590
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -282,7 +282,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         aSigs' = aSigs ++ [ aSig | isNothing mSigIdx ] ++ aSigsCtr
         conds' = conds { shareConditions = shareConditions conds ++ shareConds
                        , minus1Vars = minus1Vars conds ++
-                                      fmap (\x -> (fromRuleOrGrpNr,x)) varMin1Conds
+                                      fmap (\x -> (rule,x)) varMin1Conds
                        }
                  `addConditions` condsCtr
 

@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 23:23:50 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 17:53:20 2017 (+0200)
+-- Last-Updated: Fri Apr 14 19:23:25 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 141
+--     Update #: 143
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -60,7 +60,7 @@ prettyACondition pC pD (ACondition cost dt share min1Vars) =
   vcat (map (prettyTriple pCs prettyComparison pCs) cost) $+$
   vcat (map (prettyTriple pD prettyComparison pList) share) $+$
   vcat (map (prettyTriple pList prettyComparison pList) dt) $+$
-  vcat (map (\(a,b) -> int a <> text ": " <> pC b) min1Vars)
+  vcat (map (\(a,b) -> pC b) min1Vars)
   where pCs = hcat . intersperse (text " + ") . map pC
         pList = hcat . intersperse (text " + ") . map pD
 

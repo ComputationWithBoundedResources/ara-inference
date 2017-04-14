@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 18:32:11 2017 (+0200)
+-- Last-Updated: Fri Apr 14 19:24:08 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1537
+--     Update #: 1541
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -60,6 +60,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Exception
+import           Data.Rewriting.Typed.Rule
 import           Data.Rewriting.Typed.Signature
 
 
@@ -136,7 +137,8 @@ solveProblem :: ArgumentOptions
              -> ASigs
              -> CfSigs
              -> IO ([ASignatureSig], [ASignatureSig], [Data Int], M.Map String Vector
-                  , [ASignatureSig], [ASignatureSig], Int, ([Int],[Int]))
+                  , [ASignatureSig], [ASignatureSig], Int
+                  , ([Rule String String],[Rule String String]))
 solveProblem ops probSigs conds aSigs cfSigs = do
 
   let maxNrVec = maxVectorLength ops
@@ -185,12 +187,11 @@ solveProblem' :: (Num a, Ord a, Show a, Show a1) =>
                                      , [ASignatureSig]
                                      , [ASignatureSig]
                                      , Int
-                                     , ([Int],[Int]))
+                                     , ([Rule String String],[Rule String String]))
 solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
 
   let aSigs = map fst3 aSigsTxt
   let cfSigs = map fst3 cfSigsTxt
-
 
   -- add constraints with specified length
   addCostConditions vecLen (costCondition conds)

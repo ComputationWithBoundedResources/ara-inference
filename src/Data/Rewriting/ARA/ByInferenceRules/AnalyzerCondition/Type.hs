@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 23:24:12 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 17:50:12 2017 (+0200)
+-- Last-Updated: Fri Apr 14 19:20:12 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 78
+--     Update #: 80
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -48,11 +48,14 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Type
 import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 
+import           Data.Rewriting.Typed.Rule
+
+
 data ACondition a b = ACondition
               { costCondition   :: [([ACostCondition a], Comparison, [ACostCondition a])] -- ^
               , dtConditions    :: [([ADatatype b], Comparison, [ADatatype b])] -- ^
               , shareConditions :: [(ADatatype b, Comparison, [ADatatype b])] -- ^
-              , minus1Vars :: [(Int, ACostCondition a)]
+              , minus1Vars :: [(Rule String String, ACostCondition a)]
               } deriving (Show, Eq)
 
 data ACostCondition a = AVariableCondition String

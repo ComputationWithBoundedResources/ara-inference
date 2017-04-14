@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 14
+--     Update #: 15
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -77,7 +77,6 @@ unkown :: Parser a
 unkown = do
   _ <- try (string "unknown")
   parserFail "The smt solver returned 'unkown'."
-
 
 unsolveable :: Parser a
 unsolveable = do

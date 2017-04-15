@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 19:31:03 2017 (+0200)
+-- Last-Updated: Sat Apr 15 12:54:24 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1591
+--     Update #: 1593
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -242,7 +242,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
           | useVariableInsteadOfNeg1 = getNewVariableName nr 1
           | otherwise = (nr, [])
 
-        varMin1Conds = fmap AVariableCondition varMin1
+        varMin1Cond = AVariableCondition (head varMin1)
 
         ruleStr = show (prettyRule
                         (L.pretty (L.text $ if weak
@@ -282,14 +282,16 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         aSigs' = aSigs ++ [ aSig | isNothing mSigIdx ] ++ aSigsCtr
         conds' = conds { shareConditions = shareConditions conds ++ shareConds
                        , minus1Vars = minus1Vars conds ++
-                                      fmap (\x -> (rule,x)) varMin1Conds
+                                      [(rule, varMin1Cond) | useVariableInsteadOfNeg1]
                        }
                  `addConditions` condsCtr
 
         csts = sigRefCst isCf aSigNr :
           [ACostValue (-1) | not weak && not useVariableInsteadOfNeg1] ++
-          varMin1Conds ++
-          varsKs
+          (if useVariableInsteadOfNeg1
+           then [ACostValue 1, ACostValue (-2), varMin1Cond]
+           else [])
+          ++ varsKs
 
         (preLinear,shareConds,nr') =
           (\(a,b,c) -> (reverse a, b, c)) $

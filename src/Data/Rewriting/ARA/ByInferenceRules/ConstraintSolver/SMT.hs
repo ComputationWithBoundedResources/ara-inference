@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 19:24:08 2017 (+0200)
+-- Last-Updated: Sat Apr 15 13:00:27 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1541
+--     Update #: 1544
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -113,7 +113,7 @@ z3 logic timeo =
 minismt :: T.Text -> Maybe Int -> SMTProblem
 minismt logic timeo =
   emptySMTProblem "minismt" logic declareAsFun False
-  (["-t " `T.append` T.pack (show $ fromJust timeo) | isJust timeo ] ++ ["-v2", "-m"]) -- , "-neg"])
+  (["-t " `T.append` T.pack (show $ fromJust timeo) | isJust timeo ] ++ ["-v2", "-m", "-neg"])
   parseMinismt
 
 
@@ -283,7 +283,7 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
         | isNothing (findStrictRules ops) = ([],[])
         | otherwise =
           let lst = fmap (second (`getValueFromMap` m)) min1VarsList
-              strict = map fst $ filter ((<0).snd) lst
+              strict = map fst $ filter ((/=0).snd) lst
               weak = map fst $ filter ((==0).snd) lst
           in (strict,weak)
 

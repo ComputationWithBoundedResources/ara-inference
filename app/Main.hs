@@ -8,9 +8,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 19:25:36 2017 (+0200)
+-- Last-Updated: Sat Apr 15 12:58:49 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 939
+--     Update #: 940
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -240,7 +240,7 @@ main =
 
          when (isJust $ findStrictRules args) $ do
            putStrLn $ "Strict Rules: " ++ show strictRls
-           putStrLn $ "Weak Rules" ++ show weakRls
+           putStrLn $ "Weak Rules: " ++ show weakRls
 
 
          ) (\e ->

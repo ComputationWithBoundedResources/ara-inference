@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 19:25:40 2017 (+0200)
+-- Last-Updated: Sat Apr 15 12:57:31 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1058
+--     Update #: 1060
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -98,8 +98,9 @@ addFindStrictRulesConstraint :: (Num a, Ord a, Monad m, Show a) =>
                         -> StateT SMTProblem m ()
 addFindStrictRulesConstraint _ [] = return ()
 addFindStrictRulesConstraint minNr csts = do
-  assertions <>= [("(- 0 " +++ T.pack (show minNr) +++ ")", Geq, head $ fromListBy fromCostCond csts)]
-  let minVarBound x = "(or (= 0 " +++ xName +++ ") (= 0 (+ 1 " +++ xName +++ ")))"
+  -- assertions <>= [("(- 0 " +++ T.pack (show minNr) +++ ")", Geq, head $ fromListBy fromCostCond csts)]
+  assertions <>= [(head $ fromListBy fromCostCond csts, Geq, T.pack (show minNr))]
+  let minVarBound x = "(or (= 0 " +++ xName +++ ") (= 1 " +++ xName +++ "))" -- "(+ 1 " +++ xName +++ ")))"
         where xName = head $ fromCostCond x
   assertionsStr <>= fmap minVarBound csts
   varsDeclOnly <>=+ fmap (head . fromCostCond) csts

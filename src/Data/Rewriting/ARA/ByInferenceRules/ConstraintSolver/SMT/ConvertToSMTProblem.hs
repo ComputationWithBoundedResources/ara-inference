@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Apr 15 12:57:31 2017 (+0200)
+-- Last-Updated: Sat Apr 15 13:09:40 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1060
+--     Update #: 1062
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -103,7 +103,8 @@ addFindStrictRulesConstraint minNr csts = do
   let minVarBound x = "(or (= 0 " +++ xName +++ ") (= 1 " +++ xName +++ "))" -- "(+ 1 " +++ xName +++ ")))"
         where xName = head $ fromCostCond x
   assertionsStr <>= fmap minVarBound csts
-  varsDeclOnly <>=+ fmap (head . fromCostCond) csts
+  vars <>=+ fmap (head . fromCostCond) csts
+  -- varsDeclOnly <>=+
 
 addUniqueSigConstraints :: (Num a, Ord a, Monad m, Show a) =>
                           Int

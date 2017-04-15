@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Apr 15 13:00:27 2017 (+0200)
+-- Last-Updated: Sat Apr 15 13:01:54 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1544
+--     Update #: 1545
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -124,8 +124,8 @@ emptySMTProblem :: T.Text
                 -> [T.Text]
                 -> Parser [(String, Int)]
                 -> SMTProblem
-emptySMTProblem name logic declFun getVals args parser =
-  SMTProblem logic declFun getVals S.empty S.empty [] [] [] M.empty name args parser
+emptySMTProblem name logic declFun getVals =
+  SMTProblem logic declFun getVals S.empty S.empty [] [] [] M.empty name
 
 declareAsConst n = "(declare-const " +++ n +++ " Int)\n"
 declareAsFun n = "(declare-fun " +++ n +++ " () Int)\n"

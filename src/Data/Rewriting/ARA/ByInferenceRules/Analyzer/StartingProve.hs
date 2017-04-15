@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Apr 15 12:54:24 2017 (+0200)
+-- Last-Updated: Sat Apr 15 14:18:25 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1593
+--     Update #: 1597
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -234,6 +234,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
   where fn = (\(Fun f _) -> f) (lhs rule)
         ch = (\(Fun _ ch') -> ch') (lhs rule)
 
+        -- use variable instead of -1 ?
         useVariableInsteadOfNeg1
           | isJust (findStrictRules args) && isNothing mSigIdx && not weak = True
           | otherwise = False
@@ -289,7 +290,8 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         csts = sigRefCst isCf aSigNr :
           [ACostValue (-1) | not weak && not useVariableInsteadOfNeg1] ++
           (if useVariableInsteadOfNeg1
-           then [ACostValue 1, ACostValue (-2), varMin1Cond]
+           then -- [varMin1Cond]
+                [ACostValue (-2), ACostValue 1, varMin1Cond]
            else [])
           ++ varsKs
 

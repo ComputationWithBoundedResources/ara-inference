@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Apr 15 13:10:42 2017 (+0200)
+-- Last-Updated: Sat Apr 15 14:21:47 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1546
+--     Update #: 1550
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -283,8 +283,10 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
         | isNothing (findStrictRules ops) = ([],[])
         | otherwise =
           let lst = fmap (second (`getValueFromMap` m)) min1VarsList
+              -- weak = map fst $ filter ((==0).snd) lst
+              -- strict = map fst $ filter ((==(-1)).snd) lst
               strict = map fst $ filter ((==0).snd) lst
-              weak = map fst $ filter ((/=0).snd) lst
+              weak = map fst $ filter ((==1).snd) lst
           in (strict,weak)
 
 

@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Apr 15 13:09:40 2017 (+0200)
+-- Last-Updated: Sat Apr 15 14:25:00 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1062
+--     Update #: 1071
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -99,11 +99,13 @@ addFindStrictRulesConstraint :: (Num a, Ord a, Monad m, Show a) =>
 addFindStrictRulesConstraint _ [] = return ()
 addFindStrictRulesConstraint minNr csts = do
   -- assertions <>= [("(- 0 " +++ T.pack (show minNr) +++ ")", Geq, head $ fromListBy fromCostCond csts)]
-  assertions <>= [(head $ fromListBy fromCostCond csts, Geq, T.pack (show minNr))]
-  let minVarBound x = "(or (= 0 " +++ xName +++ ") (= 1 " +++ xName +++ "))" -- "(+ 1 " +++ xName +++ ")))"
+  let countMinNr = length csts - minNr
+  assertions <>= [(T.pack (show countMinNr), Geq, head $ fromListBy fromCostCond csts)]
+  let minVarBound x = "(or (= 1 " +++ xName +++ ") (= 0 " +++ xName +++ "))"
+  -- let minVarBound x = "(or (= 0 (+ 1 " +++ xName +++ ")) (= 0 " +++ xName +++ "))"
         where xName = head $ fromCostCond x
   assertionsStr <>= fmap minVarBound csts
-  vars <>=+ fmap (head . fromCostCond) csts
+  varsDeclOnly <>=+ fmap (head . fromCostCond) csts
   -- varsDeclOnly <>=+
 
 addUniqueSigConstraints :: (Num a, Ord a, Monad m, Show a) =>

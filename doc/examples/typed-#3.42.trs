@@ -1,0 +1,24 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x)
+(DATATYPES
+    Nat = µX.< 0, s(X) >
+    L = µX.< snoc(X, Nat), nil >)
+(SIGNATURES
+    half :: [Nat] -> Nat
+    lastbit :: [Nat] -> Nat
+    conv :: [Nat] -> L)
+(RULES
+    half(0) -> 0
+    half(s(0)) -> 0
+    half(s(s(x))) -> s(half(x))
+
+    lastbit(0) -> 0
+    lastbit(s(0)) -> s(0)
+    lastbit(s(s(x))) -> lastbit(x)
+
+    conv(0) -> snoc(nil,0)
+    conv(s(x)) -> snoc(conv(half(s(x))) ,lastbit(s(x)))
+    )

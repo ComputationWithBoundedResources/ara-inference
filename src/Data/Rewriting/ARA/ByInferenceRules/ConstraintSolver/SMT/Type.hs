@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 18:19:14 2017 (+0200)
+-- Last-Updated: Mon Apr 17 10:15:04 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 108
+--     Update #: 110
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -96,8 +96,7 @@ infixl 5 +++
 -- Conversion from/to SMT strings
 
 replList' :: [(T.Text, T.Text)]
-replList' = -- map (T.pack *** T.pack)
-  replList
+replList' = replList
   where replList :: [(T.Text, T.Text)]
         replList = [ ("#", "_HASHTAG_")
                    , (":", "_COLON_")
@@ -111,7 +110,7 @@ replList' = -- map (T.pack *** T.pack)
                    , ("]", "_RBRA_")
                    , ("(", "_LPAREN_")
                    , (")", "_RPAREN_")
-
+                   , ("=", "_EQ_")
                    ]
 
 

@@ -8,9 +8,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 17:48:35 2017 (+0200)
+-- Last-Updated: Sat May  6 19:11:43 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2828
+--     Update #: 2831
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -74,8 +74,8 @@ import           Text.PrettyPrint
 
 
 analyzeProblem :: ArgumentOptions
-               -> [(String,Integer)]
-               -> Problem String String String String String String
+               -> [(f,Integer)]
+               -> Problem f v s sDt dt cn
                -> IO (Prove, [(String, [InfTreeNodeView])])
 analyzeProblem args reachability prob =
 
@@ -179,7 +179,7 @@ checkLhsRules p =
 
 -- | @convertProblem prob'@ takes as input a parsed problem @prob'@ and creates
 -- a problem with a different type signature, which is needed for analyzing.
-convertProblem       :: Problem String String String String String String -> ProblemSig
+convertProblem       :: Problem f v s sDt dt cn -> ProblemSig f v s sDt dt cn
 convertProblem prob' =
   Problem (startTerms prob') (strategy prob') (theory prob') (convertDt $ datatypes prob')
     (convertSig $ signatures prob') (rules prob') (variables prob') (symbols prob')
@@ -187,7 +187,7 @@ convertProblem prob' =
 
 -- | @startingProve prob'@ generates default starting points of the inference
 -- trees for the input problem @prob'@.
-startingProve :: ArgumentOptions -> ProblemSig -> Prove
+startingProve :: ArgumentOptions -> ProblemSig f v s sDt dt cn -> Prove
 startingProve args prob' =
   (insertConstraints args . updateDatatypesChildCost . createCtrSig) prove0
   where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] [] []) 0 []

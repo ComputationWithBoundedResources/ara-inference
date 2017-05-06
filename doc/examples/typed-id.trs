@@ -1,12 +1,5 @@
 (VAR x y)
 
-(DATATYPES
-  Nat = µX.< 0, s(X) >
-)
-
-(SIGNATURES
-  id :: Nat -> Nat
-)
 
 (RULES
   id(0) -> 0

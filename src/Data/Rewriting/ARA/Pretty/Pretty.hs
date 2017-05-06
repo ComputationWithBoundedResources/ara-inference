@@ -7,9 +7,9 @@
 -- Created: Wed Sep 17 09:05:42 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 16:43:45 2017 (+0200)
+-- Last-Updated: Sat May  6 19:20:48 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 399
+--     Update #: 406
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,7 +66,9 @@ printWhen' True  p = (p $+$ empty $+$ )
 infixr 5 `printWhen'`
 
 
-prettyAraProblem ::  ProblemSig -> Doc
+prettyAraProblem :: (Show f, Show v, Show s, Show sDt, Show dt, Show cn,
+                     L.Pretty f, L.Pretty v) =>
+                    ProblemSig f v s sDt dt cn -> Doc
 prettyAraProblem prob =
     printWhen' (sterms /= AllTerms) (block "STARTTERM" $ text "CONSTRUCTOR-BASED")
     $ printWhen' (strat /= Full) (block "STRATEGY" $ ppStrat strat)
@@ -86,10 +88,10 @@ prettyAraProblem prob =
         ppStrat Outermost = text "OUTERMOST"
         ppStrat Full      = error "Should not be possible."
 
-        ppTexts vs = fsep [ text v | v <- vs]
+        ppTexts vs = fsep [ text (show v) | v <- vs]
 
         ppTheories thys = vcat [ppThy thy | thy <- thys]
-            where ppThy (SymbolProperty p fs) = block p (fsep [ text f | f <- fs ])
+            where ppThy (SymbolProperty p fs) = block p (fsep [ text (show f) | f <- fs ])
                   ppThy (Equations rs)        = block "EQUATIONS" $ vcat [ppRule "==" r | r <- rs]
 
         ppRules rp = vcat ([ppRule "->" r | r <- strictRules rp]
@@ -107,8 +109,8 @@ prettyAraProblem prob =
 #else
                              [ ppSig sig | sig <- filter ((\(_,_,r,_) -> not r) . lhsRootSym) sigs ]
 #endif
-        ppSig     = prettyAraSignature text ppCost
-          (\(a,b) -> text a) -- <> text ":" <> hcat (intersperse (text ",") $
+        ppSig     = prettyAraSignature (text . show) ppCost
+          (\(a,b) -> text (show a)) -- <> text ":" <> hcat (intersperse (text ",") $
                                                  -- map ppCost b))
 
         dts = fromMaybe [] (datatypes prob)
@@ -118,9 +120,10 @@ prettyAraProblem prob =
         thry   = theory prob
 
 
-prettyAraDatatype :: (a -> Doc) -> (b -> Doc) -> Datatype (String, [a]) (String, b) -> Doc
+prettyAraDatatype :: (Show dt, Show cn) =>
+                     (a -> Doc) -> (b -> Doc) -> Datatype (dt, [a]) (cn, b) -> Doc
 prettyAraDatatype pA pB (Datatype (n, cst) chld) =
-  hang empty 2 $ text n <> params <+> text "=" <+>
+  hang empty 2 $ text (show n) <> params <+> text "=" <+>
    text (if isRecursive chld then "µX.<" else "<")
    <+> prettyList' (prettyAraCtr pA pB) chld <+> text ">"
     where
@@ -138,16 +141,17 @@ prettyDtTuple pCst (n, cst) =
   if null cst then empty else text n <> parens (prettyList' pCst cst)
 
 
-prettyAraCtr :: (a -> Doc) -> (b -> Doc) -> Constructor (String, [a]) (String, b) -> Doc
+prettyAraCtr :: (Show dt, Show cn) =>
+                (a -> Doc) -> (b -> Doc) -> Constructor (dt, [a]) (cn, b) -> Doc
 prettyAraCtr pA pB (Constructor (cn, cst) []) =
-    text cn <>  csts
+    text (show cn) <>  csts
       where csts = if null (show txt)
                       then empty
                       else text ":" <> txt
                     where txt = pB cst
 
 prettyAraCtr pA pB (Constructor (cn,cst) chlds) =
-    text cn <> ctrTxt <> cstTxt
+    text (show cn) <> ctrTxt <> cstTxt
     where ctrTxt = if null (show txt)
                    then empty
                    else parens txt
@@ -158,9 +162,9 @@ prettyAraCtr pA pB (Constructor (cn,cst) chlds) =
                    where txt = pB cst
 
 
-prettyAraCtrChld :: (a -> Doc) -> ConstructorChild (String, [a]) -> Doc
+prettyAraCtrChld :: (Show cn) => (a -> Doc) -> ConstructorChild (cn, [a]) -> Doc
 prettyAraCtrChld _ ConstructorRecursive          = text "X"
-prettyAraCtrChld _ (ConstructorDatatype (dt, _)) = text dt
+prettyAraCtrChld _ (ConstructorDatatype (dt, _)) = text (show dt)
 
 
 prettyAraSignature :: (f -> Doc) -> (a -> Doc) -> (b -> Doc) -> Signature (f, a,c,d) b -> Doc

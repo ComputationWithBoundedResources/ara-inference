@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 -- InfRuleFunction.hs ---
 --
 -- Filename: InfRuleFunction.hs
@@ -7,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 17:46:17 2017 (+0200)
+-- Last-Updated: Sun May  7 22:49:02 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1229
+--     Update #: 1248
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -33,7 +34,7 @@
 
 -- Code:
 
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP                 #-}
 
 #define DEBUG
 
@@ -67,6 +68,7 @@ import           Data.Rewriting.Typed.Rule
 import           Data.Rewriting.Typed.Signature
 import           Data.Rewriting.Typed.Term                                      hiding
                                                                                  (map)
+import qualified Data.Rewriting.Typed.Term                                      as T
 
 import           Control.Arrow
 import           Control.Exception                                              (throw)
@@ -87,11 +89,14 @@ import           Debug.Trace
 -- 1. Application of non-cost free types.
 -- 2. Application of cost-free types.
 -- 3. Application for the arguments of well-typedness (using Eq instead of Geq).
-function :: ArgumentOptions
-         -> [(String,Integer)]
-         -> [String]
-         -> (ProblemSig,  CfSigs, ASigs, Int, ACondition Int Int, InfTreeNode)
-         -> [(ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, [InfTreeNode])]
+function :: forall f v s sDt dt cn. (Eq f, Eq dt, Show f, Eq v, Show v, Show dt) =>
+            ArgumentOptions
+         -> [(f, Integer)]
+         -> [f]
+         -> (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+             ACondition f v Int Int, InfTreeNode f v dt)
+         -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+              ACondition f v Int Int, [InfTreeNode f v dt])]
 function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
                InfTreeNode pre cst (Just (Fun f fc, dt))
                i@(fn,ruleStr,isCtrDeriv,startCsts,sigNr,mCfSigIdx) his) =
@@ -108,7 +113,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
 
         dtsChld = map fst (lhsSig sig)
 
-        dtName :: String
+        dtName :: dt
         dtName = getDt (fetchSigValue asigs cfsigs $ toADatatypeVector dt)
 
         varsRhs = concatMap getTermVars fc
@@ -158,22 +163,20 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
                     InfTreeNode pre cst post
                     (fn,ruleStr,ctrDer,cstRoot,sigNr, lst)
                     (his ++ [(fst3 (last his) + 1, "function cf"
-                             , InfTreeNodeView (map (second toADatatypeVector) pre)
+                             , InfTreeNodeView
+                               (map (show *** toADatatypeVectorString) pre)
                                (map toACostConditionVector cst)
-                               (second toADatatypeVector (fromJust post)))])
+                               ((T.map show show *** toADatatypeVectorString) (fromJust post))
+                             )])
 
                   setCfOrigin (InfTreeNode pre cst post (_,_,ctrDer,cstRoot,_,_) his) =
                     InfTreeNode pre cst post
                     (fn,ruleStr,ctrDer,cstRoot,sigNr,Just ((f,cfSigIdx):) <*> mCfSigLst) his
-              in
-                -- trace ("nInftrees: " ++ show ((setCfHistory.setCfOrigin) (head infTreeNds) :
-                --   map setCfOrigin (tail infTreeNds)))
-
-                (newCfSigs
+              in (newCfSigs
                  ,curInfTrees ++ (setCfHistory.setCfOrigin) (head infTreeNds) :
-                   map setCfOrigin (tail infTreeNds)
-                 , curConds `addConditions` conds'
-                 , nrO)
+                  map setCfOrigin (tail infTreeNds)
+                 ,curConds `addConditions` conds'
+                 ,nrO)
 
             ) (cfsigs ++ [(sig2ASig True args sig,cfGrp,"new cfSigs")],[],emptyACond,nr) fRules
 
@@ -208,12 +211,10 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
         -- cfBaseSig = find ((== f) . fst4 . lhsRootSym . fst3 . snd) (zip [0..] cfsigs)
         -- cfBaseSigNr = fmap fst cfBaseSig
 
-        nPre :: [ADatatype Int]
         nPre = map (\(a,b) -> sigRefParam isCfBranch a asigIdx b) (zip dtsChld [0..])
-        nPreVector :: [ADatatype Vector]
-        nPreVector = map (\(a,b) -> sigRefParam isCfBranch a asigIdx b) (zip dtsChld [0..])
+        nPreVector = map (\(a,b) -> sigRefParam isCfBranch (show a) asigIdx b) (zip dtsChld [0..])
 
-        fromVar (Var n) = n
+        fromVar (Var n) = show n
         fromVar _       = error "programming error. Should not be possible."
 
         postVarOrder (a,_) =
@@ -250,11 +251,13 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
           [ ([SigRefCst asigIdx], Eq, [SigRefCst baseSigNr]) | newDefFunSigToASig ]
 
         newDtCond =
-          zipWith (\r n -> ([snd r], if isCtrDeriv then Eq else Geq
+          zipWith (\r n -> ([removeDt $ snd r]
+                           , if isCtrDeriv then Eq else Geq
                            , sigRefParam isCfBranch "" asigIdx n :
                             [SigRefParamCf "" cfSigIdx n | nonCfHasCfBranches])) preSorted [0..]
           ++ [(sigRefRet isCfBranch "" asigIdx : [SigRefRetCf "" cfSigIdx | nonCfHasCfBranches]
-              , if isCtrDeriv then Eq else Geq, [dt])]
+              , if isCtrDeriv then Eq else Geq
+              , [removeDt dt])]
           ++ concatMap (\x ->
                            [([SigRefParam "" asigIdx x], Eq,
                              [SigRefParam "" baseSigNr x])
@@ -264,18 +267,18 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
 
         newShareCond
           | nonCfHasCfBranches =
-            (dt, Eq, [SigRefRet "" asigIdx, SigRefRetCf "" cfSigIdx]) :
-            map (\(a,b,c) -> (snd a, Eq, [b,c]))
+            (removeDt dt, Eq, [SigRefRet "" asigIdx, SigRefRetCf "" cfSigIdx]) :
+            map (\(a,b,c) -> (removeDt $ snd a, Eq, [removeDt b, removeDt c]))
             (zip3 preSorted nPre (map (SigRefParamCf "" cfSigIdx) [0..]))
           | otherwise = []
 
         his' = his ++ [(fst3 (last his) + 1, "function",
                         InfTreeNodeLeafView
-                        (FunSig f nPreVector [sigRefCst isCfBranch asigIdx]
+                        (FunSig (show f) nPreVector [sigRefCst isCfBranch asigIdx]
                           (sigRefRet isCfBranch "" asigIdx))
                        (if nonCfHasCfBranches
                          then Just $
-                          FunSig f
+                          FunSig (show f)
                           (map (SigRefParamCf "" cfSigIdx) [0..length nPreVector-1])
                           [SigRefCstCf cfSigIdx]
                           (SigRefRetCf "" cfSigIdx)

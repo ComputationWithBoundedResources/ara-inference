@@ -8,9 +8,9 @@
 -- Created: Tue Sep  9 15:15:02 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:03 2017 (+0200)
+-- Last-Updated: Sun May  7 18:48:03 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 372
+--     Update #: 373
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -48,6 +48,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.Prove.Type
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Pretty
 import           Data.Rewriting.ARA.Pretty
 import           Data.Rewriting.Typed.Problem
+import qualified Text.PrettyPrint.ANSI.Leijen                                 as L
 
 
 import           Data.List                                                    (intersperse)
@@ -61,7 +62,8 @@ import           Text.PrettyPrint
 
 line = text "" $+$ empty
 
-prettyProve :: Prove -> Doc
+prettyProve :: (Show f, Show v, Show s, Show cn, Show sDt, L.Pretty f, L.Pretty v) =>
+               Prove f v s sDt Int cn -> Doc
 prettyProve prove =
   hang empty 2 $
   text "InfTreeNodes To Prove:" $+$ line $+$
@@ -70,7 +72,7 @@ prettyProve prove =
   vcat (intersperse line (map prettyInfTreeNode (provenInfTreeNodes prove))) $+$ line $+$
   text "Signature Map: " $+$line $+$
   vcat (zipWith (\nr (y, n, z) -> int nr <> text ": "<>
-                               prettyAraSignature text pCst pDt y
+                               prettyAraSignature (text . show) pCst pDt y
 #ifdef DEBUG
                                <+> text "\tFromRule: " <> int n
                                <+> text "\t" <> text z
@@ -79,7 +81,7 @@ prettyProve prove =
         (signatureMap prove)) $+$ line $+$
   text "Cost Free Signature Map: " $+$line $+$
   vcat (zipWith (\nr (y,n,z) -> int nr <> text ": "<>
-                        prettyAraSignature text pCst pDt y
+                        prettyAraSignature (text . show) pCst pDt y
 #ifdef DEBUG
                         <+> text "\tGroup: " <> int n
                         <+> text "\tFrom: " <> text z

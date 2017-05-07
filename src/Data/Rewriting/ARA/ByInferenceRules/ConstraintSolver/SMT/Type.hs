@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 17 10:15:04 2017 (+0200)
+-- Last-Updated: Sun May  7 17:43:11 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 110
+--     Update #: 114
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -111,6 +111,7 @@ replList' = replList
                    , ("(", "_LPAREN_")
                    , (")", "_RPAREN_")
                    , ("=", "_EQ_")
+                   , ("\"", "")
                    ]
 
 
@@ -118,13 +119,13 @@ convertToSMTText :: T.Text -> T.Text
 convertToSMTText x = foldl replaceText x replList'
   where replaceText acc (from, to) = T.replace from to acc
 
-convertToSMTStringText :: String -> T.Text
-convertToSMTStringText x = foldl replaceText (T.pack x) replList'
+convertToSMTStringText :: (Show s) => s -> T.Text
+convertToSMTStringText x = foldl replaceText (T.pack (show x)) replList'
   where replaceText acc (from, to) = T.replace from to acc
 
 
-convertToSMTString :: String -> String
-convertToSMTString x = T.unpack $ foldl replaceText (T.pack x) replList'
+convertToSMTString :: (Show s) => s -> String
+convertToSMTString x = T.unpack $ foldl replaceText (T.pack $ show x) replList'
   where replaceText acc (from, to) = T.replace from to acc
 
 convertFromSMTText :: T.Text -> T.Text

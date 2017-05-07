@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 23:24:12 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 19:20:12 2017 (+0200)
+-- Last-Updated: Sun May  7 22:30:57 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 80
+--     Update #: 87
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -51,11 +51,11 @@ import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.Typed.Rule
 
 
-data ACondition a b = ACondition
+data ACondition f v a b = ACondition
               { costCondition   :: [([ACostCondition a], Comparison, [ACostCondition a])] -- ^
-              , dtConditions    :: [([ADatatype b], Comparison, [ADatatype b])] -- ^
-              , shareConditions :: [(ADatatype b, Comparison, [ADatatype b])] -- ^
-              , minus1Vars :: [(Rule String String, ACostCondition a)]
+              , dtConditions    :: [([ADatatype String b], Comparison, [ADatatype String b])] -- ^
+              , shareConditions :: [(ADatatype String b, Comparison, [ADatatype String b])] -- ^
+              , minus1Vars :: [(Rule f v, ACostCondition a)]
               } deriving (Show, Eq)
 
 data ACostCondition a = AVariableCondition String

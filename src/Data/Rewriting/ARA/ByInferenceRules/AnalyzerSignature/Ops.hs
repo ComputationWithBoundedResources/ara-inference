@@ -7,9 +7,9 @@
 -- Created: Fri Oct 10 14:08:54 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:06 2017 (+0200)
+-- Last-Updated: Sun May  7 22:49:27 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1325
+--     Update #: 1332
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -74,13 +74,13 @@ import           Debug.Trace                                                (tra
 -- #end if
 
 
-insertSignature :: ASignatureSig -> [ASignatureSig] -> [ASignatureSig]
+insertSignature :: ASignatureSig s dt -> [ASignatureSig s dt] -> [ASignatureSig s dt]
 insertSignature = flip (++) . return
 
-sigCst :: ASignatureSig -> ACost Vector
+sigCst :: ASignatureSig s dt -> ACost Vector
 sigCst (Signature x _ _) = (\(_,c,_,_) -> c) x
 
-fetchSig :: [Signature s (ADatatype t)] -> ADatatype t -> ADatatype t
+fetchSig :: [Signature x (ADatatype dt t)] -> ADatatype dt t -> ADatatype dt t
 fetchSig sigs (SigRefParam _ m n)   = lhsSig (sigs !! m) !! n
 fetchSig sigs (SigRefRet _ nr)      = rhsSig (sigs !! nr)
 fetchSig sigs (SigRefParamCf _ m n) = lhsSig (sigs !! m) !! n
@@ -88,10 +88,11 @@ fetchSig sigs (SigRefRetCf _ nr)    = rhsSig (sigs !! nr)
 fetchSig _ x                        = x
 
 
-fetchSigValue :: ASigs
-              -> CfSigs
-              -> ADatatype Vector
-              -> ADatatype Vector
+fetchSigValue :: (Eq dt) =>
+                 ASigs dt s
+              -> CfSigs dt s
+              -> ADatatype dt Vector
+              -> ADatatype dt Vector
 fetchSigValue asigs cfsigs (SigRefParam _ m n) =
     -- trace ("fetchSigValue 1")
     -- trace ("m: " ++ show m)
@@ -123,13 +124,14 @@ fetchSigValue _ _ x =
   x
 
 
-fetchCstValue :: [ASignatureSig] -> [ASignatureSig] -> ACostCondition Vector -> ACost Vector
+fetchCstValue :: [ASignatureSig s dt] -> [ASignatureSig s dt]
+              -> ACostCondition Vector -> ACost Vector
 fetchCstValue asigs cfsigs (SigRefCst nr)   = sigCst (asigs !! nr)
 fetchCstValue asigs cfsigs (SigRefCstCf nr) = sigCst (cfsigs !! nr)
 fetchCstValue _ _ (ACostValue b)            = ACost b
 
 
-equalASig :: ASigs -> CfSigs -> ASignatureSig -> ASignatureSig -> Bool
+equalASig :: (Eq dt) => ASigs dt s -> CfSigs dt s -> ASignatureSig s dt -> ASignatureSig s dt -> Bool
 equalASig sigs cfsigs (Signature (_,c0,_,_) lhs0 rhs0)  (Signature (_,c1,_,_) lhs1 rhs1) =
   c0 == c1 && length lhs0' == length lhs1' && and (zipWith (==) lhs0' lhs1') && rhs0' == rhs1'
 

@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 13:22:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:07 2017 (+0200)
+-- Last-Updated: Sun May  7 22:03:00 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 148
+--     Update #: 152
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -58,7 +58,7 @@ import           Text.PrettyPrint
 import qualified Text.PrettyPrint.ANSI.Leijen                                 as L
 line = text "" $+$ empty
 
-prettyInfTreeNode :: InfTreeNode -> Doc
+prettyInfTreeNode :: (Show f, Show v, Show dt) => InfTreeNode f v dt -> Doc
 prettyInfTreeNode ctx =
   nest 2 $ hcat (intersperse (text ", ") lstPre) <+> text "|-" <>
   hcat (intersperse (text "+") $ map (prettyACostCondition int) (costs ctx))
@@ -68,18 +68,18 @@ prettyInfTreeNode ctx =
   -- <$> pretty (conditions ctx))
   where lstPre = map prettyPreCond (preConditions ctx)
 
-prettyPostCond :: Show a => Maybe (a, ADatatype Int) -> Doc
+prettyPostCond :: (Show dt, Show a) => Maybe (a, ADatatype dt Int) -> Doc
 prettyPostCond Nothing = empty
 prettyPostCond (Just (f,d)) =
   text (show f) <+> text ":" <+> prettyADatatype (prettyACost int) d
 
-prettyPreCond :: (String, ADatatype Int) -> Doc
+prettyPreCond :: Show dt => (String, ADatatype dt Int) -> Doc
 prettyPreCond (a,b) = text a <> colon <+> prettyADatatype (prettyACost int) b
 
 prettyPreCond' (a,b) =
   text a <> colon <+> prettyADatatype (prettyACost prettyVector) b
 
-prettyInfTreeNodeView                        :: InfTreeNodeView -> Doc
+prettyInfTreeNodeView :: InfTreeNodeView -> Doc
 prettyInfTreeNodeView (InfTreeNodeView pre cst post) =
   hcat (intersperse (text ", ") (map prettyPreCond' pre))
   <+> text "|-" <> hcat (intersperse (text "+") $
@@ -106,7 +106,7 @@ prettyInfTreeNodeView (InfTreeNodeLeafView sig cfSig) =
                                  map (prettyACostCondition prettyVector) cst)
           <> text "->" <+> prettyADatatype (prettyACost prettyVector) post
 
-prettyInfTreeNodeView (InfTreeNodeLeafEmpty) = empty
+prettyInfTreeNodeView InfTreeNodeLeafEmpty = empty
 
 
 --

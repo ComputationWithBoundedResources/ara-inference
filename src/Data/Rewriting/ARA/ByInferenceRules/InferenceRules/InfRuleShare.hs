@@ -8,9 +8,9 @@
 -- Created: Sun Sep 14 17:35:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 09:34:29 2017 (+0200)
+-- Last-Updated: Mon May  8 17:46:00 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 427
+--     Update #: 438
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -48,6 +48,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerSignature
+import           Data.Rewriting.ARA.ByInferenceRules.HelperFunctions
 import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleMisc
 import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.Prove
@@ -171,7 +172,8 @@ share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
                 fun :: ([(v, ADatatype dt Int)], Int)
                     -> t
                     -> ([(v, ADatatype dt Int)], Int)
-                fun (pres', nr'') _ = (pres' ++ [(read varName, SigRefVar dtVar varName)], nr''+1)
+                fun (pres', nr'') _ =
+                  (pres' ++ [(read (show varName), SigRefVar dtVar varName)], nr''+1)
                   where varName = varPrefix ++ show nr''
                         dtVar = actCostDt $ fetchSigValue asigs cfsigs (toADatatypeVector $ snd pres)
                         actCostDt (ActualCost _ dt' _) = dt'

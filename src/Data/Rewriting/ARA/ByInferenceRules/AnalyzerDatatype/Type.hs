@@ -7,9 +7,9 @@
 -- Created: Wed Oct  1 15:42:45 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 16:49:35 2017 (+0200)
+-- Last-Updated: Mon May  8 17:45:56 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 126
+--     Update #: 127
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -99,7 +99,7 @@ getDt (SigRefParamCf dt m n) = dt
 instance Show a => Show (ADatatype dt a) where
   show (SigRefRet _ x)        = "r(" ++ show x ++ ")"
   show (SigRefParam _ m n)    = "p(" ++ show m ++ "," ++ show n ++ ")"
-  show (SigRefVar dt v)       = v -- ++ ":" ++ dt
+  show (SigRefVar dt v)       = removeApostrophes v -- ++ ":" ++ dt
   show (SigRefRetCf _ x)      = "r_cf(" ++ show x ++ ")"
   show (SigRefParamCf _ m n)  = "p_cf(" ++ show m ++ "," ++ show n ++ ")"
   show (ActualCost cf dt cst) = show cst -- ++ ":" ++ dt

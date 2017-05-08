@@ -8,9 +8,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 09:09:31 2017 (+0200)
+-- Last-Updated: Mon May  8 17:25:22 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 656
+--     Update #: 658
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -137,7 +137,7 @@ composition (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc
         nShareCond = []
 
         newVars :: [v]
-        newVars = map (read . (varPrefix ++) . show) [nr..nr']
+        newVars = map (read . show . (varPrefix ++) . show) [nr..nr']
 
         strVarsCost = drop (length fc) newVars
         strVarsNode = take (length fc) newVars

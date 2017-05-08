@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 16:49:23 2017 (+0200)
+-- Last-Updated: Mon May  8 17:45:05 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 122
+--     Update #: 123
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -115,9 +115,6 @@ replList' = replList
 
 dropChars :: [Char]
 dropChars = ['"']
-
-removeApostrophes :: String -> String
-removeApostrophes = filter (/= '"')
 
 convertToSMTText :: T.Text -> T.Text
 convertToSMTText x = foldl replaceText (T.filter (`notElem` dropChars) x) replList'

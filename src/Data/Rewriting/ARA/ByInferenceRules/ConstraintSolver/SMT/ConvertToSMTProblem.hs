@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 16:28:47 2017 (+0200)
+-- Last-Updated: Mon May  8 18:00:46 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1075
+--     Update #: 1077
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -225,16 +225,16 @@ fromADatatype vecLen (SigRefParamCf _ m n) =
 fromADatatype vecLen (SigRefRetCf _ r) =
   map (\nr -> "v" +++ T.pack (show nr) +++ "_r_cf" +++ T.pack (show r)) [1..vecLen]
 fromADatatype vecLen (SigRefVar _ n) =
-  map (\nr -> "v" +++ T.pack (show nr) +++ "_" +++ T.pack n) [1..vecLen]
+  map (\nr -> "v" +++ T.pack (show nr) +++ "_" +++ T.pack (removeApostrophes n)) [1..vecLen]
 
 fromCostCondM :: ACostCondition t -> [T.Text]
-fromCostCondM (AVariableCondition str) = [T.pack str]
+fromCostCondM (AVariableCondition str) = [T.pack (removeApostrophes str)]
 fromCostCondM (SigRefCst nr) = ["k" +++ T.pack (show nr)]
 fromCostCondM (SigRefCstCf nr) = ["k_cf" +++ T.pack (show nr)]
 fromCostCondM (ACostValue _) = [] -- numbers like: -1
 
 fromCostCond :: (Num a, Ord a, Show a) => ACostCondition a -> [T.Text]
-fromCostCond (AVariableCondition str) = [T.pack str]
+fromCostCond (AVariableCondition str) = [T.pack (removeApostrophes str)]
 fromCostCond (SigRefCst nr) = ["k" +++ T.pack (show nr)]
 fromCostCond (SigRefCstCf nr) = ["k_cf" +++ T.pack (show nr)]
 fromCostCond (ACostValue nr)

@@ -8,9 +8,9 @@
 -- Created: Tue May 24 13:30:55 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 16:56:11 2017 (+0200)
+-- Last-Updated: Mon May  8 17:00:32 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 129
+--     Update #: 130
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -87,7 +87,6 @@ insertIntoSig m (nr, Signature (n,k,b,isCf) lhs (ActualCost _ retDt rhs)) =
          insertIntoADatatype isCf m (dt, show (sigRefParam isCf dt nr n' :: ADatatype dt Vector)))
    (zip lhs [0..]))
   (insertIntoADatatype isCf m (retDt, show (sigRefRet isCf retDt nr :: ADatatype dt Int)))
-  where
 insertIntoSig _ _ = error "insertIntoSig pattern match fail, this should not have happened"
 
 

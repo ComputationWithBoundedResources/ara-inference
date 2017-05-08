@@ -7,9 +7,9 @@
 -- Created: Fri Oct 10 15:46:17 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 16:49:19 2017 (+0200)
+-- Last-Updated: Mon May  8 18:48:27 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 121
+--     Update #: 125
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -126,7 +126,7 @@ fth4 :: (t, t1, t2, t3) -> t3
 fth4 (_,_,_,x) = x
 
 
-prettyAraSignature' :: (Show dt, Show s) => ASignatureSig dt s -> Doc
+prettyAraSignature' :: (Show dt, Show s) => ASignatureSig s dt -> Doc
 prettyAraSignature' =
   prettyAraSignature (text . show) (prettyACost prettyVector)
   (prettyADatatype (prettyACost prettyVector ))
@@ -135,6 +135,9 @@ sigRefRet isCf = if isCf then SigRefRetCf else SigRefRet
 sigRefParam isCf = if isCf then SigRefParamCf else SigRefParam
 sigRefCst isCf = if isCf then SigRefCstCf else SigRefCst
 
+
+removeApostrophes :: String -> String
+removeApostrophes = filter (/= '"')
 
 --
 -- HelperFunctions.hs ends here

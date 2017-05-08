@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 13:20:53 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 22:35:58 2017 (+0200)
+-- Last-Updated: Mon May  8 08:42:49 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 113
+--     Update #: 115
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -50,7 +50,7 @@ import           Data.Maybe
 import           Data.Rewriting.Typed.Term
 
 data InfTreeNode f v dt = InfTreeNode
-    { preConditions :: [(String, ADatatype dt Int)] -- ^ e.g. (x, r(0)).
+    { preConditions :: [(v, ADatatype dt Int)] -- ^ e.g. (x, r(0)).
     , costs         :: [ACostCondition Int]         -- ^ costs
     , postCondition :: Maybe (Term f v, ADatatype dt Int) -- ^ the statement
     , functionName  :: (f, String, Bool, [ACostCondition Int], Int, Maybe [(f, Int)])

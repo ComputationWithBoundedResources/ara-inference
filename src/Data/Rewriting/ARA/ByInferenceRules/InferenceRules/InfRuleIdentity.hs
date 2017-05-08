@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 -- InfRuleIdentity.hs ---
 --
 -- Filename: InfRuleIdentity.hs
@@ -7,9 +8,9 @@
 -- Created: Mon Sep 15 03:42:33 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 17:47:45 2017 (+0200)
+-- Last-Updated: Mon May  8 09:18:47 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 179
+--     Update #: 181
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -33,7 +34,7 @@
 
 -- Code:
 
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP                 #-}
 
 -- #define DEBUG
 
@@ -60,19 +61,20 @@ import           Debug.Trace                                                    
 #endif
 
 -- | The identity inference rule.
-identity :: (ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, InfTreeNode)
-         -> [(ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, [InfTreeNode])]
+identity :: forall f v dt . (Show f, Show v) =>
+            (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+             ACondition f v Int Int, InfTreeNode f v dt)
+         -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+              ACondition f v Int Int, [InfTreeNode f v dt])]
 identity (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
            i@(_,_,isCtrDeriv,_,_,_) his) =
 
   [(prob, cfsigs, asigs, nr, nConds
    , [ InfTreeNode [] [] Nothing i (his ++ [(fst3 (last his) + 1, "identity",
                                               InfTreeNodeLeafEmpty)])])
-  | fst pre == funName ]
+  | show (fst pre) == funName ]
 
-    where condDt :: [([ADatatype Int], Comparison, [ADatatype Int])]
-          condDt = [([snd pre], if isCtrDeriv then Eq else Geq, [snd post])]
-          condCst :: [([ACostCondition Int], Comparison, [ACostCondition Int])]
+    where condDt = [([removeDt $ snd pre], if isCtrDeriv then Eq else Geq, [removeDt $ snd post])]
           condCst = [(cst, if isCtrDeriv then Eq else Geq, [ACostValue 0])]
           nConds = ACondition (costCondition conds ++ condCst) (dtConditions conds ++ condDt)
                       (shareConditions conds) (minus1Vars conds)

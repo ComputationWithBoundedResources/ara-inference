@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 -- InfRuleShare.hs ---
 --
 -- Filename: InfRuleShare.hs
@@ -7,9 +8,9 @@
 -- Created: Sun Sep 14 17:35:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 18:19:51 2017 (+0200)
+-- Last-Updated: Mon May  8 09:34:29 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 421
+--     Update #: 427
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -33,7 +34,7 @@
 
 -- Code:
 
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP                 #-}
 
 #define DEBUG
 
@@ -51,10 +52,12 @@ import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleMisc
 import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.Prove
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
+
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.Typed.Datatype
 import           Data.Rewriting.Typed.Problem
+import qualified Data.Rewriting.Typed.Term                                      as T
 
 
 import           Control.Arrow
@@ -78,8 +81,11 @@ import           Text.PrettyPrint
 import           Debug.Trace                                                    (trace)
 #endif
 
-share :: (ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, InfTreeNode)
-         -> [(ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, [InfTreeNode])]
+share :: forall f v dt . (Eq v, Eq dt, Read v, Ord v, Show v, Show dt, Show f) =>
+         (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+           ACondition f v Int Int, InfTreeNode f v dt)
+      -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+            ACondition f v Int Int, [InfTreeNode f v dt])]
 share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
         i@(_,_,isCtrDeriv,_,_,_) his) =
   -- trace ("share")
@@ -111,43 +117,40 @@ share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
   | any ((>1) . length) varPostGroups
   ]
 
-  where varsPost :: [String]
+  where varsPost :: [v]
         varsPost = map (\(Var x) -> x) (concatMap getTermVars fc)
 
         varPostGroups = group $ sort varsPost
         -- varsToReplace = concat $ filter ((>1) . length) varPostGroups
 
-        groupedPre :: [(String, ADatatype Int)]
+        groupedPre :: [(v, ADatatype dt Int)]
         groupedPre =
           -- groupBy ((==) `on` fst) $
           sortBy (compare `on` fst) $ -- grouped pre vars
           filter ((`elem` varsPost) . fst) pre
 
-        groupedPostVars :: [[String]]
+        groupedPostVars :: [[v]]
         groupedPostVars = group (sort varsPost)
 
         hisNr | null his = 0
               | otherwise = fst3 (last his) + 1
         his' = his ++ [(hisNr, "share",
                         InfTreeNodeView
-                        (map (second toADatatypeVector) $
-                         concat pre')
+                        (map (show *** toADatatypeVectorString) (concat pre'))
                         (map toACostConditionVector cst)
-                        (post', toADatatypeVector dt))]
+                        (T.map show show post', toADatatypeVectorString dt))]
 
 
         conds' = conds { shareConditions = shareConditions conds ++ shareConds }
 
         shareConds = foldl shareConds' [] (zip pre pre')
-        shareConds' :: [(ADatatype Int, Comparison, [ADatatype Int])]
-                    -> ((String, ADatatype Int), [(String, ADatatype Int)])
-                    -> [(ADatatype Int, Comparison, [ADatatype Int])]
         shareConds' acc (_, [_]) = acc
-        shareConds' acc (preDt, postDts) = acc ++ [(snd preDt
-                                                   , if isCtrDeriv then Eq else Geq
-                                                   , map snd postDts)]
+        shareConds' acc (preDt, postDts) =
+          acc ++ [(removeDt (snd preDt)
+                  ,if isCtrDeriv then Eq else Geq
+                  ,map (removeDt . snd) postDts)]
 
-        origPreOrd ((a,_),_)=
+        origPreOrd ((a,_),_) =
           snd $
           fromMaybe (error "should not happen")
           (find ((== a) . fst . fst) (zip pre [0..]))
@@ -155,20 +158,20 @@ share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
         (pre', nr') =
           -- trace ("(zip groupedPre groupedPostVars): " ++ show (zip groupedPre groupedPostVars)) $
           foldl createPre' ([], nr) $
-          sortBy (compare `on` origPreOrd) --revert original order
+          sortBy (compare `on` origPreOrd) -- revert original order
           (zip groupedPre groupedPostVars)
 
 
-        createPre' :: ([[(String, ADatatype Int)]], Int)
-                   -> ((String, ADatatype Int), [String])
-                   -> ([[(String, ADatatype Int)]], Int)
+        createPre' :: ([[(v, ADatatype dt Int)]], Int)
+                   -> ((v, ADatatype dt Int), [v])
+                   -> ([[(v, ADatatype dt Int)]], Int)
         createPre' (p', nrTmp) (pres, [_]) = (p' ++ [[pres]], nrTmp)
         createPre' (p', nrTmp) (pres, posts) = (p' ++ [p''], nrTmp')
           where (p'', nrTmp') = foldl fun ([], nrTmp) posts
-                fun :: ([(String, ADatatype Int)], Int)
-                    -> String
-                    -> ([(String, ADatatype Int)], Int)
-                fun (pres', nr'') _ = (pres' ++ [(varName, SigRefVar dtVar varName)], nr''+1)
+                fun :: ([(v, ADatatype dt Int)], Int)
+                    -> t
+                    -> ([(v, ADatatype dt Int)], Int)
+                fun (pres', nr'') _ = (pres' ++ [(read varName, SigRefVar dtVar varName)], nr''+1)
                   where varName = varPrefix ++ show nr''
                         dtVar = actCostDt $ fetchSigValue asigs cfsigs (toADatatypeVector $ snd pres)
                         actCostDt (ActualCost _ dt' _) = dt'
@@ -183,12 +186,12 @@ share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
                   ) (filter ((`elem` varsPost) . fst) pre) pre'
 
 
-        post' :: Term String String
+        post' :: Term f v
         post' = Fun f (snd $ foldl putVarsIntoTerm (subs, []) fc)
 
-        putVarsIntoTerm :: ([(String, [String])], [Term String String])
-                        -> Term String String
-                        -> ([(String, [String])], [Term String String])
+        putVarsIntoTerm :: ([(v, [v])], [Term f v])
+                        -> Term f v
+                        -> ([(v, [v])], [Term f v])
         putVarsIntoTerm (vs, acc) (Var v) =
           case find (\x -> v == fst x) vs of
             Nothing -> (vs, acc ++ [Var v])

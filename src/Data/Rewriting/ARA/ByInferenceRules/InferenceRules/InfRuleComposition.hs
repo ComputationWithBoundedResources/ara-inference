@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 -- InfRuleComposition.hs ---
 --
 -- Filename: InfRuleComposition.hs
@@ -7,9 +8,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 22:49:22 2017 (+0200)
+-- Last-Updated: Mon May  8 09:09:31 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 646
+--     Update #: 656
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -33,7 +34,7 @@
 
 -- Code:
 
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP                 #-}
 
 #ifndef DEBUG
 #define DEBUG
@@ -59,12 +60,14 @@ import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
+import           Data.Rewriting.ARA.Pretty
 import           Data.Rewriting.Typed.Datatype
 import           Data.Rewriting.Typed.Problem
 import           Data.Rewriting.Typed.Rule
 import           Data.Rewriting.Typed.Signature
 import           Data.Rewriting.Typed.Term
                                                                                      (isVar)
+import qualified Data.Rewriting.Typed.Term                                          as T
 
 import           Control.Arrow
 import           Control.Exception
@@ -84,8 +87,11 @@ import           Debug.Trace
 #endif
 
 
-composition :: (ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, InfTreeNode)
-         -> [(ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, [InfTreeNode])]
+composition :: forall f v dt . (Ord dt, Eq f, Read v, Show dt, Show v, Show f, Eq v) =>
+               (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+                ACondition f v Int Int, InfTreeNode f v dt)
+            -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+                 ACondition f v Int Int, [InfTreeNode f v dt])]
 composition (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
               i@(_,ruleStr,isCtrDeriv,cstsStart,_,_) his) =
 
@@ -97,11 +103,11 @@ composition (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc
 
   where fcVars = concatMap getTermVars fc
 
-        preDtSorted :: [String]
+        preDtSorted :: [dt]
         preDtSorted = sort (map ((\(_, x) -> actCostDt (fetchSigValue asigs cfsigs x))
                                  . second toADatatypeVector) pre)
 
-        fcDtSorted :: [String]
+        fcDtSorted :: [dt]
         fcDtSorted = sort dtFunChld
 
         actCostDt (ActualCost _ dt' _) = dt'
@@ -109,10 +115,10 @@ composition (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc
         actCostDt _                    = error "should not happen"
 
         sig = getSig f (getDt dt)          -- signature of function f
-        getSig :: String -> String -> SignatureSig
+        getSig :: f -> dt -> SignatureSig f dt
         getSig = getSignatureByNameAndType' (fromJust $ signatures prob)
 
-        dtFunChld :: [String]
+        dtFunChld :: [dt]
         dtFunChld = map fst $ concatMap getDtsRhs (zip fc (lhsSig sig))
 
         getDtsRhs (Var _, dt') = [dt']
@@ -126,60 +132,63 @@ composition (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc
                    (shareConditions conds ++ nShareCond) (minus1Vars conds)
 
         nCostCond = [(cst, if isCtrDeriv then Eq else Geq,
-                      map AVariableCondition strVarsCost)]
+                      map (AVariableCondition . show) strVarsCost)]
         nDtCond = []
         nShareCond = []
 
-        newVars :: [String]
-        newVars = map ((varPrefix ++) . show) [nr..nr']
+        newVars :: [v]
+        newVars = map (read . (varPrefix ++) . show) [nr..nr']
 
         strVarsCost = drop (length fc) newVars
         strVarsNode = take (length fc) newVars
         -- varsCost = map Var (drop (length fc) newVars)
-        varsNode = map Var (take (length fc) newVars)
+        varsNode :: [Term f v]
+        varsNode = map (Var . read . show) (take (length fc) newVars)
 
 
-        funParNode :: InfTreeNode
+        funParNode :: InfTreeNode f v dt
         funParNode = InfTreeNode funParNodeParams funParNodeCsts funParNodeFunc i hisFunParNode
           where
-            funParNodeParams :: [(String, ADatatype Int)]
-            funParNodeParams = zip strVarsNode (zipWith SigRefVar (map fst $ lhsSig sig) strVarsNode)
+            funParNodeParams :: [(v, ADatatype dt Int)]
+            funParNodeParams = zip strVarsNode (zipWith SigRefVar (map fst $ lhsSig sig)
+                                                (map show strVarsNode))
             funParNodeCsts :: [ACostCondition a]
-            funParNodeCsts = [AVariableCondition (head strVarsCost)]
+            funParNodeCsts = [AVariableCondition (show $ head strVarsCost)]
             funParNodeFunc = Just (Fun f varsNode, dt)
 
 
-            hisFunParNode = his ++ [(fst3 (last his) + 1, "comp fun",
-                                     InfTreeNodeView
-                                     (map (second toADatatypeVector) funParNodeParams)
-                                     funParNodeCsts
-                                     (second toADatatypeVector $ fromJust funParNodeFunc))]
+            hisFunParNode =
+              his ++ [(fst3 (last his) + 1, "comp fun",
+                        InfTreeNodeView
+                        (map (show *** toADatatypeVectorString) funParNodeParams)
+                        funParNodeCsts
+                        ((T.map show show *** toADatatypeVectorString) (fromJust funParNodeFunc)))]
 
 
-        funChildNodes :: [InfTreeNode]
         funChildNodes = fst $ foldl funChildNodes' ([], pre)
                         (zip4 fc (tail strVarsCost) strVarsNode (map fst $ lhsSig sig))
           where
-            funChildNodes' :: ([InfTreeNode], [(String, ADatatype Int)])
-                           -> (Term String String, String, String, String)
-                           -> ([InfTreeNode], [(String, ADatatype Int)])
+            funChildNodes' :: ([InfTreeNode f v dt], [(v, ADatatype dt Int)])
+                           -> (Term f v, v, v, dt)
+                           -> ([InfTreeNode f v dt], [(v, ADatatype dt Int)])
             funChildNodes' (acc, pres) (term, costVar, varName, dtStr) =
               (acc ++ [chldNode], restPres)
-                where chldNode :: InfTreeNode
+                where chldNode :: InfTreeNode f v dt
                       chldNode = -- trace ("his: " ++ show hisChld) $
-                        InfTreeNode chldPres [AVariableCondition costVar]
-                                   (Just (term, SigRefVar dtStr varName)) i hisChld
+                        InfTreeNode chldPres [AVariableCondition (show costVar)]
+                                   (Just (term, SigRefVar dtStr (show varName))) i hisChld
                       (chldPres, restPres) = foldl fun ([],[]) pres
 
                       hisChld = his ++ [(fst3 (last his) + 1, "comp chld",
                                          InfTreeNodeView
-                                         (map (second toADatatypeVector) chldPres)
-                                         [AVariableCondition costVar]
-                                         (term, SigRefVar dtStr varName))]
+                                         (map (show *** toADatatypeVectorString) chldPres)
+                                         [AVariableCondition (show costVar)]
+                                         (T.map show show term
+                                         ,SigRefVar (show dtStr) (show varName)))]
 
-                      fun :: ([(String, ADatatype Int)], [(String, ADatatype Int)])
-                          -> (String, ADatatype Int)
-                          -> ([(String, ADatatype Int)], [(String, ADatatype Int)])
+                      fun :: ([(v, ADatatype dt Int)], [(v, ADatatype dt Int)])
+                          -> (v, ADatatype dt Int)
+                          -> ([(v, ADatatype dt Int)], [(v, ADatatype dt Int)])
                       fun (good, bad) var = if fst var `elem` varsTerm
                                               then (good  ++ [var], bad)
                                               else (good, bad ++ [var])

@@ -7,9 +7,9 @@
 -- Created: Wed Sep 17 09:05:42 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 22:20:23 2017 (+0200)
+-- Last-Updated: Mon May  8 10:22:21 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 408
+--     Update #: 419
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -41,6 +41,8 @@ module Data.Rewriting.ARA.Pretty.Pretty
     , prettyAraSignature
     , prettyAraProblem
     , prettyDtTuple
+    , prettyRl
+    , prettyTerm
     )
     where
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost.Pretty
@@ -49,7 +51,7 @@ import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.Typed.Datatype
 import           Data.Rewriting.Typed.Problem
-import           Data.Rewriting.Typed.Rule
+import           Data.Rewriting.Typed.Rule                               hiding (prettyRule)
 import           Data.Rewriting.Typed.Signature
 
 import           Debug.Trace                                             (trace)
@@ -66,8 +68,7 @@ printWhen' True  p = (p $+$ empty $+$ )
 infixr 5 `printWhen'`
 
 
-prettyAraProblem :: (Show f, Show v, Show s, Show sDt, Show dt, Show cn,
-                     L.Pretty f, L.Pretty v) =>
+prettyAraProblem :: (Show f, Show v, Show s, Show sDt, Show dt, Show cn) =>
                     ProblemSig f v s sDt dt cn -> Doc
 prettyAraProblem prob =
     printWhen' (sterms /= AllTerms) (block "STARTTERM" $ text "CONSTRUCTOR-BASED")
@@ -97,7 +98,7 @@ prettyAraProblem prob =
         ppRules rp = vcat ([ppRule "->" r | r <- strictRules rp]
                            ++ [ppRule "->=" r | r <- weakRules rp])
 
-        ppRule sep' = text . show . prettyRule (L.pretty sep') L.pretty L.pretty
+        ppRule = prettyRule
 
         ppDatatypes dts' = vcat [ ppDatatype dt | dt <- dts' ]
         ppDatatype = prettyAraDatatype ppCost ppCost
@@ -177,6 +178,21 @@ prettyAraSignature pF pCst pDt (Signature (n, cst, _,_) lhs' rhs') =
 
 prettyList'     :: (a -> Doc) -> [a] -> Doc
 prettyList' f l = hcat $ intersperse (comma <> space) (map f l)
+
+
+prettyRule :: (Show f, Show v) => String -> Rule f v -> Doc
+prettyRule sep (Rule lhs rhs) =
+  prettyTerm lhs <+> text sep <+> prettyTerm rhs
+
+
+prettyRl :: (Show f, Show v) => Bool -> Rule f v -> Doc
+prettyRl weak (Rule lhs rhs) =
+  prettyTerm lhs <+> text (if weak then "->=" else "->") <+> prettyTerm rhs
+
+prettyTerm :: (Show f, Show v) => Term f v -> Doc
+prettyTerm (Var v) = text (show v)
+prettyTerm (Fun f ch) =
+  text (show f) <> char '(' <> hcat (map prettyTerm ch) <> char ')'
 
 
 --

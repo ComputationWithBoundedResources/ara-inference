@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 -- InfRuleWeak.hs ---
 --
 -- Filename: InfRuleWeak.hs
@@ -7,9 +8,9 @@
 -- Created: Mon Sep 15 11:39:45 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:05 2017 (+0200)
+-- Last-Updated: Mon May  8 09:35:37 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 109
+--     Update #: 110
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -32,7 +33,7 @@
 --
 
 -- Code:
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP                 #-}
 
 -- #define DEBUG
 
@@ -55,6 +56,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.Typed.Term                                          hiding
                                                                                      (map)
+import qualified Data.Rewriting.Typed.Term                                          as T
 
 
 import           Control.Arrow
@@ -64,8 +66,11 @@ import           Debug.Trace
                                                                                      (trace)
 #endif
 
-weak :: (ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, InfTreeNode)
-         -> [(ProblemSig, CfSigs, ASigs, Int, ACondition Int Int, [InfTreeNode])]
+weak :: forall f v dt . (Eq v, Eq dt, Read v, Ord v, Show v, Show dt, Show f) =>
+         (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+           ACondition f v Int Int, InfTreeNode f v dt)
+      -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+            ACondition f v Int Int, [InfTreeNode f v dt])]
 weak (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (term, dt)) fn his) =
   -- trace ("weak")
 
@@ -76,8 +81,9 @@ weak (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (term, dt)) fn h
   where pre' = filter (\x -> fst x `elem` varsTerm) pre
         varsTerm = vars term
         his' = his ++ [(fst3 (last his) + 1, "weak",
-                        InfTreeNodeView (map (second toADatatypeVector) pre')
-                        (map toACostConditionVector cst) (term, toADatatypeVector dt))]
+                        InfTreeNodeView (map (show *** toADatatypeVectorString) pre')
+                        (map toACostConditionVector cst)
+                        (T.map show show term, toADatatypeVectorString dt))]
 
 weak _ = []
 

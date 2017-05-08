@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 22:32:37 2017 (+0200)
+-- Last-Updated: Mon May  8 09:04:35 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1628
+--     Update #: 1635
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -140,7 +140,7 @@ createCtrSig' x@(Datatype dt ctrs, acc) =
         createLhs _ (ConstructorDatatype dt') = dt'
 
 
-insertConstraints :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v) =>
+insertConstraints :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v, Ord v, Read v) =>
                      ArgumentOptions -> Prove f v f dt dt f -> Prove f v f dt dt f
 insertConstraints args pr =
 
@@ -199,7 +199,7 @@ postInfTreeNode isCf nr (Rule _ term) dt = Just (term, sigRefRet isCf dt nr)
 -- | @createConstraints (rule, ctxs)@ creates a starting constraint from the given
 -- problem and saves it to the tuple. The returning rule is undefined due to not
 -- using it in mapDatatypes.
-createInfTreeNodes :: (Eq f, Eq v, Eq dt, Show f, Show v) =>
+createInfTreeNodes :: (Eq f, Eq v, Eq dt, Show f, Ord v, Read v, Show v) =>
                       Either [Rule f v] Int
                    -> Bool
                    -> Maybe Int
@@ -253,16 +253,9 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
 
         varMin1Cond = AVariableCondition (head varMin1)
 
-        ruleStr = show (prettyRl rule)
+        ruleStr = show (prettyRl weak rule)
 
-        prettyRl (Rule lhs rhs) =
-          prettyTerm lhs <+> text (if weak then "->=" else "->") <+> prettyTerm rhs
-        prettyTerm (Var v) = text (show v)
-        prettyTerm (Fun f ch) =
-          text (show f) <> char '(' <> hcat (map prettyTerm ch) <> char ')'
-
-
-                  -- ruleStr = show (prettyRule
+        -- ruleStr = show (prettyRule
         --                 (L.pretty (L.text $ if weak
         --                                     then "->="
         --                                     else "->")) L.pretty L.pretty rule)
@@ -284,7 +277,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
           Right n  -> n
 
         chInfTreeNodes = map (\(InfTreeNode _ a b c d) ->
-                                InfTreeNode pre a b c d) chInfTreeNds
+                                InfTreeNode (map (first (read.show)) pre) a b c d) chInfTreeNds
 
         -- pre :: [(String, ADatatype dt Int)]
         -- aSigsCtr :: ASigs dt s
@@ -329,21 +322,21 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
                         shareCond = (removeDt var, Eq, map removeDt list)
                     in ((fst x, var):preLin, shareCond:shares,nrO)
 
-getVarsWithDt :: (Show v, Eq f, Show f, Eq dt, Eq v) =>
+getVarsWithDt :: (Read v, Show v, Eq f, Show f, Eq dt, Eq v) =>
                  String
               -> Int
               -> Bool
               -> Bool
               -> ArgumentOptions
               -> [SignatureSig f dt]
-              -> ([(String, ADatatype dt Int)], ASigs dt f,ACondition f v Int Int
+              -> ([(v, ADatatype dt Int)], ASigs dt f,ACondition f v Int Int
                  , [ACostCondition Int],[InfTreeNode f v dt], [f], Int)
               -> (Term f v, ADatatype dt Int, dt, ACostCondition Int)
-              -> ([(String, ADatatype dt Int)], ASigs dt f,ACondition f v Int Int
+              -> ([(v, ADatatype dt Int)], ASigs dt f,ACondition f v Int Int
                 , [ACostCondition Int],[InfTreeNode f v dt], [f], Int)
 getVarsWithDt _ _ isRoot _ _ _ (accPre,accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr)
   (Var v, dtN, dt, kVar) =
-  (accPre ++ [(show v, dtN)], accSigs,accConds `addConditions` nConds,csts,infTreeNds
+  (accPre ++ [(read (show v), dtN)], accSigs,accConds `addConditions` nConds,csts,infTreeNds
   ,noCfDefSyms,sigNr)
 
   where nConds = ACondition [([kVar],Eq,[ACostValue 0]) | isRoot ] [] [] []

@@ -7,9 +7,9 @@
 -- Created: Wed Oct  1 15:42:45 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 22:17:55 2017 (+0200)
+-- Last-Updated: Mon May  8 16:49:35 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 123
+--     Update #: 126
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -49,6 +49,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost.Type
 import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 
+
 data ADatatype dt a = ActualCost Bool dt (ACost a) -- ^ was Cf, data-type and costs
                     | SigRefParam dt Int Int -- ^ m n: the same as the n'th element of the m'th sig
                     | SigRefRet dt Int       -- ^ same return data-type as the m'th signature
@@ -69,12 +70,12 @@ toADatatypeVectorString :: (Show dt) => ADatatype dt Int -> ADatatype String Vec
 toADatatypeVectorString = toADatatypeVector . toADatatypeStringDt
 
 toADatatypeStringDt :: (Show dt) => ADatatype dt c -> ADatatype String c
-toADatatypeStringDt (ActualCost cf dt c)   = ActualCost cf (show dt) c
-toADatatypeStringDt (SigRefRet dt x)       = SigRefRet (show dt) x
-toADatatypeStringDt (SigRefParam dt m n)   = SigRefParam (show dt) m n
-toADatatypeStringDt (SigRefVar dt v)       = SigRefVar (show dt) v
-toADatatypeStringDt (SigRefRetCf dt x)     = SigRefRetCf (show dt) x
-toADatatypeStringDt (SigRefParamCf dt m n) = SigRefParamCf (show dt) m n
+toADatatypeStringDt (ActualCost cf dt c)   = ActualCost cf (removeApostrophes $ show dt) c
+toADatatypeStringDt (SigRefRet dt x)       = SigRefRet (removeApostrophes $ show dt) x
+toADatatypeStringDt (SigRefParam dt m n)   = SigRefParam (removeApostrophes $ show dt) m n
+toADatatypeStringDt (SigRefVar dt v)       = SigRefVar (removeApostrophes $ show dt) v
+toADatatypeStringDt (SigRefRetCf dt x)     = SigRefRetCf (removeApostrophes $ show dt) x
+toADatatypeStringDt (SigRefParamCf dt m n) = SigRefParamCf (removeApostrophes $ show dt) m n
 
 
 removeDt :: ADatatype dt t -> ADatatype String t
@@ -102,6 +103,10 @@ instance Show a => Show (ADatatype dt a) where
   show (SigRefRetCf _ x)      = "r_cf(" ++ show x ++ ")"
   show (SigRefParamCf _ m n)  = "p_cf(" ++ show m ++ "," ++ show n ++ ")"
   show (ActualCost cf dt cst) = show cst -- ++ ":" ++ dt
+
+
+removeApostrophes :: String -> String
+removeApostrophes = filter (/= '"')
 
 
 --

@@ -8,9 +8,9 @@
 -- Created: Tue Sep  9 15:15:02 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 18:48:03 2017 (+0200)
+-- Last-Updated: Mon May  8 10:22:43 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 373
+--     Update #: 376
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -62,8 +62,8 @@ import           Text.PrettyPrint
 
 line = text "" $+$ empty
 
-prettyProve :: (Show f, Show v, Show s, Show cn, Show sDt, L.Pretty f, L.Pretty v) =>
-               Prove f v s sDt Int cn -> Doc
+prettyProve :: (Show f, Show v, Show dt, Show s, Show cn, Show sDt) =>
+               Prove f v s sDt dt cn -> Doc
 prettyProve prove =
   hang empty 2 $
   text "InfTreeNodes To Prove:" $+$ line $+$

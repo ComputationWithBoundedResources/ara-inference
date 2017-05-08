@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 17:43:11 2017 (+0200)
+-- Last-Updated: Mon May  8 16:49:23 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 114
+--     Update #: 122
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -111,21 +111,26 @@ replList' = replList
                    , ("(", "_LPAREN_")
                    , (")", "_RPAREN_")
                    , ("=", "_EQ_")
-                   , ("\"", "")
                    ]
 
+dropChars :: [Char]
+dropChars = ['"']
+
+removeApostrophes :: String -> String
+removeApostrophes = filter (/= '"')
 
 convertToSMTText :: T.Text -> T.Text
-convertToSMTText x = foldl replaceText x replList'
+convertToSMTText x = foldl replaceText (T.filter (`notElem` dropChars) x) replList'
   where replaceText acc (from, to) = T.replace from to acc
 
 convertToSMTStringText :: (Show s) => s -> T.Text
-convertToSMTStringText x = foldl replaceText (T.pack (show x)) replList'
+convertToSMTStringText x =
+  foldl replaceText (T.filter (`notElem` dropChars) (T.pack (show x))) replList'
   where replaceText acc (from, to) = T.replace from to acc
 
-
 convertToSMTString :: (Show s) => s -> String
-convertToSMTString x = T.unpack $ foldl replaceText (T.pack $ show x) replList'
+convertToSMTString x =
+  T.unpack $ foldl replaceText (T.filter (`notElem` dropChars) (T.pack $ show x)) replList'
   where replaceText acc (from, to) = T.replace from to acc
 
 convertFromSMTText :: T.Text -> T.Text

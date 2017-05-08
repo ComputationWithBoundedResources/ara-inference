@@ -8,9 +8,9 @@
 -- Created: Tue May 24 13:30:55 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 18:33:49 2017 (+0200)
+-- Last-Updated: Mon May  8 16:56:11 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 121
+--     Update #: 129
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -75,6 +75,7 @@ import           Text.PrettyPrint                                              h
 
 insertIntoSigs :: [ASignatureSig s dt] -> [Data Vector] -> [ASignatureSig s dt]
 insertIntoSigs acc dt =
+  -- trace ("m: " ++ show m) $
   map (insertIntoSig m) (zip [0..] acc)
   where m = M.fromList $ map (\(Data l v) -> (l,v)) dt
 
@@ -122,7 +123,7 @@ insertIntoSigCtr :: (Show s, Show dt) =>
                  -> [ASignatureSig String dt]
 insertIntoSigCtr args sigs vecLen m (Signature (n,k,b,isCf) lhs (ActualCost _ retDt rhs)) =
   map (\idx ->
-         Signature (show n ++ "_" ++ show retDt,
+         Signature (show n ++ "_" ++ removeApostrophes (show retDt),
                     insertIntoCstCtr m ("k" ++ cf' ++ "(ctr_" ++ cf ++ show n ++ "_" ++
                                            show idx ++ ")", k), b,isCf)
         (map (\(ActualCost isCf dt _, n') ->
@@ -134,7 +135,9 @@ insertIntoSigCtr args sigs vecLen m (Signature (n,k,b,isCf) lhs (ActualCost _ re
                                          "(ctr_"++ cf ++ show n ++ "_" ++ show idx ++ ")")))
   [1..vecLen]
   where cf' = if isCf then "_cf" else ""
-        cf = if isCf && separateBaseCtr args then show retDt ++ "_cf_" else show retDt ++ "_"
+        cf = if isCf && separateBaseCtr args
+             then removeApostrophes (show retDt) ++ "_cf_"
+             else removeApostrophes (show retDt) ++ "_"
 
 
 insertIntoSigCtr _ _ _ _ _ = error "insertIntoSig pattern match fail, this should not have happened"
@@ -149,8 +152,8 @@ insertIntoADatatypeCtr isCf m (dt, lab) =
 
 
 getValueFromMap :: String -> M.Map String Vector -> Vector
-getValueFromMap = M.findWithDefault 0
--- getValueFromMap str = M.findWithDefault (error $ "searched for:" ++ show str) str
+getValueFromMap = M.findWithDefault 0 . removeApostrophes
+-- getValueFromMap str = M.findWithDefault (error $ "searched for:" ++ show str) (removeApostrophes str)
 
 
 --

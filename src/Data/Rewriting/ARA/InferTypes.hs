@@ -8,9 +8,9 @@
 -- Created: Wed Nov  2 15:34:35 2016 (+0100)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat May  6 18:36:39 2017 (+0200)
+-- Last-Updated: Mon May  8 16:15:41 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 55
+--     Update #: 56
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -56,11 +56,11 @@ import           Text.PrettyPrint.ANSI.Leijen
 
 import           Debug.Trace
 
-type St f v s sDt = (Problem f v f T.Text T.Text f, M.Map f Int, [f])
+type St f v s sDt = (Problem f v f String String f, M.Map f Int, [f])
 
 inferTypesAndSignature :: (Ord f, Show f, Eq f) =>
                           Problem f v s sDt dt f
-                       -> Problem f v f T.Text T.Text f
+                       -> Problem f v f String String f
 inferTypesAndSignature prob =
   (^._1) $ execState infer (prob { datatypes = Nothing
                                  , signatures = Nothing},M.empty,[])
@@ -70,7 +70,7 @@ infer = do
   inferSigs
   inferTypes
 
-getProblem :: State (St f v s sDt) (Problem f v f T.Text T.Text f)
+getProblem :: State (St f v s sDt) (Problem f v f String String f)
 getProblem = do
   st <- get
   return (st^._1)

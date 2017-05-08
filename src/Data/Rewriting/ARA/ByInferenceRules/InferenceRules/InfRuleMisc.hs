@@ -7,9 +7,9 @@
 -- Created: Mon Sep 15 01:47:10 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 21:40:53 2017 (+0200)
+-- Last-Updated: Mon May  8 09:17:18 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 426
+--     Update #: 430
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -160,7 +160,6 @@ getTermVars (Fun _ ch) = concatMap getTermVars ch
 termName           :: (Show f, Show v) => Term f v -> String
 termName (Var n)   = show n
 termName (Fun n _) = show n
-
 
 --
 -- InfRuleMisc.hs ends here

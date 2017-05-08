@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 18:38:17 2017 (+0200)
+-- Last-Updated: Mon May  8 16:28:47 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1074
+--     Update #: 1075
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -459,7 +459,8 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
         )
   [1..vecLen]
   where setRetValuesToIdentiyMatrix baseNr (ctrName,isCf,_,ctrType) = do
-          let baseCf = if isCf && separateBaseCtr args then ctrType ++ "_cf_" else ctrType ++ "_"
+          let baseCf = if isCf && separateBaseCtr args
+                       then ctrType ++ "_cf_" else ctrType ++ "_"
 
           let var = SigRefVar undefined $
                     "rctr_" ++ baseCf ++ T.unpack (convertToSMTText ctrName) ++ "_"

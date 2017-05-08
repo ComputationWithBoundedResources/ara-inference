@@ -1,4 +1,5 @@
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts    #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 -- Main.hs ---
 --
 -- Filename: Main.hs
@@ -8,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 15:57:48 2017 (+0200)
+-- Last-Updated: Mon May  8 16:15:42 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 942
+--     Update #: 950
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -52,7 +53,7 @@
 -- Code:
 
 
-{-# LANGUAGE CPP              #-}
+{-# LANGUAGE CPP                 #-}
 module Main
     ( main
     ) where
@@ -157,9 +158,6 @@ main =
              ruleNames = map (\rule -> (((\(Fun f _) -> f) . lhs) rule, rule)
                              ) (allRules $ rules prob)
 
-             polyIntASigs :: [(Rule String String, ASignatureSig)]
-             polyIntASigs = fst $ foldl fun ([],ruleNames) sigs
-
              fun (acc,[]) _ = (acc,[])
              fun (acc,(rn, rule):rns) sig = if rn == fst4 (lhsRootSym sig)
                                             then  (acc ++ [(rule,sig)], rns)
@@ -243,8 +241,8 @@ main =
            putStrLn $ "Weak Rules: " ++ show weakRls
 
 
-         ) (\e ->
-              case (e :: ProgException) of
+         ) (\(e :: ProgException) ->
+              case e of
                 ShowTextOnly txt -> do
                   putStrLn "MAYBE"
                   putStrLn txt
@@ -273,7 +271,7 @@ main =
 
 
 checkCfBaseCtrsUniqueness :: (Show a, Eq a, Ord a, Eq t, Num t, Show t, Show t3) =>
-                             [Signature (a, ACost t, Bool, t3) (ADatatype t)] -> IO Bool
+                             [Signature (a, ACost t, Bool, t3) (ADatatype dt t)] -> IO Bool
 checkCfBaseCtrsUniqueness sigs = do
   let grouped = groupBy ((==) `on` fst4.lhsRootSym) $
                 sortBy (compare `on` fst4.lhsRootSym) (trace ("HEREasdf") sigs)

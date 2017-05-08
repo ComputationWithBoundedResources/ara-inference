@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 22:49:02 2017 (+0200)
+-- Last-Updated: Mon May  8 08:53:25 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1248
+--     Update #: 1252
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -89,7 +89,7 @@ import           Debug.Trace
 -- 1. Application of non-cost free types.
 -- 2. Application of cost-free types.
 -- 3. Application for the arguments of well-typedness (using Eq instead of Geq).
-function :: forall f v s sDt dt cn. (Eq f, Eq dt, Show f, Eq v, Show v, Show dt) =>
+function :: forall f v dt. (Eq f, Eq dt, Show f, Eq v, Show v, Show dt, Ord v, Read v) =>
             ArgumentOptions
          -> [(f, Integer)]
          -> [f]
@@ -214,7 +214,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
         nPre = map (\(a,b) -> sigRefParam isCfBranch a asigIdx b) (zip dtsChld [0..])
         nPreVector = map (\(a,b) -> sigRefParam isCfBranch (show a) asigIdx b) (zip dtsChld [0..])
 
-        fromVar (Var n) = show n
+        fromVar (Var n) = n
         fromVar _       = error "programming error. Should not be possible."
 
         postVarOrder (a,_) =

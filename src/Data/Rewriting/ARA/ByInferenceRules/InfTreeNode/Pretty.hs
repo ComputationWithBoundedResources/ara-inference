@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 13:22:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 22:03:00 2017 (+0200)
+-- Last-Updated: Mon May  8 08:44:04 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 152
+--     Update #: 153
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -73,8 +73,8 @@ prettyPostCond Nothing = empty
 prettyPostCond (Just (f,d)) =
   text (show f) <+> text ":" <+> prettyADatatype (prettyACost int) d
 
-prettyPreCond :: Show dt => (String, ADatatype dt Int) -> Doc
-prettyPreCond (a,b) = text a <> colon <+> prettyADatatype (prettyACost int) b
+prettyPreCond :: (Show v, Show dt) => (v, ADatatype dt Int) -> Doc
+prettyPreCond (a,b) = text (show a) <> colon <+> prettyADatatype (prettyACost int) b
 
 prettyPreCond' (a,b) =
   text a <> colon <+> prettyADatatype (prettyACost prettyVector) b

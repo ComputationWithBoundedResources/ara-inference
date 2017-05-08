@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 22:32:09 2017 (+0200)
+-- Last-Updated: Mon May  8 16:28:43 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1582
+--     Update #: 1588
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -227,7 +227,7 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
     let baseCtrs = map (\x -> (convertToSMTStringText (fst4 (lhsRootSym x))
                               , thd4 (lhsRootSym x)
                               , length (lhsSig x)
-                              , show $ getDt (rhsSig x))) constr
+                              , removeApostrophes $ show $ getDt (rhsSig x))) constr
     setBaseCtrMaxValues ops probSigs vecLen baseCtrs
 
   when (shift ops) $ do
@@ -431,10 +431,11 @@ toMConstraints args sigs (nr, Signature (n,_,True,isCf) lhs rhs) =
 
   where ctrType = getDt rhs
         baseCf = if isCf && separateBaseCtr args
-                 then show ctrType ++ "_cf_"
-                 else show ctrType ++ "_"
+                 then removeApostrophes (show ctrType) ++ "_cf_"
+                 else removeApostrophes (show ctrType) ++ "_"
         cf = if isCf then "cf_" else ""
         ns = "n" ++ cf ++ show nr
+
 
 -- To bound growth of constructors potentials
 toGrowBoundConstraints :: Show s =>
@@ -486,8 +487,8 @@ toGrowBoundConstraintsBaseCtr args sigs vecLen (Signature (n,_,_,isCf) lhs rhs)
   where cf = if isCf then "cf_" else ""
         ctrType = getDt rhs
         baseCf = if isCf && separateBaseCtr args
-                 then show ctrType ++ "_cf_"
-                 else show ctrType ++ "_"
+                 then removeApostrophes (show ctrType) ++ "_cf_"
+                 else removeApostrophes (show ctrType) ++ "_"
 
 -- independencyBaseConstr :: (Show s) =>
 --                           ArgumentOptions
@@ -550,8 +551,8 @@ baseConstructors args sigs vecLen (Signature (n,_,_,isCf) _ rhs)
   where cf = if isCf then "cf_" else ""
         ctrType = getDt rhs
         baseCf = if isCf && separateBaseCtr args
-                 then show ctrType ++ "_cf_"
-                 else show ctrType ++ "_"
+                 then removeApostrophes (show ctrType) ++ "_cf_"
+                 else removeApostrophes (show ctrType) ++ "_"
 
 combineGroupVars :: [([ADatatype dt Int],[ADatatype dt Int])]
                  -> [([ACostCondition Int],[ACostCondition Int])]

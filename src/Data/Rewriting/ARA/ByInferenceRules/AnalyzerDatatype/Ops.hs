@@ -7,9 +7,9 @@
 -- Created: Sat Nov  1 10:05:01 2014 (+0100)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:33:58 2017 (+0200)
+-- Last-Updated: Sun May  7 18:03:47 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 65
+--     Update #: 69
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -56,7 +56,7 @@ import           Debug.Trace                                               (trac
 #endif
 
 
-instance (Eq a) => Eq (ADatatype a) where
+instance (Eq a, Eq dt) => Eq (ADatatype dt a) where
   (ActualCost isCf1 dtN1 cst1) == (ActualCost isCf2 dtN2 cst2) =
     -- isCf1 == isCf2 &&
     dtN1 == dtN2 && cst1 == cst2
@@ -68,7 +68,7 @@ instance (Eq a) => Eq (ADatatype a) where
             "the signature first before comparing the values."
 
 
-instance (Show a, Ord a) => Ord (ADatatype a) where
+instance (Show a, Ord a, Eq dt) => Ord (ADatatype dt a) where
   (ActualCost isCf1 n1 c1) <= (ActualCost isCf2 n2 c2) =
     if n1 /= n2
     then throw $ FatalException "Cannot compare different data-types on costs."

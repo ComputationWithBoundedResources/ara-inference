@@ -7,9 +7,9 @@
 -- Created: Wed Sep 17 09:05:42 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 16:43:45 2017 (+0200)
+-- Last-Updated: Mon May  8 10:22:21 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 399
+--     Update #: 419
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -41,6 +41,8 @@ module Data.Rewriting.ARA.Pretty.Pretty
     , prettyAraSignature
     , prettyAraProblem
     , prettyDtTuple
+    , prettyRl
+    , prettyTerm
     )
     where
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost.Pretty
@@ -49,7 +51,7 @@ import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.Typed.Datatype
 import           Data.Rewriting.Typed.Problem
-import           Data.Rewriting.Typed.Rule
+import           Data.Rewriting.Typed.Rule                               hiding (prettyRule)
 import           Data.Rewriting.Typed.Signature
 
 import           Debug.Trace                                             (trace)
@@ -66,7 +68,8 @@ printWhen' True  p = (p $+$ empty $+$ )
 infixr 5 `printWhen'`
 
 
-prettyAraProblem ::  ProblemSig -> Doc
+prettyAraProblem :: (Show f, Show v, Show s, Show sDt, Show dt, Show cn) =>
+                    ProblemSig f v s sDt dt cn -> Doc
 prettyAraProblem prob =
     printWhen' (sterms /= AllTerms) (block "STARTTERM" $ text "CONSTRUCTOR-BASED")
     $ printWhen' (strat /= Full) (block "STRATEGY" $ ppStrat strat)
@@ -86,16 +89,16 @@ prettyAraProblem prob =
         ppStrat Outermost = text "OUTERMOST"
         ppStrat Full      = error "Should not be possible."
 
-        ppTexts vs = fsep [ text v | v <- vs]
+        ppTexts vs = fsep [ text (show v) | v <- vs]
 
         ppTheories thys = vcat [ppThy thy | thy <- thys]
-            where ppThy (SymbolProperty p fs) = block p (fsep [ text f | f <- fs ])
+            where ppThy (SymbolProperty p fs) = block p (fsep [ text (show f) | f <- fs ])
                   ppThy (Equations rs)        = block "EQUATIONS" $ vcat [ppRule "==" r | r <- rs]
 
         ppRules rp = vcat ([ppRule "->" r | r <- strictRules rp]
                            ++ [ppRule "->=" r | r <- weakRules rp])
 
-        ppRule sep' = text . show . prettyRule (L.pretty sep') L.pretty L.pretty
+        ppRule = prettyRule
 
         ppDatatypes dts' = vcat [ ppDatatype dt | dt <- dts' ]
         ppDatatype = prettyAraDatatype ppCost ppCost
@@ -107,8 +110,8 @@ prettyAraProblem prob =
 #else
                              [ ppSig sig | sig <- filter ((\(_,_,r,_) -> not r) . lhsRootSym) sigs ]
 #endif
-        ppSig     = prettyAraSignature text ppCost
-          (\(a,b) -> text a) -- <> text ":" <> hcat (intersperse (text ",") $
+        ppSig     = prettyAraSignature (text . show) ppCost
+          (\(a,b) -> text (show a)) -- <> text ":" <> hcat (intersperse (text ",") $
                                                  -- map ppCost b))
 
         dts = fromMaybe [] (datatypes prob)
@@ -118,9 +121,10 @@ prettyAraProblem prob =
         thry   = theory prob
 
 
-prettyAraDatatype :: (a -> Doc) -> (b -> Doc) -> Datatype (String, [a]) (String, b) -> Doc
+prettyAraDatatype :: (Show dt, Show cn) =>
+                     (a -> Doc) -> (b -> Doc) -> Datatype (dt, [a]) (cn, b) -> Doc
 prettyAraDatatype pA pB (Datatype (n, cst) chld) =
-  hang empty 2 $ text n <> params <+> text "=" <+>
+  hang empty 2 $ text (show n) <> params <+> text "=" <+>
    text (if isRecursive chld then "µX.<" else "<")
    <+> prettyList' (prettyAraCtr pA pB) chld <+> text ">"
     where
@@ -138,16 +142,17 @@ prettyDtTuple pCst (n, cst) =
   if null cst then empty else text n <> parens (prettyList' pCst cst)
 
 
-prettyAraCtr :: (a -> Doc) -> (b -> Doc) -> Constructor (String, [a]) (String, b) -> Doc
+prettyAraCtr :: (Show dt, Show cn) =>
+                (a -> Doc) -> (b -> Doc) -> Constructor (dt, [a]) (cn, b) -> Doc
 prettyAraCtr pA pB (Constructor (cn, cst) []) =
-    text cn <>  csts
+    text (show cn) <>  csts
       where csts = if null (show txt)
                       then empty
                       else text ":" <> txt
                     where txt = pB cst
 
 prettyAraCtr pA pB (Constructor (cn,cst) chlds) =
-    text cn <> ctrTxt <> cstTxt
+    text (show cn) <> ctrTxt <> cstTxt
     where ctrTxt = if null (show txt)
                    then empty
                    else parens txt
@@ -158,9 +163,9 @@ prettyAraCtr pA pB (Constructor (cn,cst) chlds) =
                    where txt = pB cst
 
 
-prettyAraCtrChld :: (a -> Doc) -> ConstructorChild (String, [a]) -> Doc
+prettyAraCtrChld :: (Show cn) => (a -> Doc) -> ConstructorChild (cn, [a]) -> Doc
 prettyAraCtrChld _ ConstructorRecursive          = text "X"
-prettyAraCtrChld _ (ConstructorDatatype (dt, _)) = text dt
+prettyAraCtrChld _ (ConstructorDatatype (dt, _)) = text (show dt)
 
 
 prettyAraSignature :: (f -> Doc) -> (a -> Doc) -> (b -> Doc) -> Signature (f, a,c,d) b -> Doc
@@ -173,6 +178,21 @@ prettyAraSignature pF pCst pDt (Signature (n, cst, _,_) lhs' rhs') =
 
 prettyList'     :: (a -> Doc) -> [a] -> Doc
 prettyList' f l = hcat $ intersperse (comma <> space) (map f l)
+
+
+prettyRule :: (Show f, Show v) => String -> Rule f v -> Doc
+prettyRule sep (Rule lhs rhs) =
+  prettyTerm lhs <+> text sep <+> prettyTerm rhs
+
+
+prettyRl :: (Show f, Show v) => Bool -> Rule f v -> Doc
+prettyRl weak (Rule lhs rhs) =
+  prettyTerm lhs <+> text (if weak then "->=" else "->") <+> prettyTerm rhs
+
+prettyTerm :: (Show f, Show v) => Term f v -> Doc
+prettyTerm (Var v) = text (show v)
+prettyTerm (Fun f ch) =
+  text (show f) <> char '(' <> hcat (map prettyTerm ch) <> char ')'
 
 
 --

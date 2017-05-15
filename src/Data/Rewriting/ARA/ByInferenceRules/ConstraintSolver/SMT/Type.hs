@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr 17 10:15:04 2017 (+0200)
+-- Last-Updated: Mon May  8 17:45:05 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 110
+--     Update #: 123
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -113,18 +113,21 @@ replList' = replList
                    , ("=", "_EQ_")
                    ]
 
+dropChars :: [Char]
+dropChars = ['"']
 
 convertToSMTText :: T.Text -> T.Text
-convertToSMTText x = foldl replaceText x replList'
+convertToSMTText x = foldl replaceText (T.filter (`notElem` dropChars) x) replList'
   where replaceText acc (from, to) = T.replace from to acc
 
-convertToSMTStringText :: String -> T.Text
-convertToSMTStringText x = foldl replaceText (T.pack x) replList'
+convertToSMTStringText :: (Show s) => s -> T.Text
+convertToSMTStringText x =
+  foldl replaceText (T.filter (`notElem` dropChars) (T.pack (show x))) replList'
   where replaceText acc (from, to) = T.replace from to acc
 
-
-convertToSMTString :: String -> String
-convertToSMTString x = T.unpack $ foldl replaceText (T.pack x) replList'
+convertToSMTString :: (Show s) => s -> String
+convertToSMTString x =
+  T.unpack $ foldl replaceText (T.filter (`notElem` dropChars) (T.pack $ show x)) replList'
   where replaceText acc (from, to) = T.replace from to acc
 
 convertFromSMTText :: T.Text -> T.Text

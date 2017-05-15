@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 13:20:53 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 19:01:39 2017 (+0200)
+-- Last-Updated: Mon May  8 08:42:49 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 97
+--     Update #: 115
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -49,21 +49,21 @@ import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Maybe
 import           Data.Rewriting.Typed.Term
 
-data InfTreeNode = InfTreeNode
-    { preConditions :: [(String, ADatatype Int)]                 -- ^ e.g. (x, r(0)).
-    , costs         :: [ACostCondition Int]                      -- ^ costs
-    , postCondition :: Maybe (Term String String, ADatatype Int) -- ^ the statement
-    , functionName  :: (String, String, Bool, [ACostCondition Int], Int, Maybe [(String, Int)])
+data InfTreeNode f v dt = InfTreeNode
+    { preConditions :: [(v, ADatatype dt Int)] -- ^ e.g. (x, r(0)).
+    , costs         :: [ACostCondition Int]         -- ^ costs
+    , postCondition :: Maybe (Term f v, ADatatype dt Int) -- ^ the statement
+    , functionName  :: (f, String, Bool, [ACostCondition Int], Int, Maybe [(f, Int)])
     -- ^ functionName, isChildInfTreeNode (constructors), cstsOfRoot,
     -- signatureNrOfRoot, isCostFreeDerivationBranch, Maybe idxOfCfSig
-    , history       :: [(Int, String, InfTreeNodeView)]          -- ^ history of the context
+    , history       :: [(Int, String, InfTreeNodeView)] -- ^ history of the context
     } deriving (Eq,Show)
 
 
 data InfTreeNodeView = InfTreeNodeView
-                       [(String, ADatatype Vector)]           -- ^ preConditions
-                       [ACostCondition Vector]                -- ^ costs
-                       (Term String String, ADatatype Vector) -- ^ postCondition
+                       [(String, ADatatype String Vector)] -- ^ preConditions
+                       [ACostCondition Vector]             -- ^ costs
+                       (Term String String, ADatatype String Vector) -- ^ postCondition
                      | InfTreeNodeLeafView
                        FunSig         -- ^ cost-full signature
                        (Maybe FunSig) -- ^ cost-free signature
@@ -71,10 +71,10 @@ data InfTreeNodeView = InfTreeNodeView
                        deriving (Eq)
 
 data FunSig = FunSig
-              String                  -- ^ function name
-              [ADatatype Vector]      -- ^ preConditions
-              [ACostCondition Vector] -- ^ costs
-              (ADatatype Vector)      -- ^ postCondition
+              String                    -- ^ function name
+              [ADatatype String Vector] -- ^ preConditions
+              [ACostCondition Vector]   -- ^ costs
+              (ADatatype String Vector) -- ^ postCondition
               deriving (Eq)
 
 
@@ -85,7 +85,7 @@ data FunSig = FunSig
 --                              ++ showListWithSep show history' "\n\t"
 
 instance Show InfTreeNodeView where
-  show (InfTreeNodeLeafEmpty)= ""
+  show InfTreeNodeLeafEmpty = ""
   show (InfTreeNodeView pre c post) =
     showListWithSep show pre ", "++ " |-" ++ show c ++ "- " ++ show post
   show (InfTreeNodeLeafView sig cfSig) =

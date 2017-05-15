@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 -- InferenceRules.hs ---
 --
 -- Filename: InferenceRules.hs
@@ -7,9 +8,9 @@
 -- Created: Sun Sep 14 17:30:38 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:04 2017 (+0200)
+-- Last-Updated: Mon May  8 09:41:58 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 515
+--     Update #: 524
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -33,7 +34,7 @@
 
 -- Code:
 
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP                 #-}
 -- | TODO: comment this module
 module Data.Rewriting.ARA.ByInferenceRules.InferenceRules.Ops
     ( applyInferenceRules
@@ -59,6 +60,8 @@ import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleWeak
 import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 
+import qualified Data.Rewriting.Typed.Term                                             as T
+
 
 import           Control.Arrow
 import           Debug.Trace
@@ -68,8 +71,13 @@ import           Data.Maybe
                                                                                         (fromJust)
 import           Text.PrettyPrint
 
-applyInferenceRules :: ArgumentOptions -> [(String,Integer)]  -> Prove -> Either Int [Prove]
-applyInferenceRules _ _ (Prove [] p c t cfs sigs cond v noCfDefSyms)        =
+
+applyInferenceRules :: forall f v dt . (Eq f, Ord dt, Eq v, Eq dt, Read v, Ord v,
+                                        Show v, Show dt, Show f) =>
+                       ArgumentOptions -> [(f,Integer)]
+                    -> Prove f v f dt dt f
+                    -> Either Int [Prove f v f dt dt f]
+applyInferenceRules _ _ (Prove [] p c t cfs sigs cond v noCfDefSyms) =
   return [Prove [] p c t cfs sigs cond v noCfDefSyms]
 applyInferenceRules args reachability (Prove (c:cs) p count prob cfs sigs cond v noCfDefSyms) =
     case c of
@@ -79,9 +87,11 @@ applyInferenceRules args reachability (Prove (c:cs) p count prob cfs sigs cond v
              return (if null shared
                      then [Prove (InfTreeNode pre cost stmt fn
                                   [(0,"",
-                                    InfTreeNodeView (map (second toADatatypeVector) pre)
+                                    InfTreeNodeView
+                                    (map (show *** toADatatypeVectorString) pre)
                                     (map toACostConditionVector cost)
-                                    (second toADatatypeVector $ fromJust stmt))] :cs)
+                                    ((T.map show show *** toADatatypeVectorString)
+                                     (fromJust stmt)))] :cs)
                            p count prob cfs sigs cond v noCfDefSyms]
                      else updateAll shared)
          InfTreeNode [] _ _ _ _ ->
@@ -102,20 +112,21 @@ applyInferenceRules args reachability (Prove (c:cs) p count prob cfs sigs cond v
       -- This function finds the number of contexts which were not generated
       -- by a composition. This is the number of succeeded contexts from the starting
       -- prove, when given all succeeded contexts so far.
-      nonCompositions        :: [InfTreeNode] -> Int
+      nonCompositions        :: [InfTreeNode f v dt] -> Int
       nonCompositions []     = 0
       nonCompositions (con:cons) = if "composition" `elem` map (\(_,a,_) -> a)  (history con)
                                    then nonCompositions cons
                                    else 1 + nonCompositions cons
 
 
-applyAllInferenceRules' :: ArgumentOptions
-                        -> [(String,Integer)]
-                        -> [String]
-                        -> (ProblemSig, CfSigs, ASigs,
-                            Int, ACondition Int Int, InfTreeNode)
-                        -> [(ProblemSig, CfSigs, ASigs,
-                            Int, ACondition Int Int, [InfTreeNode])]
+applyAllInferenceRules' :: (Ord dt, Eq f, Eq v, Eq dt, Read v, Ord v, Show v, Show dt, Show f) =>
+                           ArgumentOptions
+                        -> [(f,Integer)]
+                        -> [f]
+                        -> (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+                            ACondition f v Int Int, InfTreeNode f v dt)
+                        -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+                             ACondition f v Int Int, [InfTreeNode f v dt])]
 applyAllInferenceRules' args reachability noCfDefSyms (t, cfs, sig, nr, cond, c) =
 
   -- trace ("InfTreeNode: " ++ show (prettyInfTreeNode c)) $

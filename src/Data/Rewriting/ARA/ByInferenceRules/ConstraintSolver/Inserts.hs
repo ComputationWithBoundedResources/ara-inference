@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 -- Inserts.hs ---
 --
 -- Filename: Inserts.hs
@@ -7,9 +8,9 @@
 -- Created: Tue May 24 13:30:55 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 18:27:17 2017 (+0200)
+-- Last-Updated: Mon May  8 17:00:32 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 114
+--     Update #: 130
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -72,20 +73,20 @@ import           Text.PrettyPrint                                              h
                                                                                 (empty)
 
 
-insertIntoSigs :: [ASignatureSig] -> [Data Vector] -> [ASignatureSig]
+insertIntoSigs :: [ASignatureSig s dt] -> [Data Vector] -> [ASignatureSig s dt]
 insertIntoSigs acc dt =
+  -- trace ("m: " ++ show m) $
   map (insertIntoSig m) (zip [0..] acc)
   where m = M.fromList $ map (\(Data l v) -> (l,v)) dt
 
-insertIntoSig :: M.Map String Vector -> (Int, ASignatureSig) -> ASignatureSig
+insertIntoSig :: forall s dt. M.Map String Vector -> (Int, ASignatureSig s dt) -> ASignatureSig s dt
 insertIntoSig m (nr, Signature (n,k,b,isCf) lhs (ActualCost _ retDt rhs)) =
   -- trace ("isCf: " ++ show isCf) $
   Signature (n, insertIntoCst isCf m (nr, k), b,isCf)
   (map (\(ActualCost _ dt _, n') ->
-         insertIntoADatatype isCf m (dt, show (sigRefParam isCf dt nr n' :: ADatatype Vector)))
+         insertIntoADatatype isCf m (dt, show (sigRefParam isCf dt nr n' :: ADatatype dt Vector)))
    (zip lhs [0..]))
-  (insertIntoADatatype isCf m (retDt, show (sigRefRet isCf retDt nr :: ADatatype Int)))
-  where
+  (insertIntoADatatype isCf m (retDt, show (sigRefRet isCf retDt nr :: ADatatype dt Int)))
 insertIntoSig _ _ = error "insertIntoSig pattern match fail, this should not have happened"
 
 
@@ -96,42 +97,46 @@ insertIntoCst isCf m (nr, x) =
   where label = show (sigRefCst isCf nr :: ACostCondition Int)
 
 
-insertIntoADatatype :: Bool -> M.Map String Vector -> (String, String) -> ADatatype Vector
+insertIntoADatatype :: Bool -> M.Map String Vector -> (dt, String) -> ADatatype dt Vector
 insertIntoADatatype isCf m (dt, lab) =
   ActualCost isCf dt (ACost $ getValueFromMap lab m)
 
 
-insertIntoSigsCtr :: ArgumentOptions
-                  -> [SignatureSig]
+insertIntoSigsCtr :: (Show dt, Show s) =>
+                     ArgumentOptions
+                  -> [SignatureSig s sDt]
                   -> Int
-                  -> [ASignatureSig]
+                  -> [ASignatureSig s dt]
                   -> M.Map String Vector
-                  -> [ASignatureSig]
+                  -> [ASignatureSig String dt]
 insertIntoSigsCtr args sigs vecLen acc m =
   concatMap (insertIntoSigCtr args sigs vecLen m) acc
 
 
-insertIntoSigCtr :: ArgumentOptions
-                 -> [SignatureSig]
+insertIntoSigCtr :: (Show s, Show dt) =>
+                    ArgumentOptions
+                 -> [SignatureSig s sDt]
                  -> Int
                  -> M.Map String Vector
-                 -> ASignatureSig
-                 -> [ASignatureSig]
+                 -> ASignatureSig s dt
+                 -> [ASignatureSig String dt]
 insertIntoSigCtr args sigs vecLen m (Signature (n,k,b,isCf) lhs (ActualCost _ retDt rhs)) =
   map (\idx ->
-         Signature (n ++ "_" ++ retDt,
-                    insertIntoCstCtr m ("k" ++ cf' ++ "(ctr_" ++ cf ++ n ++ "_" ++
+         Signature (show n ++ "_" ++ removeApostrophes (show retDt),
+                    insertIntoCstCtr m ("k" ++ cf' ++ "(ctr_" ++ cf ++ show n ++ "_" ++
                                            show idx ++ ")", k), b,isCf)
         (map (\(ActualCost isCf dt _, n') ->
                 insertIntoADatatypeCtr isCf m
-                (dt, "p" ++ cf' ++ "(ctr_" ++ cf ++ n ++ "_" ++ show n' ++
+                (dt, "p" ++ cf' ++ "(ctr_" ++ cf ++ show n ++ "_" ++ show n' ++
                      "," ++ show idx ++ ")"))
           (zip lhs [0..]))
         (insertIntoADatatypeCtr isCf m (retDt, "r" ++ cf' ++
-                                         "(ctr_"++ cf ++ n ++ "_" ++ show idx ++ ")")))
+                                         "(ctr_"++ cf ++ show n ++ "_" ++ show idx ++ ")")))
   [1..vecLen]
   where cf' = if isCf then "_cf" else ""
-        cf = if isCf && separateBaseCtr args then retDt ++ "_cf_" else retDt ++ "_"
+        cf = if isCf && separateBaseCtr args
+             then removeApostrophes (show retDt) ++ "_cf_"
+             else removeApostrophes (show retDt) ++ "_"
 
 
 insertIntoSigCtr _ _ _ _ _ = error "insertIntoSig pattern match fail, this should not have happened"
@@ -140,14 +145,14 @@ insertIntoSigCtr _ _ _ _ _ = error "insertIntoSig pattern match fail, this shoul
 insertIntoCstCtr :: M.Map String Vector -> (String, ACost Vector) -> ACost Vector
 insertIntoCstCtr m (n, x) = ACost (getValueFromMap n m)
 
-insertIntoADatatypeCtr :: Bool -> M.Map String Vector -> (String, String) -> ADatatype Vector
+insertIntoADatatypeCtr :: Bool -> M.Map String Vector -> (dt, String) -> ADatatype dt Vector
 insertIntoADatatypeCtr isCf m (dt, lab) =
   ActualCost isCf dt (ACost $ getValueFromMap lab m)
 
 
 getValueFromMap :: String -> M.Map String Vector -> Vector
-getValueFromMap = M.findWithDefault 0
--- getValueFromMap str = M.findWithDefault (error $ "searched for:" ++ show str) str
+getValueFromMap = M.findWithDefault 0 . removeApostrophes
+-- getValueFromMap str = M.findWithDefault (error $ "searched for:" ++ show str) (removeApostrophes str)
 
 
 --

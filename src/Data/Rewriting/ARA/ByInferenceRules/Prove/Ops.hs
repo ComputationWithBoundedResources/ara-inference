@@ -10,9 +10,9 @@
 -- Created: Fri Sep  5 15:21:41 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:03 2017 (+0200)
+-- Last-Updated: Sun May  7 21:09:36 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1091
+--     Update #: 1123
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -74,10 +74,10 @@ import           Debug.Trace                                        (trace)
 -- Therefore, if new variables get created by the function it has to update this
 -- integer and set it accordingly in the return tuple, such that this function
 -- can update the varNr field in the Prove data structure accordingly.
-updateProve :: Show a => (Prove -> a)
-            -> (Prove -> a -> Prove)
-            -> ((Prove, a) -> (Prove, a))
-            -> Prove -> Prove
+updateProve :: Show a => (Prove f v s sDt dt cn -> a)
+            -> (Prove f v s sDt dt cn -> a -> Prove f v s sDt dt cn)
+            -> ((Prove f v s sDt dt cn, a) -> (Prove f v s sDt dt cn, a))
+            -> Prove f v s sDt dt cn -> Prove f v s sDt dt cn
 updateProve accessor updateFun fun pr =
   let (nPr, nVal) = fun (pr, accessor pr)
   in updateFun nPr nVal
@@ -95,51 +95,75 @@ updateProve accessor updateFun fun pr =
 -- input of the function and increase the Int value of the output. It returns
 -- the new prove, in which the varNr field is already set according to the
 -- output integer value of the input function.
-mapInfTreeNodesVarNr :: ((InfTreeNode, Int) -> (InfTreeNode, Int)) -> Prove -> Prove
+mapInfTreeNodesVarNr :: ((InfTreeNode f v dt, Int) -> (InfTreeNode f v dt, Int))
+                     -> Prove f v s sDt dt cn -> Prove f v s sDt dt cn
 mapInfTreeNodesVarNr = mapInfTreeNodes varNr updateVarNr
 
--- | @mapInfTreeNodes accessor updateFun fun pr@ can be used to iterate over the
+-- | @mapInfTreeNode f v dts accessor updateFun fun pr@ can be used to iterate over the
 -- infTreeNodesToProve of a prove @pr@. The function @fun@ will be applied to all
 -- functions. An accumulator @a@ is used to hold the result of the function
 -- @fun@. The input parameters to fun are retrieved using the specified
 -- @accessor@ field of the Prove data-structure. The update function sets the
 -- accumulated result from the function calls @fun@ through the function
 -- @updateFunction@.
-mapInfTreeNodes :: Show a => (Prove -> a)
-                -> (Prove -> a -> Prove)
-                -> ((InfTreeNode, a) -> (InfTreeNode, a))
-                -> Prove -> Prove
+mapInfTreeNodes :: Show a => (Prove f v s sDt dt cn -> a)
+                -> (Prove f v s sDt dt cn -> a -> Prove f v s sDt dt cn)
+                -> ((InfTreeNode f v dt, a) -> (InfTreeNode f v dt, a))
+                -> Prove f v s sDt dt cn -> Prove f v s sDt dt cn
 mapInfTreeNodes = mapProveAsB infTreeNodesToProve (\p x -> p { infTreeNodesToProve = x })
 
 
-mapProveAB :: Show b => (Prove -> a) -> (Prove -> a -> Prove) -> (Prove -> b) ->
-              (Prove -> b -> Prove) -> ((a, b) -> (a, b)) -> Prove -> Prove
+mapProveAB :: Show b => (Prove f v s sDt dt cn -> a)
+           -> (Prove f v s sDt dt cn -> a -> Prove f v s sDt dt cn)
+           -> (Prove f v s sDt dt cn -> b)
+           -> (Prove f v s sDt dt cn -> b -> Prove f v s sDt dt cn)
+           -> ((a, b) -> (a, b))
+           -> Prove f v s sDt dt cn
+           -> Prove f v s sDt dt cn
 mapProveAB accessorIt updateIt accessorCum updateCum fun =
   updateProve accessorCum updateCum (iterateA fun accessorIt updateIt)
 
-mapProveAsB :: Show b => (Prove -> [a]) -> (Prove -> [a] -> Prove) -> (Prove -> b) ->
-               (Prove -> b -> Prove) -> ((a, b) -> (a, b)) -> Prove -> Prove
+mapProveAsB :: Show b =>
+               (Prove f v s sDt dt cn -> [a])
+            -> (Prove f v s sDt dt cn -> [a] -> Prove f v s sDt dt cn)
+            -> (Prove f v s sDt dt cn -> b)
+            -> (Prove f v s sDt dt cn -> b -> Prove f v s sDt dt cn)
+            -> ((a, b) -> (a, b))
+            -> Prove f v s sDt dt cn -> Prove f v s sDt dt cn
 mapProveAsB accessorIt updateIt accessorCum updateCum fun =
   updateProve accessorCum updateCum (iterateAs fun accessorIt updateIt)
 
-mapProveABs :: Show b => (Prove -> a) -> (Prove -> a -> Prove) -> (Prove -> [b]) ->
-               (Prove -> [b] -> Prove) -> ((a, [b]) -> (a, [b])) -> Prove -> Prove
+mapProveABs :: Show b => (Prove f v s sDt dt cn -> a)
+            -> (Prove f v s sDt dt cn -> a -> Prove f v s sDt dt cn)
+            -> (Prove f v s sDt dt cn -> [b])
+            -> (Prove f v s sDt dt cn -> [b] -> Prove f v s sDt dt cn)
+            -> ((a, [b]) -> (a, [b]))
+            -> Prove f v s sDt dt cn
+            -> Prove f v s sDt dt cn
 mapProveABs accessorIt updateIt accessorCum updateCum fun =
   updateProve accessorCum updateCum  (iterateA fun accessorIt updateIt)
 
-mapProveAsBs :: Show b => (Prove -> [a]) -> (Prove -> [a] -> Prove) -> (Prove -> [b]) ->
-                (Prove -> [b] -> Prove) -> ((a, [b]) -> (a, [b])) -> Prove -> Prove
+mapProveAsBs :: Show b => (Prove f v s sDt dt cn -> [a])
+             -> (Prove f v s sDt dt cn -> [a] -> Prove f v s sDt dt cn)
+             -> (Prove f v s sDt dt cn -> [b])
+             -> (Prove f v s sDt dt cn -> [b] -> Prove f v s sDt dt cn)
+             -> ((a, [b]) -> (a, [b]))
+             -> Prove f v s sDt dt cn
+             -> Prove f v s sDt dt cn
 mapProveAsBs accessorIt updateIt accessorCum updateCum fun =
   updateProve accessorCum updateCum  (iterateAs fun accessorIt updateIt)
 
 -- | @updateFun pr nr@ is used to set the update Function for the prove @pr@ to
 -- the variable number field @varNr@.
-updateVarNr :: Prove -> Int -> Prove
+updateVarNr :: Prove f v s sDt dt cn -> Int -> Prove f v s sDt dt cn
 updateVarNr pr nr = pr { varNr = nr }
 
 
-mapRulesInfTreeNodesVar :: ((Rule String String, ([InfTreeNode], Int)) ->
-                       (Rule String String, ([InfTreeNode], Int))) -> Prove -> Prove
+mapRulesInfTreeNodesVar :: (Show f, Show v) =>
+                           ((Rule f v, ([InfTreeNode f v dt], Int))
+                        -> (Rule f v, ([InfTreeNode f v dt], Int)))
+                        -> Prove f v s sDt dt cn
+                        -> Prove f v s sDt dt cn
 mapRulesInfTreeNodesVar =
   mapProveAsB (allRules . rules . problem) const (\x -> (infTreeNodesToProve x, varNr x))
                (\p (x, y) -> p {infTreeNodesToProve = x, varNr = y })
@@ -150,26 +174,35 @@ mapRulesInfTreeNodesVar =
 -- number in the input of the function and increase the Int value of the output. It
 -- returns the new prove, in which the varNr field is already set according to the
 -- output integer value of the input function.
-mapProvenInfTreeNodes :: ((InfTreeNode, Int) -> (InfTreeNode, Int)) -> Prove -> Prove
+mapProvenInfTreeNodes :: ((InfTreeNode f v dt, Int) -> (InfTreeNode f v dt, Int))
+                      -> Prove f v s sDt dt cn
+                      -> Prove f v s sDt dt cn
 mapProvenInfTreeNodes = mapProveAsB provenInfTreeNodes (\p x -> p { provenInfTreeNodes = x }) varNr updateVarNr
 
 
 -- | @iterateAs fun pr@ can be used to iterate over the problem of a prove. It
 -- calls the given function @fun@ on the problem and updates the prove @pr@ with
 -- the newly generated problem.
-iterateProblemVarNr :: ((ProblemSig, Int) -> (ProblemSig, Int)) -> Prove -> Prove
+iterateProblemVarNr :: ((ProblemSig f v s sDt dt cn, Int)
+                    -> (ProblemSig f v s sDt dt cn, Int))
+                    -> Prove f v s sDt dt cn
+                    -> Prove f v s sDt dt cn
 iterateProblemVarNr = mapProveAB problem (\p x -> p { problem = x }) varNr updateVarNr
 
 
 -- | @mapSignatures fun (pr, nr)@ maps over the signatures of a problem. It
 -- saves an integer which is used as suffix for new variables during the
 -- execution.
-mapSignaturesVarNr :: ((SignatureSig, Int) -> (SignatureSig, Int)) -> Prove -> Prove
+mapSignaturesVarNr :: ((SignatureSig s sDt, Int) -> (SignatureSig s sDt, Int))
+                   -> Prove f v s sDt dt cn
+                   -> Prove f v s sDt dt cn
 mapSignaturesVarNr fun = iterateProblemVarNr (iterateAs fun accessor update)
-  where accessor :: ProblemSig -> [SignatureSig]
+  where accessor :: ProblemSig f v s sDt dt cn -> [SignatureSig s sDt]
         accessor = accessorMaybe signatures
 
-        update         :: ProblemSig -> [SignatureSig] -> ProblemSig
+        update         :: ProblemSig f v s sDt dt cn
+                       -> [SignatureSig s sDt]
+                       -> (ProblemSig f v s sDt dt cn)
         update pr' sig = pr' { signatures = if null sig
                                                then Nothing
                                                else Just sig }
@@ -178,7 +211,8 @@ mapSignaturesVarNr fun = iterateProblemVarNr (iterateAs fun accessor update)
 -- | @accessorMaybe fun prob@ is used to access a field using the function @fun@
 -- from the problem @pr@. In case the field is @Nothing@ it will return the
 -- empty list (@[]@).
-accessorMaybe :: (ProblemSig -> Maybe [a]) -> ProblemSig -> [a]
+accessorMaybe :: (ProblemSig f v s sDt dt cn -> Maybe [a])
+              -> ProblemSig f v s sDt dt cn -> [a]
 accessorMaybe fun pr = fromMaybe [] (fun pr)
 
 
@@ -187,34 +221,35 @@ accessorMaybe fun pr = fromMaybe [] (fun pr)
 -- case no elements are given in the Maybe data-structure (Nothing or Just []),
 -- then Nothing will be returned. The integer @nr@ is used to keep track of the
 -- suffixes of the newly generated variables.
-mapDatatypesVarNr :: ((DatatypeSig, Int) -> (DatatypeSig, Int)) -> Prove -> Prove
+mapDatatypesVarNr :: ((DatatypeSig dt cn, Int) -> (DatatypeSig dt cn, Int))
+                  -> Prove f v s sDt dt cn -> Prove f v s sDt dt cn
 mapDatatypesVarNr fun =
   mapProveAB problem (\p x -> p { problem = x }) (const 0) const -- varNr updateVarNr
               (iterateAs fun accessor update)
 
-  where accessor :: ProblemSig -> [DatatypeSig]
+  where accessor :: ProblemSig f v s sDt dt cn -> [DatatypeSig dt cn]
         accessor = accessorMaybe datatypes
 
-        update :: ProblemSig -> [DatatypeSig] -> ProblemSig
+        update :: ProblemSig f v s sDt dt cn -> [DatatypeSig dt cn] -> ProblemSig f v s sDt dt cn
         update p n = p { datatypes = if null n
-                                       then Nothing
-                                       else Just n }
+                                     then Nothing
+                                     else Just n }
 
--- type DatatypeSig = Datatype (String, [Cost Int]) (String, Cost Int)
+-- type DatatypeSig dt cn = Datatype (String, [Cost Int]) (String, Cost Int)
 
 -- | This function maps over the datatypes accumulating the result int the second
 -- part of the tuple. It sets the resulting data-types using the first function,
 -- and uses the specified update function to update the prove with the resulting
 -- list @[a]@.
-mapDatatypes :: Show a => (Prove -> [DatatypeSig] -> Prove)
-             -> (Prove -> [a])
-             -> (Prove -> [a] -> Prove)
-             -> ((DatatypeSig, [a]) -> (DatatypeSig, [a]))
-             -> Prove
-             -> Prove
+mapDatatypes :: Show a => (Prove f v s sDt dt cn -> [DatatypeSig dt cn] -> Prove f v s sDt dt cn)
+             -> (Prove f v s sDt dt cn -> [a])
+             -> (Prove f v s sDt dt cn -> [a] -> Prove f v s sDt dt cn)
+             -> ((DatatypeSig dt cn, [a]) -> (DatatypeSig dt cn, [a]))
+             -> Prove f v s sDt dt cn
+             -> Prove f v s sDt dt cn
 mapDatatypes = mapProveAsBs accessorIt
 
-  where accessorIt :: Prove -> [DatatypeSig]
+  where accessorIt :: Prove f v s sDt dt cn -> [DatatypeSig dt cn]
         accessorIt = accessorMaybe datatypes . problem
 
 

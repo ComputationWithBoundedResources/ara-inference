@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Apr 15 14:18:25 2017 (+0200)
+-- Last-Updated: Mon May  8 09:04:35 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1597
+--     Update #: 1635
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -83,8 +83,8 @@ import           Text.PrettyPrint
 import qualified Text.PrettyPrint.ANSI.Leijen                                   as L
 
 -- | @convertSig (Maybe sig)@ convert the signature form @(Signature String
--- String)@ to a @SignatureSig@, which is used inside of this program.
-convertSig :: Maybe [Signature String String] -> Maybe [SignatureSig]
+-- String)@ to a @SignatureSig s sDt@, which is used inside of this program.
+convertSig :: Maybe [Signature s sDt] -> Maybe [SignatureSig s sDt]
 convertSig Nothing  = Nothing
 convertSig (Just x) = Just $ map convertSig' x
   where convertSig' (Signature n lhs' rhs') =
@@ -94,7 +94,7 @@ convertSig (Just x) = Just $ map convertSig' x
 
 -- | @convertSig (Maybe sig)@ convert the signature form @(Datatype String
 -- String)@ to a @DatatypeSig@, which is used inside of this program.
-convertDt :: Maybe [Datatype String String] -> Maybe [DatatypeSig]
+convertDt :: Maybe [Datatype dt cn] -> Maybe [DatatypeSig dt cn]
 convertDt Nothing  = Nothing
 convertDt (Just x) = Just $ map convertDt' x
   where convertDt' (Datatype n ctr) = Datatype (n,[]) (map convertCtr ctr)
@@ -103,7 +103,8 @@ convertDt (Just x) = Just $ map convertDt' x
         convertCtrCh (ConstructorDatatype n) = ConstructorDatatype (n,[])
 
 
-createCtrSig    :: Prove -> Prove
+createCtrSig    :: (Show s, Show sDt) => Prove f v s sDt sDt s -> Prove f v s sDt sDt s
+  -- Prove f v s sDt dt cn -> Prove f v s sDt dt cn
 createCtrSig =
   mapDatatypes const accessor updater createCtrSig'
  where accessor = accessorMaybe signatures . problem
@@ -120,25 +121,27 @@ createCtrSig =
                                         else Just x }}
 
 
-createCtrSig' :: (DatatypeSig, [SignatureSig]) -> (DatatypeSig, [SignatureSig])
+createCtrSig' :: (DatatypeSig dt cn, [SignatureSig cn dt])
+              -> (DatatypeSig dt cn, [SignatureSig cn dt])
 createCtrSig' x@(Datatype dt ctrs, acc) =
   -- trace ("datatypes dt ctrs, acc: " ++ show x)
   -- trace ("nSig: " ++ show nSig)
 
   (undefined, acc ++ nSig)
-  where nSig :: [SignatureSig]
+  where -- nSig :: [SignatureSig s sDt]
         nSig = map (createSigFromCtr dt) ctrs
 
-        createSigFromCtr :: (String, [ACost Int]) -> ConstructorSig -> SignatureSig
+        -- createSigFromCtr :: (sDt, [ACost Int]) -> ConstructorSig sDt cn -> SignatureSig s sDt
         createSigFromCtr rhs' (Constructor (n,_) ch) =
           Signature (n,ACost 0,True,False) (map (createLhs rhs') ch) rhs'
 
-        createLhs :: (String, [ACost Int]) -> ConstructorChildSig -> (String, [ACost Int])
+        -- createLhs :: (dt, [ACost Int]) -> ConstructorChildSig dt -> (dt, [ACost Int])
         createLhs rhs' ConstructorRecursive   = rhs'
         createLhs _ (ConstructorDatatype dt') = dt'
 
 
-insertConstraints :: ArgumentOptions -> Prove -> Prove
+insertConstraints :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v, Ord v, Read v) =>
+                     ArgumentOptions -> Prove f v f dt dt f -> Prove f v f dt dt f
 insertConstraints args pr =
 
   mapProveAsB rulesWeak const accessor updater (fun True) $
@@ -162,7 +165,8 @@ insertConstraints args pr =
         fun = createInfTreeNodes (Left rls) False Nothing args dts sigs
 
 
-updateDatatypesChildCost :: Prove -> Prove
+updateDatatypesChildCost :: (Show s, Eq s, Eq dt) =>
+                            Prove f v s dt dt s -> Prove f v s dt dt s
 updateDatatypesChildCost p =
   p { problem = prob {datatypes = res }}
   where fun = updateDatatypeChildCost sigs
@@ -173,7 +177,8 @@ updateDatatypesChildCost p =
                 else Just (map fun (fromJust $ datatypes prob))
 
 
-updateDatatypeChildCost :: [SignatureSig] -> DatatypeSig -> DatatypeSig
+updateDatatypeChildCost :: (Show s, Eq s, Eq dt) =>
+                           [SignatureSig s dt] -> DatatypeSig dt s -> DatatypeSig dt s
 updateDatatypeChildCost sigs (Datatype dt ctrs) = Datatype dt (map updateCtr ctrs)
   where updateCtr (Constructor cn chld) =
           Constructor cn (map (updateCtrChld (fst cn)) (zip [0..] chld))
@@ -185,24 +190,27 @@ updateDatatypeChildCost sigs (Datatype dt ctrs) = Datatype dt (map updateCtr ctr
 
 postInfTreeNode :: Bool
                 -> Int
-                -> Rule String String
-                -> String
-                -> Maybe (Term String String, ADatatype Int)
+                -> Rule f v
+                -> dt
+                -> Maybe (Term f v, ADatatype dt Int)
 postInfTreeNode isCf nr (Rule _ term) dt = Just (term, sigRefRet isCf dt nr)
 
 
 -- | @createConstraints (rule, ctxs)@ creates a starting constraint from the given
 -- problem and saves it to the tuple. The returning rule is undefined due to not
 -- using it in mapDatatypes.
-createInfTreeNodes :: Either [Rule String String] Int
+createInfTreeNodes :: (Eq f, Eq v, Eq dt, Show f, Ord v, Read v, Show v) =>
+                      Either [Rule f v] Int
                    -> Bool
                    -> Maybe Int
                    -> ArgumentOptions
-                   -> [DatatypeSig]
-                   -> [SignatureSig]
+                   -> [DatatypeSig dt cn]
+                   -> [SignatureSig f dt]
                    -> Bool
-                   -> (Rule String String, ([InfTreeNode], ASigs, ACondition Int Int, Int, [String]))
-                   -> (Rule String String, ([InfTreeNode], ASigs, ACondition Int Int, Int, [String]))
+                   -> (Rule f v, ([InfTreeNode f v dt], ASigs dt f,
+                                   ACondition f v Int Int, Int, [f]))
+                   -> (Rule f v, ([InfTreeNode f v dt], ASigs dt f,
+                                   ACondition f v Int Int, Int, [f]))
 createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
   (rule, (nodes, aSigs, conds, nr, noCfDefSyms)) =
   -- trace ("aSigs': " ++ unlines (map (show . prettyAraSignature') aSigs'))
@@ -245,10 +253,12 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
 
         varMin1Cond = AVariableCondition (head varMin1)
 
-        ruleStr = show (prettyRule
-                        (L.pretty (L.text $ if weak
-                                            then "->="
-                                            else "->")) L.pretty L.pretty rule)
+        ruleStr = show (prettyRl weak rule)
+
+        -- ruleStr = show (prettyRule
+        --                 (L.pretty (L.text $ if weak
+        --                                     then "->="
+        --                                     else "->")) L.pretty L.pretty rule)
 
         aSigNr | isJust mSigIdx = fromJust mSigIdx
                | otherwise = length aSigs
@@ -267,11 +277,11 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
           Right n  -> n
 
         chInfTreeNodes = map (\(InfTreeNode _ a b c d) ->
-                                InfTreeNode pre a b c d) chInfTreeNds
+                                InfTreeNode (map (first (read.show)) pre) a b c d) chInfTreeNds
 
-        pre :: [(String, ADatatype Int)]
-        aSigsCtr :: ASigs
-        condsCtr :: ACondition Int Int
+        -- pre :: [(String, ADatatype dt Int)]
+        -- aSigsCtr :: ASigs dt s
+        -- condsCtr :: ACondition dt Int Int
         (pre,aSigsCtr,condsCtr,kis,chInfTreeNds,noCfDefSyms',_) =
           foldl (getVarsWithDt ruleStr fromRuleOrGrpNr True isCf args sigs)
           ([],[],ACondition [] [] [] [],[],[],[],startCtrSigNr)
@@ -298,7 +308,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         (preLinear,shareConds,nr') =
           (\(a,b,c) -> (reverse a, b, c)) $
           foldl mergeMultiple ([],[],nrKs) (groupBy ((==) `on` fst) $
-                                          sortBy (compare `on` fst) pre)
+                                            sortBy (compare `on` fst) pre)
           where mergeMultiple (preLin, shares, nrI) [x] = (x:preLin,shares, nrI)
                 mergeMultiple (preLin, shares, nrI) xs@(x:rest)
                   | any (/= getDt (snd x)) (map (getDt.snd) rest) =
@@ -309,23 +319,24 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
                     let (nrO,[varName]) = getNewVariableName nrI 1
                         var = SigRefVar (getDt (snd x)) varName
                         list = map snd xs
-                        shareCond = (var, Eq, list)
+                        shareCond = (removeDt var, Eq, map removeDt list)
                     in ((fst x, var):preLin, shareCond:shares,nrO)
 
-getVarsWithDt :: String
+getVarsWithDt :: (Read v, Show v, Eq f, Show f, Eq dt, Eq v) =>
+                 String
               -> Int
               -> Bool
               -> Bool
               -> ArgumentOptions
-              -> [SignatureSig]
-              -> ([(String, ADatatype Int)], ASigs,ACondition Int Int
-                 , [ACostCondition Int],[InfTreeNode], [String], Int)
-              -> (Term String String, ADatatype Int, String, ACostCondition Int)
-              -> ([(String, ADatatype Int)], ASigs,ACondition Int Int
-                , [ACostCondition Int],[InfTreeNode], [String], Int)
+              -> [SignatureSig f dt]
+              -> ([(v, ADatatype dt Int)], ASigs dt f,ACondition f v Int Int
+                 , [ACostCondition Int],[InfTreeNode f v dt], [f], Int)
+              -> (Term f v, ADatatype dt Int, dt, ACostCondition Int)
+              -> ([(v, ADatatype dt Int)], ASigs dt f,ACondition f v Int Int
+                , [ACostCondition Int],[InfTreeNode f v dt], [f], Int)
 getVarsWithDt _ _ isRoot _ _ _ (accPre,accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr)
   (Var v, dtN, dt, kVar) =
-  (accPre ++ [(v, dtN)], accSigs,accConds `addConditions` nConds,csts,infTreeNds
+  (accPre ++ [(read (show v), dtN)], accSigs,accConds `addConditions` nConds,csts,infTreeNds
   ,noCfDefSyms,sigNr)
 
   where nConds = ACondition [([kVar],Eq,[ACostValue 0]) | isRoot ] [] [] []
@@ -343,7 +354,8 @@ getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs
                 isCtr (Signature (_,_,c,_) _ _) = c
                 dts = map fst (lhsSig sig)
                 aSig = (sig2ASig isCf args sig, ruleGrpNr, "getVarsWithDt")
-                nConds = ACondition [] [([dtN], Eq, [sigRefRet isCf dt sigNr])] [] []
+                nConds = ACondition [] [([removeDt dtN], Eq
+                                        ,[removeDt $ sigRefRet isCf dt sigNr])] [] []
                 nCsts = [sigRefCst isCf sigNr | isRoot]
                 nInfTreeNds =
                   [InfTreeNode
@@ -355,7 +367,7 @@ getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs
                     [] | isRoot ]
 
 
-addConditions :: ACondition a b -> ACondition a b -> ACondition a b
+addConditions :: ACondition f v a b -> ACondition f v a b -> ACondition f v a b
 addConditions conds condsNew =
   ACondition
   (costCondition conds ++ costCondition condsNew)

@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 117
+--     Update #: 129
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -51,6 +51,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode.Type
 import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
+import           Data.Rewriting.Typed.Signature
 import           Data.Rewriting.Typed.Term                             hiding
                                                                         (map)
 
@@ -60,22 +61,28 @@ import           Data.List                                             (find)
 import qualified Data.Map                                              as M
 import           Debug.Trace
 
-putValuesInInfTreeView :: ASigs
-                       -> CfSigs
+putValuesInInfTreeView :: (Show dt) =>
+                          ASigs dt s
+                       -> CfSigs dt s
                        -> M.Map String Vector
                        -> [[InfTreeNodeView]]
                        -> [[InfTreeNodeView]]
-putValuesInInfTreeView sigs cfsigs vals = map (putValuesInInfTreeView' sigs cfsigs vals)
+putValuesInInfTreeView sigs cfsigs vals = map (putValuesInInfTreeView' sigs' cfsigs' vals)
+  where sigs' = map (\(a,b,c) -> (showSigName a,b,c)) sigs
+        cfsigs' = map (\(a,b,c) -> (showSigName a,b,c)) cfsigs
+        showSigName (Signature root l r) =
+          Signature root (map toADatatypeStringDt l) (toADatatypeStringDt r)
 
-putValuesInInfTreeView' :: ASigs
-                        -> CfSigs
+
+putValuesInInfTreeView' :: ASigs String s
+                        -> CfSigs String s
                         -> M.Map String Vector
                         -> [InfTreeNodeView]
                         -> [InfTreeNodeView]
 putValuesInInfTreeView' sigs cfsigs vals = map (putValuesInInfTreeNodeView sigs cfsigs vals)
 
-putValuesInInfTreeNodeView :: ASigs
-                           -> CfSigs
+putValuesInInfTreeNodeView :: ASigs String s
+                           -> CfSigs String s
                            -> M.Map String Vector
                            -> InfTreeNodeView
                            -> InfTreeNodeView
@@ -90,11 +97,11 @@ putValuesInInfTreeNodeView sigs cfsigs vs (InfTreeNodeLeafView sig cfSig) =
 putValuesInInfTreeNodeView _ _ _ InfTreeNodeLeafEmpty = InfTreeNodeLeafEmpty
 
 
-putValuesInPre :: ASigs
-               -> CfSigs
+putValuesInPre :: ASigs String s
+               -> CfSigs String s
                -> M.Map String Vector
-               -> (String, ADatatype Vector)
-               -> (String, ADatatype Vector)
+               -> (String, ADatatype String Vector)
+               -> (String, ADatatype String Vector)
 putValuesInPre sigs cfsigs vs (n, dt)   = (n, putValuesInDt sigs cfsigs vs dt)
 
 putValuesInCst :: M.Map String Vector -> ACostCondition Vector -> ACostCondition Vector
@@ -105,27 +112,27 @@ putValuesInCst vals (SigRefCstCf nr) = ACostValue (getValueNr vals n)
   where n = "k_cf(" ++ show nr ++ ")"
 putValuesInCst vals (ACostValue x) = ACostValue x
 
-putValuesInPost :: ASigs
-                -> CfSigs
+putValuesInPost :: ASigs String s
+                -> CfSigs String s
                 -> M.Map String Vector
-                -> (Term String String, ADatatype Vector)
-                -> (Term String String, ADatatype Vector)
+                -> (Term String String, ADatatype String Vector)
+                -> (Term String String, ADatatype String Vector)
 putValuesInPost sigs cfsigs vs (t, dt) = (t, putValuesInDt sigs cfsigs vs dt)
 
 
-putValuesInPostLeaf :: ASigs
-                    -> CfSigs
+putValuesInPostLeaf :: ASigs String s
+                    -> CfSigs String s
                     -> M.Map String Vector
-                    -> ADatatype Vector
-                    -> ADatatype Vector
+                    -> ADatatype String Vector
+                    -> ADatatype String Vector
 putValuesInPostLeaf = putValuesInDt
 
 
-putValuesInDt :: ASigs
-              -> CfSigs
+putValuesInDt :: ASigs String s
+              -> CfSigs String s
               -> M.Map String Vector
-              -> ADatatype Vector
-              -> ADatatype Vector
+              -> ADatatype String Vector
+              -> ADatatype String Vector
 putValuesInDt _ _ _ (ActualCost isCf dt cst) = ActualCost isCf dt cst
 putValuesInDt _ _ vals (SigRefVar dt n)    = ActualCost False dt (ACost $ getValueNr vals n)
 putValuesInDt sigs cfsigs vals x =

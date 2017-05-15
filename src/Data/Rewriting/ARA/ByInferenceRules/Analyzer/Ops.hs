@@ -1,4 +1,5 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP                 #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 -- Ops.hs ---
 --
 -- Filename: Ops.hs
@@ -8,9 +9,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 17:48:35 2017 (+0200)
+-- Last-Updated: Mon May  8 10:23:46 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2828
+--     Update #: 2840
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -73,10 +74,12 @@ import           Data.Maybe                                                 (fro
 import           Text.PrettyPrint
 
 
-analyzeProblem :: ArgumentOptions
-               -> [(String,Integer)]
-               -> Problem String String String String String String
-               -> IO (Prove, [(String, [InfTreeNodeView])])
+analyzeProblem :: forall f v dt . (Eq f, Ord f, Ord dt, Eq v, Eq dt, Read v, Ord v,
+                                   Show v, Show dt, Show f) =>
+                  ArgumentOptions
+               -> [(f,Integer)]
+               -> Problem f v f dt dt f
+               -> IO (Prove f v f dt dt f, [(String, [InfTreeNodeView])])
 analyzeProblem args reachability prob =
 
   if null (allRules $ rules prob)
@@ -92,9 +95,9 @@ analyzeProblem args reachability prob =
                                        (minus1Vars cond0)
                         }
 
-               linearBaseConds :: [(([ADatatype Int], Comparison, [ADatatype Int])
+               linearBaseConds :: [(([ADatatype String Int], Comparison, [ADatatype String Int])
                                    ,([ACostCondition Int], Comparison, [ACostCondition Int])
-                                   , [([ADatatype Int], Comparison, [ADatatype Int])]
+                                   , [([ADatatype String Int], Comparison, [ADatatype String Int])]
                                      )]
                linearBaseConds =
                  concatMap createEqConditions $ filter ((> 1) . length) . groupsCSnd .
@@ -120,14 +123,15 @@ analyzeProblem args reachability prob =
              print (text "Starting Proves:" $+$ prettyProve sp)
 #endif
 
-           let solution :: Prove                         -- the final solution
+           let -- solution :: Prove f v f dt dt cn -- the final solution
                solution = (\x -> x { provenInfTreeNodes = provenInfTreeNodes x }) $
                           analyzeProve [sp]
 
            let snd6 (_,x,_,_,_,_) = x
 
                inferenceTrees :: [(String, [InfTreeNodeView])]
-               inferenceTrees = map (\s -> (snd6 (functionName s) , map (\(_,_,c) -> c) (history s)))
+               inferenceTrees = map (\s -> (snd6 (functionName s),
+                                     map (\(_,_,c) -> c) (history s)))
                                   (reverse $ provenInfTreeNodes solution)
 
 #ifdef DEBUG
@@ -138,7 +142,7 @@ analyzeProblem args reachability prob =
 
            return (solution, inferenceTrees)
 
-   where analyzeProve :: [Prove] -> Prove
+   where analyzeProve :: [Prove f v f dt dt f] -> Prove f v f dt dt f
          analyzeProve [] = throw $ WarningException $
             "The Term Rewrite System could not be solved using the inference rules :( \n" ++
             "First of all, check if your input has no errors, e.g. wrong signatures. " ++
@@ -157,13 +161,13 @@ analyzeProblem args reachability prob =
                         fromMaybe (analyzeProve (proves++ps)) (getSolution proves)
 
 
-checkLhsRules :: Prove -> Prove
+checkLhsRules :: (Show v) => Prove f v f dt dt f -> Prove f v f dt dt f
 checkLhsRules p =
   if all (check . lhs) ((allRules . rules . problem) p)
     then p
     else undefined
   where check (Var n) = throw $ FatalException $
-                        "Root symbol of LHS must be a function: "  ++ n
+                        "Root symbol of LHS must be a function: "  ++ show n
         check (Fun _ c)  = True -- all (checkLhsTerm p) c
 
 -- checkLhsTerm :: Prove -> Term String String -> Bool
@@ -179,7 +183,7 @@ checkLhsRules p =
 
 -- | @convertProblem prob'@ takes as input a parsed problem @prob'@ and creates
 -- a problem with a different type signature, which is needed for analyzing.
-convertProblem       :: Problem String String String String String String -> ProblemSig
+convertProblem       :: Problem f v f dt dt f -> ProblemSig f v f dt dt f
 convertProblem prob' =
   Problem (startTerms prob') (strategy prob') (theory prob') (convertDt $ datatypes prob')
     (convertSig $ signatures prob') (rules prob') (variables prob') (symbols prob')
@@ -187,14 +191,15 @@ convertProblem prob' =
 
 -- | @startingProve prob'@ generates default starting points of the inference
 -- trees for the input problem @prob'@.
-startingProve :: ArgumentOptions -> ProblemSig -> Prove
+startingProve :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v, Ord v, Read v) =>
+                 ArgumentOptions -> ProblemSig f v f dt dt f -> Prove f v f dt dt f
 startingProve args prob' =
   (insertConstraints args . updateDatatypesChildCost . createCtrSig) prove0
   where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] [] []) 0 []
 
 -- | This function takes a list of proves and checks it for the finished and
 --   successful proves. It either returns a successful prove, or fails.
-getSolution    :: (Monad m) => [Prove] -> m Prove
+getSolution    :: (Monad m) => [Prove f v f dt dt f] -> m (Prove f v f dt dt f)
 getSolution [] = fail "No prove was found."
 getSolution (p:ps) =
     case p of

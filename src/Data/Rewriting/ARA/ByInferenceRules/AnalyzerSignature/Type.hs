@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 22
+--     Update #: 26
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -39,11 +39,11 @@ module Data.Rewriting.ARA.ByInferenceRules.AnalyzerSignature.Type where
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 
 type FromRule = Int
-type ASigs = [(ASignatureSig, FromRule, String)]
+type ASigs dt s = [(ASignatureSig s dt, FromRule, String)]
 
 type CfSigGroup = Int
-type CfSig = (ASignatureSig, CfSigGroup, String)
-type CfSigs = [CfSig]
+type CfSig dt s = (ASignatureSig s dt, CfSigGroup, String)
+type CfSigs dt s = [CfSig dt s]
 
 -- addASig :: ASigs -> ASignatureSig ->
 

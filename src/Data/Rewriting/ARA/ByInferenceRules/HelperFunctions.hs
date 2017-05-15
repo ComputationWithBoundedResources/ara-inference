@@ -7,9 +7,9 @@
 -- Created: Fri Oct 10 15:46:17 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:08 2017 (+0200)
+-- Last-Updated: Mon May  8 18:48:27 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 106
+--     Update #: 125
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -61,13 +61,16 @@ import           Text.PrettyPrint
 
 -- | @getSignatureByName sigs sigName@ checks all signatures defined in @sigs@
 -- and searches for the one with the name @sigName@.
-getSignatureByNameAndType :: [SignatureSig] -> String -> String -> Maybe SignatureSig
+getSignatureByNameAndType :: (Eq s, Eq sDt) =>
+                             [SignatureSig s sDt] -> s -> sDt
+                          -> Maybe (SignatureSig s sDt)
 getSignatureByNameAndType sigs sig dt =
   find (\(Signature (n,_,_,_) _ (dtRhs,_)) -> dt == dtRhs && n == sig) sigs
 
 -- | @getSignatureByName sigs sigName@ checks all signatures defined in @sigs@
 -- and searches for the one with the name @sigName@.
-getDefSymSignatureByName :: [SignatureSig] -> String -> Maybe SignatureSig
+getDefSymSignatureByName :: (Eq s) =>
+                            [SignatureSig s sDt] -> s -> Maybe (SignatureSig s sDt)
 getDefSymSignatureByName sigs sig =
   find (\(Signature (n,_,isCtr,_) _ _) -> not isCtr && n == sig) sigs
 
@@ -75,24 +78,23 @@ getDefSymSignatureByName sigs sig =
 -- | @getSignatureByName' sigs sigName@ finds the signature with the name
 -- @sigName@ from the list of signatures @sigs@ and returns it. If it cannot be
 -- found an exception will be throws!
-getSignatureByNameAndType' :: [SignatureSig] -> String -> String -> SignatureSig
+getSignatureByNameAndType' :: (Show s, Eq s, Eq sDt) =>
+                              [SignatureSig s sDt] -> s -> sDt -> SignatureSig s sDt
 getSignatureByNameAndType' sigs sigName dt =
-  fromMaybe (throw $ FatalException $ "Cannot find signature for " ++
-                   show (text sigName))
+  fromMaybe (throw $ FatalException $ "Cannot find signature for " ++ show sigName)
             (getSignatureByNameAndType sigs sigName dt)
 
 -- | @getSignatureByName sigs sigName@ checks all signatures defined in @sigs@
 -- and searches for the one with the name @sigName@.
-getDefSymSignatureByName' :: [SignatureSig] -> String -> SignatureSig
+getDefSymSignatureByName' :: (Show s, Eq s) => [SignatureSig s sDt] -> s -> SignatureSig s sDt
 getDefSymSignatureByName' sigs sig =
-  fromMaybe (throw $ FatalException $ "Cannot find signature for " ++
-                   show (text sig))
+  fromMaybe (throw $ FatalException $ "Cannot find signature for " ++ show sig)
   (getDefSymSignatureByName sigs sig)
 
 -- | @getDatatypeByName dts dtName@ takes as input a list of parsed data-types
 -- @dts@ and a name @dtName@ to search for in the list. It either returns the
 -- data-type wrapped in a Just or it will returns Nothing.
-getDatatypeByName         :: [DatatypeSig] -> String -> Maybe DatatypeSig
+getDatatypeByName :: (Eq s) => [DatatypeSig s sDt] -> s -> Maybe (DatatypeSig s sDt)
 getDatatypeByName dts str = find ((== str) . (\(Datatype dtn _) -> fst dtn)) dts
 
 
@@ -100,10 +102,10 @@ getDatatypeByName dts str = find ((== str) . (\(Datatype dtn _) -> fst dtn)) dts
 -- @dts@ and a name @dtName@ to search for in the list. It returns the datatype
 -- if any was found or throws an exception, if it cannot find the datatype named
 -- @dtName@.
-getDatatypeByName'         :: [DatatypeSig] -> String -> DatatypeSig
+getDatatypeByName' :: (Show s, Eq s) => [DatatypeSig s sDt] -> s -> DatatypeSig s sDt
 getDatatypeByName' dts str =
   fromMaybe (throw $ FatalException $ "Could not find datatype " ++
-             str ++ ". However, you used it in the signature block!")
+             show str ++ ". However, you used it in the signature block!")
             (getDatatypeByName dts str)
 
 
@@ -124,14 +126,18 @@ fth4 :: (t, t1, t2, t3) -> t3
 fth4 (_,_,_,x) = x
 
 
-prettyAraSignature' :: ASignatureSig -> Doc
+prettyAraSignature' :: (Show dt, Show s) => ASignatureSig s dt -> Doc
 prettyAraSignature' =
-  prettyAraSignature text (prettyACost prettyVector) (prettyADatatype (prettyACost prettyVector ))
+  prettyAraSignature (text . show) (prettyACost prettyVector)
+  (prettyADatatype (prettyACost prettyVector ))
 
 sigRefRet isCf = if isCf then SigRefRetCf else SigRefRet
 sigRefParam isCf = if isCf then SigRefParamCf else SigRefParam
 sigRefCst isCf = if isCf then SigRefCstCf else SigRefCst
 
+
+removeApostrophes :: String -> String
+removeApostrophes = filter (/= '"')
 
 --
 -- HelperFunctions.hs ends here

@@ -7,9 +7,9 @@
 -- Created: Wed Oct  1 16:02:50 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:09 2017 (+0200)
+-- Last-Updated: Sun May  7 18:54:35 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 91
+--     Update #: 108
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -50,14 +50,15 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Ops
 import           Text.PrettyPrint
 
 
-type ASignatureSig = Signature (String, ACost Vector, Bool, Bool) (ADatatype Vector)
-type SignatureSig = Signature (String, ACost Int, Bool,Bool) (String, [ACost Int])
-type ProblemSig  = Problem String String (String, ACost Int, Bool,Bool)
-                   (String,[ACost Int]) (String, [ACost Int]) (String, ACost Int)
+type ASignatureSig s sDt = Signature (s, ACost Vector, Bool, Bool) (ADatatype sDt Vector)
+type SignatureSig s sDt = Signature (s, ACost Int, Bool,Bool) (sDt, [ACost Int])
 
-type DatatypeSig = Datatype (String, [ACost Int]) (String, ACost Int)
-type ConstructorSig = Constructor (String, [ACost Int]) (String, ACost Int)
-type ConstructorChildSig = ConstructorChild (String, [ACost Int])
+type ProblemSig f v s sDt dt cn  = Problem f v (s, ACost Int, Bool,Bool)
+                   (sDt,[ACost Int]) (dt, [ACost Int]) (cn, ACost Int)
+
+type DatatypeSig dt cn = Datatype (dt, [ACost Int]) (cn, ACost Int)
+type ConstructorSig dt cn  = Constructor (dt, [ACost Int]) (cn, ACost Int)
+type ConstructorChildSig dt = ConstructorChild (dt, [ACost Int])
 
 --
 -- TypeSignatures.hs ends here

@@ -7,9 +7,9 @@
 -- Created: Wed Oct  1 15:44:01 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:33:58 2017 (+0200)
+-- Last-Updated: Sun May  7 18:04:03 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 77
+--     Update #: 80
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -47,9 +47,9 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Type
 import           Text.PrettyPrint
 
 
-prettyADatatype :: Show a => (ACost a -> Doc) -> ADatatype a -> Doc
+prettyADatatype :: (Show dt, Show a) => (ACost a -> Doc) -> ADatatype dt a -> Doc
 prettyADatatype pCst (ActualCost fromCf dt cst) =
-  text dt <> (if fromCf then text "_cf" else empty) <> pCst cst
+  text (show dt) <> (if fromCf then text "_cf" else empty) <> pCst cst
 
 prettyADatatype _ x = text (show x)
 

@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 23:23:50 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 19:23:25 2017 (+0200)
+-- Last-Updated: Sun May  7 22:31:15 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 143
+--     Update #: 149
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -53,9 +53,9 @@ import           Text.PrettyPrint
 
 
 prettyACondition :: (Show b) =>
-                   (ACostCondition a -> Doc)
-                 -> (ADatatype b -> Doc)
-                 -> ACondition a b -> Doc
+                    (ACostCondition a -> Doc)
+                 -> (ADatatype String b -> Doc)
+                 -> ACondition f v a b -> Doc
 prettyACondition pC pD (ACondition cost dt share min1Vars) =
   vcat (map (prettyTriple pCs prettyComparison pCs) cost) $+$
   vcat (map (prettyTriple pD prettyComparison pList) share) $+$

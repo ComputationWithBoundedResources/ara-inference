@@ -7,9 +7,9 @@
 -- Created: Mon Sep 15 01:47:10 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 20:16:30 2017 (+0200)
+-- Last-Updated: Mon May  8 09:17:18 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 416
+--     Update #: 430
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -108,45 +108,43 @@ instances x (y:ys)
 -- | @getConstructor prob name dtStr@ gets the constructor @name@ from the
 -- data-type with the name dtStr. The information is retrieved from the problem
 -- @prob@.
-getConstructor :: ProblemSig -> String -> String -> Maybe ConstructorSig
+getConstructor :: (Eq cn, Eq dt) =>
+                  ProblemSig f v s sDt dt cn -> cn -> dt -> Maybe (ConstructorSig dt cn)
 getConstructor prob name dtStr = let mDt = getDatatypeByName prob dtStr
                                  in case mDt of
                                       Nothing -> Nothing
                                       Just dt -> find (\(Constructor cn _) -> name == fst cn)
                                                      (constructors dt)
 
-getConstructorByName :: ProblemSig -> String -> Maybe ConstructorSig
+getConstructorByName :: (Eq cn) => ProblemSig f v s sDt dt cn -> cn -> Maybe (ConstructorSig dt cn)
 getConstructorByName p n = let dt = concatMap constructors (fromMaybe [] (datatypes p))
                            in find (\(Constructor x _ ) -> fst x == n) dt
 
-getConstructorByName' :: [DatatypeSig] -> String -> Maybe ConstructorSig
+getConstructorByName' :: (Eq cn) => [DatatypeSig dt cn] -> cn -> Maybe (ConstructorSig dt cn)
 getConstructorByName' dts n = let dt = concatMap constructors dts
                                in find (\(Constructor x _ ) -> fst x == n) dt
 
 -- | @getDatatypeByName prob dt@ checks all data-types defined in the problem
 -- @prob@ and searches for the one with the datatype @dt@.
-getDatatypeByName :: ProblemSig -> String -> Maybe DatatypeSig
+getDatatypeByName :: (Eq dt) => ProblemSig f v s sDt dt cn -> dt -> Maybe (DatatypeSig dt cn)
 getDatatypeByName prob dt = getDatatypeWith prob (\(Datatype dtn _) -> dt == fst dtn)
 
 
 -- | This function searches the rewrite rule in the given TRS by its name.
 --   It returns the rewrite rule packed in the monad, or fails.
-getRewriteRuleByName :: ProblemSig -> String -> Maybe (Rule String String)
+getRewriteRuleByName :: (Eq f) => ProblemSig f v s sDt dt cn -> f -> Maybe (Rule f v)
 getRewriteRuleByName t n = find (\r -> n == rName r) (allRules (rules t))
-    where rName :: Rule String String -> String
-          rName rule = rootSymbol (lhs rule)
+    where rName rule = rootSymbol (lhs rule)
 
-          rootSymbol :: Term String String -> String
-          rootSymbol (Var v)   = v
+          rootSymbol :: Term f v -> f
+          rootSymbol (Var v)   = error "root symbol cannot be a variable"
           rootSymbol (Fun f _) = f
 
 
-sig2ASig :: Bool -> ArgumentOptions -> SignatureSig -> ASignatureSig
+sig2ASig :: Bool -> ArgumentOptions -> SignatureSig s sDt -> ASignatureSig s sDt
 sig2ASig isCf args (Signature (n,_,ctr,_) pre post) =
   Signature (n, newACost, ctr,isCf) (map newADatatype pre) (newADatatype post)
-  where
-    newADatatype         :: (String, [ACost Int]) -> ADatatype Vector
-    newADatatype (dt, csts) = ActualCost isCf dt (newACostVector args)
+  where newADatatype (dt, csts) = ActualCost isCf dt (newACostVector args)
 
 newACost :: ACost Vector
 newACost = ACost (Vector1 0)
@@ -155,14 +153,13 @@ newACostVector      :: ArgumentOptions -> ACost Vector
 newACostVector args = ACost 0
 
 
-getTermVars :: Term String String -> [Term String String]
+getTermVars :: Term f v -> [Term f v]
 getTermVars (Var x)    = [Var x]
 getTermVars (Fun _ ch) = concatMap getTermVars ch
 
-termName           :: Term String String -> String
-termName (Var n)   = n
-termName (Fun n _) = n
-
+termName           :: (Show f, Show v) => Term f v -> String
+termName (Var n)   = show n
+termName (Fun n _) = show n
 
 --
 -- InfRuleMisc.hs ends here

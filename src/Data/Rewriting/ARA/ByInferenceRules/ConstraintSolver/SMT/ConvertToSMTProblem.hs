@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Apr 15 14:25:00 2017 (+0200)
+-- Last-Updated: Mon May  8 18:00:46 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1071
+--     Update #: 1077
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -110,8 +110,8 @@ addFindStrictRulesConstraint minNr csts = do
 
 addUniqueSigConstraints :: (Num a, Ord a, Monad m, Show a) =>
                           Int
-                        -> [((ADatatype a, ADatatype a)
-                          , [(ADatatype a, ADatatype a)]
+                        -> [((ADatatype dt a, ADatatype dt a)
+                          , [(ADatatype dt a, ADatatype dt a)]
                           , [(ACostCondition a, ACostCondition a)])]
                         -> StateT SMTProblem m ()
 addUniqueSigConstraints vecLen uSigConstr = do
@@ -149,7 +149,7 @@ addUniqueSigConstraints vecLen uSigConstr = do
 addMultConstraints :: (Monad m) =>
                      Int
                    -> [((ACostCondition Int, T.Text, ACostCondition Int)
-                      ,[(ADatatype Int, T.Text, ADatatype Int)])]
+                      ,[(ADatatype dt Int, T.Text, ADatatype dt Int)])]
                    -> StateT SMTProblem m ()
 addMultConstraints vecLen multConstr = do
 
@@ -194,7 +194,7 @@ addMultConstraints vecLen multConstr = do
 
 addShareConditions :: (Show a, Monad m) =>
                      Int
-                   -> [(ADatatype a, Comparison, [ADatatype a])]
+                   -> [(ADatatype dt a, Comparison, [ADatatype dt a])]
                    -> StateT SMTProblem m ()
 addShareConditions vecLen shareCond = do
   mapM_ (\(a,_,c) -> addVarsBy (fromADatatype vecLen) [a]) shareCond
@@ -205,14 +205,14 @@ addShareConditions vecLen shareCond = do
 
 addDtConditions :: (Show a, Monad m) =>
                   Int
-                -> [([ADatatype a], Comparison, [ADatatype a])]
+                -> [([ADatatype dt a], Comparison, [ADatatype dt a])]
                 -> StateT SMTProblem m ()
 addDtConditions vecLen dtCond = do
   mapM_ (\(a,_,c) -> addVarsBy (fromADatatype vecLen) (a++c)) dtCond
   mapM_ (addConstraintBy (fromListBy (fromADatatype vecLen))) dtCond
 
 
-fromADatatype :: Int -> ADatatype t -> [T.Text]
+fromADatatype :: Int -> ADatatype dt a -> [T.Text]
 fromADatatype vecLen ActualCost{} = error "not possible"
 fromADatatype vecLen (SigRefParam _ m n) =
   map (\nr -> "v" +++ T.pack (show nr) +++ "_p" +++ T.pack (show m)
@@ -225,16 +225,16 @@ fromADatatype vecLen (SigRefParamCf _ m n) =
 fromADatatype vecLen (SigRefRetCf _ r) =
   map (\nr -> "v" +++ T.pack (show nr) +++ "_r_cf" +++ T.pack (show r)) [1..vecLen]
 fromADatatype vecLen (SigRefVar _ n) =
-  map (\nr -> "v" +++ T.pack (show nr) +++ "_" +++ T.pack n) [1..vecLen]
+  map (\nr -> "v" +++ T.pack (show nr) +++ "_" +++ T.pack (removeApostrophes n)) [1..vecLen]
 
 fromCostCondM :: ACostCondition t -> [T.Text]
-fromCostCondM (AVariableCondition str) = [T.pack str]
+fromCostCondM (AVariableCondition str) = [T.pack (removeApostrophes str)]
 fromCostCondM (SigRefCst nr) = ["k" +++ T.pack (show nr)]
 fromCostCondM (SigRefCstCf nr) = ["k_cf" +++ T.pack (show nr)]
 fromCostCondM (ACostValue _) = [] -- numbers like: -1
 
 fromCostCond :: (Num a, Ord a, Show a) => ACostCondition a -> [T.Text]
-fromCostCond (AVariableCondition str) = [T.pack str]
+fromCostCond (AVariableCondition str) = [T.pack (removeApostrophes str)]
 fromCostCond (SigRefCst nr) = ["k" +++ T.pack (show nr)]
 fromCostCond (SigRefCstCf nr) = ["k_cf" +++ T.pack (show nr)]
 fromCostCond (ACostValue nr)
@@ -305,13 +305,13 @@ addConstraintBy2 f1 f2 (lhs, Geq, rhs) = do
 
 addConstructorGrowthConstraints :: (Monad m) =>
                                   Int
-                                -> [(T.Text, ADatatype Int, Int, ADatatype Int,
-                                     ACostCondition Int, ADatatype Int)]
+                                -> [(T.Text, ADatatype dt Int, Int, ADatatype dt Int,
+                                     ACostCondition Int, ADatatype dt Int)]
                                 -> StateT SMTProblem m ()
 addConstructorGrowthConstraints vecLen = mapM_ addConstructorGrowthConstraints'
   where addConstructorGrowthConstraints' :: (Monad m) =>
-                                           (T.Text, ADatatype Int, Int, ADatatype Int,
-                                            ACostCondition Int, ADatatype Int)
+                                           (T.Text, ADatatype dt Int, Int, ADatatype dt Int,
+                                            ACostCondition Int, ADatatype dt Int)
                                          -> StateT SMTProblem m ()
         addConstructorGrowthConstraints' (name,ui,uiNr,ri,p,w) = do
 
@@ -390,7 +390,7 @@ addConstructorGrowthConstraints vecLen = mapM_ addConstructorGrowthConstraints'
 
 addIndependenceConstraints :: (Monad m) =>
                              Int
-                           -> [(Int, ADatatype Int)]
+                           -> [(Int, ADatatype dt Int)]
                            -> StateT SMTProblem m ()
 addIndependenceConstraints vecLen = mapM_ addIndependenceConstraints'
   where addIndependenceConstraints' (nr, rDt) = do
@@ -405,8 +405,8 @@ addIndependenceConstraints vecLen = mapM_ addIndependenceConstraints'
 
 addHeuristics :: (Monad m) =>
                  Int
-              -> [([(ADatatype Int, Heuristic (ADatatype Int))],
-                   (ACostCondition Int, Heuristic (ADatatype Int)))]
+              -> [([(ADatatype dt Int, Heuristic (ADatatype dt Int))],
+                   (ACostCondition Int, Heuristic (ADatatype dt Int)))]
               -> StateT SMTProblem m ()
 addHeuristics vecLen = mapM_ addHeuristics'
   where addHeuristics' (dtHeuristics, cstHeuristic) = do
@@ -447,7 +447,7 @@ addHeuristics vecLen = mapM_ addHeuristics'
 
 setBaseCtrMaxValues :: (Monad m) =>
                        ArgumentOptions
-                    -> [SignatureSig]
+                    -> [SignatureSig s sDt]
                     -> Int
                     -> [(T.Text,Bool,Int,String)]
                     -> StateT SMTProblem m ()
@@ -459,7 +459,8 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
         )
   [1..vecLen]
   where setRetValuesToIdentiyMatrix baseNr (ctrName,isCf,_,ctrType) = do
-          let baseCf = if isCf && separateBaseCtr args then ctrType ++ "_cf_" else ctrType ++ "_"
+          let baseCf = if isCf && separateBaseCtr args
+                       then ctrType ++ "_cf_" else ctrType ++ "_"
 
           let var = SigRefVar undefined $
                     "rctr_" ++ baseCf ++ T.unpack (convertToSMTText ctrName) ++ "_"
@@ -501,8 +502,8 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
 
 addCfGroupsConstraints :: (Monad m) =>
                          Int
-                       -> [([ADatatype Int],[ACostCondition Int],
-                            [ADatatype Int],[ACostCondition Int])]
+                       -> [([ADatatype dt Int],[ACostCondition Int],
+                            [ADatatype dt Int],[ACostCondition Int])]
                        -> StateT SMTProblem m ()
 addCfGroupsConstraints 1 = mapM_ makeAllZero
   where makeAllZero (grplDt, grplCst, grprDt, grprCst) = do
@@ -540,12 +541,12 @@ addIndependenceBaseCtrConstraints :: (Monad m) =>
                                       T.Text,
                                       T.Text,
                                       T.Text,
-                                      ADatatype Int,
-                                      ADatatype Int,
+                                      ADatatype dt Int,
+                                      ADatatype dt Int,
                                       ACostCondition Int,
                                        ACostCondition Int,
-                                      [ADatatype Int],
-                                      [ADatatype Int])]
+                                      [ADatatype dt Int],
+                                      [ADatatype dt Int])]
                                   -> StateT SMTProblem m ()
 addIndependenceBaseCtrConstraints vecLen = mapM_ addIndependenceBaseCtrConstraints'
   where addIndependenceBaseCtrConstraints' (x1,x2,y1,y2,r1Dt,r2Dt,k1Dt,k2Dt,p1sDt,p2sDt) = do

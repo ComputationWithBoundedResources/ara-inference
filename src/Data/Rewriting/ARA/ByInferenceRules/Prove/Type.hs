@@ -7,9 +7,9 @@
 -- Created: Fri Sep  5 08:52:29 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:03 2017 (+0200)
+-- Last-Updated: Sun May  7 22:31:47 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 252
+--     Update #: 260
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -50,16 +50,16 @@ import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.Constants
 
 
-data Prove = Prove
-    { infTreeNodesToProve :: [InfTreeNode]
-    , provenInfTreeNodes  :: [InfTreeNode]
+data Prove f v s sDt dt cn = Prove
+    { infTreeNodesToProve :: [InfTreeNode f v dt]
+    , provenInfTreeNodes  :: [InfTreeNode f v dt]
     , countCostVars       :: Int
-    , problem             :: ProblemSig
-    , costFreeSigs        :: CfSigs
-    , signatureMap        :: ASigs
-    , conditions          :: ACondition Int Int
+    , problem             :: ProblemSig f v s sDt dt cn
+    , costFreeSigs        :: CfSigs dt s
+    , signatureMap        :: ASigs dt s
+    , conditions          :: ACondition f v Int Int
     , varNr               :: Int
-    , lhsArgDefSyms       :: [String]
+    , lhsArgDefSyms       :: [f]
     } deriving (Show)
 
 

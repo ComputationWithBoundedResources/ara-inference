@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 32
+--     Update #: 34
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -51,8 +51,9 @@ import           Data.Maybe
 
 import           Debug.Trace
 
-analyzeReachability :: Problem String String String String String String
-                    -> [(String,Integer)]
+analyzeReachability :: (Eq f, Ord f) =>
+                       Problem f v s sDt dt cn
+                    -> [(f,Integer)]
 analyzeReachability prob =
   concat $ zipWith (\a b -> (map (\x -> (fst3 $ fromVert (fst x),b)) a))
   (reverse reachGroups) [0..]

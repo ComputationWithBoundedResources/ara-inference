@@ -1,0 +1,15 @@
+(VAR m n r)
+
+(DATATYPES a = µX. < 0, s(X) >
+ )
+
+(SIGNATURES p :: a x a x a -> a
+ )
+
+
+(RULES
+  p(m,n,s(r)) -> p(m,r,n)
+  p(m,s(n),0) -> p(0,n,m)
+  p(m,0,0) -> m
+)
+

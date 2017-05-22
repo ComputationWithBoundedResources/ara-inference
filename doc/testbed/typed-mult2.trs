@@ -1,0 +1,20 @@
+(COMMENT: O(n^2), works with POP* and with polynomial interpretation
+p(0) = 1
+p(add) = 2*x1 + x2
+p(mult) = 3*x1 + 2*x1*x2
+p(s) = 1 + x1
+)
+(VAR x y)
+(DATATYPES
+  Nat = µX.< 0, s(X) >
+)
+(SIGNATURES
+  add :: Nat x Nat -> Nat
+  mult :: Nat x Nat -> Nat
+)
+(RULES
+add(0,y) -> y
+add(s(x),y) -> s(add(x,y))
+mult(0,y) -> 0
+mult(s(x),y) -> add(y,mult(x,y))
+)

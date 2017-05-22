@@ -1,0 +1,53 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/eratosthenes.raml
+ *
+ * Author:
+ *   Ankush Das, Jan Hoffmann (2015)
+ *
+ * Description:
+ *   Sieve of Eratosthenes.
+ *)
+
+;;
+let rec filter p l =
+	match l with
+	| Nil -> Nil
+	| Cons(x,xs) ->
+		(
+		let xs' = filter p xs in
+		if (x mod p = 0) then xs'
+		else Cons(x,xs'))
+;;
+let rec eratos l =
+	match l with
+	| Nil -> Nil
+	| Cons(x,xs) -> ( Cons(x,(eratos (filter x xs))))
+
+eratos [2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20]
+
+
+
+
+
+
+
+
+
+
+;;

@@ -1,0 +1,87 @@
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases * *
+ *
+ * File:
+ *   example/list_map.raml
+ *
+ * Author:
+ *   Jan Hoffmann, Shu-Chun Weng (2014)
+ *
+ * Description:
+ *   Some variations of list map.
+ *
+ *)
+
+
+(* The usual list map function. *)
+let rec map f l =
+  match l with
+    | Nil -> Nil
+    | Cons(x,xs) ->
+      let ys = map f xs in
+      (f x)Cons(,ys)
+
+
+(* The usual list rev_map function. *)
+let map_rev f l =
+  let rec rmap l acc =
+    match l with
+      | Nil -> acc
+      | Cons(x,xs) ->
+	let acc' = (f x)Cons(,acc) in
+	rmap  xs acc'
+  in
+  rmap l Nil
+
+
+(* Iteratively apply two functional arguments. *)
+let map_rev2 f1 f2 l =
+
+  let rec rmap1 l acc =
+    match l with
+      | Nil -> acc
+      | Cons(x,xs) ->
+	rmap2 xs ((f1 x)Cons(,acc))
+
+  and rmap2 l acc =
+    match l with
+      | Nil -> acc
+      | Cons(x,xs) ->
+	rmap1 xs ((f2 x)Cons(,acc))
+  in
+
+  rmap1 l Nil
+
+;;
+let unused =
+  let f = fun(unused) -> Raml.tick 1.0 in
+  let g = map f in
+  let h = map g in
+  let x = [[1;2;3;1;3;3];[1;2;3;1;3;3];[1;2;3;1;3;3];[1;2;3;1;3;3]] in
+  h x
+;;
+let unused =
+  let f x = let unused = Raml.tick 1.0 in x*x*x in
+  let g x = x+2 in
+  let map_f_g = map_rev2 f g in
+  map_f_g [2;3;4;4;5;5;5]
+;;
+let unused =
+  let seq f g x = f (g x) in
+  let f x = x+x in
+  let g x = x*x in
+  map (seq g f) [1;2;3;4;5;6]
+
+
+;;

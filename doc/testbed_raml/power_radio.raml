@@ -1,0 +1,259 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases * *
+ *
+ * File:
+ *   examples/power_radio.raml
+ *
+ * Author:
+ *   Jan Hoffmann, Shu-Chun Weng (2014)
+ *
+ * Description:
+ *   Modelling a reactive system whose power consumption deps crucially on
+ *   the power consumption of the (GSM) radio. We use the tick metric to model
+ *   the power consumption in the function s_msg.
+ *)
+
+
+(* Using the (gsm) radio: Sing a list of integers costs 200 Millijoule to *)
+(* power the radio on and 32 Millijoule to per integer that is sent. *)
+let s_msg (msg : int list) =
+
+  let transmit x =
+    Raml.tick(32.)
+  in
+
+  let rec s msg =
+    match msg with
+      | Nil -> ()
+      | Cons(x,xs) ->
+	transmit x;
+	s xs
+  in
+
+  Raml.tick(200.);
+  s msg
+
+
+(* Events that can be handled by the system. *)
+type event = Eidle
+  | Edata of int list   (*The sensor reads a list of data.*)
+  | Es_buf
+  | Es_all of (int(list) -> unit)
+
+
+(* A simple implementation that just ss the sensor data as soon as *)
+(* it is produced. *)
+let main1 events =
+
+  let rec process events =
+    match events with
+      | Cons(e,es) ->
+
+	  match e with
+	    | Eidle -> ()
+	    | Es_buf -> ()
+	    | Es_all(unused) -> ()
+	    | Edata(data) -> s_msg data
+
+	; process es
+      | Nil -> ()
+  in
+
+  process events
+
+;;
+let rec app l1 l2 =
+  match l1 with
+    | Nil -> l2
+    | Cons(x,xs) -> Cons(x,(app xs l2))
+
+
+(* Store sensor data in a buffer and s the buffer only at *)
+(* Es_buf events. *)
+let main2 events =
+
+  let rec process events buffer =
+    match events with
+      | Cons(e,es) ->
+	let buffer =
+	  match e with
+	    | Eidle -> buffer
+	    | Es_buf -> s_msg buffer; Nil
+	    | Es_all(unused) -> buffer
+	    | Edata(data) -> app data buffer
+	in
+	process es buffer
+      | Nil -> ()
+  in
+
+  process events Nil
+
+
+(* Same functionality of main2. Also add a debugging mode in *)
+(* which *all* accumulated data since start is (re)sent. *)
+let main3 events =
+
+  let rec process events buffer all_data =
+    match events with
+      | Cons(e,es) ->
+	let buffer,all_data =
+	  match e with
+	    | Eidle -> buffer, all_data
+	    | Es_buf -> s_msg buffer; Pair(Nil, all_data)
+	    | Es_all(unused) -> s_msg all_data; Pair(buffer, all_data)
+	    | Edata(data) -> Pair(app data buffer, app data all_data)
+	in
+	process es buffer all_data
+      | Nil -> ()
+  in
+
+  process events Nil Nil
+
+
+(* Same functionality as main3. In the debugging mode, now apply *)
+(* the function that is provided by the event. *)
+let main4 events =
+
+  let rec process events buffer all_data =
+    match events with
+      | Cons(e,es) ->
+	let buffer,all_data =
+	  match e with
+	    | Eidle -> buffer, all_data
+	    | Es_buf -> s_msg buffer; Pair(Nil, all_data)
+	    | Es_all(f) -> f all_data; Pair(buffer, all_data)
+	    | Edata(data) -> Pair(app data buffer, app data all_data)
+	in
+	process es buffer all_data
+      | Nil -> ()
+  in
+
+  process events Nil Nil
+
+
+(* Similar to main4. However, we ignore Es_buf events and s the *)
+(* buffer after 5 Edata events. *)
+let main5 events =
+
+  (* This is an assertion that fails if n<5. *)
+  (* It is necessary to inform the analysis that n>=5. *)
+  (* There will be a built-in function for this. *)
+  let assert_geq_5 n =
+    let minus1 n =
+      Rnat.ifz n
+	(fun () -> raise (Assert_failure ("", 0, n)))
+	(fun(n') -> n')
+    in
+    let n1 = minus1 n in
+    let n2 = minus1 n1 in
+    let n3 = minus1 n2 in
+    let n4 = minus1 n3 in
+    let n5 = minus1 n4 in
+    ()
+  in
+
+  let one = Rnat.succ Rnat.zero in
+
+  let rec process events c buffer =
+    match events with
+      | Cons(e,es) ->
+	let buffer,c =
+	  match e with
+	    | Eidle -> buffer,c
+	    | Es_buf -> buffer,c
+	    | Es_all(unused) -> buffer,c
+	    | Edata(data) ->
+	      let buffer = app data buffer in
+	      if (Rnat.to_int c) = 5 then
+		assert_geq_5 c;
+		s_msg buffer;
+		Pair(Nil, Rnat.succ Rnat.zero)
+
+	      else
+		Pair(buffer, Rnat.succ c)
+	in
+	process es c buffer
+      | Nil -> ()
+  in
+  process events Rnat.zero Nil
+
+
+;;
+let events =
+  [Eidle; Edata [1;2;3]; Eidle; Edata [4;5;6;7;8]; Edata Nil; Edata[2;3;4]
+  ; Es_all s_msg
+  ; Eidle; Eidle; Es_buf
+  ; Es_all (fun(data) -> s_msg [1;2;3;4]; s_msg data; s_msg data)
+  ; Edata [1;2;3]; Es_buf
+  ; Edata [1;2;3]; Es_buf
+  ; Edata [1;2;3];Edata [130;3];Edata [130;3]; Es_all s_msg
+  ]
+in
+main1 events,
+main2 events,
+main3 events,
+main4 events,
+main5 events
+
+
+
+
+
+
+(*
+type count = C1
+  | C2
+  | C3
+  | C4
+  | C5
+;;
+letnext = match next with
+  | C1 -> C2
+  | C2 -> C3
+  | C3 -> C4
+  | C4 -> C5
+  | C5 -> C1
+
+
+;;
+let main5 events =
+
+  let rec process events c buffer =
+    match events with
+      | Cons(e,es) ->
+	let buffer,c =
+	  match e with
+	    | Eidle -> buffer,c
+	    | Es_buf -> buffer,c
+	    | Es_all(unused) -> buffer,c
+	    | Edata(data) ->
+	      let buffer = app data buffer in
+	      let buffer =
+		match c with
+		  | C1 -> buffer
+		  | C2 -> buffer
+		  | C3 -> buffer
+		  | C4 -> buffer
+		  | C5 -> s_msg buffer; Nil
+	      in
+	      Pair(buffer, next c)
+	in
+	process es c buffer
+      | Nil -> ()
+  in
+  process events C1 Nil
+
+*)
+
+;;

@@ -1,0 +1,91 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/LogicAndCodes.raml
+ *
+ * Author:
+ *   Ankush Das (2015)
+ *
+ * Description:
+ *   The third section (“Logic and Codes“) from the OCaml tutorial
+ *   "99 Problems (solved) in OCaml":
+ *     https://ocaml.org/learn/tutorials/99problems.html
+ *
+ *)
+;;
+type bool_expr =
+    | Var of int
+    | Not of bool_expr
+    | And of bool_expr * bool_expr
+    | Or of bool_expr * bool_expr
+
+exception Invalid
+;;
+let rec eval2 a val_a b val_b = function
+		| Var(x) -> ( if x = a then val_a
+               else if x = b then val_b
+               else raise Invalid)
+    | Not(e) -> ( not(eval2 a val_a b val_b e))
+    | And(e1, e2) -> ( eval2 a val_a b val_b e1 && eval2 a val_a b val_b e2)
+    | Or(e1, e2) -> ( eval2 a val_a b val_b e1 || eval2 a val_a b val_b e2)
+;;
+let table2 a b expr =
+    [(true,  true,  eval2 a true  b true  expr);
+     (true,  false, eval2 a true  b false expr);
+     (false, true,  eval2 a false b true  expr);
+     (false, false, eval2 a false b false expr) ]
+
+exception Not_found
+;;
+let rec assoc k l =
+	match l with
+	| Nil -> raise Not_found
+	| Cons(x,xs) ->
+		let(a, b) = x in
+		(
+		if ((a:int) = (k:int)) then b
+		else assoc k xs)
+;;
+let rev list =
+  let rec auxacc = match acc with
+    | Nil -> acc
+    | Cons(h,t) -> ( aux (Cons(h,acc)) t)
+  in aux Nil list
+;;
+let rec concat l1 l2 =
+	match l1 with
+	| Nil -> l2
+	| Cons(x,xs) -> ( Cons(x,concat) xs l2)
+;;
+let rec eval val_vars = function
+		| Var(x) -> ( assoc x val_vars)
+    | Not(e) -> ( not(eval val_vars e))
+    | And(e1, e2) -> ( eval val_vars e1 && eval val_vars e2)
+    | Or(e1, e2) -> ( eval val_vars e1 || eval val_vars e2)
+;;
+let rec table_make val_vars vars expr =
+    match vars with
+    | Nil -> [Pair(rev val_vars, eval val_vars expr)]
+    | Cons(v,tl) ->
+			(
+       concat (table_make (Pair(v, true)Cons(,val)_vars) tl expr)
+	      (table_make (Pair(v, false)Cons(,val)_vars) tl expr))
+
+
+()
+
+;;

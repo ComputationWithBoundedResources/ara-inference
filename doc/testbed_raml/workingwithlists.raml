@@ -1,0 +1,416 @@
+
+let fst x =
+  match x with
+  | Pair(a,b) -> a
+;;
+let snd x =
+  match x with
+  | Pair(a,b) -> b
+
+;;
+let fst x =
+  match x with
+  | Pair(a,b) -> a
+;;
+let snd x =
+  match x with
+  | Pair(a,b) -> b
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/workingwithlists.raml
+ *
+ * Author:
+ *   Ankush Das (2015)
+ *
+ * Description:
+ *   The first section ("Working with Lists") from the OCaml tutorial
+ *   "99 Problems (solved) in OCaml":
+ *     https://ocaml.org/learn/tutorials/99problems.html
+ *
+ *)
+
+
+
+;;
+let rec last l =
+	match l with
+  | Nil -> None
+  | Cons(x,xs) ->
+		match xs with
+		| Nil -> Some x
+		| _::_ -> ( last xs)
+;;
+let rec last_two l =
+	match l with
+  | Nil -> None
+	| Cons(x,xs) ->
+		match xs with
+		| Nil -> None
+		| Cons(y,ys) ->
+			match ys with
+			| Nil -> Some(x, y)
+			| _::_ -> ( last_two xs)
+;;
+let rec at k l =
+	match l with
+	| Nil -> None
+	| Cons(h,t) ->
+		(
+		if (k = 0) then Some h
+		else at (k-1) t)
+;;
+let rec natAt k l =
+	match l with
+	| Nil -> None
+	| Cons(h,t) ->
+		( Rnat.ifz k h (fun(x) -> natAt x t))
+;;
+let length list =
+  let rec auxn = match n with
+    | Nil -> n
+    | _Cons(,t) -> ( aux (n+1) t)
+  in aux 0 list
+;;
+let rev list =
+  let rec auxacc = match acc with
+    | Nil -> acc
+    | Cons(h,t) -> ( aux (Cons(h,acc)) t)
+  in aux Nil list
+;;
+let rec eq l1 l2 =
+	match l1 with
+	| Nil ->
+
+		match l2 with
+		| Nil -> true
+		| _::_ -> false
+
+	| Cons(x1,x1s) ->
+
+		match l2 with
+		| Nil -> false
+		| Cons(x2,x2s) -> ( ((x1:int) = (x2:int)) && eq x1s x2s)
+
+;;
+let is_palindrome list =
+  eq list (rev list)
+
+(*type 'a node =
+    One of 'a
+  | Many of 'a node list
+
+
+(* The example from the problem: (a (b (c d) e)) *)
+;;
+let example =
+  [ One `a ; Many [ One `b ; Many [ One `c ; One `d ] ; One `e ] ]
+
+
+(* This function traverses the list, preping any encountered elements
+   to an accumulator, which flattens the list in inverse order. It can then
+   be reversed to obtain the actual flattened list. *)
+;;
+let flatten list =
+  let rec auxacc = match acc with
+    | Nil -> acc
+    | One Cons(x,t) -> aux (Cons(x,acc)) t
+    | Many Cons(l,t) -> aux (aux acc l) t
+  in
+  rev (aux Nil list)
+*)
+;;
+let rec compress l =
+	match l with
+	| Nil -> Nil
+	| Cons(x,xs) ->
+		match xs with
+		| Nil -> [x]
+		| Cons(y,ys) ->
+			(
+			if ((x:int) = (y:int)) then compress xs
+			else Cons(x,compress) xs)
+;;
+let pack list =
+
+  let rec aux current acc l =
+		match l with
+    | Nil -> Nil (* Can only be reached if original list is empty *)
+    | Cons(a,t) ->
+			match t with
+			| Nil -> (Cons(a,current))Cons(,acc)
+			| b::_ ->
+				(
+				if ((a:int) = (b:int)) then aux (Cons(a,current)) acc t
+				else aux Nil ((Cons(a,current))Cons(,acc)) t)
+  in
+
+  rev (aux Nil Nil list)
+
+;;
+let encode list =
+
+  let rec aux count acc l =
+		match l with
+    | Nil -> Nil (* Can only be reached if original list is empty *)
+		| Cons(a,t) ->
+			match t with
+    	| Nil -> Pair(count+1,a)Cons(,acc)
+    	| b::_ ->
+				(
+				if ((a:int) = (b:int)) then aux (count + 1) acc t
+				else aux 0 (Pair(count+1,a)Cons(,acc)) t)
+  in
+
+  rev (aux 0 Nil list)
+
+(*
+type 'a rle =
+  | One of 'a
+  | Many of (int * 'a)
+
+;;
+let decode list =
+
+  let rec many acc n x =
+    if n = 0 then acc else many (Cons(x,acc)) (n-1) x
+  in
+
+  let rec aux acc l =
+		match l with
+    | Nil -> acc
+		| Cons(a,t) ->
+			match a with
+    	| One(x) -> aux (Cons(x,acc)) t
+    	| Many(n,x) -> aux (many acc n x) t
+  in
+
+  aux Nil (rev list)
+
+*)
+;;
+let recduplicate = match duplicate with
+  | Nil -> Nil
+  | Cons(h,t) -> ( Cons(h,h)Cons(,duplicate) t)
+;;
+let replicate list n =
+
+  let rec prep n acc x =
+    if n = 0 then acc else ( prep (n-1) (Cons(x,acc)) x)
+  in
+
+  let rec auxacc = match acc with
+    | Nil -> acc
+    | Cons(h,t) -> ( aux (prep n acc h) t)
+  in
+
+  (* This could also be written as: List.fold_left (prep n) Nil (List.rev list) *)
+  aux Nil (rev list)
+
+
+;;
+let drop list n =
+
+  let rec auxi = match i with
+    | Nil -> Nil
+    | Cons(h,t) -> ( if i = n then aux 1 t else Cons(h,aux) (i+1) t)
+  in
+
+  aux 1 list
+
+;;
+let split list n =
+
+  let rec aux i acc l =
+		match l with
+    | Nil -> rev acc, Nil
+    | Cons(h,t) -> ( if i = 0 then rev acc, l else aux (i-1) (Cons(h,acc)) t)
+  in
+
+  aux n Nil list
+
+;;
+let slice list b e =
+
+  let rec taken = match n with
+    | Nil -> Nil
+    | Cons(h,t) -> ( if n = 0 then Nil else Cons(h,take) (n-1) t)
+  in
+
+  let rec drop n l =
+		match l with
+    | Nil -> Nil
+    | Cons(h,t) -> ( if n = 0 then l else drop (n-1) t)
+  in
+
+  take (e - b + 1) (drop (b - 1) list)
+
+;;
+let rec concat l1 l2 =
+	match l1 with
+	| Nil -> l2
+	| Cons(x,xs) -> ( Cons(x,concat) xs l2)
+;;
+let rotate list n =
+
+  let len = length list in
+  let n = if len = 0 then 0 else (n mod len + len) mod len in (* Compute a rotation value between 0 and len-1 *)
+  if n = 0 then list else
+    let a = fst (split list n) in
+    let b = snd (split list n) in (concat b a)
+
+
+;;
+let rec removeAtn = match n with
+  | Nil -> Nil
+  | Cons(h,t) -> ( if n = 1 then t else Cons(h,removeAt) (n-1) t)
+
+;;
+let rec insertAt xn = match n with
+  | Nil -> Nil
+  | Cons(h,t) -> ( if n = 1 then Cons(x,h)Cons(,t) else Cons(h,insertAt) x (n-1) t)
+
+;;
+let (--) a b =
+  let rec aux a b =
+    if a > b then Nil else Cons(a,aux) (a+1) b
+  in
+
+  if a > b then rev (aux b a) else aux a b
+
+;;
+let random n = 1337 mod n
+;;
+let min m n =
+	(
+	if ((m:int) < (n:int)) then m
+	else n)
+;;
+let rec rand_select list n =
+
+  let rec extract accn = match n with
+    | Nil -> raise Not_found
+    | Cons(h,t) -> ( if n = 0 then h, (concat acc t) else extract (Cons(h,acc)) (n-1) t)
+  in
+
+  let extract_rand list len =
+    extract Nil (random len) list
+  in
+
+  let rec aux n acc list len =
+    if n = 0 then acc else
+      let picked, rest = extract_rand list len in
+      ( aux (n-1) (Cons(picked,acc)) rest (len-1))
+  in
+
+  let len = length list in
+
+  aux (min n len) Nil list len
+
+;;
+let lotto_select n m = rand_select (1 -- m) n
+(*
+let extract k list =
+
+  let rec aux k accemit = match emit with
+    | Nil -> acc
+    | Cons(h,t) ->
+      if k = 1 then aux k (emit [h] acc) emit t else
+	let new_emit x = emit (Cons(h,x)) in
+	aux k (aux (k-1) acc new_emit t) emit t
+  in
+
+  let emit x acc = Cons(x,acc) in
+
+  aux k Nil emit list
+
+*)
+;;
+let snd x =
+	(
+	let(a, b) = x in
+	b)
+;;
+let fst x =
+	(
+	let(a, b) = x in
+	a)
+;;
+let rec map f l =
+	match l with
+	| Nil -> Nil
+	| Cons(x,xs) -> ( (f x)Cons(,map) f xs)
+(*
+let group list sizes =
+
+  let initial = map Pair(fun(size) -> size, Nil) sizes in
+
+  (* The core of the function. Prep accepts a list of groups, each with
+     the number of items that should be added, and preps the item to every
+     group that can support it, thus turning [1,a ; 2,b ; 0,c] into
+     [ [0,Cons(x,a) ; 2,b ; 0,c ] ; [1,a ; 1,Cons(x,b) ; 0,c] ; [ 1,a ; 2,b ; 0,c ]]
+     Again, in the prolog language (for which these questions are inted),
+     this function is a whole lot simpler.
+  *)
+  let prep p list =
+    let emit l acc = Cons(l,acc) in
+    let rec aux emitacc = match acc with
+      | Nil -> emit Nil acc
+      | Pair(n,l) as Cons(h,t) ->
+	let acc = if n > 0 then emit ((n-1, Cons(p,l))Cons(,t)) acc else acc in
+	aux (fun l(acc) -> emit (Cons(h,l)) acc) acc t
+    in
+    aux emit Nil list
+  in
+
+  let recaux = match aux with
+    | Nil -> [ initial ]
+    | Cons(h,t) -> concat (map (prep h) (aux t))
+  in
+
+  let all = aux list in
+
+  (* Don't forget to eliminate all group sets that have non-full groups *)
+  let complete = List.filter (List.for_all (fun Pair(x,_) -> x = 0)) all in
+
+  map (map snd) complete
+
+*)
+;;
+let rec insert cmpe = match e with
+  | Nil -> [e]
+  | Cons(h,t) -> ( if cmp e h <= 0 then Cons(e,h)Cons(,t) else Cons(h,insert) cmp e t)
+
+;;
+let rec sortcmp = match cmp with
+  | Nil -> Nil
+  | Cons(h,t) -> ( insert cmp h (sort cmp t))
+
+
+(* Sorting according to length : prep length, sort, remove length *)
+;;
+let compare x y =
+	(
+	if (x = y) then 0
+	else if ((x:int) < (y:int)) then -1
+	else 1)
+;;
+let length_sort lists =
+  let lists = map Pair(fun(list) -> length list, list) lists in
+  let lists = sort (fun a(b) -> compare (fst a) (fst b)) lists in
+  map snd lists
+
+()
+
+;;

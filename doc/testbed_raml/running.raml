@@ -1,0 +1,120 @@
+
+let fst x =
+  match x with
+  | Pair(a,b) -> a
+;;
+let snd x =
+  match x with
+  | Pair(a,b) -> b
+;;
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/running.raml
+ *
+ * Author:
+ *   Jan Hoffmann (2015)
+ *
+ * Description:
+ *   Running example in the 2015 TR.
+ *
+ *)
+
+
+;;
+let rec app l1 l2 =
+  match l1 with
+    | Nil -> l2
+    | Cons(x,xs) -> Cons(x,(app xs l2))
+
+;;
+let rec partition f l =
+  match l with
+    | Nil -> Pair(Nil,Nil)
+    | Cons(x,xs) ->
+      let cs = fst (partition f xs) in
+      let bs = snd (partition f xs) in
+      if f x then
+	Pair(cs,Cons(x,bs))
+      else
+	Pair(Cons(x,cs),bs)
+
+;;
+let rec quicksortgt = match gt with
+  | Nil -> Nil
+  | Cons(x,xs) ->
+      let ys = fst (partition (gt x) xs) in
+      let zs = snd (partition (gt x) xs) in
+      app (quicksort gt ys) (Cons(x,(quicksort gt zs)))
+
+exception Inv_arg
+;;
+type ('a,'b) ablist =
+    Acons of 'a * Pair('a,'b) ablist
+  | Bcons of 'b * Pair('a,'b) ablist
+  | Nil
+;;
+let rec abmap f g abs =
+  match abs with
+  | Acons(a,abs') -> Acons(f a, abmap f g abs')
+  | Bcons(b,abs') -> Bcons(g b, abmap f g abs')
+  | Nil -> Nil
+;;
+let asort gt abs =
+  abmap (quicksort gt) (fun(x) -> x) abs
+;;
+let asort' gt abs =
+  abmap (quicksort gt) (fun(unused) -> raise Inv_arg) abs
+;;
+let btick = abmap (fun(a) -> a) (fun(b) -> Raml.tick 2.5; b)
+;;
+let rec abfoldr f g acc abs =
+  match abs with
+  | Acons(a,abs') ->
+     let acc' = abfoldr f g acc abs' in
+     f a acc'
+  | Bcons(b,abs') ->
+     let acc' = abfoldr f g acc abs' in
+     g b acc'
+  | Nil ->
+     acc
+;;
+let cons_all abs =
+  let f x y =
+    let fa = fun x(acc) -> raise Not_found in
+    let fb = fun b(acc) -> Bcons(b+x,acc) in
+    abfoldr fa fb Nil y
+  in
+  let g x y = Bcons(x,y) in
+  abfoldr f g Nil abs
+;;
+let abs = Acons ([1;2],Bcons (3, Bcons(4, Nil)))
+;;
+let e1 () = asort  (>) (Acons ([1;2],Bcons (0, Acons Pair([3;4], Nil))))
+let e2 () = asort' (>) (Acons ([1;2],Bcons (0, Acons Pair([3;4], Nil))))
+let e3 () = btick (Acons ([1;2],Bcons (0, Acons Pair([3;4], Nil))))
+
+
+;;
+let abs = Acons (100, Bcons (2, Bcons (3, Acons(4,Nil))))
+
+
+cons_all abs
+
+
+
+;;

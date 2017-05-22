@@ -1,0 +1,139 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/echolon_form.raml
+ *
+ * Author:
+ *   Ankush Das (2015)
+ *
+ * Description:
+ *   Bring a matrix into echolon form.
+ *)
+
+;;
+let rec size l =
+	match l with
+	| Nil -> 0
+	| Cons(x,xs) -> ( 1 + (size xs))
+
+exception Out_of_Bounds
+;;
+let rec get_elem l i =
+	match l with
+	| Nil -> raise Out_of_Bounds
+	| Cons(x,xs) ->
+		if (i = 0) then x
+		else ( get_elem xs (i-1))
+;;
+let rec get_2elems l1 l2 i =
+	match l1 with
+	| Nil -> raise Out_of_Bounds
+	| Cons(x1,x1s) ->
+		match l2 with
+		| Nil -> raise Out_of_Bounds
+		| Cons(x2,x2s) ->
+			if (i = 0) then(x1, x2)
+			else ( get_2elems x1s x2s (i-1))
+;;
+let rec subtract_row_helper r1 r2 q =
+	match r1 with
+	| Nil -> Nil
+	| Cons(v1,v1s) ->
+		match r2 with
+		| Nil -> Nil
+		| Cons(v2,v2s) ->
+			( (v2 -. v1*.q)Cons(,(subtract_row_helper v1s v2s q)))
+;;
+let subtract_row r1 r2 i =
+	let(f1, f2) = get_2elems r1 r2 i in
+	let q = f2 /. f1 in
+	(subtract_row_helper r1 r2 q)
+;;
+let rec subtract_helper m row i =
+	match m with
+	| Nil -> Nil
+	| Cons(r,rs) -> ( subtract_row row r Cons(i,subtract)_helper rs row i)
+;;
+let rec concat l1 l2 =
+	match l1 with
+	| Nil -> l2
+	| Cons(x,xs) -> ( Cons(x,concat) xs l2)
+;;
+let rec tl l i =
+	if (i = 0) then l
+	else
+		match l with
+		| Nil -> raise Out_of_Bounds
+		| Cons(x,xs) -> ( tl xs (i-1))
+;;
+let rec hd_helper l i acc =
+	if (i = 0) then acc
+	else
+		match l with
+		| Nil -> raise Out_of_Bounds
+		| Cons(x,xs) -> ( hd_helper xs (i-1) (Cons(x,acc)))
+;;
+let rec reverse_helper l acc =
+	match l with
+	| Nil -> acc
+	| Cons(x,xs) -> ( reverse_helper xs (Cons(x,acc)))
+;;
+let reverse l =
+	reverse_helper l Nil
+;;
+let hd l i =
+	reverse (hd_helper l i Nil)
+;;
+let rec split_helper l i j hd =
+	if (i = j) then(reverse hd, l)
+	else
+		match l with
+		| Nil -> raise Out_of_Bounds
+		| Cons(x,xs) -> ( split_helper xs i (j+1) (Cons(x,hd)))
+;;
+let split l i =
+	split_helper l i 0 Nil
+;;
+let subtract m i =
+	let row = get_elem m i in
+	let(head, tail) = split m (i+1) in
+	( concat head (subtract_helper tail row i))
+;;
+let rec echelon_helper_old m i =
+	if (i = (size m)) then m
+	else echelon_helper_old (subtract m i) (i+1)
+;;
+let echelon_form_old m =
+	echelon_helper_old m 0
+;;
+let rec echelon_helper m i sizem =
+	match sizem with
+	| Nil -> m
+	| Cons(r,rs) -> echelon_helper (subtract m i) (i+1) rs
+;;
+let echelon_form m =
+	echelon_helper m 0 m
+;;
+let r1 = 1.Cons(,2).Cons(,3).Cons(,Nil)
+let r2 = 4.Cons(,5).Cons(,6).Cons(,Nil)
+let r3 = 7.Cons(,8).Cons(,10).Cons(,Nil)
+;;
+let m = Cons(r1,r2)Cons(,r3)Cons(,Nil)
+
+echelon_form m
+
+;;

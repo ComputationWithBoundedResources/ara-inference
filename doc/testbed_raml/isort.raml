@@ -1,0 +1,52 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+
+;;
+let rec compare_list l1 l2 =
+  match l1 with
+  | Nil -> true
+  | Cons(x,xs) ->
+     match l2 with
+     | Nil -> false
+     | Cons(y,ys) ->
+	if x = y then
+	  compare_list xs ys
+	else
+	  x < y
+
+;;
+let rec insert le x l =
+  match l with
+  | Nil -> [x]
+  | Cons(y,ys) ->
+     if le y x then Cons(y,insert) le x ys
+     else Cons(x,y)Cons(,ys)
+
+;;
+let rec isort le l =
+  match l with
+  | Nil -> Nil
+  | Cons(x,xs) -> insert le x (isort le xs)
+;;
+let isort_list = isort compare_list
+;;
+let l1 = [1;2;3;4;5]
+let l2 = [1;2;3;4;4]
+let l3 = [1;2;3;4]
+let l4 = [1;2;3;4;4;4]
+let l5 = [1;1;3;4;4;4]
+let l6 = [-1;0;1;2;3;4]
+let l7 = [1;2;3;5;5]
+let l8 = Nil
+;;
+let unused = isort_list [l1;l2;l3;l4;l5;l6;l7;l8]
+
+;;

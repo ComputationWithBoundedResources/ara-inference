@@ -1,0 +1,45 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/hello_world.raml
+ *
+ * Author:
+ *   Jan Hoffmann (2015)
+ *
+ * Description:
+ *   Hello world with ASCII.
+ *)
+
+;;
+let rec app l1 l2 =
+  match l1 with
+    | Nil -> l2
+    | Cons(x,xs) ->
+      let unused = Raml.tick(1.2) in
+      Cons(x,(app xs l2))
+;;
+let hello = [72;101;108;108;111]
+let world = [87;111;114;108;100]
+
+
+;;
+let hello' = app hello [32] in
+let world' = app world [33] in
+app hello' world'
+
+
+;;

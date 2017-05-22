@@ -1,0 +1,93 @@
+
+let fst x =
+  match x with
+  | Pair(a,b) -> a
+;;
+let snd x =
+  match x with
+  | Pair(a,b) -> b
+;;
+type Unit = Unit
+
+;;
+type nat = 0 | S of nat
+
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+
+;;
+type 'a option = None | Some of 'a
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/avanzini.raml
+ *
+ * Author:
+ *   Jan Hoffmann, Shu-Chun Weng (2015)
+ *
+ * Description:
+ *   Example from the paper "Analysing the Complexity of Functional Programs: Higher-Order Meets First-Order"
+ *   by Avanzini et al. which appeared at ICFP'15.
+ *
+ *)
+;;
+let rec app l1 l2 =
+  match l1 with
+    | Nil -> l2
+    | Cons(x,xs) -> Cons(x,(app xs l2))
+
+;;
+let rec partition f l =
+  match l with
+    | Nil -> Pair(Nil,Nil)
+    | Cons(x,xs) ->
+      let cs = fst (partition f xs) in
+      let bs = snd (partition f xs) in
+      if f x then
+	Pair(cs,Cons(x,bs))
+      else
+	Pair(Cons(x,cs),bs)
+
+;;
+let rec quicksortgt = match gt with
+  | Nil -> Nil
+  | Cons(x,xs) ->
+      let ys = fst (partition (gt x) xs) in
+      let zs = snd (partition (gt x) xs) in
+      app (quicksort gt ys) (Cons(x,(quicksort gt zs)))
+;;
+type ('a, 'b) either = Left of 'a | Right of 'b
+;;
+let comp f x g = fun(z) -> f x (g z)
+;;
+let rec walk f xs =
+  match xs with
+    | Nil -> (fun(z) ->  z)
+    | Cons(x,ys) -> match x with
+	| Left(unused) -> fun(y) -> comp (walk f) ys (fun(z) -> Cons(x,z)) y
+	| Right(l) ->
+	  let x' = Right (quicksort f l) in
+	  fun(y) -> comp (walk f) ys (fun(z) -> Cons(x',z)) y
+;;
+let rev_sort f l = walk f l Nil
+;;
+let unused = rev_sort (fun a(b) -> a <= b) [Right [3;2;1]; Right [2;1;0;-1]; Left 1; Left 2; Left 3; Right Nil]
+
+
+(* let rec walk xs = *)
+(*   match xs with *)
+(*     | Nil -> (fun(z) ->  z) *)
+(*     | Cons(x,ys) -> fun(y) -> comp walk ys (fun(z) -> Cons(x,z)) y  *)
+
+(* let rev l = walk l Nil  *)
+
+
+;;

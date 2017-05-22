@@ -1,0 +1,52 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/constant_time/cond_rev.raml
+ *
+ * Author:
+ *   Van Chan Ngo (2016)
+ *
+ * Description:
+ *
+ *)
+;;
+let rev l =
+	let rec rev_aux l acc =
+		match l with
+		| Nil -> let unused = Raml.tick(2.0) in acc
+		| Cons(h,t) ->  let unused = Raml.tick(4.0) in
+		  let x = Cons(h,acc) in rev_aux t x
+	in rev_aux l Nil
+
+(**
+ * [cond_rev b l1 l2] reverses l1 then l2 if b is true.
+ * Otherwise reverses l2 then l1. Finally, it returns unit.
+ *)
+;;
+let cond_rev l1 l2 b =
+	let r =
+		if b then (rev l1; l2)
+		else (rev l2; l1)
+	in (rev r; ())
+
+
+
+
+
+
+
+;;

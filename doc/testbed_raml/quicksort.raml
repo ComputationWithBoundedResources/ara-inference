@@ -1,0 +1,128 @@
+
+let fst x =
+  match x with
+  | Pair(a,b) -> a
+;;
+let snd x =
+  match x with
+  | Pair(a,b) -> b
+;;
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/quicksort.raml
+ *
+ * Author:
+ *   Jan Hoffmann, Shu-Chun Weng (2014)
+ *
+ * Description:
+ *   Tony Hoare's quicksort for lists.
+ *
+ *)
+
+
+;;
+let rec app l1 l2 =
+  match l1 with
+    | Nil -> l2
+    | Cons(x,xs) -> Cons(x,(app xs l2))
+
+;;
+let rec partition f l =
+  match l with
+    | Nil -> Pair(Nil,Nil)
+    | Cons(x,xs) ->
+      let cs = fst (partition f xs) in
+      let bs = snd (partition f xs) in
+      
+      if f x then
+	Pair(cs,Cons(x,bs))
+      else
+	Pair(Cons(x,cs),bs)
+
+;;
+let rec quicksortgt = match gt with
+  | Nil -> Nil
+  | Cons(x,xs) ->
+      let ys = fst (partition (gt x) xs) in
+      let zs = snd (partition (gt x) xs) in
+      app (quicksort gt ys) (Cons(x,(quicksort gt zs)))
+
+;;
+let unused =
+  quicksort (fun a(b) -> a <= b)  [9;8;7;6;5;4;3;2;1]
+
+
+
+
+;;
+let compare a b =
+  let a1 = fst (a) in
+  let a2 = snd (a) in
+  let b1 = fst (b) in
+  let b2 = snd (b) in
+  if not (a1=b1) then
+    a1 < b1
+  else
+    a2 <= b2
+;;
+let quicksort_pairs = quicksort compare
+
+;;
+let unused =
+  quicksort_pairs [Pair(1,2);Pair(3,4);Pair(3,5);Pair(1,1)]
+
+
+
+
+;;
+let rec compare_list l1 l2 =
+  match l1 with
+    | Nil -> true
+    | Cons(x,xs) ->
+      match l2 with
+	| Nil -> false
+	| Cons(y,ys) ->
+	  if x = y then
+	    compare_list xs ys
+	  else
+	    x <= y
+;;
+let quicksort_list = quicksort compare_list
+;;
+let ll =
+[ [4;1;1]
+; [4;1]
+; [4]
+; [2;1]
+; [1;3;3;3]
+; [1;2;3;4]
+; [1;2]
+]
+;;
+let ll' =
+[ [1;1;1;1;1]
+; [1;1;1;1]
+; [1;1;1]
+; [1;1]
+; [1]
+]
+
+;;
+let unused =
+  quicksort_list  ll'
+;;

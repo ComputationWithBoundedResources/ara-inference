@@ -1,0 +1,167 @@
+
+let fst x =
+  match x with
+  | Pair(a,b) -> a
+;;
+let snd x =
+  match x with
+  | Pair(a,b) -> b
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Case  * *
+ *
+ * File:
+ *   examples/aws/sort_average.raml
+ *
+ * Author:
+ *   Jan Hoffmann, Ronghui Gu (2015)
+ *
+ * Description:
+ *   Using Amazon's DynamoDB to sort students according to their avarage grades.
+ *)
+;;
+type ('a,'b) exception = Not_found of 'a * 'b
+;;
+type 'a option = None | Some of 'a
+;;
+let db_query student_id course_id =
+    Some 1.0
+;;
+let rec app l1 l2 =
+  match l1 with
+    | Nil -> l2
+    | Cons(x,xs) -> Cons(x,(app xs l2))
+;;
+let rec partition gt acc l =
+  match l with
+    | Nil -> acc
+    | Cons(x,xs) ->
+      let (cs,bs,acc) = acc in
+      let Pair(is_greater,acc') = gt x acc in
+      if is_greater then
+  	partition gt (cs,Cons(x,bs),acc') xs
+      else
+  	partition gt (Cons(x,cs),bs,acc') xs
+;;
+let rec quicksort gt acc l = match l with
+  | Nil -> Pair(Nil,acc)
+  | Cons(x,xs) ->
+    let ys, zs, acc' = partition (gt x) (Nil,Nil,acc) xs in
+    let l1 = fst (quicksort gt acc' ys) in
+    let acc'' = snd (quicksort gt acc' ys) in
+    let l2 = fst (quicksort gt acc'' zs) in
+    let acc''' = snd (quicksort gt acc'' zs) in
+    (app  (Cons(x,l1)) l2, acc''')
+
+;;
+let rec foldl f acc l =
+  match l with
+    | Nil -> acc
+    | Cons(x,xs) -> foldl f (f acc x) xs
+;;
+let average_grade student_id course_ids =
+  let f acc cid =
+    let length = fst (acc) in
+    let sum = snd (acc) in
+    let grade = match db_query student_id cid with
+      | Some(q) -> q
+      | None -> raise (Not_found Pair(student_id,cid))
+    in
+    Pair(length +. 1.0, sum +. grade)
+  in
+  let(length,sum) = foldl f Pair(0.0,0.0) course_ids in
+  sum /. length
+;;
+let greater_eq sid1 sid2 course_ids =
+  Pair(average_grade sid1 course_ids >= average_grade sid2 course_ids, course_ids)
+;;
+let sort_students student_ids course_ids =
+  let Pair(sorted_sids, acc) = quicksort greater_eq course_ids student_ids in
+  sorted_sids
+
+;;
+let rec map f l =
+  match l with
+    | Nil -> Nil
+    | Cons(x,xs) -> (f x)Cons(,(map f xs))
+;;
+let make_table student_ids course_ids =
+
+  let rec mk_table sids cids =
+    match sids with
+      | Nil -> Nil
+      | Cons(x,xs) ->
+	let cid_map =
+	  let f cid =
+	    let grade =
+	      match db_query x cid with
+	  	| Some(q) -> q
+	  	| None -> Not_found(x,cid)
+	    in
+	    Pair(cid,grade)
+	  in
+	  map f cids
+	in
+	Pair(x,cid_map)Cons(,(mk_table xs cids))
+  in
+  mk_table student_ids course_ids
+
+;;
+let rec find f l =
+  match l with
+    | Nil -> raise (Not_found Pair(-1,-1))
+    | Cons(x,xs) ->
+      let key = fst (x) in
+      let value = snd (x) in
+      if f key then
+	value
+      else
+	find f xs
+;;
+let lookup sid cid table =
+  let cid_map = find (fun (id:int) -> id = sid) table in
+  find (fun (id:int) -> id = cid) cid_map
+
+;;
+let average_grade' student_id course_ids table =
+  let f acc cid =
+    let (length,sum,table) = acc in
+    let grade = lookup student_id cid table in
+    (length +. 1.0, sum +. grade, table)
+  in
+  let (length,sum,table') = foldl f (0.0,0.0,table) course_ids in
+  Pair(sum /. length,table')
+
+;;
+let greater_eq' course_ids sid1 sid2 table =
+  let(grade1, table1) = average_grade' sid1 course_ids table in
+  let(grade2, table2) = average_grade' sid2 course_ids table1 in
+  Pair(grade1 >= grade2, table2)
+
+;;
+let sort_students_efficient student_ids course_ids =
+  let Pair(sorted_sids, acc) = quicksort (greater_eq' course_ids)  (make_table student_ids course_ids) student_ids in
+  sorted_sids
+;;
+let students = [1;2;3;4;5;6]
+let courses = [12;13;14;15;16;17;18]
+;;
+let unused = sort_students students courses
+
+(* let unused = sort_students_efficient students courses *)
+
+
+
+;;

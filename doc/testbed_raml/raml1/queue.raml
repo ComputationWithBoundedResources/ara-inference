@@ -1,0 +1,157 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/queue.raml
+ *
+ * Author:
+ *   Ankush Das, Jan Hoffmann (2015)
+ *
+ * Description:
+ *   A breadth-first traversal of a tree using a FIFO queue.
+ *
+ *   A nice example that demonstrates the strengths of amortized
+ *   analysis is the analysis of algorithms that uses a FIFO queue or
+ *   just a queue.  A queue is usually implemented as a pair of lists
+ *   that consists of an in-queue and an out-queue: If an element is
+ *   enqueued then it is added to the top of the in-queue.  If an
+ *   element is dequeued then it is removed from the top of the
+ *   out-queue.  If the out-queue is empty then the in-queue is copied
+ *   over to the out-queue.
+ *
+ *   A standard example of the use of a queue is the breadth-first
+ *   traversal of a tree: One puts the tree in the queue and then
+ *   proceeds by dequeing an element, processing its root, and
+ *   enqueueing its children.
+ *
+ *   Here we use a compact representaition of special trees that has the
+ *   type (int,int,L(int),L(int)).  The size of the tree is quadratic in the
+ *   lengths of the lists.  For example (1,1,[2,3,4,5],[2,3,4,5])
+ *   defines the tree
+ *
+ *              Pair(1,1)
+ *             /     \
+ *          Pair(2,1)     Pair(2,2)
+ *           /       /    \
+ *        Pair(3,1)   Pair(3,2)   Pair(3,3)
+ *         /       /       /   \
+ *      Pair(4,1)   Pair(4,2)   Pair(4,3)  Pair(4,4)
+ *       /       /       /      /   \
+ *    Pair(5,1)   Pair(5,2)   Pair(5,3)  Pair(5,4)  Pair(5,5)
+ *
+ *   See the function children for details.
+ *
+ *   This compact representation of trees leads to a quadratic resource
+ *   behavior.
+ *)
+
+;;
+let empty x =
+	Pair(Nil, Nil)
+;;
+let enqueue x queue =
+	let(inq, outq) = queue in
+	( Pair(Cons(x,inq), outq))
+;;
+let rec enqueues l queue =
+	match l with
+	| Nil -> queue
+	| Cons(x,xs) -> ( enqueues xs (enqueue x queue))
+;;
+let rec copyover queue =
+	let(inq, outq) = queue in
+	match inq with
+	| Nil -> Pair(Nil, outq)
+	| Cons(x,xs) -> ( copyover (xs, (Cons(x,outq))))
+;;
+let rec dequeue queue =
+	let(inq, outq) = queue in
+	match outq with
+	| Nil ->
+
+		match inq with
+		| Nil -> Pair(Pair(Nil, Nil), Nil)
+		| Cons(x,xs) -> ( dequeue (copyover ((Cons(x,xs)), Nil)))
+
+	| Cons(y,ys) -> ( Pair(Pair(inq, ys), [y]))
+;;
+let children c =
+	let (a, b, l1, l2) = c in
+	(Pair(a, b),
+	match l1 with
+	| Nil ->
+
+		match l2 with
+		| Nil -> Nil
+		| Cons(y,ys) -> ( [(y, b, Nil, ys)])
+
+	| Cons(x,xs) ->
+
+		match l2 with
+		| Nil -> Nil
+		| Cons(y,ys) -> ( [(x, b, Nil, xs); (x, y, xs, ys)])
+
+	)
+;;
+let rec breadth queue =
+	let(queue', elem) = dequeue queue in
+	match elem with
+	| Nil -> Nil
+	| z::_ ->
+		let(x, ys) = children z in
+		( Cons(x,(breadth (enqueues ys queue'))))
+;;
+let startBreadth xs =
+	match xs with
+	| Nil -> Nil
+	| Cons(x,xs) -> ( breadth (enqueue (x, x, xs, xs) (empty ())))
+;;
+let rec appD xs ys =
+	match xs with
+	| Nil -> ys
+	| Cons(x,xs) -> ( Cons(x,appD) xs ys)
+;;
+let rec depth d =
+	let (a, b, l1, l2) = d in
+	let(x, zs) = children (a, b, l1, l2) in
+	x::
+	(
+		match zs with
+		| Nil -> Nil
+		| Cons(z1,zs) ->
+			(
+			match zs with
+			| Nil -> depth z1
+			| z2::_ -> appD (depth z1) (depth z2))
+	)
+;;
+let startDepth xs =
+	match xs with
+	| Nil -> Nil
+	| Cons(x,xs) -> ( depth (x, x, xs, xs))
+
+startBreadth [1;2;3;4;5;6;7]
+
+
+
+
+
+
+
+
+
+
+;;

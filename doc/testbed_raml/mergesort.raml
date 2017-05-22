@@ -1,0 +1,93 @@
+
+let fst x =
+  match x with
+  | Pair(a,b) -> a
+;;
+let snd x =
+  match x with
+  | Pair(a,b) -> b
+;;
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/mergesort.raml
+ *
+ * Author:
+ *   Jan Hoffmann (2015)
+ *
+ * Description:
+ *   Mergesort with an auxiliary variable that is the logarithm of
+ *   the length of the input list.
+ *
+ *)
+
+;;
+let rec split l =
+  match l with
+    | Nil -> Pair(Nil,Nil)
+    | Cons(x1,xs) ->
+      match xs with
+        | Nil -> Pair([x1],Nil)
+        | Cons(x2,xs') ->
+	  let(l1,l2) = split xs' in
+          (Cons(x1,l1),Cons(x2,l2))
+;;
+let rec merge compare l1 l2 =
+  match l1 with
+    | Nil -> l2
+    | Cons(x,xs) ->
+      match l2 with
+        | Nil -> (Cons(x,xs))
+        | Cons(y,ys) ->
+	  if compare x y then
+	    Cons(x,(merge compare xs l2))
+          else
+	    Cons(y,(merge compare l1 ys))
+;;
+let rec mergesort compare _log_l l =
+  Rnat.ifz _log_l (fun () -> Nil)
+    (fun _log_l' ->
+      match l with
+	| Nil -> raise Not_found
+	| Cons(x1,xs) ->
+	  match xs with
+            | Nil -> [x1]
+            | (Cons(x2,xs')) ->
+              let l1 = fst (split l) in
+              let l2 = snd (split l) in
+              let l1' = mergesort compare _log_l' l1 in
+	      let l2' = mergesort compare _log_l' l2 in
+	      merge compare l1' l2';
+    )
+;;
+let rec compare_list l1 l2 =
+  match l1 with
+    | Nil -> true
+    | Cons(x,xs) ->
+      match l2 with
+	| Nil -> false
+	| Cons(y,ys) ->
+	  if x = y then
+	    compare_list xs ys
+	  else
+	    x <= y
+;;
+let mergesort_list = mergesort compare_list
+
+
+
+mergesort (>) (Rnat.of_int 6) [1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17]
+
+;;

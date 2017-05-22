@@ -1,0 +1,258 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/matrix.raml
+ *
+ * Author:
+ *   Ankush Das (2015)
+ *
+ * Description:
+ *   Several operation on matrices that represented as lists of lists.
+ *)
+
+;;
+type 'a matrix = int * int * 'a list list
+;;
+let rec size l =
+	match l with
+	| Nil -> 0
+	| Cons(x,xs) -> ( 1 + (size xs))
+;;
+let rec check_lists v n =
+	match v with
+	| Nil -> true
+	| Cons(r,rs) ->
+		(
+		if (size r = n) then check_lists rs n
+		else false)
+;;
+let check_mat m n v =
+	if (size v = m) then
+		check_lists v n
+	else false
+;;
+let check_matrix mat =
+	let (m, n, v) = mat in
+	check_mat m n v
+
+exception Incompatible_Dimensions
+;;
+let construct_matrix m n v =
+	if (check_mat m n v) then
+		(m, n, v)
+	else
+		raise Incompatible_Dimensions
+
+exception Out_of_Bounds
+;;
+let rec get_elem l i =
+	match l with
+	| Nil -> raise Out_of_Bounds
+	| Cons(x,xs) ->
+		if (i = 0) then x
+		else ( get_elem xs (i-1))
+;;
+let get_elem m i j =
+	let (r, c, v) = m in
+	let l = get_elem v i in
+	get_elem l j
+;;
+type 'a matrix_arith_expr =
+	  Constant of int * int * 'a list list
+	| Plus of 'a matrix_arith_expr * 'a matrix_arith_expr
+	| Minus of 'a matrix_arith_expr * 'a matrix_arith_expr
+	| Mult of 'a matrix_arith_expr * 'a matrix_arith_expr
+;;
+let op sign x1 x2 =
+	(
+	if (sign > 0) then x1 + x2
+	else x1 - x2)
+;;
+let rec rec_list l1 l2 sign =
+	match l1 with
+	| Nil -> Nil
+	| Cons(x1,x1s) ->
+		match l2 with
+		| Nil -> Nil
+		| Cons(x2,x2s) -> ( (op sign x1 x2)Cons(,(rec_list x1s x2s sign)))
+;;
+let rec rec_mat m1 m2 sign =
+	match m1 with
+	| Nil -> Nil
+	| Cons(r1,r1s) ->
+		match m2 with
+		| Nil -> Nil
+		| Cons(r2,r2s) -> ( (rec_list r1 r2 sign)Cons(,(rec_mat r1s r2s sign)))
+;;
+let check_sanity m1 m2 =
+	let (r1, c1, v1) = m1 in
+	let (r2, c2, v2) = m2 in
+	check_matrix m1 && check_matrix m2 &&
+	r1 = r2 && c1 = c2
+;;
+let plus m1 m2 =
+	if check_sanity m1 m2 then
+		let (m, n, v1) = m1 in
+		let (m', n', v2) = m2 in
+		let v = rec_mat v1 v2 1 in
+		construct_matrix m n v
+	else raise Incompatible_Dimensions
+;;
+let minus m1 m2 =
+	if check_sanity m1 m2 then
+		let (m, n, v1) = m1 in
+		let	(m', n', v2) = m2 in
+		let v = rec_mat v1 v2 (-1) in
+		construct_matrix m n v
+	else raise Incompatible_Dimensions
+;;
+let rec app l x =
+	match l with
+	| Nil -> Cons(x,Nil)
+	| Cons(y,ys) -> ( Cons(y,(app ys x)))
+;;
+let rec app_row m row =
+	match row with
+	| Nil -> m
+	| Cons(x,xs) ->
+		match m with
+		| Nil -> ( (Cons(x,Nil))Cons(,(app_row Nil xs)))
+		| Cons(r,rs) -> ( (app r x)Cons(,(app_row rs xs)))
+;;
+let rec transpose_helper m m_trans =
+	match m with
+	| Nil -> m_trans
+	| Cons(r,rs) -> ( transpose_helper rs (app_row m_trans r))
+;;
+let transpose m =
+	transpose_helper m Nil
+;;
+let rec reverse_helper l acc =
+	match l with
+	| Nil -> acc
+	| Cons(x,xs) -> ( reverse_helper xs (Cons(x,acc)))
+;;
+let reverse l =
+	reverse_helper l Nil
+;;
+let rec reverse_rows_helper m m_rev =
+	match m with
+	| Nil -> m_rev
+	| Cons(r,rs) -> ( reverse_rows_helper rs (reverse Cons(r,m)_rev))
+;;
+let reverse_rows m =
+	reverse (reverse_rows_helper m Nil)
+;;
+let rec app_start m row =
+	match row with
+	| Nil -> reverse_rows m
+	| Cons(x,xs) ->
+		match m with
+		| Nil -> ( [x]Cons(,(app_start Nil xs)))
+		| Cons(r,rs) -> ( (Cons(x,r))Cons(,(app_start rs xs)))
+;;
+let rec new_transpose_helper m m_trans =
+	match m with
+	| Nil -> m_trans
+	| Cons(r,rs) -> ( new_transpose_helper rs (app_start m_trans r))
+;;
+let new_transpose m =
+	reverse_rows (new_transpose_helper m Nil)
+;;
+let rec prod l1 l2 =
+	match l1 with
+	| Nil -> 0
+	| Cons(x1,x1s) ->
+		match l2 with
+		| Nil -> 0
+		| Cons(x2,x2s) -> ( (x1 * x2) + (prod x1s x2s))
+;;
+let rec prod_mat row mat =
+	match mat with
+	| Nil -> Nil
+	| Cons(r,rs) -> ( (prod row r)Cons(,(prod_mat row rs)))
+;;
+let rec mat_mult m1 m2 =
+	let m2t = transpose m2 in
+	match m1 with
+	| Nil -> Nil
+	| Cons(r,rs) -> ( (prod_mat r m2t)Cons(,(mat_mult rs m2)))
+;;
+let rec lineMult n l1 l2 =
+	match l1 with
+	| Nil -> Nil
+	| Cons(x,xs) ->
+		match l2 with
+		| Nil -> x*Cons(n,lineMult) n xs Nil
+		| Cons(y,ys) -> ( x*n + Cons(y,lineMult) n xs ys)
+;;
+let rec computeLine line m acc =
+	match line with
+	| Nil -> acc
+	| Cons(x,xs) ->
+		match m with
+		| Nil -> Nil
+		| Cons(l,ls) -> ( computeLine xs ls (lineMult x l acc))
+;;
+let rec mat_mult_jan m1 m2 =
+	match m1 with
+	| Nil -> Nil
+	| Cons(l,ls) -> ( computeLine l m2 NilCons(,mat)_mult_jan ls m2)
+;;
+let check_mult_sanity m1 m2 =
+	check_matrix m1 && check_matrix m2 &&
+	let (r1, c1, v1) = m1 in
+	let (r2, c2, v2) = m2 in
+	c1 = r2
+;;
+let mult m1 m2 =
+	if check_mult_sanity m1 m2 then
+		let (m, n, v1) = m1 in
+		let (m', n', v2) = m2 in
+		let v = mat_mult_jan v1 v2 in
+		construct_matrix m n v
+	else raise Incompatible_Dimensions
+;;
+let rec evaluate expr =
+	match expr with
+	| Constant(m, n, v) -> construct_matrix m n v
+	| Plus(e1, e2) -> plus (evaluate e1) (evaluate e2)
+	| Minus(e1, e2) -> minus (evaluate e1) (evaluate e2)
+	| Mult(e1, e2) -> mult (evaluate e1) (evaluate e2)
+;;
+let rec del l i =
+	match l with
+	| Nil -> raise Out_of_Bounds
+	| Cons(x,xs) ->
+		(
+		if (i = 0) then xs
+		else Cons(x,del) xs (i-1))
+;;
+let rec submat m i j =
+	match m with
+	| Nil -> Nil
+	| Cons(r,rs) ->
+		(
+		if (i = 0) then submat rs (i-1) j
+		else (del r j)Cons(,(submat rs (i-1)) j))
+;;
+let remFirstRow m =
+	match m with
+	| Nil -> raise Out_of_Bounds
+	| Cons(r,rs) -> rs
+
+()
+
+;;

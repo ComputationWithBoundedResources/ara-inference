@@ -59,15 +59,15 @@ let eval_simpl expr =
     match expr with
       | Nat(n) -> n
       | Add(e1,e2) ->
-	let n1 = eval e1 in
-	let n2 = eval e2 in
-	add n1 n2
+	      let n1 = eval e1 in
+	      let n2 = eval e2 in
+	      add n1 n2
       | Sub(e1,e2) ->
-	let n1 = eval e1 in
-	let n2 = eval e2 in
-	sub n1 n2
-  in
-  eval expr
+	      let n1 = eval e1 in
+	      let n2 = eval e2 in
+	      sub n1 n2
+        in
+        eval expr
 
 ;;
 let rec eval expr =
@@ -78,7 +78,7 @@ let rec eval expr =
 
 	match n1 with
 	  | Zero -> eval e2
-	  | Succ(n) -> Succ (eval (Add(Nat n, e2)) )
+	  | Succ(n) -> Succ(eval (Add(Nat n, e2)))
 
     | Sub(e1,e2) ->
       let n2 = eval e2 in
@@ -90,24 +90,7 @@ let rec eval expr =
 
 	      match n1 with
 		| Zero -> Zero
-		| Succ(n) -> eval (Sub(Nat n, Nat m))
+		| Succ(n) -> eval(Sub(Nat n, Nat m))
 
-
-;;
-let rec nat_to_int n =
-  match n with
-    | Zero -> 0
-    | Succ(n) ->
-      let i = nat_to_int n in
-      i + 1
-
-;;
-let one = Nat (Succ Zero)
-;;
-let two = Nat (Succ (Succ Zero)	)
-
-;;
-let unused = let n = eval (Sub ((Add (Add(two,two), Add(two, one))), two)) in
-	nat_to_int n
 
 ;;

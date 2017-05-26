@@ -1,0 +1,24 @@
+(VAR x y xs ys)
+
+(DATATYPES
+   a = µX. < pair(X,X) >
+   b = µX. < nil, cons(a,X) >
+ )
+
+(SIGNATURES
+   append :: b x b -> b
+   attach :: a x b -> b
+   pairs :: b -> b
+ )
+
+
+(RULES
+append(nil,ys) -> ys
+append(cons(x,xs),ys) -> cons(x,append(xs,ys))
+
+attach(x,nil) -> nil
+attach(x,cons(y,ys)) -> cons(pair(x,y),attach(x,ys))
+
+pairs(nil) -> nil
+pairs(cons(x,xs)) -> append(attach(x,xs),pairs(xs))
+)

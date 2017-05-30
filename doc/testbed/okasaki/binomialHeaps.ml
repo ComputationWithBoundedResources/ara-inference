@@ -4,6 +4,11 @@ type Bool = True | False;;
 type Nat = 0 | S of Nat;;
 type Elem = Elem of Nat;;
 type Tree = Node of Nat * Elem * Tree list;;
+(* type a' Error = Error of a';; *)
+type ('a,'b) Pair = Pair of 'a * 'b;;
+
+let empty = Nil
+;;
 
 let isEmtpy ls =
     match ls with
@@ -53,7 +58,7 @@ let link t1 t2 =
 
 let rec insTree t xs = match xs with
   | Nil -> Cons(t,Nil)
-  | Cons(t',ts') -> match leq (S(rank t)) (rank t') with
+  | Cons(t',ts') -> match lt (rank t) (rank t') with
     | True -> Cons(t,Cons(t',ts'))
     | False -> insTree (link t t') ts'
                        ;;
@@ -66,11 +71,40 @@ let rec merge ts1 ts2 = match ts1 with
   | Nil -> ts2
   | Cons(t1,ts1') -> match ts2 with
   | Nil -> ts1
-  | Cons(t2,ts2') -> match leq S(rank t1) (rank t2) with
+  | Cons(t2,ts2') -> match lt (rank t1) (rank t2) with
   | True -> Cons(t1,(merge ts1' ts2))
-  | False -> match leq S(rank t2) (rank t1) with
+  | False -> match lt (rank t2) (rank t1) with
   | True -> Cons(t2,(merge ts1 ts2'))
   | False  -> insTree (link t1 t2) (merge ts1' ts2')
                      ;;
 
 
+let rec removeMinTree xs = match xs with
+  (* | Nil -> Error *)
+  | Cons(t,ts) -> match ts with
+  | Nil -> Pair(t,Nil)
+  | Cons(x,xx) -> match removeMinTree ts with
+    | Pair(t',ts') -> match leqElem (root t) (root t') with
+      | True -> Pair(t,ts)
+      | False -> Pair(t',Cons(t,ts'))
+            ;;
+
+let findMin ts = match removeMinTree ts with
+ | Pair(t,y) -> root t
+ ;;
+
+let rec app xss ys = match xss with
+  | Nil -> ys
+  | Cons(x,xs) -> Cons(x, app xs ys)
+;;
+
+let rec rev xss = match xss with
+  | Nil -> Nil
+  | Cons(x,xs) -> app (rev xs) (Cons(x,Nil))
+;;
+
+
+let deleteMin ts = match removeMinTree ts with
+  | Pair(nd,ts2) -> match nd with
+  | Node(r,x,ts1) -> merge (rev ts1) ts2
+;;

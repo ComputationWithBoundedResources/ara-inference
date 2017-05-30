@@ -1,0 +1,127 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x4 x3 x2 x1 x6 x7 x8 x9 x5 x12 x16 x20 x19 x25 x33 x41 x11 x10 x14 x15 x13
+    x34 x50 x66 x30 x24 x32)
+(RULES
+    cond_deleteMin_ts(Pair(Node(x4,x3,x2),x1)) -> merge#2(rev#1(x2),x1)
+    rev#1(Nil()) -> Nil()
+    rev#1(Cons(x2,x1)) -> app#2(rev#1(x1),Cons(x2,Nil()))
+    app#2(Nil(),Cons(x2,Nil())) -> Cons(x2,Nil())
+    app#2(Cons(x6,x4),Cons(x2,Nil())) -> Cons(x6,app#2(x4,Cons(x2,Nil())))
+    cond_removeMinTree_xs_3(True()
+                           ,Node(x7,x8,x9)
+                           ,Cons(x6,x5)
+                           ,Node(x2,x3,x4)
+                           ,x1) -> Pair(Node(x7,x8,x9),Cons(x6,x5))
+    cond_removeMinTree_xs_3(False()
+                           ,Node(x7,x8,x9)
+                           ,Cons(x6,x5)
+                           ,Node(x2,x3,x4)
+                           ,x1) -> Pair(Node(x2,x3,x4),Cons(Node(x7,x8,x9),x1))
+    cond_removeMinTree_xs_2(Pair(Node(x12,x16,x20),x19)
+                           ,Node(x25,x33,x41)
+                           ,Cons(x7,x11)) ->
+      cond_removeMinTree_xs_3(leqElem#2(x33,x16)
+                             ,Node(x25,x33,x41)
+                             ,Cons(x7,x11)
+                             ,Node(x12,x16,x20)
+                             ,x19)
+    removeMinTree#1(Cons(x1,Nil())) -> Pair(x1,Nil())
+    removeMinTree#1(Cons(x3,Cons(x2,x1))) ->
+      cond_removeMinTree_xs_2(removeMinTree#1(Cons(x2,x1)),x3,Cons(x2,x1))
+    cond_merge_ts1_ts2_3(True()
+                        ,Cons(Node(x10,x11,x12),x9)
+                        ,Node(x6,x7,x8)
+                        ,x5
+                        ,Node(x2,x3,x4)
+                        ,x1) -> Cons(Node(x2,x3,x4)
+                                    ,merge#2(Cons(Node(x10,x11,x12),x9),x1))
+    cond_merge_ts1_ts2_3(False()
+                        ,Cons(Node(x10,x11,x12),x9)
+                        ,Node(x6,x7,x8)
+                        ,x5
+                        ,Node(x2,x3,x4)
+                        ,x1) -> insTree#2(link#2(Node(x6,x7,x8),Node(x2,x3,x4))
+                                         ,merge#2(x5,x1))
+    cond_merge_ts1_ts2_2(True()
+                        ,Cons(Node(x14,x15,x16),x13)
+                        ,Cons(Node(x10,x11,x12),x9)
+                        ,Node(x6,x7,x8)
+                        ,x5
+                        ,Node(x2,x3,x4)
+                        ,x1) -> Cons(Node(x6,x7,x8)
+                                    ,merge#2(x5,Cons(Node(x10,x11,x12),x9)))
+    cond_merge_ts1_ts2_2(False()
+                        ,Cons(Node(x14,x15,x16),x13)
+                        ,Cons(Node(x10,x11,x12),x9)
+                        ,Node(x8,x7,x6)
+                        ,x5
+                        ,Node(x4,x3,x2)
+                        ,x1) -> cond_merge_ts1_ts2_3(lt#2(x4,x8)
+                                                    ,Cons(Node(x14,x15,x16),x13)
+                                                    ,Node(x8,x7,x6)
+                                                    ,x5
+                                                    ,Node(x4,x3,x2)
+                                                    ,x1)
+    merge#2(Nil(),x2) -> x2
+    merge#2(Cons(x4,x2),Nil()) -> Cons(x4,x2)
+    merge#2(Cons(Node(x34,x50,x66),x30),Cons(Node(x16,x24,x32),x14)) ->
+      cond_merge_ts1_ts2_2(lt#2(x34,x16)
+                          ,Cons(Node(x34,x50,x66),x30)
+                          ,Cons(Node(x16,x24,x32),x14)
+                          ,Node(x34,x50,x66)
+                          ,x30
+                          ,Node(x16,x24,x32)
+                          ,x14)
+    cond_insTree_t_xs_1(True()
+                       ,Node(S(x10),x9,Cons(Node(x5,x6,x7),x8))
+                       ,Node(x4,x3,x2)
+                       ,x1) -> Cons(Node(S(x10),x9,Cons(Node(x5,x6,x7),x8))
+                                   ,Cons(Node(x4,x3,x2),x1))
+    cond_insTree_t_xs_1(False()
+                       ,Node(S(x9),x8,Cons(Node(x4,x5,x6),x7))
+                       ,Node(x3,x2,x1)
+                       ,Nil()) -> Cons(link#2(Node(S(x9)
+                                                  ,x8
+                                                  ,Cons(Node(x4,x5,x6),x7))
+                                             ,Node(x3,x2,x1))
+                                      ,Nil())
+    insTree#2(x2,Nil()) -> Cons(x2,Nil())
+    insTree#2(Node(S(x10),x9,Cons(Node(x5,x6,x7),x8))
+             ,Cons(Node(x4,x3,x2),x1)) -> cond_insTree_t_xs_1(lt#2(S(x10),x4)
+                                                             ,Node(S(x10)
+                                                                  ,x9
+                                                                  ,Cons(Node(x5
+                                                                            ,x6
+                                                                            ,x7)
+                                                                       ,x8))
+                                                             ,Node(x4,x3,x2)
+                                                             ,x1)
+    cond_link_t1_t2_2(True(),Node(x9,x10,x11),Node(x6,x7,x8),x5,x4,x3,x2,x1) ->
+      Node(S(x5),x4,Cons(Node(x6,x7,x8),x3))
+    cond_link_t1_t2_2(False(),Node(x9,x10,x11),Node(x6,x7,x8),x5,x4,x3,x2,x1) ->
+      Node(S(x5),x2,Cons(Node(x9,x10,x11),x1))
+    link#2(Node(x12,x10,x8),Node(x6,x4,x2)) -> cond_link_t1_t2_2(leqElem#2(x10
+                                                                          ,x4)
+                                                                ,Node(x12
+                                                                     ,x10
+                                                                     ,x8)
+                                                                ,Node(x6,x4,x2)
+                                                                ,x12
+                                                                ,x10
+                                                                ,x8
+                                                                ,x4
+                                                                ,x2)
+    leqElem#2(Elem(x4),Elem(x2)) -> leq#2(x4,x2)
+    leq#2(0(),x20) -> True()
+    leq#2(S(x4),S(x2)) -> leq#2(x4,x2)
+    leq#2(S(x24),0()) -> False()
+    lt#2(0(),0()) -> False()
+    lt#2(0(),S(x20)) -> True()
+    lt#2(S(x4),S(x2)) -> lt#2(x4,x2)
+    lt#2(S(x20),0()) -> False()
+    main(x24) -> cond_deleteMin_ts(removeMinTree#1(x24)))
+

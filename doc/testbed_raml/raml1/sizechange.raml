@@ -39,7 +39,7 @@ type Unit = Unit
 let rec r1 ls a =
 	match ls with
 	| Nil -> a
-	| Cons(x,xs) -> ( r1 xs (Cons(x,a)))
+	| Cons(x,xs) -> (r1 xs (Cons(x,a)))
 ;;
 let rev ls =
 	r1 ls Nil
@@ -63,8 +63,6 @@ let rec f i x =
 	| Cons(y,ys) -> ( g ys x i)
   and g a b c =
 	( f a (app b c))
-
-
 
 
 (* Example 3: Ackermann function *)
@@ -125,7 +123,6 @@ let rec f2' x y =
 		| Cons(b,bs) -> ( f2' y bs)
 
 
-
 (* Example 6: Late-Starting Descing Parameters*)
 ;;
 let rec g3 c d =
@@ -139,14 +136,6 @@ let rec f3 a b =
 	| Cons(x,xs) -> ( f3 (Cons(x,a)) xs)
 
 ()
-
-
-
-
-
-
-
-
 
 
 ;;

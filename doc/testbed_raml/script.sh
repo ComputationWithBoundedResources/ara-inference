@@ -119,8 +119,9 @@ for file in $FILES; do
   sed -i 's/end//g' $file
 
   # remove ticks
-  sed -i 's/Raml.tick(1.0);//g' $file
-  sed -i 's/Raml.tick 1.0;//g' $file
+  sed -i 's/Raml.tick([0-9\.]*)[;]*//g' $file
+  sed -i 's/Raml.tick [0-9\.]*[;]*//g' $file
+  sed -i 's/:int//g' $file
 
   # remove first | from type when there
   sed -i ":begin;$!N;$!N;s/type \([a-zA-Z0-9']*\) =[\n ]*|/type \1 =/;tbegin;P;D" $file
@@ -136,9 +137,9 @@ for file in $FILES; do
   # sed -i ':begin;$!N;$!N;s/ *)\n;;let/;;\n\n/;tbegin;P;D' $file
 
   # remove type casts
-  sed -i "s/(\([a-zA-Z0-9']*\):[^),]*)\([^=]*\)=$/\1\2=/g" $file
-  sed -i "s/(\([a-zA-Z0-9']*\):[^),]*)\([^=]*\)=$/\1\2=/g" $file
-  sed -i "s/(\([a-zA-Z0-9']*\):[^),]*)\([^=]*\)=$/\1\2=/g" $file
+  sed -i "s/(\([a-zA-Z0-9']*\)[ ]*:[ ]*[^),]*)\([^=]*\)=$/\1\2=/g" $file
+  sed -i "s/(\([a-zA-Z0-9']*\)[ ]*:[ ]*[^),]*)\([^=]*\)=$/\1\2=/g" $file
+  sed -i "s/(\([a-zA-Z0-9']*\)[ ]*:[ ]*[^),]*)\([^=]*\)=$/\1\2=/g" $file
 
   # translate
   rm ${file}.trs 2>/dev/null

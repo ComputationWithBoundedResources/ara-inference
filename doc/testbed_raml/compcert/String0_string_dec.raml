@@ -30,20 +30,9 @@ let rec string_dec s s0 =
   | Cons(a,s1) ->
     (match s0 with
      | Nil -> False
-     | Cons(a0,s2) -> match a a0 with
+     | Cons(a0,s2) -> match eq a a0 with
          | True -> string_dec s1 s2
          | False ->  False)
-
-(** val prefix : char(list) -> char(list) -> bool **)
 ;;
-let rec prefix s1 s2 =
-  match s1 with
-  | Nil -> True
-  | Cons(a,s1') ->
-    (match s2 with
-     | Nil -> False
-     | Cons(b,s2') -> match eq a b with
-        | True ->  prefix s1' s2'
-        | False -> False)
 
-;;
+

@@ -5,7 +5,7 @@ type ('a,'b) pair = Pair of 'a * 'b
 type 'a list = Nil | Cons of 'a * 'a list
 ;;
 type Unit = Unit
-
+;;
 (* * * * * * * * * * *
  * Resource Aware ML *
  * * * * * * * * * * *
@@ -27,22 +27,14 @@ type Unit = Unit
 
 (* Using the (gsm) radio: Sing a list of integers costs 200 Millijoule to *)
 (* power the radio on and 32 Millijoule to per integer that is sent. *)
-let s_msg (msg : int list) =
 
-  let transmit x =
-    Raml.tick(32.)
-  in
+let s_msg msg =
 
   let rec s msg =
     match msg with
       | Nil -> ()
-      | Cons(x,xs) ->
-	transmit x;
-	s xs
-  in
-
-  Raml.tick(200.);
-  s msg
+      | Cons(x,xs) -> s xs
+   in s msg
 
 
 (* Events that can be handled by the system. *)
@@ -205,10 +197,6 @@ main2 events,
 main3 events,
 main4 events,
 main5 events
-
-
-
-
 
 
 (*

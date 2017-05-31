@@ -23,17 +23,22 @@ type Unit = Unit
  *
  *)
 
-
+;;
 (* The usual list map function. *)
 let rec map f l =
   match l with
     | Nil -> Nil
-    | Cons(x,xs) ->
-      let ys = map f xs in
-      (f x)Cons(,ys)
+    | Cons(x,xs) -> Cons(f x,map f xs)
+;;
+
+let plus1 x = S(x)
+;;
+let f = map plus1 Cons(0,Cons(S(S(0)),Nil))
+
+;;
 
 
-(* The usual list rev_map function. *)
+(* The usual list rev_map function.
 let map_rev f l =
   let rec rmap l acc =
     match l with
@@ -43,9 +48,9 @@ let map_rev f l =
 	rmap  xs acc'
   in
   rmap l Nil
+;;
 
-
-(* Iteratively apply two functional arguments. *)
+(* Iteratively apply two functional arguments.
 let map_rev2 f1 f2 l =
 
   let rec rmap1 l acc =
@@ -85,3 +90,4 @@ let unused =
 
 
 ;;
+*)

@@ -36,9 +36,15 @@ let rec member x tree = match tree with
 let balance xs = match xs with
      | Tree(c,t1,z,d) -> match c with
        | B -> match a with
-         | Tree(c2,t2,y,c) -> match c2 with
+         | Tree(c2,t2,y,t2') -> match c2 with
            | R -> match t2 with
-             | Tree(c3,b,y,c) -> match c3 with
+             | Tree(c3,b,y,t3') -> match c3 with
                | R -> Tree(R,Tree(B,a,x,b),y,Tree(B,c,z,d))
-               |
+               | B -> ...
+           | B -> match t2' with
+             | Tree(c3,b,x,c) -> match c3 with
+               | R -> Tree(R,Tree(B,a,y,b),x,Tree(B,c,z,d))
+               | B -> ...
+
+
 ;;

@@ -1,0 +1,54 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x5 x6 x7 x2 x3 x4 x1 x54 x8 x38 x30 x14 x11 x10 x9 x20 x24 x100 x132 x164
+    x48 x64 x80 x28)
+(RULES
+    cond_insTree_t_xs_1(True(),Node(x5,x6,x7),Node(x2,x3,x4),x1) ->
+      Cons(Node(x5,x6,x7),Cons(Node(x2,x3,x4),x1))
+    cond_insTree_t_xs_1(False()
+                       ,Node(x54,Elem(x8),x38)
+                       ,Node(x30,Elem(x4),x14)
+                       ,Nil()) -> Cons(cond_link_t1_t2_2(leq#2(x8,x4)
+                                                        ,Node(x54,Elem(x8),x38)
+                                                        ,Node(x30,Elem(x4),x14)
+                                                        ,x54
+                                                        ,Elem(x8)
+                                                        ,x38
+                                                        ,Elem(x4)
+                                                        ,x14)
+                                      ,Nil())
+    cond_link_t1_t2_2(True()
+                     ,Node(x11,Elem(x10),x9)
+                     ,Node(x8,Elem(x7),x6)
+                     ,x5
+                     ,Elem(x4)
+                     ,x3
+                     ,Elem(x2)
+                     ,x1) -> Node(S(x5),Elem(x4),Cons(Node(x8,Elem(x7),x6),x3))
+    cond_link_t1_t2_2(False()
+                     ,Node(x11,Elem(x10),x9)
+                     ,Node(x8,Elem(x7),x6)
+                     ,x5
+                     ,Elem(x4)
+                     ,x3
+                     ,Elem(x2)
+                     ,x1) -> Node(S(x5)
+                                 ,Elem(x2)
+                                 ,Cons(Node(x11,Elem(x10),x9),x1))
+    leq#2(0(),x20) -> True()
+    leq#2(S(x4),S(x2)) -> leq#2(x4,x2)
+    leq#2(S(x24),0()) -> False()
+    lt#2(0(),0()) -> False()
+    lt#2(0(),S(x20)) -> True()
+    lt#2(S(x4),S(x2)) -> lt#2(x4,x2)
+    lt#2(S(x20),0()) -> False()
+    main(x4,Nil()) -> Cons(x4,Nil())
+    main(Node(x100,x132,x164),Cons(Node(x48,x64,x80),x28)) ->
+      cond_insTree_t_xs_1(lt#2(x100,x48)
+                         ,Node(x100,x132,x164)
+                         ,Node(x48,x64,x80)
+                         ,x28))
+

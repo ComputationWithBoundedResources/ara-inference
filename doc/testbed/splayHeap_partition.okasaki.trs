@@ -1,0 +1,57 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x12 x13 x6 x7 x9 x10 x11 x5 x4 x3 x2 x1 x8 x16)
+(RULES
+    cond_partition_pivot_heap_4(Pair(x12,x13),x6,x7,x9,x10) -> Pair(T(T(x6
+                                                                       ,x7
+                                                                       ,x9)
+                                                                     ,x10
+                                                                     ,x12)
+                                                                   ,x13)
+    cond_partition_pivot_heap_5(Pair(x12,x13),x6,x7,x10,x11) -> Pair(T(x6
+                                                                      ,x7
+                                                                      ,x12)
+                                                                    ,T(x13
+                                                                      ,x10
+                                                                      ,x11))
+    cond_partition_pivot_heap_3(True(),x6,x5,x4,x3,x2,x1) ->
+      cond_partition_pivot_heap_4(partition#2(x6,x1),x5,x4,x3,x2)
+    cond_partition_pivot_heap_3(False(),x6,x5,x4,x3,x2,x1) ->
+      cond_partition_pivot_heap_5(partition#2(x6,x3),x5,x4,x2,x1)
+    cond_partition_pivot_heap_8(Pair(x12,x13),x7,x8,x9,x10) -> Pair(T(x9
+                                                                     ,x10
+                                                                     ,x12)
+                                                                   ,T(x13
+                                                                     ,x7
+                                                                     ,x8))
+    cond_partition_pivot_heap_9(Pair(x12,x13),x7,x8,x10,x11) -> Pair(x12
+                                                                    ,T(x13
+                                                                      ,x10
+                                                                      ,T(x11
+                                                                        ,x7
+                                                                        ,x8)))
+    cond_partition_pivot_heap_7(True(),x6,x5,x4,x3,x2,x1) ->
+      cond_partition_pivot_heap_8(partition#2(x6,x1),x5,x4,x3,x2)
+    cond_partition_pivot_heap_7(False(),x6,x5,x4,x3,x2,x1) ->
+      cond_partition_pivot_heap_9(partition#2(x6,x3),x5,x4,x2,x1)
+    cond_partition_pivot_heap_1(True(),x3,x2,x1,E()) -> Pair(T(x2,x1,E()),E())
+    cond_partition_pivot_heap_1(True(),x6,x5,x4,T(x3,x2,x1)) ->
+      cond_partition_pivot_heap_3(leqElem#2(x2,x6),x6,x5,x4,x3,x2,x1)
+    cond_partition_pivot_heap_1(False(),x3,E(),x2,x1) -> Pair(E(),T(E(),x2,x1))
+    cond_partition_pivot_heap_1(False(),x6,T(x5,x4,x3),x2,x1) ->
+      cond_partition_pivot_heap_7(leqElem#2(x4,x6),x6,x2,x1,x5,x4,x3)
+    partition#2(x2,E()) -> Pair(E(),E())
+    partition#2(x8,T(x6,x4,x2)) -> cond_partition_pivot_heap_1(leqElem#2(x4,x8)
+                                                              ,x8
+                                                              ,x6
+                                                              ,x4
+                                                              ,x2)
+    leqElem#2(Elem(x4),Elem(x2)) -> leq#2(x4,x2)
+    leq#2(0(),x12) -> True()
+    leq#2(S(x4),S(x2)) -> leq#2(x4,x2)
+    leq#2(S(x16),0()) -> False()
+    main(x2,x1) -> partition#2(x1,x2))
+

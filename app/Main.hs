@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 16:15:42 2017 (+0200)
+-- Last-Updated: Thu Jun  8 13:54:21 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 950
+--     Update #: 952
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -128,9 +128,6 @@ main =
          -- Solve cost constraints
          let cond = conditions prove
          let probSig = signatures (problem prove)
-
-         when (lowerbound args) $
-           E.throw $ FatalException "Lowerbound analysis not yet implemented!"
 
          when (isNothing probSig && shift args) $
            E.throw $ FatalException "Shift requires signature information in input TRS."

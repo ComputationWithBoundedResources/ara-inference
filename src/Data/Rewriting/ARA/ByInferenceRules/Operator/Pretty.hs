@@ -7,9 +7,9 @@
 -- Created: Tue Dec 16 21:14:03 2014 (+0100)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:33:58 2017 (+0200)
+-- Last-Updated: Sat Jun 10 15:19:10 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 16
+--     Update #: 17
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -53,6 +53,7 @@ prettyOrdering EQ = text "=="
 
 prettyComparison     :: Comparison -> Doc
 prettyComparison Geq = text ">="
+prettyComparison Leq = text "<="
 prettyComparison Eq  = text "=="
 
 --

@@ -8,9 +8,9 @@
 -- Created: Sun Sep 14 17:30:38 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 09:41:58 2017 (+0200)
+-- Last-Updated: Sat Jun 10 15:18:19 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 524
+--     Update #: 530
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -105,7 +105,7 @@ applyInferenceRules args reachability (Prove (c:cs) p count prob cfs sigs cond v
                                    (prob, cfs, sigs, v, cond, c))
 
     where
-      shared = share (prob, cfs, sigs, v, cond, c)
+      shared = share args (prob, cfs, sigs, v, cond, c)
       updateAll = map (\(u,w,x,v',y,z) ->  -- normally apply all rules
                                    Prove (z++cs) p count u w x y v' noCfDefSyms)
 
@@ -133,17 +133,16 @@ applyAllInferenceRules' args reachability noCfDefSyms (t, cfs, sig, nr, cond, c)
 
   concatMap (\x -> x (t, cfs, sig, nr, cond, c)) rules
         where
-          rules = [ share
+          rules = [ share args
 
                   , function args reachability noCfDefSyms
-                                  -- list of inference rules (the order is
-                                  -- important) the higher the rule is named,
-                                  -- the earlier it gets
-                  , identity      -- applied. If the prove can be finished
-                                  -- without using
-                  , composition   -- rules at the end of the list, the
-                                  -- computation will
-                  , weak          -- be faster.
+                                     -- list of inference rules (the order is
+                                     -- important) the higher the rule is named,
+                                     -- the earlier it gets applied. If the prove
+                                     -- can be finished without using
+                  , identity args    -- rules at the end of the list, the
+                  , composition args -- computation will be faster.
+                  , weak args
                   ]
 
 

@@ -8,9 +8,9 @@
 -- Created: Sun Sep 14 17:35:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 17:46:00 2017 (+0200)
+-- Last-Updated: Sat Jun 10 15:17:53 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 438
+--     Update #: 441
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -48,6 +48,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerSignature
+import           Data.Rewriting.ARA.ByInferenceRules.CmdLineArguments
 import           Data.Rewriting.ARA.ByInferenceRules.HelperFunctions
 import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleMisc
 import           Data.Rewriting.ARA.ByInferenceRules.Operator
@@ -83,11 +84,12 @@ import           Debug.Trace                                                    
 #endif
 
 share :: forall f v dt . (Eq v, Eq dt, Read v, Ord v, Show v, Show dt, Show f) =>
-         (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+         ArgumentOptions
+      -> (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
            ACondition f v Int Int, InfTreeNode f v dt)
       -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
             ACondition f v Int Int, [InfTreeNode f v dt])]
-share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
+share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
         i@(_,_,isCtrDeriv,_,_,_) his) =
   -- trace ("share")
 
@@ -144,11 +146,15 @@ share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
 
         conds' = conds { shareConditions = shareConditions conds ++ shareConds }
 
+        geq | lowerbound args = Leq
+            | otherwise = Geq
+
+
         shareConds = foldl shareConds' [] (zip pre pre')
         shareConds' acc (_, [_]) = acc
         shareConds' acc (preDt, postDts) =
           acc ++ [(removeDt (snd preDt)
-                  ,if isCtrDeriv then Eq else Geq
+                  ,if isCtrDeriv then Eq else geq
                   ,map (removeDt . snd) postDts)]
 
         origPreOrd ((a,_),_) =
@@ -203,7 +209,7 @@ share (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
         putVarsIntoTerm (vs, acc) (Fun f ch) = (vs', acc ++ [Fun f ch'])
           where (vs', ch') = foldl putVarsIntoTerm (vs, []) ch
 
-share _ = []
+share _ _ = []
 
 
 --

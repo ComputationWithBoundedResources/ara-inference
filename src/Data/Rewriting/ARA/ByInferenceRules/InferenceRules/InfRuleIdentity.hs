@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 03:42:33 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 09:18:47 2017 (+0200)
+-- Last-Updated: Sat Jun 10 15:07:48 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 181
+--     Update #: 184
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -48,6 +48,7 @@ module Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleIdentity
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Type
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerSignature
+import           Data.Rewriting.ARA.ByInferenceRules.CmdLineArguments
 import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleMisc
 import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode
 import           Data.Rewriting.ARA.ByInferenceRules.Operator
@@ -62,11 +63,12 @@ import           Debug.Trace                                                    
 
 -- | The identity inference rule.
 identity :: forall f v dt . (Show f, Show v) =>
-            (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+            ArgumentOptions
+         -> (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
              ACondition f v Int Int, InfTreeNode f v dt)
          -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
               ACondition f v Int Int, [InfTreeNode f v dt])]
-identity (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
+identity args (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
            i@(_,_,isCtrDeriv,_,_,_) his) =
 
   [(prob, cfsigs, asigs, nr, nConds
@@ -74,12 +76,14 @@ identity (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
                                               InfTreeNodeLeafEmpty)])])
   | show (fst pre) == funName ]
 
-    where condDt = [([removeDt $ snd pre], if isCtrDeriv then Eq else Geq, [removeDt $ snd post])]
-          condCst = [(cst, if isCtrDeriv then Eq else Geq, [ACostValue 0])]
+    where condDt = [([removeDt $ snd pre], if isCtrDeriv then Eq else geq, [removeDt $ snd post])]
+          condCst = [(cst, if isCtrDeriv then Eq else geq, [ACostValue 0])]
           nConds = ACondition (costCondition conds ++ condCst) (dtConditions conds ++ condDt)
                       (shareConditions conds) (minus1Vars conds)
           funName = termName (fst post)
-identity _ = []
+          geq | lowerbound args = Leq
+              | otherwise = Geq
+identity _ _ = []
 
 
 --

@@ -7,9 +7,9 @@
 -- Created: Fri Sep  5 09:06:31 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:33:58 2017 (+0200)
+-- Last-Updated: Sat Jun 10 15:07:13 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 16
+--     Update #: 18
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -53,7 +53,7 @@ module Data.Rewriting.ARA.ByInferenceRules.Operator.Type
     )
     where
 
-data Comparison = Eq | Geq -- | Leq | Times | Plus | Minus | Exp
+data Comparison = Eq | Geq | Leq -- | Times | Plus | Minus | Exp
                 deriving (Eq)
 
 instance Show Comparison where
@@ -61,7 +61,7 @@ instance Show Comparison where
     show Geq = ">="
     -- show Gt    = ">"
     -- show Lt    = "<"
-    -- show Leq   = "<="
+    show Leq = "<="
     -- show Times = "*"
     -- show Plus  = "+"
     -- show Minus = "-"

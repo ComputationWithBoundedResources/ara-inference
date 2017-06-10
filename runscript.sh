@@ -4,7 +4,8 @@
 PROG="./.stack-work/dist/x86_64-linux/Cabal-1.24.0.0/build/ara-inference-exe/ara-inference-exe"
 COMMAND="$PROG $@ "
 TIMES=1
-FOLDERS=" ./doc/examples/"
+# FOLDERS=" ./doc/examples/"
+FOLDERS=" ./doc/testbed/"
 # FOLDERS=" ./doc/examples/linear "
 # FOLDERS=" ./doc/tpdb_full/"
 # FOLDERS=" ./doc/tpdb_full/raML/"

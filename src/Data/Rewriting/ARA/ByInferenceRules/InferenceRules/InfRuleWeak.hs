@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 11:39:45 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 09:35:37 2017 (+0200)
+-- Last-Updated: Sat Jun 10 15:11:16 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 110
+--     Update #: 111
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -48,6 +48,7 @@ module Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleWeak
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Type
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerSignature
+import           Data.Rewriting.ARA.ByInferenceRules.CmdLineArguments
 import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleFunction
 import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleMisc
 import           Data.Rewriting.ARA.ByInferenceRules.Prove
@@ -67,11 +68,12 @@ import           Debug.Trace
 #endif
 
 weak :: forall f v dt . (Eq v, Eq dt, Read v, Ord v, Show v, Show dt, Show f) =>
-         (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
-           ACondition f v Int Int, InfTreeNode f v dt)
-      -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
-            ACondition f v Int Int, [InfTreeNode f v dt])]
-weak (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (term, dt)) fn his) =
+        ArgumentOptions
+     -> (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+          ACondition f v Int Int, InfTreeNode f v dt)
+     -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+           ACondition f v Int Int, [InfTreeNode f v dt])]
+weak args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (term, dt)) fn his) =
   -- trace ("weak")
 
   [(prob, cfsigs, asigs, nr, conds, [InfTreeNode pre' cst (Just (term, dt)) fn his'])
@@ -85,7 +87,7 @@ weak (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (term, dt)) fn h
                         (map toACostConditionVector cst)
                         (T.map show show term, toADatatypeVectorString dt))]
 
-weak _ = []
+weak _ _ = []
 
 --
 -- InfRuleWeak.hs ends here

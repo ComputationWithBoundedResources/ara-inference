@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 17:45:05 2017 (+0200)
+-- Last-Updated: Thu Jun  8 14:12:10 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 123
+--     Update #: 127
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -74,13 +74,14 @@ data SMTProblem = SMTProblem
                   , _ifs            :: [([(T.Text, T.Text)], [(T.Text,T.Text)])]
                   , _values         :: M.Map T.Text Int
                   , _programName    :: T.Text
+                  , _isLowerbound   :: Bool
                   , _programOptions :: [T.Text]
                   , _parseFunction  :: Parser [(String, Int)]
                   }
 makeLenses ''SMTProblem
 
 instance Show SMTProblem where
-  show (SMTProblem l _ _ vars varsDecl ass assstr ifs vals n o _) =
+  show (SMTProblem l _ _ vars varsDecl ass assstr ifs vals n _ o _) =
     "Logic: " ++ show l ++
     "\nVars: " ++ show vars ++ "\nVars (decls only): " ++ show varsDecl
     ++ "\nAssertions: "

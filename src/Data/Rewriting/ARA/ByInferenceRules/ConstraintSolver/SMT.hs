@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 16:28:43 2017 (+0200)
+-- Last-Updated: Thu Jun  8 14:11:46 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1588
+--     Update #: 1594
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -125,7 +125,7 @@ emptySMTProblem :: T.Text
                 -> Parser [(String, Int)]
                 -> SMTProblem
 emptySMTProblem name logic declFun getVals =
-  SMTProblem logic declFun getVals S.empty S.empty [] [] [] M.empty name
+  SMTProblem logic declFun getVals S.empty S.empty [] [] [] M.empty name False
 
 declareAsConst n = "(declare-const " +++ n +++ " Int)\n"
 declareAsFun n = "(declare-fun " +++ n +++ " () Int)\n"
@@ -186,6 +186,11 @@ solveProblem' :: (Num a, Ord a, Show a, Show a1, Show s, Eq s, Ord s, Eq sDt,
                                        [ASignatureSig String dt], Int,
                                        ([Rule f v], [Rule f v]))
 solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
+
+  let lowerb = lowerbound ops
+  when lowerb $
+    isLowerbound .= True
+
 
   let aSigs = map fst3 aSigsTxt
   let cfSigs = map fst3 cfSigsTxt

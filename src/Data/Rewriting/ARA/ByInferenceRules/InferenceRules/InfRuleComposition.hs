@@ -8,9 +8,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 17:25:22 2017 (+0200)
+-- Last-Updated: Sat Jun 10 15:08:43 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 658
+--     Update #: 659
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -51,6 +51,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerSignature
+import           Data.Rewriting.ARA.ByInferenceRules.CmdLineArguments
 import           Data.Rewriting.ARA.ByInferenceRules.HelperFunctions
 import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleFunction
 import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.InfRuleMisc
@@ -88,11 +89,12 @@ import           Debug.Trace
 
 
 composition :: forall f v dt . (Ord dt, Eq f, Read v, Show dt, Show v, Show f, Eq v) =>
-               (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
+               ArgumentOptions
+            -> (ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
                 ACondition f v Int Int, InfTreeNode f v dt)
             -> [(ProblemSig f v f dt dt f, CfSigs dt f, ASigs dt f, Int,
                  ACondition f v Int Int, [InfTreeNode f v dt])]
-composition (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
+composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc, dt))
               i@(_,ruleStr,isCtrDeriv,cstsStart,_,_) his) =
 
  [ (prob, cfsigs, asigs, nr'+1, conds', funParNode : funChildNodes)
@@ -131,13 +133,17 @@ composition (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc
         conds' = ACondition (costCondition conds ++ nCostCond) (dtConditions conds ++ nDtCond)
                    (shareConditions conds ++ nShareCond) (minus1Vars conds)
 
-        nCostCond = [(cst, if isCtrDeriv then Eq else Geq,
+        nCostCond = [(cst, if isCtrDeriv then Eq else geq,
                       map (AVariableCondition . show) strVarsCost)]
         nDtCond = []
         nShareCond = []
 
         newVars :: [v]
         newVars = map (read . show . (varPrefix ++) . show) [nr..nr']
+
+        geq | lowerbound args = Leq
+            | otherwise = Geq
+
 
         strVarsCost = drop (length fc) newVars
         strVarsNode = take (length fc) newVars
@@ -197,7 +203,7 @@ composition (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc
 
             fromVar (Var v) = v
 
-composition _ = []
+composition _ _ = []
 
 
 --

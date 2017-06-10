@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 18:00:46 2017 (+0200)
+-- Last-Updated: Sat Jun 10 15:23:13 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1077
+--     Update #: 1123
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -76,12 +76,12 @@ import           Text.PrettyPrint                                      hiding
 
 
 -- Monadic insert into state for set from list
-(<>=+) :: (Ord a, MonadState SMTProblem m) =>
+(<>+=) :: (Ord a, MonadState SMTProblem m) =>
           ASetter' SMTProblem (S.Set a)
        -> [a]
        -> m ()
-infix 4 <>=+
-field <>=+ strs = field %= (\x -> foldl (flip S.insert) x strs)
+infix 4 <>+=
+field <>+= strs = field %= (\x -> foldl (flip S.insert) x strs)
 
 
 addEqZeroConstraints :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
@@ -105,8 +105,8 @@ addFindStrictRulesConstraint minNr csts = do
   -- let minVarBound x = "(or (= 0 (+ 1 " +++ xName +++ ")) (= 0 " +++ xName +++ "))"
         where xName = head $ fromCostCond x
   assertionsStr <>= fmap minVarBound csts
-  varsDeclOnly <>=+ fmap (head . fromCostCond) csts
-  -- varsDeclOnly <>=+
+  varsDeclOnly <>+= fmap (head . fromCostCond) csts
+  -- varsDeclOnly <>+=
 
 addUniqueSigConstraints :: (Num a, Ord a, Monad m, Show a) =>
                           Int
@@ -264,7 +264,7 @@ addVarsBy :: (Foldable t, MonadState SMTProblem m) =>
             (a -> [T.Text])
           -> t a
           -> m ()
-addVarsBy f strs = vars <>=+ concatMap f strs
+addVarsBy f strs = vars <>+= concatMap f strs
 
 
 addConstraint :: MonadState SMTProblem m =>
@@ -292,7 +292,6 @@ addConstraintBy2 f1 f2 (lhs, Eq, rhs) = do
   assertions %= (xs ++)
 
 addConstraintBy2 f1 f2 (lhs, Geq, rhs) = do
-
   let lhss = f1 lhs
       rhss = f2 rhs
   let before = T.concat (replicate (length lhss-1) "(and ")
@@ -302,18 +301,76 @@ addConstraintBy2 f1 f2 (lhs, Geq, rhs) = do
 
   let ass = before +++ xs +++ after
   assertionsStr %= (ass :)
+addConstraintBy2 f1 f2 (lhs, Leq, rhs) = do
+  let lhss = f1 lhs
+      rhss = f2 rhs
+  let before = T.concat (replicate (length lhss-1) "(and ")
+      after = T.concat (replicate (length lhss-1) ")")
+
+  let xs = T.concat $ zipWith (\a b -> "(<= " +++ a +++ " "  +++ b +++ ") ") lhss rhss
+
+  let ass = before +++ xs +++ after
+  assertionsStr %= (ass :)
 
 addConstructorGrowthConstraints :: (Monad m) =>
                                   Int
                                 -> [(T.Text, ADatatype dt Int, Int, ADatatype dt Int,
                                      ACostCondition Int, ADatatype dt Int)]
                                 -> StateT SMTProblem m ()
-addConstructorGrowthConstraints vecLen = mapM_ addConstructorGrowthConstraints'
-  where addConstructorGrowthConstraints' :: (Monad m) =>
+addConstructorGrowthConstraints vecLen xs = do
+  lowerb <- gets (^.isLowerbound)
+  if lowerb
+    then mapM_ addConstructorGrowthConstraintsLower xs
+    else mapM_ addConstructorGrowthConstraintsUpper xs
+  where addConstructorGrowthConstraintsLower :: (Monad m) =>
                                            (T.Text, ADatatype dt Int, Int, ADatatype dt Int,
                                             ACostCondition Int, ADatatype dt Int)
                                          -> StateT SMTProblem m ()
-        addConstructorGrowthConstraints' (name,ui,uiNr,ri,p,w) = do
+        addConstructorGrowthConstraintsLower (name,ui,uiNr,ri,p,w) = do
+          -- (*) Angenommen für alle Konstruktoren c gilt, wenn c: p_1 x ... x p_n
+          -- ->^k q, dann p_i >= q und k >= max q =: r. Dann gilt für all q \not =
+          -- 0, \Phi(v:q) >= r * |v|.
+
+          let baseVarI = "ipvar_th32_" +++ name +++ "_" +++ T.pack (show uiNr) +++ "_"
+          let ws = fromADatatype vecLen w   -- w = q
+              wsMaxV = baseVarI +++ "wsmax" -- wsMaxV = r
+              wsMaxConstr = "(= " +++ wsMaxV +++ " " +++ maxList ws +++ ")"
+          let ks =  fromCostCond p
+          -- let uis = fromADatatype vecLen ui
+
+
+          trace ("name: " ++ show name)
+            trace ("ui: " ++ show ui)
+            trace ("uiNr: " ++ show uiNr)
+            trace ("ri: " ++ show ri)
+            trace ("p: " ++ show p)
+            trace ("w: " ++ show w)
+            trace ("wsMaxV=r: " ++ show wsMaxV)
+            trace ("conts: " ++ show (head ks, Geq, wsMaxV))
+            trace ("ctrs: " ++ show (ui, Geq, w))
+
+            addConstraintBy (fromADatatype vecLen) (ui, Geq, w)
+
+
+          when (uiNr == 0) $ do
+            assertionsStr %= (wsMaxConstr :)
+            addConstraint (head ks, Geq, wsMaxV) -- k >= max q
+            vars <>+= [wsMaxV]
+
+
+        maxList (x:xs) = maxList' x xs
+        maxList' x [] = x
+        maxList' x xs@(y:ys) =
+          let lst = map (\y -> "(> " +++ x +++ " " +++ y +++ ")") xs
+              ifQ = (T.concat $ fromListByFun "(and " return lst)
+          in "(ite " +++ ifQ +++ " " +++ x +++ " " +++ maxList' y ys +++ ")"
+
+
+        addConstructorGrowthConstraintsUpper :: (Monad m) =>
+                                           (T.Text, ADatatype dt Int, Int, ADatatype dt Int,
+                                            ACostCondition Int, ADatatype dt Int)
+                                         -> StateT SMTProblem m ()
+        addConstructorGrowthConstraintsUpper (name,ui,uiNr,ri,p,w) = do
 
           let uis = fromADatatype vecLen ui
           let ris = fromADatatype (vecLen-1) ri ++ ["0"]
@@ -355,13 +412,6 @@ addConstructorGrowthConstraints vecLen = mapM_ addConstructorGrowthConstraints'
           --      (...))
 
 
-          let maxList (x:xs) = maxList' x xs
-              maxList' x [] = x
-              maxList' x xs@(y:ys) =
-                let lst = map (\y -> ("(> " +++ x +++ " " +++ y +++ ")")) xs
-                    ifQ = (T.concat $ fromListByFun "(and " return lst)
-                in "(ite " +++ ifQ +++ " " +++ x +++ " " +++ maxList' y ys +++ ")"
-
           let wsMaxFun = maxList ws
               wsMaxV = baseVarI +++ "wsmax"
               wsMaxConstr = "(= " +++ wsMaxV +++ " " +++ wsMaxFun +++ ")"
@@ -386,22 +436,22 @@ addConstructorGrowthConstraints vecLen = mapM_ addConstructorGrowthConstraints'
 
           -- add variables
           let newVars = take (length ris-1) ris ++ wRiVars ++ [wsMaxV, riMaxV]
-          vars <>=+ newVars
+          vars <>+= newVars
 
-addIndependenceConstraints :: (Monad m) =>
-                             Int
-                           -> [(Int, ADatatype dt Int)]
-                           -> StateT SMTProblem m ()
-addIndependenceConstraints vecLen = mapM_ addIndependenceConstraints'
-  where addIndependenceConstraints' (nr, rDt) = do
-          let rs = fromADatatype vecLen rDt
-          let rsDel = delete (rs!!(nr-1)) rs
-          let zero x = "(>= 0 " +++ x +++ ") "
-          let andList = T.concat . fromListByFun "(and " return
-          let rsZero = andList (map zero rsDel)
-          unless (T.null rsZero)
-            (assertionsStr %= (rsZero :))
-          -- -- trace ("rs: " ++ show rsZero)
+-- addIndependenceConstraints :: (Monad m) =>
+--                              Int
+--                            -> [(Int, ADatatype dt Int)]
+--                            -> StateT SMTProblem m ()
+-- addIndependenceConstraints vecLen = mapM_ addIndependenceConstraints'
+--   where addIndependenceConstraints' (nr, rDt) = do
+--           let rs = fromADatatype vecLen rDt
+--           let rsDel = delete (rs!!(nr-1)) rs
+--           let zero x = "(>= 0 " +++ x +++ ") "
+--           let andList = T.concat . fromListByFun "(and " return
+--           let rsZero = andList (map zero rsDel)
+--           unless (T.null rsZero)
+--             (assertionsStr %= (rsZero :))
+--           -- -- trace ("rs: " ++ show rsZero)
 
 addHeuristics :: (Monad m) =>
                  Int
@@ -424,10 +474,10 @@ addHeuristics vecLen = mapM_ addHeuristics'
         addHeur (this, Shift other) = do
           assertions <>= map (\(t,p1,p2) -> (t, Eq,"(+ " +++ p1 +++ " " +++ p2 +++ ")" ))
                          (zip3 this other (tail other ++ ["0"]))
-          vars <>=+ concatMap (\(t,p1,p2) -> [t,p1,p2]) (zip3 this other other)
+          vars <>+= concatMap (\(t,p1,p2) -> [t,p1,p2]) (zip3 this other other)
         addHeur (this, Diamond other) = do
           assertions <>= [(head this, Eq, head other)]
-          vars <>=+ [head this, head other]
+          vars <>+= [head this, head other]
         addHeur (this, Interleaving other1 other2) = do
           let fun (acc,p1,p2) t
                 | length p1 + length p2 <= vecLen =
@@ -439,10 +489,10 @@ addHeuristics vecLen = mapM_ addHeuristics'
           assertions <>= asserts1                                    -- set interleaving
           assertions <>= map (\x -> (x, Eq, "0")) (restP1 ++ restP2) -- set rest to 0
 
-          vars <>=+ other1 ++ other2 ++ this
+          vars <>+= other1 ++ other2 ++ this
         addHeur (this, Zero) = do
           assertions <>= map (\x -> (x, Eq, "0")) this
-          vars <>=+ this
+          vars <>+= this
 
 
 setBaseCtrMaxValues :: (Monad m) =>
@@ -479,7 +529,7 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
           let var :: ACostCondition Int
               var = AVariableCondition $
                     "kctr_" ++ baseCf ++ T.unpack (convertToSMTText ctrName) ++ "_"
-                    ++ (show baseNr)
+                    ++ show baseNr
           let k = head (fromCostCond var)
           let constr = [("1",Geq,k)]
           assertions <>= constr
@@ -513,7 +563,7 @@ addCfGroupsConstraints 1 = mapM_ makeAllZero
                     concatMap fromCostCond grprCst
 
           let constr = T.concat (fromListByFun "(and " (\x -> ["(= 0 " +++ x +++ ") "]) vars')
-          vars <>=+ vars'
+          vars <>+= vars'
           assertionsStr <>= [constr]
 
 addCfGroupsConstraints vecLen = mapM_ addCfGroupsConstraints'
@@ -531,79 +581,79 @@ addCfGroupsConstraints vecLen = mapM_ addCfGroupsConstraints'
                        +++ ")"
 
           -- trace ("vsl: " ++ show constr)
-          vars <>=+ vsl ++ vsr
+          vars <>+= vsl ++ vsr
           assertionsStr <>= [constr]
 
 
-addIndependenceBaseCtrConstraints :: (Monad m) =>
-                                    Int
-                                  -> [(T.Text,
-                                      T.Text,
-                                      T.Text,
-                                      T.Text,
-                                      ADatatype dt Int,
-                                      ADatatype dt Int,
-                                      ACostCondition Int,
-                                       ACostCondition Int,
-                                      [ADatatype dt Int],
-                                      [ADatatype dt Int])]
-                                  -> StateT SMTProblem m ()
-addIndependenceBaseCtrConstraints vecLen = mapM_ addIndependenceBaseCtrConstraints'
-  where addIndependenceBaseCtrConstraints' (x1,x2,y1,y2,r1Dt,r2Dt,k1Dt,k2Dt,p1sDt,p2sDt) = do
+-- addIndependenceBaseCtrConstraints :: (Monad m) =>
+--                                     Int
+--                                   -> [(T.Text,
+--                                       T.Text,
+--                                       T.Text,
+--                                       T.Text,
+--                                       ADatatype dt Int,
+--                                       ADatatype dt Int,
+--                                       ACostCondition Int,
+--                                        ACostCondition Int,
+--                                       [ADatatype dt Int],
+--                                       [ADatatype dt Int])]
+--                                   -> StateT SMTProblem m ()
+-- addIndependenceBaseCtrConstraints vecLen = mapM_ addIndependenceBaseCtrConstraints'
+--   where addIndependenceBaseCtrConstraints' (x1,x2,y1,y2,r1Dt,r2Dt,k1Dt,k2Dt,p1sDt,p2sDt) = do
 
-          let r1s = fromADatatype vecLen r1Dt
-          let r2s = fromADatatype vecLen r2Dt
-          -- let k1 = fromCostCond k1Dt
-          -- let k2 = fromCostCond k2Dt
-          -- let p1s = map (fromADatatype vecLen) p1sDt
-          -- let p2s = map (fromADatatype vecLen) p2sDt
+--           let r1s = fromADatatype vecLen r1Dt
+--           let r2s = fromADatatype vecLen r2Dt
+--           -- let k1 = fromCostCond k1Dt
+--           -- let k2 = fromCostCond k2Dt
+--           -- let p1s = map (fromADatatype vecLen) p1sDt
+--           -- let p2s = map (fromADatatype vecLen) p2sDt
 
-          let mult fac = map (\r -> "(* " +++ fac +++ " " +++ r +++ ") ")
-          let x1R1 = mult x1 r1s
-          let y1R2 = mult y1 r2s
-          -- let x2R1 = mult x2 r1s
-          -- let y2R2 = mult y2 r2s
+--           let mult fac = map (\r -> "(* " +++ fac +++ " " +++ r +++ ") ")
+--           let x1R1 = mult x1 r1s
+--           let y1R2 = mult y1 r2s
+--           -- let x2R1 = mult x2 r1s
+--           -- let y2R2 = mult y2 r2s
 
-          -- let x1K1 = mult x1 k1
-          -- let y1K2 = mult y1 k2
-          -- let x2K1 = mult x2 k1
-          -- let y2K2 = mult y2 k2
+--           -- let x1K1 = mult x1 k1
+--           -- let y1K2 = mult y1 k2
+--           -- let x2K1 = mult x2 k1
+--           -- let y2K2 = mult y2 k2
 
-          -- let x1P1s = map (mult x1) p1s
-          -- let y1P2s = map (mult y1) p2s
-          -- let x2P1s = map (mult x2) p1s
-          -- let y2P2s = map (mult y2) p2s
+--           -- let x1P1s = map (mult x1) p1s
+--           -- let y1P2s = map (mult y1) p2s
+--           -- let x2P1s = map (mult x2) p1s
+--           -- let y2P2s = map (mult y2) p2s
 
-          let zipping = zipWith4 (\x1r1 y1r2 x2r1 y2r2 ->
-                                    "(= (+ " +++ x1r1 +++ " " +++ y1r2 +++ ") " +++
-                                       "(+ " +++ x2r1 +++ " " +++ y2r2 +++ "))")
-          let andList = T.concat . fromListByFun "(and " return
-          -- let r = andList $ zipping x1R1 y1R2 x2R1 y2R2
-          -- let k = andList $ zipping x1K1 y1K2 x2K1 y2K2
-          -- let ps = concat $ fromListByFun "(and " return $
-          --          zipWith4 (\x1P1 y1P2 x2P1 y2P2 -> andList $ zipping x1P1 y1P2 x2P1 y2P2)
-          --          x1P1s y1P2s x2P1s y2P2s
+--           let zipping = zipWith4 (\x1r1 y1r2 x2r1 y2r2 ->
+--                                     "(= (+ " +++ x1r1 +++ " " +++ y1r2 +++ ") " +++
+--                                        "(+ " +++ x2r1 +++ " " +++ y2r2 +++ "))")
+--           let andList = T.concat . fromListByFun "(and " return
+--           -- let r = andList $ zipping x1R1 y1R2 x2R1 y2R2
+--           -- let k = andList $ zipping x1K1 y1K2 x2K1 y2K2
+--           -- let ps = concat $ fromListByFun "(and " return $
+--           --          zipWith4 (\x1P1 y1P2 x2P1 y2P2 -> andList $ zipping x1P1 y1P2 x2P1 y2P2)
+--           --          x1P1s y1P2s x2P1s y2P2s
 
 
-          let r1xEqyr2 =
-                andList $
-                zipWith (\x1r1 y1r2 ->  "(= " +++ x1r1 +++ " " +++ y1r2 +++ ")") x1R1 y1R2
-          let eqList r1 r2 = "(= " +++ r1 +++ " " +++ r2 +++ ")"
-          let r1Eqr2 = andList $ zipWith eqList r1s r2s
-          -- let k1Eqk2 = andList $ zipWith eqList k1 k2
-          -- let p1Eqp2 = andList $ map andList $ zipWith (zipWith eqList) p1s p2s
-          -- let geq1Constr n = "(>= " +++ n +++ " 1) " --  (< " +++ n +++ " 10)) "
-          let geq1Constr n = "(< " +++ n +++ " 1) " --  (< " +++ n +++ " 10)) "
-          let name (SigRefVar _ n) =  n
+--           let r1xEqyr2 =
+--                 andList $
+--                 zipWith (\x1r1 y1r2 ->  "(= " +++ x1r1 +++ " " +++ y1r2 +++ ")") x1R1 y1R2
+--           let eqList r1 r2 = "(= " +++ r1 +++ " " +++ r2 +++ ")"
+--           let r1Eqr2 = andList $ zipWith eqList r1s r2s
+--           -- let k1Eqk2 = andList $ zipWith eqList k1 k2
+--           -- let p1Eqp2 = andList $ map andList $ zipWith (zipWith eqList) p1s p2s
+--           let geq1Constr n = "(< " +++ n +++ " 1) " --  (< " +++ n +++ " 10)) "
+--           let name (SigRefVar _ n) =  n
 
-          let constr =
-                "(forall ((" +++ x1 +++ " Int) (" +++ y1
-                +++ " Int)) " +++ "(or (or " +++ geq1Constr x1
-                +++ geq1Constr y1 +++ ")" +++ "(or " +++
-                r1Eqr2 +++ " (not " +++ r1xEqyr2 +++ "))))"
+--           let constr =
+--                 "(forall ((" +++ x1 +++ " Int) (" +++ y1
+--                 +++ " Int)) " +++ "(or (or " +++ geq1Constr x1
+--                 +++ geq1Constr y1 +++ ")" +++ "(or " +++
+--                 r1Eqr2 +++ " (not " +++ r1xEqyr2 +++ "))))"
 
-          -- trace ("constr: "++ show constr) $
-          assertionsStr %= (constr:)
+--           -- trace ("constr: "++ show constr) $
+--           assertionsStr %= (constr:)
+
 
 fromListBy :: (Show a) => (a -> [T.Text]) -> [a] -> [T.Text]
 fromListBy = fromListByFun "(+ "

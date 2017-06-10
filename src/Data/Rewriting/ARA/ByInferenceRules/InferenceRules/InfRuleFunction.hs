@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 08:53:25 2017 (+0200)
+-- Last-Updated: Sat Jun 10 15:09:24 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1252
+--     Update #: 1253
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -243,7 +243,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
 
         newCstCond =
           -- ensure the costs are not growing too much
-          [(cst, if isCtrDeriv then Eq else Geq
+          [(cst, if isCtrDeriv then Eq else geq
             , sigRefCst isCfBranch asigIdx :
              [SigRefCstCf cfSigIdx | nonCfHasCfBranches] -- ++
               -- fmap AVariableCondition nCVar
@@ -252,11 +252,11 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
 
         newDtCond =
           zipWith (\r n -> ([removeDt $ snd r]
-                           , if isCtrDeriv then Eq else Geq
+                           , if isCtrDeriv then Eq else geq
                            , sigRefParam isCfBranch "" asigIdx n :
                             [SigRefParamCf "" cfSigIdx n | nonCfHasCfBranches])) preSorted [0..]
           ++ [(sigRefRet isCfBranch "" asigIdx : [SigRefRetCf "" cfSigIdx | nonCfHasCfBranches]
-              , if isCtrDeriv then Eq else Geq
+              , if isCtrDeriv then Eq else geq
               , [removeDt dt])]
           ++ concatMap (\x ->
                            [([SigRefParam "" asigIdx x], Eq,
@@ -264,6 +264,10 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
                            | newDefFunSigToASig ]
                        ) [0..length pre-1]
           ++ [([SigRefRet "" baseSigNr], Eq, [SigRefRet "" asigIdx]) | newDefFunSigToASig ]
+
+        geq | lowerbound args = Leq
+            | otherwise = Geq
+
 
         newShareCond
           | nonCfHasCfBranches =

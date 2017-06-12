@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Jun  8 14:11:46 2017 (+0200)
+-- Last-Updated: Mon Jun 12 14:33:11 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1594
+--     Update #: 1610
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -145,6 +145,7 @@ solveProblem ops probSigs conds aSigs cfSigs = do
   let minNrVec = minVectorLength ops
   let eqZero = concatMap constantToZero
                (zip [0..] (map fst3 aSigs) ++ zip [0..] (map fst3 cfSigs))
+
   let prob0 = execState (addEqZeroConstraints eqZero) (use ops)
   let vecLens = [minNrVec..maxNrVec]
   when (maxNrVec < 1 || maxNrVec > maximumVectorLength)
@@ -195,6 +196,10 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
   let aSigs = map fst3 aSigsTxt
   let cfSigs = map fst3 cfSigsTxt
 
+  when lowerb $ do
+    let retEqZero = concatMap retConstantToZero (zip [0..] aSigs ++ zip [0..] cfSigs)
+    addRetEqZeroConstraints vecLen retEqZero
+
   -- add constraints with specified length
   addCostConditions vecLen (costCondition conds)
   addDtConditions vecLen (dtConditions conds)
@@ -230,9 +235,12 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
 
 
     let baseCtrs = map (\x -> (convertToSMTStringText (fst4 (lhsRootSym x))
-                              , thd4 (lhsRootSym x)
-                              , length (lhsSig x)
-                              , removeApostrophes $ show $ getDt (rhsSig x))) constr
+                              ,thd4 (lhsRootSym x)
+                              ,length (lhsSig x)
+                              ,removeApostrophes $ show $ getDt (rhsSig x))
+
+
+                       ) constr
     setBaseCtrMaxValues ops probSigs vecLen baseCtrs
 
   when (shift ops) $ do
@@ -305,6 +313,12 @@ constantToZero :: (Int, Signature (t1, t2, Bool,Bool) t) -> [ACostCondition Int]
 constantToZero (nr, Signature (n,_,True,False) [] rhs) = [SigRefCst nr]
 constantToZero (nr, Signature (n,_,True,True) [] rhs)  = [SigRefCstCf nr]
 constantToZero _                                       = []
+
+
+retConstantToZero (nr, Signature (n,_,True,False) [] rhs) = [SigRefRet "" nr]
+retConstantToZero (nr, Signature (n,_,True,True) [] rhs)  = [SigRefRetCf "" nr]
+retConstantToZero _                                       = []
+
 
 uniqueBaseCtr :: (Show s) =>
                  Int

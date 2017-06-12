@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Jun 10 15:23:13 2017 (+0200)
+-- Last-Updated: Mon Jun 12 14:33:52 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1123
+--     Update #: 1128
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -90,6 +90,14 @@ addEqZeroConstraints :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
 addEqZeroConstraints eqZero = do
   mapM_ (addVars . fromCostCond) eqZero
   mapM_ (\x -> addConstraint (head (fromCostCond x), Eq, "0")) eqZero
+
+addRetEqZeroConstraints :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
+                           Int
+                        -> [ADatatype t a]
+                        -> m ()
+addRetEqZeroConstraints vecLen eqZero = do
+  mapM_ (addVars . fromADatatype vecLen) eqZero
+  mapM_ (\x -> addConstraint (head (fromADatatype vecLen x), Eq, "0")) eqZero
 
 
 addFindStrictRulesConstraint :: (Num a, Ord a, Monad m, Show a) =>
@@ -339,17 +347,17 @@ addConstructorGrowthConstraints vecLen xs = do
           -- let uis = fromADatatype vecLen ui
 
 
-          trace ("name: " ++ show name)
-            trace ("ui: " ++ show ui)
-            trace ("uiNr: " ++ show uiNr)
-            trace ("ri: " ++ show ri)
-            trace ("p: " ++ show p)
-            trace ("w: " ++ show w)
-            trace ("wsMaxV=r: " ++ show wsMaxV)
-            trace ("conts: " ++ show (head ks, Geq, wsMaxV))
-            trace ("ctrs: " ++ show (ui, Geq, w))
+          -- trace ("name: " ++ show name)
+          --   trace ("ui: " ++ show ui)
+          --   trace ("uiNr: " ++ show uiNr)
+          --   trace ("ri: " ++ show ri)
+          --   trace ("p: " ++ show p)
+          --   trace ("w: " ++ show w)
+          --   trace ("wsMaxV=r: " ++ show wsMaxV)
+          --   trace ("conts: " ++ show (head ks, Geq, wsMaxV))
+          --   trace ("ctrs: " ++ show (ui, Geq, w))
 
-            addConstraintBy (fromADatatype vecLen) (ui, Geq, w)
+          addConstraintBy (fromADatatype vecLen) (ui, Geq, w)
 
 
           when (uiNr == 0) $ do
@@ -508,7 +516,7 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
             mapM_ (setMaxOfParams baseNr) constrNames
         )
   [1..vecLen]
-  where setRetValuesToIdentiyMatrix baseNr (ctrName,isCf,_,ctrType) = do
+  where setRetValuesToIdentiyMatrix baseNr (ctrName,isCf,paramLen,ctrType) = do
           let baseCf = if isCf && separateBaseCtr args
                        then ctrType ++ "_cf_" else ctrType ++ "_"
 
@@ -520,7 +528,7 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
                 -- acc ++ if nr == baseNr
                 --        then []
                 --        else [("0", Eq, var)]
-                acc ++ [(if nr == baseNr then "1" else "0", Eq, var)]
+                acc ++ [(if nr == baseNr && paramLen /= 0 then "1" else "0", Eq, var)]
           let constr = foldl constrFun [] rs
           assertions <>= constr
 

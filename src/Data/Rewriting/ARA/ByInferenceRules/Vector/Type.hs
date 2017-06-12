@@ -7,9 +7,9 @@
 -- Created: Wed May  4 17:33:02 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:08 2017 (+0200)
+-- Last-Updated: Mon Jun 12 17:23:48 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 21
+--     Update #: 22
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -514,6 +514,14 @@ instance Ord Vector where
 instance Enum Vector where
   toEnum   = vectorFromInt
   fromEnum = denormalizeVector
+
+isNonZeroVector (Vector1 x1) = x1 /= 0
+isNonZeroVector (Vector2 x1 x2) = x1 /= 0 || x2 /= 0
+isNonZeroVector (Vector3 x1 x2 x3) = x1 /= 0 || x2 /= 0 || x3 /= 0
+isNonZeroVector (Vector4 x1 x2 x3 x4) = x1 /= 0 || x2 /= 0 || x3 /= 0 || x4 /= 0
+isNonZeroVector (Vector5 x1 x2 x3 x4 x5) = x1 /= 0 || x2 /= 0 || x3 /= 0 || x4 /= 0 || x5 /= 0
+isNonZeroVector (Vector6 x1 x2 x3 x4 x5 x6) = x1 /= 0 || x2 /= 0 || x3 /= 0 || x4 /= 0 || x5 /= 0 || x6 /= 0
+isNonZeroVector (Vector7 x1 x2 x3 x4 x5 x6 x7) = x1 /= 0 || x2 /= 0 || x3 /= 0 || x4 /= 0 || x5 /= 0 || x6 /= 0 || x7 /= 0
 
 
 --

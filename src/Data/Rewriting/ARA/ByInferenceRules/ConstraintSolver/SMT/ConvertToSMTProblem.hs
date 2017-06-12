@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jun 12 14:33:52 2017 (+0200)
+-- Last-Updated: Mon Jun 12 16:20:33 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1128
+--     Update #: 1130
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -516,7 +516,7 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
             mapM_ (setMaxOfParams baseNr) constrNames
         )
   [1..vecLen]
-  where setRetValuesToIdentiyMatrix baseNr (ctrName,isCf,paramLen,ctrType) = do
+  where setRetValuesToIdentiyMatrix baseNr (ctrName,isCf,_,ctrType) = do
           let baseCf = if isCf && separateBaseCtr args
                        then ctrType ++ "_cf_" else ctrType ++ "_"
 
@@ -528,7 +528,7 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
                 -- acc ++ if nr == baseNr
                 --        then []
                 --        else [("0", Eq, var)]
-                acc ++ [(if nr == baseNr && paramLen /= 0 then "1" else "0", Eq, var)]
+                acc ++ [(if nr == baseNr then "1" else "0", Eq, var)]
           let constr = foldl constrFun [] rs
           assertions <>= constr
 

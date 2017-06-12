@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 09:04:35 2017 (+0200)
+-- Last-Updated: Mon Jun 12 17:13:01 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1635
+--     Update #: 1636
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -284,7 +284,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         -- condsCtr :: ACondition dt Int Int
         (pre,aSigsCtr,condsCtr,kis,chInfTreeNds,noCfDefSyms',_) =
           foldl (getVarsWithDt ruleStr fromRuleOrGrpNr True isCf args sigs)
-          ([],[],ACondition [] [] [] [],[],[],[],startCtrSigNr)
+          ([],[],ACondition [(csts, Geq, [ACostValue 0])] [] [] [],[],[],[],startCtrSigNr)
           (zip4 ch params dts varsKs)
         params = map (\(a,b) -> sigRefParam isCf a aSigNr b) (zip dts [0..])
         dts = map fst (lhsSig sig)

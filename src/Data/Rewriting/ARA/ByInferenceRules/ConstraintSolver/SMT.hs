@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jun 12 14:33:11 2017 (+0200)
+-- Last-Updated: Mon Jun 12 17:27:04 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1610
+--     Update #: 1621
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -298,14 +298,20 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
               weak = map fst $ filter ((==1).snd) lst
           in (strict,weak)
 
+  let aSigs' = insertIntoSigs aSigs solVars
+      fromACost (ACost x) = x
+      fromActualCost (ActualCost _ _ x) = x
+      hasNonZeroDt (Signature _ lhs (ActualCost _ _ (ACost rhsVec))) =
+        isNonZeroVector rhsVec || any (isNonZeroVector.fromACost.fromActualCost) lhs
+      isNotConstant = any hasNonZeroDt aSigs'
 
-  return ( insertIntoSigs aSigs solVars
+  return ( aSigs'
          , insertIntoSigs cfSigs solVars
          , solVarsNs
          , m
          , insertIntoSigsCtr ops probSigs vecLen ctrSigs m
          , insertIntoSigsCtr ops probSigs vecLen cfCtrSigs m
-         , vecLen
+         , if isNotConstant then vecLen else 0
          , retFindStrict)
 
 
@@ -315,9 +321,9 @@ constantToZero (nr, Signature (n,_,True,True) [] rhs)  = [SigRefCstCf nr]
 constantToZero _                                       = []
 
 
-retConstantToZero (nr, Signature (n,_,True,False) [] rhs) = [SigRefRet "" nr]
-retConstantToZero (nr, Signature (n,_,True,True) [] rhs)  = [SigRefRetCf "" nr]
-retConstantToZero _                                       = []
+retConstantToZero (nr, Signature (n,_,False,False) _ _) = [SigRefRet "" nr]
+-- retConstantToZero (nr, Signature (n,_,False,True) _ rhs)  = [SigRefRetCf "" nr]
+retConstantToZero _                                     = []
 
 
 uniqueBaseCtr :: (Show s) =>

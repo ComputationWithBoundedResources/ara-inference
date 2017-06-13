@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Jun 11 10:56:19 2017 (+0200)
+-- Last-Updated: Tue Jun 13 16:58:37 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 953
+--     Update #: 954
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -181,7 +181,7 @@ main =
 
          -- print solution
          if lowerbound args
-           then putStrLn $ "BEST_CASE(O(n^" ++ show bigO ++ "),?)\n"
+           then putStrLn $ "BEST_CASE(Omega(n^" ++ show bigO ++ "),?)\n"
            else putStrLn $ "WORST_CASE(?,O(n^" ++ show bigO ++ "))\n"
 
          print (text "Solution:\n" <> text "---------\n")

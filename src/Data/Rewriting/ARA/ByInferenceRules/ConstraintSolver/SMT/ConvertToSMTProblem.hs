@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jun 12 16:20:33 2017 (+0200)
+-- Last-Updated: Tue Jun 13 17:31:02 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1130
+--     Update #: 1142
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -91,6 +91,26 @@ addEqZeroConstraints eqZero = do
   mapM_ (addVars . fromCostCond) eqZero
   mapM_ (\x -> addConstraint (head (fromCostCond x), Eq, "0")) eqZero
 
+
+addAnyNonZeroConstraints :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
+                            Int
+                         -> [ADatatype t a]
+                         -> m ()
+addAnyNonZeroConstraints vecLen' xs = do
+  let vecLen | vecLen' == 0 = 1
+             | otherwise = vecLen'
+
+
+  let idx = vecLen-1
+  let vs = map ((!!idx) . fromADatatype vecLen) xs
+  let sum = T.concat (fromListBy return vs)
+  let constr | vecLen' == 0 = "(= " +++ sum +++ " 0)"
+             | otherwise = "(>= " +++ sum +++ " 1)"
+  -- trace ("constr: " ++ show constr) $
+  assertionsStr <>= [constr]
+  addVars vs
+
+
 addRetEqZeroConstraints :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
                            Int
                         -> [ADatatype t a]
@@ -114,7 +134,6 @@ addFindStrictRulesConstraint minNr csts = do
         where xName = head $ fromCostCond x
   assertionsStr <>= fmap minVarBound csts
   varsDeclOnly <>+= fmap (head . fromCostCond) csts
-  -- varsDeclOnly <>+=
 
 addUniqueSigConstraints :: (Num a, Ord a, Monad m, Show a) =>
                           Int

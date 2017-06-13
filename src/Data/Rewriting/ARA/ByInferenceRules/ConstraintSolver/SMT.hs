@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jun 12 17:27:04 2017 (+0200)
+-- Last-Updated: Tue Jun 13 17:30:33 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1621
+--     Update #: 1650
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -146,18 +146,27 @@ solveProblem ops probSigs conds aSigs cfSigs = do
   let eqZero = concatMap constantToZero
                (zip [0..] (map fst3 aSigs) ++ zip [0..] (map fst3 cfSigs))
 
+
   let prob0 = execState (addEqZeroConstraints eqZero) (use ops)
   let vecLens = [minNrVec..maxNrVec]
+  when (lowerbound ops && maxNrVec > 1)
+    (throw $ FatalException "vector length for this lowerbound method must be 1")
   when (maxNrVec < 1 || maxNrVec > maximumVectorLength)
     (throw $ FatalException $
      "vector length must be in [1.." ++ show maximumVectorLength ++ "]")
+
+
   let catcher :: IOError -> IO (Either String b)
       catcher e = return (Left (show e))
 
   let sols = parMap rpar
         (\nr -> handle catcher (Right <$>
                                evalStateT (solveProblem' ops probSigs conds aSigs cfSigs nr)
-                               prob0)) vecLens
+                               prob0
+
+                               ))
+        (if lowerbound ops then [1,0] else vecLens)
+
 
   let getSol :: [IO (Either String a)] -> IO a
       getSol (xIO:xs) = do
@@ -186,19 +195,25 @@ solveProblem' :: (Num a, Ord a, Show a, Show a1, Show s, Eq s, Ord s, Eq sDt,
                                        M.Map String Vector, [ASignatureSig String dt],
                                        [ASignatureSig String dt], Int,
                                        ([Rule f v], [Rule f v]))
-solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen = do
+solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
 
   let lowerb = lowerbound ops
   when lowerb $
     isLowerbound .= True
 
-
   let aSigs = map fst3 aSigsTxt
   let cfSigs = map fst3 cfSigsTxt
+
+
+  let nonZeroDts = concatMap nonZeroDatatypes (zip [0..] aSigs)
+
+  let vecLen | vecLen' == 0 = 1
+             | otherwise = vecLen'
 
   when lowerb $ do
     let retEqZero = concatMap retConstantToZero (zip [0..] aSigs ++ zip [0..] cfSigs)
     addRetEqZeroConstraints vecLen retEqZero
+    addAnyNonZeroConstraints vecLen' nonZeroDts
 
   -- add constraints with specified length
   addCostConditions vecLen (costCondition conds)
@@ -324,6 +339,12 @@ constantToZero _                                       = []
 retConstantToZero (nr, Signature (n,_,False,False) _ _) = [SigRefRet "" nr]
 -- retConstantToZero (nr, Signature (n,_,False,True) _ rhs)  = [SigRefRetCf "" nr]
 retConstantToZero _                                     = []
+
+
+nonZeroDatatypes (nr, Signature (n,_,isCtr,False) lhs rhs) =
+  zipWith (curry nonZeroParam) [0..] lhs ++ [ nonZeroRet | isCtr]
+  where nonZeroParam (pNr,_) = SigRefParam "" nr pNr
+        nonZeroRet = SigRefRet "" nr
 
 
 uniqueBaseCtr :: (Show s) =>

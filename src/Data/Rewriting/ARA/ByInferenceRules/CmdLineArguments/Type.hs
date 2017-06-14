@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:19:36 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 17:19:29 2017 (+0200)
+-- Last-Updated: Wed Jun 14 12:04:00 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 77
+--     Update #: 80
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -56,6 +56,7 @@ data ArgumentOptions = ArgumentOptions
     , shift            :: Bool
     , allowLowerSCC    :: Bool
     , lowerbound       :: Bool
+    , lowerboundArg    :: Bool
     , timeout          :: Maybe Int
     , smtSolver        :: SMTSolver
     , findStrictRules  :: Maybe Int

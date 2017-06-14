@@ -40,4 +40,6 @@ extra-deps:
 - unordered-containers-0.2.7.1
 - vector-0.11.0.0
 - void-0.7.1
+- ghc-paths-0.1.0.9
+- syb-0.7
 resolver: ghc-8

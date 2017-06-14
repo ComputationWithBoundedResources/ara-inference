@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Apr 14 17:18:58 2017 (+0200)
+-- Last-Updated: Wed Jun 14 12:03:22 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 253
+--     Update #: 260
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,6 +66,7 @@ defaultOptions = ArgumentOptions {
                  , shift = False
                  , allowLowerSCC = False
                  , lowerbound = False
+                 , lowerboundArg = False
                  , timeout = Nothing
                  , smtSolver = Z3
                  , findStrictRules = Nothing
@@ -97,9 +98,17 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
    (NoArg (\opts -> return $ opts { shift = True } ))
    "Uses heuristics instead of base constructors [Default: False]."
 
-  , Option ['l'] ["lowerbound"]
-   (NoArg (\opts -> return $ opts { lowerbound = True } ))
-   "Search for best case lowerbound instead of upperbound."
+  , Option [] ["lowerbound"]
+   (NoArg (\opts -> return $
+            if lowerboundArg opts
+            then opts
+            else opts { lowerbound = True } ))
+   "Search for best case lowerbound measured in size instead of upperbound (only works for linear bounds). [Default: False]"
+
+  , Option ['l'] ["lowerboundArg"]
+   (NoArg (\opts -> return $ opts { lowerbound = False, lowerboundArg = True } ))
+   "Search for best case lowerbound instead of upperbound (Overrules lowerbound option). [Default: False]"
+
 
   , Option ['s'] ["smt"]
    (ReqArg (\str opts -> return $

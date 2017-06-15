@@ -8,9 +8,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Jun 10 15:08:43 2017 (+0200)
+-- Last-Updated: Thu Jun 15 18:22:22 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 659
+--     Update #: 662
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -79,6 +79,8 @@ import           Data.List
                                                                                      sortBy,
                                                                                      zip4)
 import           Data.Maybe
+                                                                                     (isJust)
+import           Data.Maybe
                                                                                      (fromJust,
                                                                                      fromMaybe)
 import           Text.PrettyPrint
@@ -141,7 +143,7 @@ composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun
         newVars :: [v]
         newVars = map (read . show . (varPrefix ++) . show) [nr..nr']
 
-        geq | lowerbound args = Leq
+        geq | isJust (lowerboundArg args) && lowerbound args = Leq
             | otherwise = Geq
 
 

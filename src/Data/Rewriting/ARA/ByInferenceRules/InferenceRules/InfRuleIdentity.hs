@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 03:42:33 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Jun 10 15:07:48 2017 (+0200)
+-- Last-Updated: Thu Jun 15 18:22:41 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 184
+--     Update #: 187
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -57,6 +57,8 @@ import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.Typed.Problem
 
+import           Data.Maybe                                                     (isJust)
+
 #ifdef DEBUG
 import           Debug.Trace                                                    (trace)
 #endif
@@ -81,7 +83,7 @@ identity args (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
           nConds = ACondition (costCondition conds ++ condCst) (dtConditions conds ++ condDt)
                       (shareConditions conds) (minus1Vars conds)
           funName = termName (fst post)
-          geq | lowerbound args = Leq
+          geq | isJust (lowerboundArg args) && lowerbound args = Leq
               | otherwise = Geq
 identity _ _ = []
 

@@ -8,9 +8,9 @@
 -- Created: Sun Sep 14 17:35:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Jun 10 15:17:53 2017 (+0200)
+-- Last-Updated: Thu Jun 15 18:22:58 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 441
+--     Update #: 444
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -73,7 +73,8 @@ import           Data.List                                                      
                                                                                  sort,
                                                                                  sortBy,
                                                                                  (\\))
-import           Data.Maybe                                                     (fromMaybe)
+import           Data.Maybe                                                     (fromMaybe,
+                                                                                 isJust)
 import           Data.Ord                                                       (compare)
 
 import           Text.PrettyPrint
@@ -146,7 +147,7 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
 
         conds' = conds { shareConditions = shareConditions conds ++ shareConds }
 
-        geq | lowerbound args = Leq
+        geq | isJust (lowerboundArg args) && lowerbound args = Leq
             | otherwise = Geq
 
 

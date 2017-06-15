@@ -6,12 +6,14 @@
 
 (SIGNATURES
   add :: Nat x Nat -> Nat
+  main :: Nat x Nat -> Nat
 )
 
 
 (RULES
   add(0, y) -> y
   add(s(x), s(y)) -> add(x,y)
+  main(x,y) -> add(x,y)
 )
 (COMMENT
 

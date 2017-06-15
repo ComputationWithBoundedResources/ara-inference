@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Jun 13 17:31:02 2017 (+0200)
+-- Last-Updated: Thu Jun 15 18:25:30 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1142
+--     Update #: 1179
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -100,15 +100,41 @@ addAnyNonZeroConstraints vecLen' xs = do
   let vecLen | vecLen' == 0 = 1
              | otherwise = vecLen'
 
-
   let idx = vecLen-1
   let vs = map ((!!idx) . fromADatatype vecLen) xs
   let sum = T.concat (fromListBy return vs)
   let constr | vecLen' == 0 = "(= " +++ sum +++ " 0)"
              | otherwise = "(>= " +++ sum +++ " 1)"
-  -- trace ("constr: " ++ show constr) $
+
   assertionsStr <>= [constr]
   addVars vs
+
+
+addMainToZeroConstr :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
+                       Int
+                    -> [ADatatype t a]
+                    -> m ()
+addMainToZeroConstr vecLen xs = do
+  let vss = map (fromADatatype vecLen) xs
+  let baseVar = "ipvar_mainZero_"
+
+  let eqZero x = "(= 0 " +++ x +++ ")"
+  let predicateArg = fromListByFun "(and " return . map eqZero
+  let ite pred = "(ite " +++ pred +++ " 1 0)"
+  let counterContrs = concatMap (map ite.predicateArg) vss
+
+  let countVars = map ((baseVar +++) . T.pack . show) [0..length counterContrs-1]
+  let asserts = zipWith (\a b -> (a, Eq, b)) countVars counterContrs
+
+  assertions <>= asserts
+
+  let nonZeroCtr = fromListBy return countVars
+  assertions <>= [(head nonZeroCtr,Eq,"1")]
+
+  addVars (countVars ++ concat vss)
+
+  -- trace ("vs: " ++ show asserts)
+  --   trace ("vs: " ++ show [(head nonZeroCtr,Eq,"1")]) undefined
 
 
 addRetEqZeroConstraints :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
@@ -340,15 +366,15 @@ addConstraintBy2 f1 f2 (lhs, Leq, rhs) = do
   assertionsStr %= (ass :)
 
 addConstructorGrowthConstraints :: (Monad m) =>
-                                  Int
+                                ArgumentOptions
+                                -> Int
                                 -> [(T.Text, ADatatype dt Int, Int, ADatatype dt Int,
                                      ACostCondition Int, ADatatype dt Int)]
                                 -> StateT SMTProblem m ()
-addConstructorGrowthConstraints vecLen xs = do
-  lowerb <- gets (^.isLowerbound)
-  if lowerb
-    then mapM_ addConstructorGrowthConstraintsLower xs
-    else mapM_ addConstructorGrowthConstraintsUpper xs
+addConstructorGrowthConstraints ops vecLen xs
+  | lowerbound ops = mapM_ addConstructorGrowthConstraintsLower xs
+  | isJust $ lowerboundArg ops = mapM_ addConstructorGrowthConstraintsLower xs
+  | otherwise = mapM_ addConstructorGrowthConstraintsUpper xs
   where addConstructorGrowthConstraintsLower :: (Monad m) =>
                                            (T.Text, ADatatype dt Int, Int, ADatatype dt Int,
                                             ACostCondition Int, ADatatype dt Int)

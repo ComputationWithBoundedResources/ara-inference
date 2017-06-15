@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Jun 13 17:30:33 2017 (+0200)
+-- Last-Updated: Thu Jun 15 18:54:51 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1650
+--     Update #: 1711
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -60,6 +60,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.ARA.Exception
+import           Data.Rewriting.Typed.Problem
 import           Data.Rewriting.Typed.Rule
 import           Data.Rewriting.Typed.Signature
 
@@ -125,13 +126,14 @@ emptySMTProblem :: T.Text
                 -> Parser [(String, Int)]
                 -> SMTProblem
 emptySMTProblem name logic declFun getVals =
-  SMTProblem logic declFun getVals S.empty S.empty [] [] [] M.empty name False
+  SMTProblem logic declFun getVals S.empty S.empty [] [] [] M.empty name
 
 declareAsConst n = "(declare-const " +++ n +++ " Int)\n"
 declareAsFun n = "(declare-fun " +++ n +++ " () Int)\n"
 
 
-solveProblem :: (Eq s, Eq sDt, Ord s, Show s, Show dt, Ord dt) => ArgumentOptions
+solveProblem :: (Eq s, Eq sDt, Ord s, Show s, Show dt, Ord dt, Show f, Show v) =>
+             ArgumentOptions
              -> [SignatureSig s sDt]
              -> ACondition f v Int Int
              -> ASigs dt s
@@ -184,8 +186,8 @@ baseCtrSigDef x y = fst4 (lhsRootSym x) == fst4 (lhsRootSym y) &&
 
 
 solveProblem' :: (Num a, Ord a, Show a, Show a1, Show s, Eq s, Ord s, Eq sDt,
-                  Show dt, Eq dt, Ord dt) =>
-                ArgumentOptions
+                  Show dt, Eq dt, Ord dt, Show f, Show v) =>
+                 ArgumentOptions
               -> [SignatureSig s sDt]
               -> ACondition f v a a1
               -> ASigs dt s
@@ -197,9 +199,7 @@ solveProblem' :: (Num a, Ord a, Show a, Show a1, Show s, Eq s, Ord s, Eq sDt,
                                        ([Rule f v], [Rule f v]))
 solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
 
-  let lowerb = lowerbound ops
-  when lowerb $
-    isLowerbound .= True
+  let lowerb = lowerbound ops || isJust (lowerboundArg ops)
 
   let aSigs = map fst3 aSigsTxt
   let cfSigs = map fst3 cfSigsTxt
@@ -210,10 +210,14 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
   let vecLen | vecLen' == 0 = 1
              | otherwise = vecLen'
 
+  let mainToZeroConstr = concatMap mainToZero (zip [0..] aSigs)
+
+
   when lowerb $ do
-    let retEqZero = concatMap retConstantToZero (zip [0..] aSigs ++ zip [0..] cfSigs)
+    let retEqZero = concatMap retDefFunToZero (zip [0..] aSigs ++ zip [0..] cfSigs)
     addRetEqZeroConstraints vecLen retEqZero
-    addAnyNonZeroConstraints vecLen' nonZeroDts
+    addAnyNonZeroConstraints vecLen' nonZeroDts -- including 0, thus vecLen'
+    addMainToZeroConstr vecLen mainToZeroConstr
 
   -- add constraints with specified length
   addCostConditions vecLen (costCondition conds)
@@ -239,8 +243,8 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
           concatMap (toGrowBoundConstraintsBaseCtr ops probSigs vecLen) constr
 
     -- needed because addition of base ctr can cause problems
-    addConstructorGrowthConstraints vecLen growthConstraints
-    addConstructorGrowthConstraints vecLen growthConstraintsBaseCtr
+    addConstructorGrowthConstraints ops vecLen growthConstraints
+    addConstructorGrowthConstraints ops vecLen growthConstraintsBaseCtr
 
     -- independence constraints:
     -- let indepConstr = concatMap (independencyBaseConstr ops vecLen) constr
@@ -336,9 +340,9 @@ constantToZero (nr, Signature (n,_,True,True) [] rhs)  = [SigRefCstCf nr]
 constantToZero _                                       = []
 
 
-retConstantToZero (nr, Signature (n,_,False,False) _ _) = [SigRefRet "" nr]
--- retConstantToZero (nr, Signature (n,_,False,True) _ rhs)  = [SigRefRetCf "" nr]
-retConstantToZero _                                     = []
+retDefFunToZero (nr, Signature (n,_,False,False) _ _) = [SigRefRet "" nr]
+-- retDefFunToZero (nr, Signature (n,_,False,True) _ rhs)  = [SigRefRetCf "" nr]
+retDefFunToZero _                                     = []
 
 
 nonZeroDatatypes (nr, Signature (n,_,isCtr,False) lhs rhs) =
@@ -346,6 +350,13 @@ nonZeroDatatypes (nr, Signature (n,_,isCtr,False) lhs rhs) =
   where nonZeroParam (pNr,_) = SigRefParam "" nr pNr
         nonZeroRet = SigRefRet "" nr
 
+mainToZero :: (Show t, Show s) =>
+              (Int, Signature (s, t2, Bool,Bool) t)
+           -> [ADatatype String Int]
+mainToZero (nr, Signature (n,_,False,False) lhs rhs)
+  | take 4 (filter (/='"') $ show n) == "main" = map (SigRefParam "" nr) [0..length lhs-1]
+  | otherwise = []
+mainToZero _ = []
 
 uniqueBaseCtr :: (Show s) =>
                  Int

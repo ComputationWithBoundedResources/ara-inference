@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Jun 14 12:03:22 2017 (+0200)
+-- Last-Updated: Thu Jun 15 18:20:22 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 260
+--     Update #: 275
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -45,6 +45,9 @@ import           Control.Exception.Base                                    (thro
 import           Data.Foldable                                             (foldlM)
 import           Data.Function                                             (on)
 import           Data.List                                                 (sortBy)
+import           Data.Maybe                                                (fromJust,
+                                                                            isJust,
+                                                                            isNothing)
 import           System.Console.GetOpt
 import           System.Environment                                        (getArgs,
                                                                             getProgName)
@@ -66,7 +69,7 @@ defaultOptions = ArgumentOptions {
                  , shift = False
                  , allowLowerSCC = False
                  , lowerbound = False
-                 , lowerboundArg = False
+                 , lowerboundArg = Nothing
                  , timeout = Nothing
                  , smtSolver = Z3
                  , findStrictRules = Nothing
@@ -100,14 +103,20 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
 
   , Option [] ["lowerbound"]
    (NoArg (\opts -> return $
-            if lowerboundArg opts
+            if isJust (lowerboundArg opts)
             then opts
             else opts { lowerbound = True } ))
    "Search for best case lowerbound measured in size instead of upperbound (only works for linear bounds). [Default: False]"
 
   , Option ['l'] ["lowerboundArg"]
-   (NoArg (\opts -> return $ opts { lowerbound = False, lowerboundArg = True } ))
-   "Search for best case lowerbound instead of upperbound (Overrules lowerbound option). [Default: False]"
+   (OptArg (\mStr opts -> return $
+             let readNr = reads (fromJust mStr) :: [(Int, String)]
+             in if isNothing mStr
+                then opts {lowerboundArg = Just 1}
+                else if null readNr
+                     then throw $ FatalException "Cannot parse argument of -l/--lowerboundArg!"
+                     else opts { lowerboundArg = Just (fst $ head readNr)}) "INT")
+   "Search for best case lowerbound instead of upperbound (Overrules lowerbound option). [Default: unset, when enabled with no argument then 1 is used]"
 
 
   , Option ['s'] ["smt"]

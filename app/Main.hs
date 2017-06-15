@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Jun 14 12:04:42 2017 (+0200)
+-- Last-Updated: Thu Jun 15 19:19:48 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 956
+--     Update #: 992
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -82,6 +82,8 @@ import           Data.Rewriting.ARA.Pretty
 import           Data.Rewriting.Typed.Problem
 import           Data.Rewriting.Typed.Rule
 import           Data.Rewriting.Typed.Signature
+import           Data.Rewriting.Typed.Term.Type                            hiding
+                                                                            (map)
 
 import           Control.Arrow                                             hiding
                                                                             ((<+>))
@@ -112,12 +114,38 @@ main =
          probFile <- parseFileIO (filePath args)
 
          -- if no types given, infer them
-         let prob = if isNothing (datatypes probFile) || isNothing (signatures probFile)
+         let probParse = if isNothing (datatypes probFile) || isNothing (signatures probFile)
                then inferTypesAndSignature probFile
                else probFile
 
+         -- possibly add main function
+         let isMainFun (Fun f _) = take 4 f == "main"
+             isMainFun _         = False
+         let mainFun = filter (isMainFun.lhs) (allRules $ rules probParse)
+         let stricts = strictRules (rules probParse)
+         prob <- if isJust (lowerboundArg args) && null mainFun && not (null stricts)
+                 then do
+                   let (Fun f ch) = lhs $ last stricts
+                   let sigF = fromMaybe (E.throw $ FatalException $
+                                         "Could not find signature of " ++ show f) $
+                              find ((== f).lhsRootSym) (fromJust $ signatures probParse)
+                   let args = map (\nr -> "x" ++ show nr) [1..length ch]
+                   let argsStr = intercalate "," args
+                   putStrLn $ "WARNING: taking " ++ f ++ "(" ++ argsStr ++ ") as main function"
+                   let rule = Rule (Fun "main" (map Var args)) (Fun f (map Var args))
+                   return $ probParse { rules = (rules probParse)
+                               { strictRules = strictRules (rules probParse) ++
+                                                             [rule]}
+                                      , signatures =
+                                        fmap (++ [sigF { lhsRootSym = "main" }])
+                                        (signatures probParse)
+                                      }
+                 else return probParse
+
+
          -- Find out SCCs
          let reachability = analyzeReachability prob
+
 
          (prove, infTrees) <- analyzeProblem args reachability prob
 
@@ -180,7 +208,7 @@ main =
 
 
          -- print solution
-         if lowerbound args
+         if lowerbound args || isJust (lowerboundArg args)
            then putStrLn $ "BEST_CASE(Omega(n^" ++ show bigO ++ "),?)\n"
            else putStrLn $ "WORST_CASE(?,O(n^" ++ show bigO ++ "))\n"
 

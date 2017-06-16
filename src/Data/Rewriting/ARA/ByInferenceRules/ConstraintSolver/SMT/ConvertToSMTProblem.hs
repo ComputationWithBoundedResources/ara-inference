@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 17:56:05 2017 (+0200)
+-- Last-Updated: Fri Jun 16 20:20:03 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1315
+--     Update #: 1346
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -110,25 +110,31 @@ addAnyNonZeroConstraints vecLen' xs = do
   addVars vs
 
 
-addMainToZeroConstr :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
-                       Int
-                    -> Int
-                    -> [ADatatype t a]
-                    -> m ()
-addMainToZeroConstr vecLen nrOfArgs xs = do
+addArgNotAllZeroConstr :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
+                          Bool
+                       -> Int
+                       -> Int
+                       -> (Int,String,[ADatatype t a])
+                       -> m ()
+addArgNotAllZeroConstr _ _ 0 _ = return ()
+addArgNotAllZeroConstr _ _ _ (_,_,[]) = return ()
+addArgNotAllZeroConstr isCtr vecLen nrOfArgs (nr,name,xs) = do
   let vss = map (fromADatatype vecLen) xs
-  let baseVar = "ipvar_mainZero_"
+  let baseVar = "ipvar_argZero_" +++ T.pack name +++ "_" +++ T.pack (show nr) +++ "_"
 
   let gtZero x = "(> " +++ x +++ " 0)"
   let predicateArg = fromListByFun "(or " return . map gtZero
-  let ite pred = "(ite " +++ pred +++ " 1 0)"
+  let eqZero x = "(= " +++ x +++ " 0)"
+  let retZero = fromListByFun "(and " return $ map eqZero $ fromADatatype vecLen (SigRefRet "" nr)
+  let ite pred | isCtr = "(ite (or " +++ T.concat retZero +++ " " +++ pred +++ ") 1 0)"
+               | otherwise = "(ite " +++ pred +++ " 1 0)"
   let counterContrs = concatMap (map ite.predicateArg) vss
 
-  when (vecLen > 1) $ do
-    let eqZero x = "(= " +++ x +++ " 0)"
-    let eqZeroList = fromListByFun "(and " return . map eqZero
-    let iteZero (v:vs) = "(ite (= 0 " +++ v +++ ") " +++ T.concat (eqZeroList vs) +++ " true)"
-    assertionsStr <>= map iteZero vss
+  -- when (vecLen > 1) $ do
+  --   let eqZero x = "(= " +++ x +++ " 0)"
+  --   let eqZeroList = fromListByFun "(and " return . map eqZero
+  --   let iteZero (v:vs) = "(ite (= 0 " +++ v +++ ") " +++ T.concat (eqZeroList vs) +++ " true)"
+  --   assertionsStr <>= map iteZero vss
 
 
   let countVars = map ((baseVar +++) . T.pack . show) [0..length counterContrs-1]
@@ -137,7 +143,15 @@ addMainToZeroConstr vecLen nrOfArgs xs = do
   assertions <>= asserts
 
   let nonZeroCtr = fromListBy return countVars
-  assertions <>= [(head nonZeroCtr,Eq,T.pack (show nrOfArgs))]
+  assertions <>=
+    -- trace ("asserts: " ++ show asserts)
+    -- trace ("vss: " ++ show vss)
+    -- trace ("counterContrs: " ++ show counterContrs)
+    -- trace ("argNotAllZero: " ++ show nonZeroCtr)
+    -- trace ("vecLen: " ++ show vecLen)
+    -- trace ("countVars: " ++ show countVars)
+
+    [(head nonZeroCtr, Geq, T.pack (show nrOfArgs))]
 
   addVars (countVars ++ concat vss)
 

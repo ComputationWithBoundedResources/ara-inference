@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 17:54:53 2017 (+0200)
+-- Last-Updated: Fri Jun 16 20:18:36 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1729
+--     Update #: 1769
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -174,7 +174,7 @@ solveProblem ops probSigs conds aSigs cfSigs = do
         (if lowerbound ops
          then [1,0]
           else if isJust (lowerboundArg ops)
-               then reverse vecLens ++ [0]
+               then reverse vecLens -- ++ [0]
           else vecLens)
 
 
@@ -218,14 +218,19 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
   let vecLen | vecLen' == 0 = 1
              | otherwise = vecLen'
 
-  let mainToZeroConstr = concatMap mainToZero (zip [0..] aSigs)
-
 
   when lowerb $ do
     let retEqZero = concatMap retDefFunToZero (zip [0..] aSigs ++ zip [0..] cfSigs)
     addRetEqZeroConstraints vecLen retEqZero
     addAnyNonZeroConstraints vecLen' nonZeroDts -- including 0, thus vecLen'
-    addMainToZeroConstr vecLen (fromJust $ lowerboundArg ops) mainToZeroConstr
+    let minNrArgs | isJust (lowerboundArg ops) = fromJust (lowerboundArg ops)
+                  | otherwise = 1
+
+    -- for main function and constructors
+    let mainArgNotAllZeroConstr = concatMap mainArgNotAllZero (zip [0..] aSigs)
+    mapM_ (addArgNotAllZeroConstr False vecLen minNrArgs) mainArgNotAllZeroConstr
+    let ctrArgNotAllZeroConstr = concatMap ctrArgNotAllZero (zip [0..] aSigs)
+    mapM_ (addArgNotAllZeroConstr True vecLen 1) ctrArgNotAllZeroConstr
 
 
   -- add constraints with specified length
@@ -349,24 +354,32 @@ constantToZero (nr, Signature (n,_,True,False) [] rhs) = [SigRefCst nr]
 constantToZero (nr, Signature (n,_,True,True) [] rhs)  = [SigRefCstCf nr]
 constantToZero _                                       = []
 
-
-retDefFunToZero (nr, Signature (n,_,False,False) _ _) = [SigRefRet "" nr]
--- retDefFunToZero (nr, Signature (n,_,False,True) _ rhs)  = [SigRefRetCf "" nr]
+retDefFunToZero (nr, Signature (n,_,False,False) _ _)
+  | take 4 (filter (/='"') $ show n) == "main" = [SigRefRet "" nr]
+  | otherwise = []
 retDefFunToZero _                                     = []
-
 
 nonZeroDatatypes (nr, Signature (n,_,isCtr,False) lhs rhs) =
   zipWith (curry nonZeroParam) [0..] lhs ++ [ nonZeroRet | isCtr]
   where nonZeroParam (pNr,_) = SigRefParam "" nr pNr
         nonZeroRet = SigRefRet "" nr
 
-mainToZero :: (Show t, Show s) =>
+mainArgNotAllZero :: (Show t, Show s) =>
               (Int, Signature (s, t2, Bool,Bool) t)
-           -> [ADatatype String Int]
-mainToZero (nr, Signature (n,_,False,False) lhs rhs)
-  | take 4 (filter (/='"') $ show n) == "main" = map (SigRefParam "" nr) [0..length lhs-1]
+           -> [(Int,String,[ADatatype String Int])]
+mainArgNotAllZero (nr, Signature (n,_,False,False) lhs rhs)
+  | take 4 (filter (/='"') $ show n) == "main" =
+      [(nr,filter (/='"') $ show n,map (SigRefParam "" nr) [0..length lhs-1])]
   | otherwise = []
-mainToZero _ = []
+mainArgNotAllZero _ = []
+
+ctrArgNotAllZero :: (Show t, Show s) =>
+              (Int, Signature (s, t2, Bool,Bool) t)
+           -> [(Int,String,[ADatatype String Int])]
+ctrArgNotAllZero (nr, Signature (n,_,True,_) lhs rhs) =
+  [(nr,filter (/='"') $ show n,map (SigRefParam "" nr) [0..length lhs-1])]
+ctrArgNotAllZero _ = []
+
 
 uniqueBaseCtr :: (Show s) =>
                  Int

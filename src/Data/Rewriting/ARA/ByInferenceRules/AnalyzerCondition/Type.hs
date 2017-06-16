@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 23:24:12 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 22:30:57 2017 (+0200)
+-- Last-Updated: Fri Jun 16 17:36:45 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 87
+--     Update #: 93
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -54,6 +54,7 @@ import           Data.Rewriting.Typed.Rule
 data ACondition f v a b = ACondition
               { costCondition   :: [([ACostCondition a], Comparison, [ACostCondition a])] -- ^
               , dtConditions    :: [([ADatatype String b], Comparison, [ADatatype String b])] -- ^
+              , dtConditionsInt :: [(ADatatype String Int, Comparison, Int)] -- ^
               , shareConditions :: [(ADatatype String b, Comparison, [ADatatype String b])] -- ^
               , minus1Vars :: [(Rule f v, ACostCondition a)]
               } deriving (Show, Eq)

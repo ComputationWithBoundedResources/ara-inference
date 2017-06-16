@@ -12,7 +12,7 @@
 
 (RULES
   add(0, y) -> y
-  add(s(x), s(y)) -> add(x,y)
+  add(s(x), y) -> s(add(x,y))
   main(x,y) -> add(x,y)
 )
 (COMMENT

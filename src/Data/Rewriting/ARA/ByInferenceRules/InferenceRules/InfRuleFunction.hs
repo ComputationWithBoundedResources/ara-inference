@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 10:42:30 2017 (+0200)
+-- Last-Updated: Fri Jun 16 17:31:31 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1256
+--     Update #: 1257
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -146,7 +146,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
           | isJust mCfSigIdx = any ((==f) . fst) (fromJust mCfSigIdx)
           | otherwise = False
 
-        emptyACond = ACondition [] [] [] []
+        emptyACond = ACondition [] [] [] [] []
 
         (cfsigs',infTreesCf,conds'',nr')
           | not newSigToCfSig = (cfsigs, [], emptyACond,nr)

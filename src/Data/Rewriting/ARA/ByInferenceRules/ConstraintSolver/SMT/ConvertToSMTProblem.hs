@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 14:37:15 2017 (+0200)
+-- Last-Updated: Fri Jun 16 17:56:05 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1246
+--     Update #: 1315
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -120,7 +120,7 @@ addMainToZeroConstr vecLen nrOfArgs xs = do
   let baseVar = "ipvar_mainZero_"
 
   let gtZero x = "(> " +++ x +++ " 0)"
-  let predicateArg = fromListByFun "(and " return . map gtZero
+  let predicateArg = fromListByFun "(or " return . map gtZero
   let ite pred = "(ite " +++ pred +++ " 1 0)"
   let counterContrs = concatMap (map ite.predicateArg) vss
 
@@ -273,9 +273,17 @@ addDtConditions vecLen dtCond = do
   mapM_ (\(a,_,c) -> addVarsBy (fromADatatype vecLen) (a++c)) dtCond
   mapM_ (addConstraintBy (fromListBy (fromADatatype vecLen))) dtCond
 
+addDtIntConditions :: (Show a, Monad m) =>
+                  Int
+                -> [(ADatatype dt a, Comparison, Int)]
+                -> StateT SMTProblem m ()
+addDtIntConditions vecLen dtCond = do
+  mapM_ (\(a,_,_) -> addVarsBy (fromADatatype vecLen) [a]) dtCond
+  mapM_ (addConstraintBy2 (fromADatatype vecLen) (replicate vecLen . T.pack . show)) dtCond
+
 
 fromADatatype :: Int -> ADatatype dt a -> [T.Text]
-fromADatatype vecLen ActualCost{} = error "not possible"
+fromADatatype vecLen ActualCost{}  = error "not allowed"
 fromADatatype vecLen (SigRefParam _ m n) =
   map (\nr -> "v" +++ T.pack (show nr) +++ "_p" +++ T.pack (show m)
         +++ "_" +++ T.pack (show n)) [1..vecLen]
@@ -422,9 +430,8 @@ addConstructorGrowthConstraints ops vecLen xs
           let ctrRGeqQM1 = ctrRGeqQM1Ctr ctrRGeqQM1Vals
 
           -- Any p_i >= q + r
-          let wRiVars :: [T.Text]
-              wRiVars = fromADatatype vecLen $
-                SigRefVar undefined (T.unpack $ baseVarI +++ "wri")
+          let wRiVars = fromADatatype vecLen $
+                (SigRefVar undefined (T.unpack $ baseVarI +++ "wri") :: ADatatype String Int)
           let wRiConstr =
                 map (\(v,w,r) -> "(= " +++ v +++ " (+ " +++ w +++ " " +++ r +++ "))" )
                 (zip3 wRiVars ws ris)
@@ -526,8 +533,8 @@ addConstructorGrowthConstraints ops vecLen xs
 
 
           let wRiVars :: [T.Text]
-              wRiVars = fromADatatype vecLen $
-                SigRefVar undefined (T.unpack $ baseVarI +++ "wri")
+              wRiVars = fromADatatype vecLen
+                (SigRefVar undefined (T.unpack $ baseVarI +++ "wri") :: ADatatype String Int)
 
           let wRiConstr =
                 map (\(v,w,r) -> "(= " +++ v +++ " (+ " +++ w +++ " " +++ r +++ "))" )
@@ -642,16 +649,29 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
   mapM_ (\baseNr -> do
             mapM_ (setRetValuesToIdentiyMatrix baseNr) constrNames
             mapM_ (setMaxOfCosts baseNr) constrNames
-            mapM_ (setMaxOfParams baseNr) constrNames
-        )
-  [1..vecLen]
-  where setRetValuesToIdentiyMatrix baseNr (ctrName,isCf,_,ctrType) = do
+            if isNothing (lowerboundArg args)
+              then mapM_ (setMaxOfParamsUpper baseNr) constrNames
+              else do mapM_ (setMaxOfParamsLower baseNr) constrNames
+                      mapM_ (kGeq1 baseNr) constrNames
+        ) [1..vecLen]
+
+  where kGeq1 baseNr (ctrName,isCf,paramLen,ctrType) = do
+          -- when (paramLen > 0) $ do
+          let baseCf = if isCf && separateBaseCtr args
+                       then ctrType ++ "_cf_" else ctrType ++ "_"
+          let var :: ACostCondition Int
+              var = AVariableCondition $
+                    "kctr_" ++ baseCf ++ T.unpack (convertToSMTText ctrName) ++ "_"
+                    ++ show baseNr
+          addConstraint (head (fromCostCond var), Geq, T.pack (show 1))
+
+        setRetValuesToIdentiyMatrix baseNr (ctrName,isCf,_,ctrType) = do
           let baseCf = if isCf && separateBaseCtr args
                        then ctrType ++ "_cf_" else ctrType ++ "_"
 
-          let var = SigRefVar undefined $
+          let var = (SigRefVar undefined $
                     "rctr_" ++ baseCf ++ T.unpack (convertToSMTText ctrName) ++ "_"
-                    ++ show baseNr
+                    ++ show baseNr :: ADatatype String Int)
           let rs = zip [1..] (fromADatatype vecLen var)
           let constrFun acc (nr,var) =
                 -- acc ++ if nr == baseNr
@@ -671,13 +691,43 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
           let constr = [("1",Geq,k)]
           assertions <>= constr
 
-        setMaxOfParams baseNr (ctrName,isCf,paramLen,ctrType) = do
-          let baseCf = if isCf && separateBaseCtr args then ctrType ++ "_cf_" else ctrType ++ "_"
-          let var x = SigRefVar undefined $
-                "pctr_" ++ baseCf ++ T.unpack ctrName ++ "_" ++ show x ++ "_"
-                ++ show baseNr
+        setMaxOfParamsLower baseNr (ctrName,isCf,paramLen,ctrType)
+          | paramLen == 0 = return ()
+          | otherwise = do
+              let baseCf = if isCf && separateBaseCtr args
+                    then ctrType ++ "_cf_"
+                    else ctrType ++ "_"
+              let var x = SigRefVar undefined $
+                    "pctr_" ++ baseCf ++ T.unpack ctrName ++ "_" ++ show x ++ "_"
+                    ++ show baseNr
+              let nonZeroCount x = "(ite (= " +++ x +++ " 0) 0 1)"
 
-          let ps = concatMap (fromADatatype  vecLen . var ) [0..paramLen-2]
+              -- let ps = map (fromADatatype  vecLen . var ) [0..paramLen-1]
+              -- let eqZeroList = map (fromListByFun "(or " return . map nonZeroCount) ps
+              -- let
+              -- let ctr = "(= 1 " +++ T.concat eqZeroList +++ ")"
+
+              -- trace ("ctr: " ++ show ctr) undefined
+              -- constr
+
+
+              return ()
+          -- let ps = concatMap (fromADatatype  vecLen . var ) [0..paramLen-2]
+          -- let ps' = concatMap (fromADatatype  vecLen . var)
+          --           [paramLen-1 | paramLen > 0]
+          -- let constr = map (\x -> ("2",Geq,x)) ps
+          -- let constr' = map (\x -> ("1",Geq,x)) ps'
+          -- assertions <>= -- trace ("constr: " ++ show constr)
+          --   constr
+          -- assertions <>= -- trace ("constr': " ++ show constr')
+          --   constr'
+        setMaxOfParamsUpper baseNr (ctrName,isCf,paramLen,ctrType) = do
+          let baseCf = if isCf && separateBaseCtr args then ctrType ++ "_cf_" else ctrType ++ "_"
+          let var x = (SigRefVar undefined $
+                "pctr_" ++ baseCf ++ T.unpack ctrName ++ "_" ++ show x ++ "_"
+                ++ show baseNr :: ADatatype String Int)
+
+          let ps = concatMap (fromADatatype  vecLen . var) [0..paramLen-2]
           let ps' = concatMap (fromADatatype  vecLen . var)
                     [paramLen-1 | paramLen > 0]
           let constr = map (\x -> ("2",Geq,x)) ps

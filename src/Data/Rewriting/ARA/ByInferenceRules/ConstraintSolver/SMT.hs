@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 11:00:00 2017 (+0200)
+-- Last-Updated: Fri Jun 16 17:54:53 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1718
+--     Update #: 1729
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -145,8 +145,12 @@ solveProblem ops probSigs conds aSigs cfSigs = do
 
   let maxNrVec = maxVectorLength ops
   let minNrVec = minVectorLength ops
-  let eqZero = concatMap constantToZero
-               (zip [0..] (map fst3 aSigs) ++ zip [0..] (map fst3 cfSigs))
+
+
+  let eqZero
+        | isJust (lowerboundArg ops) = []
+        | otherwise = concatMap constantToZero (zip [0..] (map fst3 aSigs) ++ zip [0..]
+                                                (map fst3 cfSigs))
 
 
   let prob0 = execState (addEqZeroConstraints eqZero) (use ops)
@@ -223,9 +227,11 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
     addAnyNonZeroConstraints vecLen' nonZeroDts -- including 0, thus vecLen'
     addMainToZeroConstr vecLen (fromJust $ lowerboundArg ops) mainToZeroConstr
 
+
   -- add constraints with specified length
   addCostConditions vecLen (costCondition conds)
   addDtConditions vecLen (dtConditions conds)
+  addDtIntConditions vecLen (dtConditionsInt conds)
   addShareConditions vecLen (shareConditions conds)
 
   when (isJust $ findStrictRules ops) $ do

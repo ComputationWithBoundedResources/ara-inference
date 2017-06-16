@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 23:23:50 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 22:31:15 2017 (+0200)
+-- Last-Updated: Fri Jun 16 17:38:19 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 149
+--     Update #: 154
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -52,14 +52,14 @@ import           Data.List
 import           Text.PrettyPrint
 
 
-prettyACondition :: (Show b) =>
-                    (ACostCondition a -> Doc)
-                 -> (ADatatype String b -> Doc)
-                 -> ACondition f v a b -> Doc
-prettyACondition pC pD (ACondition cost dt share min1Vars) =
+prettyACondition :: (ACostCondition a -> Doc)
+                 -> (ADatatype String Int -> Doc)
+                 -> ACondition f v a Int -> Doc
+prettyACondition pC pD (ACondition cost dt dtInt share min1Vars) =
   vcat (map (prettyTriple pCs prettyComparison pCs) cost) $+$
   vcat (map (prettyTriple pD prettyComparison pList) share) $+$
   vcat (map (prettyTriple pList prettyComparison pList) dt) $+$
+  vcat (map (prettyTriple pD prettyComparison int) dtInt) $+$
   vcat (map (\(a,b) -> pC b) min1Vars)
   where pCs = hcat . intersperse (text " + ") . map pC
         pList = hcat . intersperse (text " + ") . map pD

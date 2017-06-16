@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 03:42:33 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 10:42:21 2017 (+0200)
+-- Last-Updated: Fri Jun 16 17:32:36 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 188
+--     Update #: 190
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -81,7 +81,7 @@ identity args (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
     where condDt = [([removeDt $ snd pre], if isCtrDeriv then Eq else geq, [removeDt $ snd post])]
           condCst = [(cst, if isCtrDeriv then Eq else geq, [ACostValue 0])]
           nConds = ACondition (costCondition conds ++ condCst) (dtConditions conds ++ condDt)
-                      (shareConditions conds) (minus1Vars conds)
+                   (dtConditionsInt conds) (shareConditions conds) (minus1Vars conds)
           funName = termName (fst post)
           geq | isJust (lowerboundArg args) || lowerbound args = Leq
               | otherwise = Geq

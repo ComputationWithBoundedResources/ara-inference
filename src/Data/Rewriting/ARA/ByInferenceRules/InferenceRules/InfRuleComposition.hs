@@ -8,9 +8,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 10:42:35 2017 (+0200)
+-- Last-Updated: Fri Jun 16 17:32:13 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 663
+--     Update #: 664
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -133,7 +133,7 @@ composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun
         nr' = nr + length fc + length fc
 
         conds' = ACondition (costCondition conds ++ nCostCond) (dtConditions conds ++ nDtCond)
-                   (shareConditions conds ++ nShareCond) (minus1Vars conds)
+                 (dtConditionsInt conds) (shareConditions conds ++ nShareCond) (minus1Vars conds)
 
         nCostCond = [(cst, if isCtrDeriv then Eq else geq,
                       map (AVariableCondition . show) strVarsCost)]

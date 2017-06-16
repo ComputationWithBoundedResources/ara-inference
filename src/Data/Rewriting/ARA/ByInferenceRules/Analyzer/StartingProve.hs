@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jun 12 17:13:01 2017 (+0200)
+-- Last-Updated: Fri Jun 16 18:24:22 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1636
+--     Update #: 1650
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -284,7 +284,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         -- condsCtr :: ACondition dt Int Int
         (pre,aSigsCtr,condsCtr,kis,chInfTreeNds,noCfDefSyms',_) =
           foldl (getVarsWithDt ruleStr fromRuleOrGrpNr True isCf args sigs)
-          ([],[],ACondition [(csts, Geq, [ACostValue 0])] [] [] [],[],[],[],startCtrSigNr)
+          ([],[],ACondition [(csts, Geq, [ACostValue 0])] [] [] [] [],[],[],[],startCtrSigNr)
           (zip4 ch params dts varsKs)
         params = map (\(a,b) -> sigRefParam isCf a aSigNr b) (zip dts [0..])
         dts = map fst (lhsSig sig)
@@ -339,7 +339,7 @@ getVarsWithDt _ _ isRoot _ _ _ (accPre,accSigs,accConds,csts,infTreeNds,noCfDefS
   (accPre ++ [(read (show v), dtN)], accSigs,accConds `addConditions` nConds,csts,infTreeNds
   ,noCfDefSyms,sigNr)
 
-  where nConds = ACondition [([kVar],Eq,[ACostValue 0]) | isRoot ] [] [] []
+  where nConds = ACondition [([kVar],Eq,[ACostValue 0]) | isRoot ] [] [] [] []
 
 getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs
   (accPre,accSigs,accConds,csts,infTreeNds,noCfDefSyms,sigNr) (Fun f ch,dtN,dt,kVar) =
@@ -355,7 +355,7 @@ getVarsWithDt ruleStr ruleGrpNr isRoot isCf args sigs
                 dts = map fst (lhsSig sig)
                 aSig = (sig2ASig isCf args sig, ruleGrpNr, "getVarsWithDt")
                 nConds = ACondition [] [([removeDt dtN], Eq
-                                        ,[removeDt $ sigRefRet isCf dt sigNr])] [] []
+                                        ,[removeDt $ sigRefRet isCf dt sigNr])] [] [] []
                 nCsts = [sigRefCst isCf sigNr | isRoot]
                 nInfTreeNds =
                   [InfTreeNode
@@ -372,6 +372,7 @@ addConditions conds condsNew =
   ACondition
   (costCondition conds ++ costCondition condsNew)
   (dtConditions conds ++ dtConditions condsNew)
+  (dtConditionsInt conds ++ dtConditionsInt condsNew)
   (shareConditions conds ++ shareConditions condsNew)
   (minus1Vars conds ++ minus1Vars condsNew)
 

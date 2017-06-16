@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Jun 15 19:19:48 2017 (+0200)
+-- Last-Updated: Fri Jun 16 18:23:52 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 992
+--     Update #: 1000
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -131,7 +131,6 @@ main =
                               find ((== f).lhsRootSym) (fromJust $ signatures probParse)
                    let args = map (\nr -> "x" ++ show nr) [1..length ch]
                    let argsStr = intercalate "," args
-                   putStrLn $ "WARNING: taking " ++ f ++ "(" ++ argsStr ++ ") as main function"
                    let rule = Rule (Fun "main" (map Var args)) (Fun f (map Var args))
                    return $ probParse { rules = (rules probParse)
                                { strictRules = strictRules (rules probParse) ++
@@ -212,15 +211,17 @@ main =
            then putStrLn $ "BEST_CASE(Omega(n^" ++ show bigO ++ "),?)\n"
            else putStrLn $ "WORST_CASE(?,O(n^" ++ show bigO ++ "))\n"
 
+         let isMainSig (Signature (n,_,_,_) _ _)
+               | take 4 n == "main" = True
+               | otherwise = False
+
          print (text "Solution:\n" <> text "---------\n")
          print $ vcat $
            zipWith (\nr x -> (if printInfTree args
                              then nest 2 $ int nr <> colon
                              else empty)
                              <+> prettyAraSignature' x) [0..]
-           ( -- concatMap (sortBy (compare `on` rhsSig)) $
-             -- groupBy ((==) `on` fst4 . lhsRootSym) $
-             if printInfTree args
+           (filter (not.isMainSig) $ if printInfTree args
              then sigs
              else sortBy (compare `on` fst4 . lhsRootSym) (nub sigs))
 
@@ -232,9 +233,7 @@ main =
                               else empty)
                              <+> prettyAraSignature' x) [0..]
 
-           ( -- concatMap (sortBy (compare `on` rhsSig)) $
-             -- groupBy ((==) `on` fst4 . lhsRootSym) $
-             if printInfTree args
+           ( if printInfTree args
              then cfSigs
              else sortBy (compare `on` fst4 . lhsRootSym) (nub cfSigs))
 

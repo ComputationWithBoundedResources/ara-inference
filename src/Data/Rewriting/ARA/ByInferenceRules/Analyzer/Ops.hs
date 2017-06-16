@@ -9,9 +9,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 10:23:46 2017 (+0200)
+-- Last-Updated: Fri Jun 16 17:34:34 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2840
+--     Update #: 2843
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -91,6 +91,7 @@ analyzeProblem args reachability prob =
                                        (costCondition cond0 ++ map snd3 linearBaseConds)
                                        (dtConditions cond0 ++ map fst3 linearBaseConds ++
                                         concatMap thd3 linearBaseConds)
+                                       (dtConditionsInt cond0)
                                        (shareConditions cond0)
                                        (minus1Vars cond0)
                         }
@@ -195,7 +196,7 @@ startingProve :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v, Ord v, Read v) =>
                  ArgumentOptions -> ProblemSig f v f dt dt f -> Prove f v f dt dt f
 startingProve args prob' =
   (insertConstraints args . updateDatatypesChildCost . createCtrSig) prove0
-  where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] [] []) 0 []
+  where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] [] [] []) 0 []
 
 -- | This function takes a list of proves and checks it for the finished and
 --   successful proves. It either returns a successful prove, or fails.

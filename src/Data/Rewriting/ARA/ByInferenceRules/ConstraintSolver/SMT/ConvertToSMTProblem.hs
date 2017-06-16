@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 20:20:03 2017 (+0200)
+-- Last-Updated: Fri Jun 16 21:38:56 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1346
+--     Update #: 1382
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -109,18 +109,56 @@ addAnyNonZeroConstraints vecLen' xs = do
   assertionsStr <>= [constr]
   addVars vs
 
+addArgNotAllZeroBaseCtr :: (Monad m) =>
+                           Int
+                        -> [[ADatatype dt Int]]
+                        -> StateT SMTProblem m ()
+addArgNotAllZeroBaseCtr vecLen [] = return ()
+-- addArgNotAllZeroBaseCtr vecLen [_] = return ()
+addArgNotAllZeroBaseCtr vecLen params = do
+
+  let vs = map (map (head . fromADatatype vecLen)) params
+  let gtZero x = "(> " +++ x +++ " 0)"
+  let orList = map (head . fromListByFun "(or " return . map gtZero) vs
+  let ite x = "(ite " +++ x +++ " 1 0)"
+  let iteList = map ite orList
+  let ctr = "(>= " +++ T.concat (fromListBy return iteList) +++ " 1)"
+
+  addVars (concat vs)
+  assertionsStr <>= trace ("ctr: " ++ show ctr) [ctr]
+
+
+  -- let uis = fromADatatype vecLen ui
+  -- let gtZero x = "(> " +++ x +++ " 0)"
+  -- let predicateArg = fromListByFun "(or " return . map gtZero
+  -- let eqZero x = "(= " +++ x +++ " 0)"
+  -- let ite pred = "(ite " +++ pred +++ " 1 0)"
+  -- let counterContrs = concatMap (map ite.predicateArg) uis
+
+
+  -- trace ("name: " ++ show name)
+  --           trace ("ui: " ++ show ui)
+  --           trace ("uiNr: " ++ show uiNr)
+  --           trace ("ri: " ++ show ri)
+  --           trace ("p: " ++ show p)
+  --           trace ("w: " ++ show w)
+
+  -- trace ("params: " ++ show params)
+  --   trace ("orList: " ++ show orList)
+  --   undefined
+
 
 addArgNotAllZeroConstr :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
                           Bool
                        -> Int
                        -> Int
-                       -> (Int,String,[ADatatype t a])
+                       -> (Int,T.Text,[ADatatype t a])
                        -> m ()
 addArgNotAllZeroConstr _ _ 0 _ = return ()
 addArgNotAllZeroConstr _ _ _ (_,_,[]) = return ()
 addArgNotAllZeroConstr isCtr vecLen nrOfArgs (nr,name,xs) = do
   let vss = map (fromADatatype vecLen) xs
-  let baseVar = "ipvar_argZero_" +++ T.pack name +++ "_" +++ T.pack (show nr) +++ "_"
+  let baseVar = "ipvar_argZero_" +++ name +++ "_" +++ T.pack (show nr) +++ "_"
 
   let gtZero x = "(> " +++ x +++ " 0)"
   let predicateArg = fromListByFun "(or " return . map gtZero
@@ -663,10 +701,10 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
   mapM_ (\baseNr -> do
             mapM_ (setRetValuesToIdentiyMatrix baseNr) constrNames
             mapM_ (setMaxOfCosts baseNr) constrNames
-            if isNothing (lowerboundArg args)
-              then mapM_ (setMaxOfParamsUpper baseNr) constrNames
-              else do mapM_ (setMaxOfParamsLower baseNr) constrNames
+            if isJust (lowerboundArg args) || lowerbound args
+              then do mapM_ (setMaxOfParamsLower baseNr) constrNames
                       mapM_ (kGeq1 baseNr) constrNames
+              else mapM_ (setMaxOfParamsUpper baseNr) constrNames
         ) [1..vecLen]
 
   where kGeq1 baseNr (ctrName,isCf,paramLen,ctrType) = do
@@ -706,6 +744,7 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
           assertions <>= constr
 
         setMaxOfParamsLower baseNr (ctrName,isCf,paramLen,ctrType)
+          -- | not (directArgumentFilter args) = return ()
           | paramLen == 0 = return ()
           | otherwise = do
               let baseCf = if isCf && separateBaseCtr args
@@ -714,27 +753,11 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
               let var x = SigRefVar undefined $
                     "pctr_" ++ baseCf ++ T.unpack ctrName ++ "_" ++ show x ++ "_"
                     ++ show baseNr
-              let nonZeroCount x = "(ite (= " +++ x +++ " 0) 0 1)"
 
-              -- let ps = map (fromADatatype  vecLen . var ) [0..paramLen-1]
-              -- let eqZeroList = map (fromListByFun "(or " return . map nonZeroCount) ps
-              -- let
-              -- let ctr = "(= 1 " +++ T.concat eqZeroList +++ ")"
+              let ps = concatMap (fromADatatype  vecLen . var ) [0..paramLen-1]
+              let constr = map (\x -> ("2",Geq,x)) ps
+              assertions <>= constr
 
-              -- trace ("ctr: " ++ show ctr) undefined
-              -- constr
-
-
-              return ()
-          -- let ps = concatMap (fromADatatype  vecLen . var ) [0..paramLen-2]
-          -- let ps' = concatMap (fromADatatype  vecLen . var)
-          --           [paramLen-1 | paramLen > 0]
-          -- let constr = map (\x -> ("2",Geq,x)) ps
-          -- let constr' = map (\x -> ("1",Geq,x)) ps'
-          -- assertions <>= -- trace ("constr: " ++ show constr)
-          --   constr
-          -- assertions <>= -- trace ("constr': " ++ show constr')
-          --   constr'
         setMaxOfParamsUpper baseNr (ctrName,isCf,paramLen,ctrType) = do
           let baseCf = if isCf && separateBaseCtr args then ctrType ++ "_cf_" else ctrType ++ "_"
           let var x = (SigRefVar undefined $

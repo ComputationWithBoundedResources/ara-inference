@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Jun 15 18:20:22 2017 (+0200)
+-- Last-Updated: Fri Jun 16 20:29:56 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 275
+--     Update #: 282
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -73,6 +73,7 @@ defaultOptions = ArgumentOptions {
                  , timeout = Nothing
                  , smtSolver = Z3
                  , findStrictRules = Nothing
+                 , directArgumentFilter = False
                  }
 
 -- |This function defines the options, the function to be called, when
@@ -81,7 +82,7 @@ defaultOptions = ArgumentOptions {
 -- Arguments: The help message to be displayed in case the -h option is set.
 options :: [OptDescr (ArgumentOptions -> IO ArgumentOptions)]
 options = sortBy (compare `on` (\(Option c _ _ _) -> c))
-  [ Option ['d'] ["temp-dir"]
+  [ Option [] ["temp-dir"]
    (ReqArg (\str opts -> return $ opts { tempFilePath = str } ) "DIR" )
    "the temporary directory [Default: /tmp)]"
 
@@ -181,6 +182,12 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
                  then return opts
                  else return (opts { timeout = Just $ fst (head readRes) })) "INT")
     "Set a Timeout for the SMT solver."
+
+  , Option ['d'] ["directArgumentFilter"]
+   (NoArg (\opts -> return $
+            opts { directArgumentFilter = not (directArgumentFilter opts) } ))
+   "Allow different argument filtering for the same function in different annotations (for lowercase bounds) [Default: False]."
+
   ]
 
 

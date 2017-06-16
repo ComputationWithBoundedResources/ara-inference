@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 20:18:36 2017 (+0200)
+-- Last-Updated: Fri Jun 16 21:09:01 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1769
+--     Update #: 1799
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -218,6 +218,8 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
   let vecLen | vecLen' == 0 = 1
              | otherwise = vecLen'
 
+  let constr = nubBy baseCtrSigDef $
+               filter (thd4 . lhsRootSym) (aSigs++cfSigs)
 
   when lowerb $ do
     let retEqZero = concatMap retDefFunToZero (zip [0..] aSigs ++ zip [0..] cfSigs)
@@ -226,11 +228,16 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
     let minNrArgs | isJust (lowerboundArg ops) = fromJust (lowerboundArg ops)
                   | otherwise = 1
 
-    -- for main function and constructors
+    -- for main function
     let mainArgNotAllZeroConstr = concatMap mainArgNotAllZero (zip [0..] aSigs)
     mapM_ (addArgNotAllZeroConstr False vecLen minNrArgs) mainArgNotAllZeroConstr
+
+    -- and constructors
     let ctrArgNotAllZeroConstr = concatMap ctrArgNotAllZero (zip [0..] aSigs)
-    mapM_ (addArgNotAllZeroConstr True vecLen 1) ctrArgNotAllZeroConstr
+    let baseParamsList = map (baseParams ops probSigs vecLen) constr
+    if directArgumentFilter ops
+      then mapM_ (addArgNotAllZeroConstr True vecLen 1) ctrArgNotAllZeroConstr
+      else mapM_ (addArgNotAllZeroBaseCtr vecLen) baseParamsList
 
 
   -- add constraints with specified length
@@ -250,12 +257,11 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
     addMultConstraints vecLen mConstr
 
     -- bound growth of constructors
-    let growthConstraints =
-          concatMap (toGrowBoundConstraints ops) (zip [0..] aSigs ++ zip [0..] cfSigs)
-    let constr = nubBy baseCtrSigDef $
-                 filter (thd4 . lhsRootSym) (aSigs++cfSigs)
     let growthConstraintsBaseCtr =
           concatMap (toGrowBoundConstraintsBaseCtr ops probSigs vecLen) constr
+
+    let growthConstraints =
+          concatMap (toGrowBoundConstraints ops) (zip [0..] aSigs ++ zip [0..] cfSigs)
 
     -- needed because addition of base ctr can cause problems
     addConstructorGrowthConstraints ops vecLen growthConstraints
@@ -272,8 +278,6 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
                               ,thd4 (lhsRootSym x)
                               ,length (lhsSig x)
                               ,removeApostrophes $ show $ getDt (rhsSig x))
-
-
                        ) constr
     setBaseCtrMaxValues ops probSigs vecLen baseCtrs
 
@@ -366,18 +370,18 @@ nonZeroDatatypes (nr, Signature (n,_,isCtr,False) lhs rhs) =
 
 mainArgNotAllZero :: (Show t, Show s) =>
               (Int, Signature (s, t2, Bool,Bool) t)
-           -> [(Int,String,[ADatatype String Int])]
+           -> [(Int,T.Text,[ADatatype String Int])]
 mainArgNotAllZero (nr, Signature (n,_,False,False) lhs rhs)
   | take 4 (filter (/='"') $ show n) == "main" =
-      [(nr,filter (/='"') $ show n,map (SigRefParam "" nr) [0..length lhs-1])]
+      [(nr,convertToSMTStringText n,map (SigRefParam "" nr) [0..length lhs-1])]
   | otherwise = []
 mainArgNotAllZero _ = []
 
 ctrArgNotAllZero :: (Show t, Show s) =>
               (Int, Signature (s, t2, Bool,Bool) t)
-           -> [(Int,String,[ADatatype String Int])]
+           -> [(Int,T.Text,[ADatatype String Int])]
 ctrArgNotAllZero (nr, Signature (n,_,True,_) lhs rhs) =
-  [(nr,filter (/='"') $ show n,map (SigRefParam "" nr) [0..length lhs-1])]
+  [(nr, convertToSMTStringText n, map (SigRefParam "" nr) [0..length lhs-1])]
 ctrArgNotAllZero _ = []
 
 
@@ -569,6 +573,28 @@ toGrowBoundConstraintsBaseCtr args sigs vecLen (Signature (n,_,_,isCf) lhs rhs)
         baseCf = if isCf && separateBaseCtr args
                  then removeApostrophes (show ctrType) ++ "_cf_"
                  else removeApostrophes (show ctrType) ++ "_"
+
+
+baseParams :: (Show dt, Show s) =>
+              ArgumentOptions
+           -> [SignatureSig s sDt]
+           -> Int
+           -> Signature (s, t, Bool,Bool) (ADatatype dt a)
+           -> [[ADatatype String Int]]
+baseParams args sigs vecLen (Signature (n,_,_,isCf) [] rhs) = []
+baseParams args sigs vecLen (Signature (n,_,_,isCf) lhs rhs) =
+  map (\y ->
+         map (\v ->
+                 SigRefVar undefined $ "pctr_" ++ baseCf ++ convertToSMTString n ++
+                 "_" ++ show y ++ "_" ++ show v
+             ) [1..vecLen]
+      ) [0..length lhs-1]
+  where cf = if isCf then "cf_" else ""
+        ctrType = getDt rhs
+        baseCf = if isCf && separateBaseCtr args
+                 then removeApostrophes (show ctrType) ++ "_cf_"
+                 else removeApostrophes (show ctrType) ++ "_"
+
 
 -- independencyBaseConstr :: (Show s) =>
 --                           ArgumentOptions

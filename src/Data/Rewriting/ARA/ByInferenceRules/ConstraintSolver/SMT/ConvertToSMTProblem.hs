@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Jun 15 18:25:30 2017 (+0200)
+-- Last-Updated: Fri Jun 16 14:37:15 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1179
+--     Update #: 1246
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -112,16 +112,24 @@ addAnyNonZeroConstraints vecLen' xs = do
 
 addMainToZeroConstr :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
                        Int
+                    -> Int
                     -> [ADatatype t a]
                     -> m ()
-addMainToZeroConstr vecLen xs = do
+addMainToZeroConstr vecLen nrOfArgs xs = do
   let vss = map (fromADatatype vecLen) xs
   let baseVar = "ipvar_mainZero_"
 
-  let eqZero x = "(= 0 " +++ x +++ ")"
-  let predicateArg = fromListByFun "(and " return . map eqZero
+  let gtZero x = "(> " +++ x +++ " 0)"
+  let predicateArg = fromListByFun "(and " return . map gtZero
   let ite pred = "(ite " +++ pred +++ " 1 0)"
   let counterContrs = concatMap (map ite.predicateArg) vss
+
+  when (vecLen > 1) $ do
+    let eqZero x = "(= " +++ x +++ " 0)"
+    let eqZeroList = fromListByFun "(and " return . map eqZero
+    let iteZero (v:vs) = "(ite (= 0 " +++ v +++ ") " +++ T.concat (eqZeroList vs) +++ " true)"
+    assertionsStr <>= map iteZero vss
+
 
   let countVars = map ((baseVar +++) . T.pack . show) [0..length counterContrs-1]
   let asserts = zipWith (\a b -> (a, Eq, b)) countVars counterContrs
@@ -129,7 +137,7 @@ addMainToZeroConstr vecLen xs = do
   assertions <>= asserts
 
   let nonZeroCtr = fromListBy return countVars
-  assertions <>= [(head nonZeroCtr,Eq,"1")]
+  assertions <>= [(head nonZeroCtr,Eq,T.pack (show nrOfArgs))]
 
   addVars (countVars ++ concat vss)
 
@@ -142,8 +150,9 @@ addRetEqZeroConstraints :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
                         -> [ADatatype t a]
                         -> m ()
 addRetEqZeroConstraints vecLen eqZero = do
+  let vs = concatMap (fromADatatype vecLen) eqZero
   mapM_ (addVars . fromADatatype vecLen) eqZero
-  mapM_ (\x -> addConstraint (head (fromADatatype vecLen x), Eq, "0")) eqZero
+  mapM_ (\x -> addConstraint (x, Eq, "0")) vs
 
 
 addFindStrictRulesConstraint :: (Num a, Ord a, Monad m, Show a) =>
@@ -373,9 +382,85 @@ addConstructorGrowthConstraints :: (Monad m) =>
                                 -> StateT SMTProblem m ()
 addConstructorGrowthConstraints ops vecLen xs
   | lowerbound ops = mapM_ addConstructorGrowthConstraintsLower xs
-  | isJust $ lowerboundArg ops = mapM_ addConstructorGrowthConstraintsLower xs
+  | isJust $ lowerboundArg ops = mapM_ addConstructorGrowthConstraintsLowerArg xs
   | otherwise = mapM_ addConstructorGrowthConstraintsUpper xs
-  where addConstructorGrowthConstraintsLower :: (Monad m) =>
+  where addConstructorGrowthConstraintsLowerArg :: (Monad m) =>
+                                           (T.Text, ADatatype dt Int, Int, ADatatype dt Int,
+                                            ACostCondition Int, ADatatype dt Int)
+                                         -> StateT SMTProblem m ()
+        addConstructorGrowthConstraintsLowerArg (name,ui,uiNr,ri,p,w) = do
+          -- Suppose for all constructor symbols c and for all its annotated
+          -- signatures [p_1 × · · · × p_n ] → q ∈ F(c), where q /= 0, there exists
+          -- i (1 <= i <= n) and r ∈ A such that p_i >= q + r and |r| >= |q| - 1.
+          -- Then for all values v and all annotations q, we have ...
+
+          let baseVarI = "ipvar_th32_" +++ name +++ "_" +++ T.pack (show uiNr) +++ "_"
+          let ws = fromADatatype vecLen w   -- w = q
+              wsMaxV = baseVarI +++ "wsmax" -- wsMaxV = r
+              wsMaxConstr = "(= " +++ wsMaxV +++ " " +++ maxList ws +++ ")"
+          let ks =  fromCostCond p
+          let ris = fromADatatype vecLen ri
+          let uis = fromADatatype vecLen ui
+
+
+          -- Either q == 0 OR ...
+          let eqZero x = "(= " +++ x +++ " 0)"
+          let eqZeroList = fromListByFun "(and " return . map eqZero
+          let ctrBuilder ctr = "(or " +++ T.concat (eqZeroList ws) +++ " " +++ ctr +++ ")"
+
+          -- Constraint for |r| >= |q| - 1
+          let gtZero x = "(> " +++ x +++ " 0)"
+          let ctrRGeqQM1Fun 1 = (head ws, [])
+              ctrRGeqQM1Fun idx = (ws !! (idx-1), drop (idx-2) ris)
+          let ctrRGeqQM1Vals = reverse (map ctrRGeqQM1Fun [1..vecLen])
+          let ctrRGeqQM1Ctr [(pred, [])] = "true"
+              ctrRGeqQM1Ctr ((pred, ls):xs) =
+                "(ite (> " +++ pred +++ " 0) " +++
+                T.concat (fromListByFun "(or " return (map gtZero ls)) +++
+                " " +++ elsePart +++ ")"
+                where elsePart = ctrRGeqQM1Ctr xs
+          let ctrRGeqQM1 = ctrRGeqQM1Ctr ctrRGeqQM1Vals
+
+          -- Any p_i >= q + r
+          let wRiVars :: [T.Text]
+              wRiVars = fromADatatype vecLen $
+                SigRefVar undefined (T.unpack $ baseVarI +++ "wri")
+          let wRiConstr =
+                map (\(v,w,r) -> "(= " +++ v +++ " (+ " +++ w +++ " " +++ r +++ "))" )
+                (zip3 wRiVars ws ris)
+          let ctrPiGeqQr = zipWith (\p qr -> "(>= " +++ p +++ " " +++ qr +++ ")") uis wRiVars
+
+          -- Full constraint
+          let ctrs = map ctrBuilder ctrPiGeqQr
+
+          vars <>+= wRiVars ++ ris
+          assertionsStr <>= ctrs         -- Constraint: q == 0 OR pi >= q + r
+          assertionsStr <>= [ctrRGeqQM1] -- Def of r:   |r| >= |q|-1
+          assertionsStr <>= wRiConstr    -- Def of wRi: wRi_i = w_i + r_i
+
+
+          -- trace ("name: " ++ show name)
+          --   trace ("ui: " ++ show ui)
+          --   trace ("uiNr: " ++ show uiNr)
+          --   trace ("ri: " ++ show ri)
+          --   trace ("p: " ++ show p)
+          --   trace ("w: " ++ show w)
+          --   trace ("wsMaxV=r: " ++ show wsMaxV)
+          --   trace ("conts: " ++ show (head ks, Geq, wsMaxV))
+          --   trace ("ctrs: " ++ show (ui, Geq, w))
+          --   trace ("ctrRGtQM1: " ++ show (ctrRGeqQM1))
+          --   trace ("ctrs: " ++ show ctrs)
+          --          undefined
+
+          -- addConstraintBy (fromADatatype vecLen) (ui, Geq, w)
+
+
+          -- when (uiNr == 0) $ do
+          --   assertionsStr %= (wsMaxConstr :)
+          --   addConstraint (head ks, Geq, wsMaxV) -- k >= max q
+          --   vars <>+= [wsMaxV]
+
+        addConstructorGrowthConstraintsLower :: (Monad m) =>
                                            (T.Text, ADatatype dt Int, Int, ADatatype dt Int,
                                             ACostCondition Int, ADatatype dt Int)
                                          -> StateT SMTProblem m ()
@@ -409,7 +494,6 @@ addConstructorGrowthConstraints ops vecLen xs
             assertionsStr %= (wsMaxConstr :)
             addConstraint (head ks, Geq, wsMaxV) -- k >= max q
             vars <>+= [wsMaxV]
-
 
         maxList (x:xs) = maxList' x xs
         maxList' x [] = x

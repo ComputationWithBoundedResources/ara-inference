@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Jun 15 18:21:34 2017 (+0200)
+-- Last-Updated: Fri Jun 16 10:42:30 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1255
+--     Update #: 1256
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -265,7 +265,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
                        ) [0..length pre-1]
           ++ [([SigRefRet "" baseSigNr], Eq, [SigRefRet "" asigIdx]) | newDefFunSigToASig ]
 
-        geq | isJust (lowerboundArg args) && lowerbound args = Leq
+        geq | isJust (lowerboundArg args) || lowerbound args = Leq
             | otherwise = Geq
 
 

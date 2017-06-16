@@ -8,9 +8,9 @@
 -- Created: Sun Sep 14 17:35:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Jun 15 18:22:58 2017 (+0200)
+-- Last-Updated: Fri Jun 16 10:42:26 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 444
+--     Update #: 445
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -147,7 +147,7 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
 
         conds' = conds { shareConditions = shareConditions conds ++ shareConds }
 
-        geq | isJust (lowerboundArg args) && lowerbound args = Leq
+        geq | isJust (lowerboundArg args) || lowerbound args = Leq
             | otherwise = Geq
 
 

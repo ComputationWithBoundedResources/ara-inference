@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Jun 15 18:54:51 2017 (+0200)
+-- Last-Updated: Fri Jun 16 11:00:00 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1711
+--     Update #: 1718
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -167,7 +167,11 @@ solveProblem ops probSigs conds aSigs cfSigs = do
                                prob0
 
                                ))
-        (if lowerbound ops then [1,0] else vecLens)
+        (if lowerbound ops
+         then [1,0]
+          else if isJust (lowerboundArg ops)
+               then reverse vecLens ++ [0]
+          else vecLens)
 
 
   let getSol :: [IO (Either String a)] -> IO a
@@ -217,7 +221,7 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
     let retEqZero = concatMap retDefFunToZero (zip [0..] aSigs ++ zip [0..] cfSigs)
     addRetEqZeroConstraints vecLen retEqZero
     addAnyNonZeroConstraints vecLen' nonZeroDts -- including 0, thus vecLen'
-    addMainToZeroConstr vecLen mainToZeroConstr
+    addMainToZeroConstr vecLen (fromJust $ lowerboundArg ops) mainToZeroConstr
 
   -- add constraints with specified length
   addCostConditions vecLen (costCondition conds)

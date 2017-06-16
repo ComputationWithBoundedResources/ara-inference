@@ -8,9 +8,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Jun 15 18:22:22 2017 (+0200)
+-- Last-Updated: Fri Jun 16 10:42:35 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 662
+--     Update #: 663
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -143,7 +143,7 @@ composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun
         newVars :: [v]
         newVars = map (read . show . (varPrefix ++) . show) [nr..nr']
 
-        geq | isJust (lowerboundArg args) && lowerbound args = Leq
+        geq | isJust (lowerboundArg args) || lowerbound args = Leq
             | otherwise = Geq
 
 

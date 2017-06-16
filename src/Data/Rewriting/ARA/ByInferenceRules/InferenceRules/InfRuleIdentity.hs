@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 03:42:33 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Jun 15 18:22:41 2017 (+0200)
+-- Last-Updated: Fri Jun 16 10:42:21 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 187
+--     Update #: 188
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -83,7 +83,7 @@ identity args (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
           nConds = ACondition (costCondition conds ++ condCst) (dtConditions conds ++ condDt)
                       (shareConditions conds) (minus1Vars conds)
           funName = termName (fst post)
-          geq | isJust (lowerboundArg args) && lowerbound args = Leq
+          geq | isJust (lowerboundArg args) || lowerbound args = Leq
               | otherwise = Geq
 identity _ _ = []
 

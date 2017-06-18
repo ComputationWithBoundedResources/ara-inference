@@ -7,9 +7,9 @@
 -- Created: Wed Sep 17 09:05:42 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 10:22:21 2017 (+0200)
+-- Last-Updated: Sun Jun 18 15:53:25 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 419
+--     Update #: 420
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -192,7 +192,7 @@ prettyRl weak (Rule lhs rhs) =
 prettyTerm :: (Show f, Show v) => Term f v -> Doc
 prettyTerm (Var v) = text (show v)
 prettyTerm (Fun f ch) =
-  text (show f) <> char '(' <> hcat (map prettyTerm ch) <> char ')'
+  text (show f) <> char '(' <> hcat (intersperse (text ",") (map prettyTerm ch)) <> char ')'
 
 
 --

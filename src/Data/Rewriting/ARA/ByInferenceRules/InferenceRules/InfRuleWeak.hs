@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 11:39:45 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 18:26:53 2017 (+0200)
+-- Last-Updated: Sun Jun 18 20:02:40 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 149
+--     Update #: 160
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -75,7 +75,8 @@ weak :: forall f v dt . (Eq v, Eq dt, Read v, Ord v, Show v, Show dt, Show f) =>
            ACondition f v Int Int, [InfTreeNode f v dt])]
 weak args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (term, dt))
             i@(fn,ruleStr,isCtrDeriv,startCsts,sigNr,mCfSigIdx) his) =
-  -- trace ("weak")
+  -- trace ("preweak: " ++ show (pre,term))
+  -- trace ("weak: " ++ show (length pre > length varsTerm))
   [(prob, cfsigs, asigs, nr, conds', [InfTreeNode pre' cst (Just (term, dt)) i his'])
   | length pre > length varsTerm -- only if more variables left than right
   ]

@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 17:31:31 2017 (+0200)
+-- Last-Updated: Sun Jun 18 20:33:12 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1257
+--     Update #: 1261
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -80,9 +80,7 @@ import           Data.List                                                      
 import           Data.Maybe
 import           Text.PrettyPrint
 
-#ifdef DEBUG
 import           Debug.Trace
-#endif
 
 
 -- | This includes 3 different types of function applications:
@@ -136,7 +134,8 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
                   | otherwise = Just []
         nonCfHasCfBranches = not (isConstructor f) && not isCtrDeriv &&
                              not isCfBranch && (f == fn || isInSCCOfStartSig) &&
-                             not isInNoCfDefSyms
+                             not isInNoCfDefSyms &&
+                             not (isJust $ lowerboundArg args)
         cfBranchNeedSig = isCfBranch && (f /= fn || isInSCCOfStartSig)
         newSigToASig = not isCfBranch && (isConstructor f || f /= fn)
         newDefFunSigToASig = newSigToASig && not (isConstructor f)
@@ -234,8 +233,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
 
         conds' = conds { costCondition = costCondition conds ++ newCstCond
                                          ++ costCondition conds''
-                       , dtConditions = dtConditions conds ++ newDtCond
-                                        ++ dtConditions conds''
+                       , dtConditions = dtConditions conds ++ newDtCond ++ dtConditions conds''
                        , shareConditions = shareConditions conds ++ newShareCond
                                            ++ shareConditions conds''
                        }
@@ -248,7 +246,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
              [SigRefCstCf cfSigIdx | nonCfHasCfBranches] -- ++
               -- fmap AVariableCondition nCVar
             )] ++
-          [ ([SigRefCst asigIdx], Eq, [SigRefCst baseSigNr]) | newDefFunSigToASig ]
+          [([SigRefCst asigIdx], Eq, [SigRefCst baseSigNr]) | newDefFunSigToASig ]
 
         newDtCond =
           zipWith (\r n -> ([removeDt $ snd r]

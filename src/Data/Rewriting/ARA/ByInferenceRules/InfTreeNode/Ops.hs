@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 129
+--     Update #: 151
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -45,6 +45,7 @@ module Data.Rewriting.ARA.ByInferenceRules.InfTreeNode.Ops
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype
+import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Type
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerSignature
 import           Data.Rewriting.ARA.ByInferenceRules.Data.Type
 import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode.Type
@@ -52,13 +53,13 @@ import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 import           Data.Rewriting.Typed.Signature
-import           Data.Rewriting.Typed.Term                             hiding
-                                                                        (map)
+import           Data.Rewriting.Typed.Term                                 hiding
+                                                                            (map)
 
 
 import           Control.Lens
-import           Data.List                                             (find)
-import qualified Data.Map                                              as M
+import           Data.List                                                 (find)
+import qualified Data.Map                                                  as M
 import           Debug.Trace
 
 putValuesInInfTreeView :: (Show dt) =>
@@ -105,7 +106,7 @@ putValuesInPre :: ASigs String s
 putValuesInPre sigs cfsigs vs (n, dt)   = (n, putValuesInDt sigs cfsigs vs dt)
 
 putValuesInCst :: M.Map String Vector -> ACostCondition Vector -> ACostCondition Vector
-putValuesInCst vals (AVariableCondition n) = ACostValue (getValueNr vals n)
+putValuesInCst vals (AVariableCondition n) = ACostValue (getValueNr vals $ filter (/= '"') n)
 putValuesInCst vals (SigRefCst nr) = ACostValue (getValueNr vals n)
   where n = "k(" ++ show nr ++ ")"
 putValuesInCst vals (SigRefCstCf nr) = ACostValue (getValueNr vals n)
@@ -133,16 +134,16 @@ putValuesInDt :: ASigs String s
               -> M.Map String Vector
               -> ADatatype String Vector
               -> ADatatype String Vector
-putValuesInDt _ _ _ (ActualCost isCf dt cst) = ActualCost isCf dt cst
-putValuesInDt _ _ vals (SigRefVar dt n)    = ActualCost False dt (ACost $ getValueNr vals n)
+putValuesInDt _ _ _ x@(ActualCost isCf dt cst) = ActualCost isCf dt cst
+putValuesInDt _ _ vals (SigRefVar dt n)    =
+  ActualCost False (filter (/= '"') dt) (ACost $ getValueNr vals $ filter (/= '"') n)
 putValuesInDt sigs cfsigs vals x =
-  ActualCost fromCf dt (ACost $ getValueNr vals $ show x)
+  ActualCost fromCf dt (ACost $ getValueNr vals $ filter (/= '"') $ show x)
   where (fromCf, dt) = (\(ActualCost isCf x _) -> (isCf,x)) $ fetchSigValue sigs cfsigs x
 
 
 getValueNr :: M.Map String Vector -> String -> Vector
-getValueNr vals label = M.findWithDefault 0 label vals
-
+getValueNr = flip (M.findWithDefault 0)
 
 -- putValuesInACost                   :: [Data Int] -> ACost Int -> ACost Int
 -- putValuesInACost vals (ACost x nr) = ACost x nr

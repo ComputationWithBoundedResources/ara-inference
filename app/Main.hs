@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 19:07:22 2017 (+0200)
+-- Last-Updated: Sun Jun 18 17:34:54 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1002
+--     Update #: 1004
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -260,6 +260,8 @@ main =
                             else sortBy (compare `on` fst4 . lhsRootSym) (nub cfBaseCtrs))))
                     <> line)
 
+
+         -- trace ("vals: " ++ show vals) $
          when (isJust $ findStrictRules args) $ do
            putStrLn $ "Strict Rules: " ++ show strictRls
            putStrLn $ "Weak Rules: " ++ show weakRls

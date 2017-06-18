@@ -8,9 +8,9 @@
 -- Created: Sun Sep 14 17:35:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 10:42:26 2017 (+0200)
+-- Last-Updated: Sat Jun 17 19:32:35 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 445
+--     Update #: 454
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -114,10 +114,13 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
     -- trace ("subs: " ++ show subs)
     -- trace ("groupedPre: " ++ show groupedPre )
     -- trace ("groupedPostVars: " ++ show groupedPostVars)
-    -- trace ("pre: " ++ show pre)
-    -- trace ("pre': " ++ show pre')
+    -- trace ("SharePre: " ++ show pre)
+    -- trace ("SharePre'': " ++ show pre'')
+    -- trace ("share..:" ++ show ((zip groupedPre groupedPostVars)))
+    -- trace ("varsPost: " ++ show groupedPostVars)
+    -- trace ("varspre: " ++ show groupedPre)
 
-  [ (prob, cfsigs, asigs, nr', conds', [InfTreeNode (concat pre') cst (Just (post', dt)) i his'])
+  [ (prob, cfsigs, asigs, nr', conds', [InfTreeNode pre'' cst (Just (post', dt)) i his'])
   | any ((>1) . length) varPostGroups
   ]
 
@@ -125,7 +128,8 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
         varsPost = map (\(Var x) -> x) (concatMap getTermVars fc)
 
         varPostGroups = group $ sort varsPost
-        -- varsToReplace = concat $ filter ((>1) . length) varPostGroups
+
+        pre'' = concat pre' ++ filter ((`notElem` varsPost) . fst) pre
 
         groupedPre :: [(v, ADatatype dt Int)]
         groupedPre =
@@ -176,9 +180,7 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
         createPre' (p', nrTmp) (pres, [_]) = (p' ++ [[pres]], nrTmp)
         createPre' (p', nrTmp) (pres, posts) = (p' ++ [p''], nrTmp')
           where (p'', nrTmp') = foldl fun ([], nrTmp) posts
-                fun :: ([(v, ADatatype dt Int)], Int)
-                    -> t
-                    -> ([(v, ADatatype dt Int)], Int)
+                fun :: ([(v, ADatatype dt Int)], Int) -> t -> ([(v, ADatatype dt Int)], Int)
                 fun (pres', nr'') _ =
                   (pres' ++ [(read (show varName), SigRefVar dtVar varName)], nr''+1)
                   where varName = varPrefix ++ show nr''

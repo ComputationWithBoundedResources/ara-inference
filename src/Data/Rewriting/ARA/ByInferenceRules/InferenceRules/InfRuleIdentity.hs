@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 03:42:33 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 17:32:36 2017 (+0200)
+-- Last-Updated: Sun Jun 18 20:33:55 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 190
+--     Update #: 198
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -59,9 +59,7 @@ import           Data.Rewriting.Typed.Problem
 
 import           Data.Maybe                                                     (isJust)
 
-#ifdef DEBUG
 import           Debug.Trace                                                    (trace)
-#endif
 
 -- | The identity inference rule.
 identity :: forall f v dt . (Show f, Show v) =>
@@ -73,6 +71,11 @@ identity :: forall f v dt . (Show f, Show v) =>
 identity args (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
            i@(_,_,isCtrDeriv,_,_,_) his) =
 
+  -- (if paramNr (snd pre) == 9
+  -- then trace ("term: " ++ show (pre, post))
+  --      trace ("nConds: " ++ show condDt)
+  --      trace ("show (fst pre) == funName: " ++ show (show (fst pre) == funName))
+  -- else id)
   [(prob, cfsigs, asigs, nr, nConds
    , [ InfTreeNode [] [] Nothing i (his ++ [(fst3 (last his) + 1, "identity",
                                               InfTreeNodeLeafEmpty)])])
@@ -85,6 +88,8 @@ identity args (prob, cfsigs, asigs, nr, conds, InfTreeNode [pre] cst (Just post)
           funName = termName (fst post)
           geq | isJust (lowerboundArg args) || lowerbound args = Leq
               | otherwise = Geq
+          paramNr (SigRefParam _ nr _) = nr
+          paramNr _                    = -1
 identity _ _ = []
 
 

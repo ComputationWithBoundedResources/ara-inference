@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 21:38:56 2017 (+0200)
+-- Last-Updated: Sat Jun 17 19:05:37 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1382
+--     Update #: 1384
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -125,7 +125,8 @@ addArgNotAllZeroBaseCtr vecLen params = do
   let ctr = "(>= " +++ T.concat (fromListBy return iteList) +++ " 1)"
 
   addVars (concat vs)
-  assertionsStr <>= trace ("ctr: " ++ show ctr) [ctr]
+  assertionsStr <>= -- trace ("ctr: " ++ show ctr)
+    [ctr]
 
 
   -- let uis = fromADatatype vecLen ui

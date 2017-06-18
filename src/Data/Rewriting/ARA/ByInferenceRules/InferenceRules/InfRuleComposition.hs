@@ -8,9 +8,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 17:32:13 2017 (+0200)
+-- Last-Updated: Sun Jun 18 20:34:16 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 664
+--     Update #: 670
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -100,8 +100,8 @@ composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun
               i@(_,ruleStr,isCtrDeriv,cstsStart,_,_) his) =
 
  [ (prob, cfsigs, asigs, nr'+1, conds', funParNode : funChildNodes)
- | length pre == length fcVars &&             -- 1. number of variables fit
-   any (not . isVar) fc &&                     -- 2. function is not applicable
+ | length pre == length fcVars &&            -- 1. number of variables fit
+   any (not . isVar) fc &&                   -- 2. function is not applicable
    and (zipWith (==) preDtSorted fcDtSorted) -- 3. datatypes match
  ]
 
@@ -168,9 +168,10 @@ composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun
             hisFunParNode =
               his ++ [(fst3 (last his) + 1, "comp fun",
                         InfTreeNodeView
-                        (map (show *** toADatatypeVectorString) funParNodeParams)
+                        (map (removeApostrophes . show *** toADatatypeVectorString) funParNodeParams)
                         funParNodeCsts
-                        ((T.map show show *** toADatatypeVectorString) (fromJust funParNodeFunc)))]
+                        ((T.map (removeApostrophes . show) (removeApostrophes . show) ***
+                          toADatatypeVectorString) (fromJust funParNodeFunc)))]
 
 
         funChildNodes = fst $ foldl funChildNodes' ([], pre)

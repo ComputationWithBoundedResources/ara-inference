@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 13:22:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 08:44:04 2017 (+0200)
+-- Last-Updated: Sun Jun 18 18:10:59 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 153
+--     Update #: 154
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -81,7 +81,7 @@ prettyPreCond' (a,b) =
 
 prettyInfTreeNodeView :: InfTreeNodeView -> Doc
 prettyInfTreeNodeView (InfTreeNodeView pre cst post) =
-  hcat (intersperse (text ", ") (map prettyPreCond' pre))
+  hcat (intersperse (text ",") (map prettyPreCond' pre))
   <+> text "|-" <> hcat (intersperse (text "+") $
                          map (prettyACostCondition prettyVector) cst) <>
   text "-" <+> postTerm post <> postCost post

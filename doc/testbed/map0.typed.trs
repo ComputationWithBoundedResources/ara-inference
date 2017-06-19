@@ -12,9 +12,6 @@
     +Full :: [A x A] -> A
     * :: [A x A] -> A)
 (RULES
-    map(Cons(x,xs)) -> Cons(f(x)
-                           ,map(xs))
-    map(Nil()) -> Nil()
     goal(xs) -> map(xs)
     f(x) -> *(x,x)
     +Full(S(x),y) -> +Full(x,S(y))
@@ -22,4 +19,10 @@
     *(x,S(S(y))) ->= +(x,*(x,S(y)))
     *(x,S(0())) ->= x
     *(x,0()) ->= 0()
-    *(0(),y) ->= 0())
+    *(0(),y) ->= 0()
+
+    map(Cons(x,xs)) -> Cons(f(x)
+                           ,map(xs))
+    map(Nil()) -> Nil()
+
+)

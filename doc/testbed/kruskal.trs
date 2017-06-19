@@ -40,10 +40,6 @@
   partitions(nil) -> nil
   partitions(dd(n,N)) -> dd(dd(n,nil),partitions(N))
 
-  kruskal(nil,F,P) -> pair(F,P)
-  kruskal(dd(e,E),F,P) -> kruskal#q(inBlock(e,P),e,E,F,P)
-  kruskal#q(true,e,E,F,P) -> kruskal(E,F,P)
-  kruskal#q(false,e,E,F,P) -> kruskal(E,dd(e,F),join(e,P,nil))
 
   inBlock(e,nil) -> false
   inBlock(e,dd(p,P)) -> or(and(elem(src(e),p),elem(trg(e),p))
@@ -88,4 +84,10 @@
   or(false,true) -> true
   or(true,false) -> true
   or(false,false) -> false
-)
+
+  kruskal(nil,F,P) -> pair(F,P)
+  kruskal(dd(e,E),F,P) -> kruskal#q(inBlock(e,P),e,E,F,P)
+  kruskal#q(true,e,E,F,P) -> kruskal(E,F,P)
+  kruskal#q(false,e,E,F,P) -> kruskal(E,dd(e,F),join(e,P,nil))
+
+  )

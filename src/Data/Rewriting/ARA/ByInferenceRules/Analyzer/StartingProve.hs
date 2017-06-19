@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Jun 17 19:33:27 2017 (+0200)
+-- Last-Updated: Mon Jun 19 18:21:14 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1652
+--     Update #: 1660
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -225,6 +225,10 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
   -- trace ("varNameKs: " ++ show (varNameKs :: [String]))
   -- trace ("pre: " ++ show pre)
 
+  (if length pre > length preLinear
+   then trace ("nonLL: " ++ filePath args)
+   else id)
+
   (undefined,
    (nodes ++ [InfTreeNode
               preLinear
@@ -308,7 +312,8 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
         (preLinear,shareConds,nr') =
           (\(a,b,c) -> (reverse a, b, c)) $
           foldl mergeMultiple ([],[],nrKs) (groupBy ((==) `on` fst) $
-                                            sortBy (compare `on` fst)pre)
+                                            sortBy (compare `on` fst)
+                                            pre)
           where mergeMultiple (preLin, shares, nrI) [x] = (x:preLin,shares, nrI)
                 mergeMultiple (preLin, shares, nrI) xs@(x:rest)
                   | any (/= getDt (snd x)) (map (getDt.snd) rest) =

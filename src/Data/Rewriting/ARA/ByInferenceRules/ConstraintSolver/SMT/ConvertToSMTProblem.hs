@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Jun 17 19:05:37 2017 (+0200)
+-- Last-Updated: Mon Jun 19 18:19:10 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1384
+--     Update #: 1394
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -179,6 +179,10 @@ addArgNotAllZeroConstr isCtr vecLen nrOfArgs (nr,name,xs) = do
   let countVars = map ((baseVar +++) . T.pack . show) [0..length counterContrs-1]
   let asserts = zipWith (\a b -> (a, Eq, b)) countVars counterContrs
 
+  let lastElementG0 =
+        zipWith (\a argNr -> "(or (= " +++ a +++ " 0) (> " +++ last (vss!!argNr) +++ " 0))")
+        countVars [0..]
+
   assertions <>= asserts
 
   let nonZeroCtr = fromListBy return countVars
@@ -189,8 +193,12 @@ addArgNotAllZeroConstr isCtr vecLen nrOfArgs (nr,name,xs) = do
     -- trace ("argNotAllZero: " ++ show nonZeroCtr)
     -- trace ("vecLen: " ++ show vecLen)
     -- trace ("countVars: " ++ show countVars)
+    -- trace (show lastElementG0) undefined
 
     [(head nonZeroCtr, Geq, T.pack (show nrOfArgs))]
+
+  assertionsStr <>= lastElementG0
+
 
   addVars (countVars ++ concat vss)
 
@@ -509,6 +517,8 @@ addConstructorGrowthConstraints ops vecLen xs
           --   trace ("conts: " ++ show (head ks, Geq, wsMaxV))
           --   trace ("ctrs: " ++ show (ui, Geq, w))
           --   trace ("ctrRGtQM1: " ++ show (ctrRGeqQM1))
+          --   trace ("ctrs: " ++ show wRiConstr)
+          --   trace ("ctrs: " ++ show ctrRGeqQM1)
           --   trace ("ctrs: " ++ show ctrs)
           --          undefined
 

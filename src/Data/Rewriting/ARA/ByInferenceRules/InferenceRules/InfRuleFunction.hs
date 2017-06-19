@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Jun 18 20:33:12 2017 (+0200)
+-- Last-Updated: Mon Jun 19 18:22:51 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1261
+--     Update #: 1274
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -134,8 +134,8 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
                   | otherwise = Just []
         nonCfHasCfBranches = not (isConstructor f) && not isCtrDeriv &&
                              not isCfBranch && (f == fn || isInSCCOfStartSig) &&
-                             not isInNoCfDefSyms &&
-                             not (isJust $ lowerboundArg args)
+                             not isInNoCfDefSyms
+                             -- && isNothing (lowerboundArg args)
         cfBranchNeedSig = isCfBranch && (f /= fn || isInSCCOfStartSig)
         newSigToASig = not isCfBranch && (isConstructor f || f /= fn)
         newDefFunSigToASig = newSigToASig && not (isConstructor f)
@@ -265,7 +265,6 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
 
         geq | isJust (lowerboundArg args) || lowerbound args = Leq
             | otherwise = Geq
-
 
         newShareCond
           | nonCfHasCfBranches =

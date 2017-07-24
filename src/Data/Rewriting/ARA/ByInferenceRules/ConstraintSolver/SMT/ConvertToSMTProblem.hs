@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jun 19 18:19:10 2017 (+0200)
+-- Last-Updated: Mon Jul 24 15:34:58 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1394
+--     Update #: 1419
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -175,7 +175,6 @@ addArgNotAllZeroConstr isCtr vecLen nrOfArgs (nr,name,xs) = do
   --   let iteZero (v:vs) = "(ite (= 0 " +++ v +++ ") " +++ T.concat (eqZeroList vs) +++ " true)"
   --   assertionsStr <>= map iteZero vss
 
-
   let countVars = map ((baseVar +++) . T.pack . show) [0..length counterContrs-1]
   let asserts = zipWith (\a b -> (a, Eq, b)) countVars counterContrs
 
@@ -183,6 +182,8 @@ addArgNotAllZeroConstr isCtr vecLen nrOfArgs (nr,name,xs) = do
         zipWith (\a argNr -> "(or (= " +++ a +++ " 0) (> " +++ last (vss!!argNr) +++ " 0))")
         countVars [0..]
 
+  -- INFO commented
+  -- trace ("asserts: " ++ show asserts)
   assertions <>= asserts
 
   let nonZeroCtr = fromListBy return countVars
@@ -194,9 +195,11 @@ addArgNotAllZeroConstr isCtr vecLen nrOfArgs (nr,name,xs) = do
     -- trace ("vecLen: " ++ show vecLen)
     -- trace ("countVars: " ++ show countVars)
     -- trace (show lastElementG0) undefined
-
+    trace (">0 constraint: " ++ show (head nonZeroCtr, Geq, T.pack (show nrOfArgs)))
     [(head nonZeroCtr, Geq, T.pack (show nrOfArgs))]
 
+  -- INFO commented
+  -- trace ("missing asserts: " ++ show asserts)
   assertionsStr <>= lastElementG0
 
 
@@ -755,7 +758,8 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
           assertions <>= constr
 
         setMaxOfParamsLower baseNr (ctrName,isCf,paramLen,ctrType)
-          -- | not (directArgumentFilter args) = return ()
+          -- INFO commented following line in
+          | not (directArgumentFilter args) = return ()
           | paramLen == 0 = return ()
           | otherwise = do
               let baseCf = if isCf && separateBaseCtr args

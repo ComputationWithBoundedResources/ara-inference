@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Jun 18 17:34:54 2017 (+0200)
+-- Last-Updated: Mon Jul 24 13:21:04 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1004
+--     Update #: 1005
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -223,7 +223,8 @@ main =
                              <+> prettyAraSignature' x) [0..]
            (if printInfTree args
              then sigs
-             else filter (not.isMainSig) $ sortBy (compare `on` fst4 . lhsRootSym) (nub sigs))
+             else filter (\x -> not (null mainFun) || not (isMainSig x)) $
+                  sortBy (compare `on` fst4 . lhsRootSym) (nub sigs))
 
          -- Cost free signatures
          print (text "\n\nCost Free Signatures:\n" <> text "---------------------\n")

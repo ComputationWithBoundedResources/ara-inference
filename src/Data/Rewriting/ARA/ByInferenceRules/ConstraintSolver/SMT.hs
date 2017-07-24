@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Jun 18 18:57:30 2017 (+0200)
+-- Last-Updated: Mon Jul 24 15:28:26 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1800
+--     Update #: 1808
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -169,7 +169,6 @@ solveProblem ops probSigs conds aSigs cfSigs = do
         (\nr -> handle catcher (Right <$>
                                evalStateT (solveProblem' ops probSigs conds aSigs cfSigs nr)
                                prob0
-
                                ))
         (if lowerbound ops
          then [1,0]
@@ -272,7 +271,6 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
     -- addIndependenceBaseCtrConstraints vecLen indepConstr -- !!!
     -- let constrDt = concatMap (baseConstructors ops vecLen) constr
     -- addIndependenceConstraints vecLen constrDt -- !!!
-
 
     let baseCtrs = map (\x -> (convertToSMTStringText (fst4 (lhsRootSym x))
                               ,thd4 (lhsRootSym x)
@@ -381,7 +379,9 @@ ctrArgNotAllZero :: (Show t, Show s) =>
               (Int, Signature (s, t2, Bool,Bool) t)
            -> [(Int,T.Text,[ADatatype String Int])]
 ctrArgNotAllZero (nr, Signature (n,_,True,_) lhs rhs) =
-  [(nr, convertToSMTStringText n, map (SigRefParam "" nr) [0..length lhs-1])]
+  [(nr, name, map (SigRefParam "" nr) [0..length lhs-1])
+  | name /= "main"]
+  where name = convertToSMTStringText n
 ctrArgNotAllZero _ = []
 
 

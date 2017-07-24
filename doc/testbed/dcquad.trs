@@ -7,6 +7,7 @@
    q :: b x b -> b
    p :: b x b x b x b -> b
    add :: b x b -> b
+   main :: b x b -> b
  )
 
 (RULES
@@ -16,4 +17,5 @@
  q(s(x),y) -> p(s(x),0,s(0),y)
  add(0,x) -> x
  add(s(x),y) -> s(add(x,y))
+ main(x,y) -> add(x,y)
 )

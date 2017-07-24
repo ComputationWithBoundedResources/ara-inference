@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # COMMAND="./dist/build/inference-exe/inference-exe $@ "
-PROG="./.stack-work/dist/x86_64-linux/Cabal-1.24.0.0/build/ara-inference-exe/ara-inference-exe"
+PROG=".stack-work/dist/x86_64-linux-tinfo6/Cabal-1.24.2.0/build/ara-inference-exe/ara-inference-exe"
 COMMAND="$PROG $@ "
 TIMES=1
 # FOLDERS=" ./doc/examples/"
@@ -18,7 +18,7 @@ FOLDERS=" ./doc/testbed/"
 # poly strategie
 
 COLWIDTH=10
-TIMEOUT=10
+TIMEOUT=60
 
 function displayUsage {
     echo -e -n "Usage:\n$0 [arguments to analyse program]"

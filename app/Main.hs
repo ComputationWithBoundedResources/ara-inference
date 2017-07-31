@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jul 24 13:21:04 2017 (+0200)
+-- Last-Updated: Mon Jul 31 14:43:04 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1005
+--     Update #: 1006
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -74,6 +74,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode
 import           Data.Rewriting.ARA.ByInferenceRules.Prove
 
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
+import           Data.Rewriting.ARA.CompletelyDefined
 import           Data.Rewriting.ARA.Constants                              (seperatorDoc)
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.ARA.Exception.Pretty                       ()
@@ -115,8 +116,8 @@ main =
 
          -- if no types given, infer them
          let probParse = if isNothing (datatypes probFile) || isNothing (signatures probFile)
-               then inferTypesAndSignature probFile
-               else probFile
+               then mkCompletelyDefined $ inferTypesAndSignature probFile
+               else mkCompletelyDefined $ probFile
 
          -- possibly add main function
          let isMainFun (Fun f _) = take 4 f == "main"

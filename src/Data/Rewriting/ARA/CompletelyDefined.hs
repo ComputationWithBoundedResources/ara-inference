@@ -10,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 232
+--     Update #: 235
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -93,17 +93,20 @@ mkCompletelyDefinedConds p =
         -- addSig = (++ [Signature (read (show rhsBtmSym)) [] (read (show rhsBtmSym))])
         ret = foldl mkSigCond (ACondition [] [] [] [] [], []) nRules
         mkSigCond acc [] =  acc
-        mkSigCond (cond,sigs) (Rule (Fun _ lhss) (Fun f _):_) =
-          ( cond { dtConditionsInt = dtConditionsInt cond ++
-                    map (\p -> (SigRefParam "" (nr::Int) (p::Int) , Eq, 0))
-                    [0..(length lhss-1)]
-                 }
+        mkSigCond acc (Rule (Fun _ lhss) (Fun f _):_) =
+          foldl (mkSigCond' f) acc (zip [0..] lhss)
 
-           , sigs ++ [(Signature (f,ACost (Vector1 0),False, False)
-                       (map (\dt -> ActualCost False dt (ACost 0)) pDts)
-                       (ActualCost False rDt (ACost 0))
-                      , -1, "to make completely defined")]
-           )
+        mkSigCond' f (cond,sigs) (pNr,lhs) = case lhs of
+          Var _    ->
+            ( cond { dtConditionsInt = dtConditionsInt cond ++
+                     [(SigRefParam "" (nr::Int) (pNr::Int) , Eq, 0)] }
+            , sigs ++ [(Signature (f,ACost (Vector1 0),False, False)
+                        (map (\dt -> ActualCost False dt (ACost 0)) pDts)
+                        (ActualCost False rDt (ACost 0))
+                       , -1, "to make completely defined")]
+            )
+          Fun f' ch -> foldl (mkSigCond' f') (cond,sigs) (zip [0..] ch)
+
           where nr = length sigs
                 sig = getDefSymSignatureByName' (fromJust $ signatures p) f
                 pDts = map fst $ lhsSig sig

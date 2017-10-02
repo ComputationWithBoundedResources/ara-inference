@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jul 31 14:43:04 2017 (+0200)
+-- Last-Updated: Mon Oct  2 12:09:31 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1006
+--     Update #: 1012
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -83,11 +83,9 @@ import           Data.Rewriting.ARA.Pretty
 import           Data.Rewriting.Typed.Problem
 import           Data.Rewriting.Typed.Rule
 import           Data.Rewriting.Typed.Signature
-import           Data.Rewriting.Typed.Term.Type                            hiding
-                                                                            (map)
+import           Data.Rewriting.Typed.Term.Type                            hiding (map)
 
-import           Control.Arrow                                             hiding
-                                                                            ((<+>))
+import           Control.Arrow                                             hiding ((<+>))
 import qualified Control.Exception                                         as E
 import           Control.Monad.State
 import           Data.Function
@@ -116,8 +114,8 @@ main =
 
          -- if no types given, infer them
          let probParse = if isNothing (datatypes probFile) || isNothing (signatures probFile)
-               then mkCompletelyDefined $ inferTypesAndSignature probFile
-               else mkCompletelyDefined $ probFile
+               then inferTypesAndSignature probFile
+               else probFile
 
          -- possibly add main function
          let isMainFun (Fun f _) = take 4 f == "main"

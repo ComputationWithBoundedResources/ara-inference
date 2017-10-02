@@ -16,8 +16,8 @@
   quot(s(x), s(y)) -> s(quot(minus(x, y), s(y)))
 )
 (COMMENT
-  minus(0,s(x)) ->
-  quot(s(x),0) ->
+  minus(0,s(x)) -> BTM
+  quot(s(x),0) -> BTM
 )
 
 

@@ -7,9 +7,9 @@
 -- Created: Wed Oct  1 15:39:56 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:02 2017 (+0200)
+-- Last-Updated: Mon Oct  2 13:26:58 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 101
+--     Update #: 102
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -34,7 +34,6 @@
 
 -- Code:
 
--- | TODO: comment this module
 module Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost.Type
     ( ACost (..)
     , getACostValue

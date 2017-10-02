@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 -- CompletelyDefined.hs ---
 --
 -- Filename: CompletelyDefined.hs
@@ -9,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 174
+--     Update #: 220
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -35,42 +36,78 @@
 -- Code:
 
 module Data.Rewriting.ARA.CompletelyDefined
-    ( mkCompletelyDefined
+    ( mkCompletelyDefinedConds
     ) where
 
+import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition.Type
+import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost.Type
+import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Type
+import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerSignature.Type
+import           Data.Rewriting.ARA.ByInferenceRules.Operator.Type
+import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
+import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
+import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.Typed.Datatype
 import           Data.Rewriting.Typed.Problem
 import           Data.Rewriting.Typed.Rule
 import           Data.Rewriting.Typed.Signature
 
-
 import           Control.Lens
 import           Control.Monad.State
-import           Data.Function                  (on)
+import           Data.Function                                              (on)
 import           Data.List
-import qualified Data.Map.Strict                as M
+import qualified Data.Map.Strict                                            as M
 import           Data.Maybe
-import qualified Data.Text                      as T
-import           Text.PrettyPrint.ANSI.Leijen
+import qualified Data.Text                                                  as T
+import           Text.PrettyPrint.ANSI.Leijen                               hiding ((<$>))
 
 import           Debug.Trace
 
 
-mkCompletelyDefined :: (Read f, Ord f, Eq f, Show f, Show v) =>
-                       Problem f v s sDt dt f
-                    -> Problem f v f String String f
-mkCompletelyDefined p =
-  trace ("grRls: " ++ show grRls)
-  trace ("defSyms: " ++ show defSyms)
-  trace ("allSyms: " ++ show allSyms)
-  trace ("ctrSyms: " ++ show ctrSyms)
-  trace ("lhss: " ++ show lhssChlds) $
-  trace ("ctrArities: " ++ show ctrArities)
+mkCompletelyDefinedConds :: (Ord f, Eq f, Show f, Show dt, Show v) =>
+                            ProblemSig f v f dt dt f
+                         -> (ACondition f v Int Int, ASigs dt f)
+mkCompletelyDefinedConds p =
+  -- trace ("grRls: " ++ show grRls)
+  -- trace ("defSyms: " ++ show defSyms)
+  -- trace ("allSyms: " ++ show allSyms)
+  -- trace ("ctrSyms: " ++ show ctrSyms)
+  -- trace ("lhss: " ++ show lhssChlds) $
+  -- trace ("ctrArities: " ++ show ctrArities)
   trace ("nRules: " ++ show nRules)
-  undefined
+
+  -- trace ("nSigs: " ++ show (addSig <$> signatures p))
+  -- undefined
+  -- p { rules = (rules p) { strictRules = strictRules (rules p) ++ concat nRules }
+  --   , datatypes = addDt <$> datatypes p
+  --   , signatures = addSig <$> signatures p
+  --   }
+  -- undefined
+
+  ret
 
 
-  where rls = allRules (rules p)
+  where -- addDt = (++ [Datatype (read (show rhsBtmSym))
+        --               [ Constructor (read $ show rhsBtmSym) []]])
+        -- addSig = (++ [Signature (read (show rhsBtmSym)) [] (read (show rhsBtmSym))])
+        ret = foldl mkSigCond (ACondition [] [] [] [] [], []) nRules
+        mkSigCond acc [] =  acc
+        mkSigCond (cond,sigs) (Rule (Fun _ lhss) (Fun f _):_) =
+          ( cond { dtConditionsInt = dtConditionsInt cond ++
+                    map (\p ->
+                            (SigRefParam (error "forced dt of mkSig") (nr::Int) (p::Int)
+                            , Geq, 0))
+                    [0..(length lhss-1)]
+                 }
+
+           , sigs ++ [(Signature (f,ACost (Vector1 0),False, False)
+                       (map (SigRefParam (error "forced dt of mkSig") nr) [0..(length lhss-1)])
+                        (SigRefRet (error "forced dt of mkSig") nr)
+                      , -1, "to make completely defined")]
+           )
+          where nr = length sigs
+
+        rls = allRules (rules p)
         rootTerm (Rule (Fun f _) _) = f
         rootTerm (Rule (Var v) _)   = error "not possible"
 
@@ -111,10 +148,7 @@ mkCompletelyDefined p =
               ctrParams = map (map dropAritiesFromFun) ctrCombs
               filteredParams = foldl (flip filterParams) ctrParams lhss
               mkRule params = Rule (Fun f params) (Fun  f [])
-          in trace ("maxDepth: " ++ show maxDepth)
-             trace ("combs: " ++ show ctrCombs)
-             trace ("filtered: " ++ show filteredParams)
-             map mkRule filteredParams
+          in map mkRule filteredParams
 
 filterParams :: (Eq f) => [Term f v] -> [[Term f v]] -> [[Term f v]]
 filterParams rule []     = []

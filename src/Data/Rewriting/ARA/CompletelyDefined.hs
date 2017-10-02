@@ -10,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 220
+--     Update #: 232
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -43,6 +43,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCondition.Type
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost.Type
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Type
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerSignature.Type
+import           Data.Rewriting.ARA.ByInferenceRules.HelperFunctions
 import           Data.Rewriting.ARA.ByInferenceRules.Operator.Type
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
@@ -64,7 +65,7 @@ import           Text.PrettyPrint.ANSI.Leijen                               hidi
 import           Debug.Trace
 
 
-mkCompletelyDefinedConds :: (Ord f, Eq f, Show f, Show dt, Show v) =>
+mkCompletelyDefinedConds :: (Ord f, Eq f, Show f, Show dt, Eq dt, Show v) =>
                             ProblemSig f v f dt dt f
                          -> (ACondition f v Int Int, ASigs dt f)
 mkCompletelyDefinedConds p =
@@ -94,18 +95,19 @@ mkCompletelyDefinedConds p =
         mkSigCond acc [] =  acc
         mkSigCond (cond,sigs) (Rule (Fun _ lhss) (Fun f _):_) =
           ( cond { dtConditionsInt = dtConditionsInt cond ++
-                    map (\p ->
-                            (SigRefParam (error "forced dt of mkSig") (nr::Int) (p::Int)
-                            , Geq, 0))
+                    map (\p -> (SigRefParam "" (nr::Int) (p::Int) , Eq, 0))
                     [0..(length lhss-1)]
                  }
 
            , sigs ++ [(Signature (f,ACost (Vector1 0),False, False)
-                       (map (SigRefParam (error "forced dt of mkSig") nr) [0..(length lhss-1)])
-                        (SigRefRet (error "forced dt of mkSig") nr)
+                       (map (\dt -> ActualCost False dt (ACost 0)) pDts)
+                       (ActualCost False rDt (ACost 0))
                       , -1, "to make completely defined")]
            )
           where nr = length sigs
+                sig = getDefSymSignatureByName' (fromJust $ signatures p) f
+                pDts = map fst $ lhsSig sig
+                rDt = fst $ rhsSig sig
 
         rls = allRules (rules p)
         rootTerm (Rule (Fun f _) _) = f

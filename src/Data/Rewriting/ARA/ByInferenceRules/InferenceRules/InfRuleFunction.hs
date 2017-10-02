@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jul 24 12:50:10 2017 (+0200)
+-- Last-Updated: Mon Sep 11 22:20:01 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1276
+--     Update #: 1277
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -135,6 +135,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
         nonCfHasCfBranches = not (isConstructor f) && not isCtrDeriv &&
                              not isCfBranch && (f == fn || isInSCCOfStartSig) &&
                              not isInNoCfDefSyms
+                             && False
                              -- && isNothing (lowerboundArg args)
         cfBranchNeedSig = isCfBranch && (f /= fn || isInSCCOfStartSig)
         newSigToASig = not isCfBranch && (isConstructor f || f /= fn)
@@ -223,7 +224,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
         preSorted = sortBy (compare `on` postVarOrder) pre
 
         getRetCst (InfTreeNode _ _ (Just (_,cst)) _ _) = cst
-        getRetCst _ = error "should not happen"
+        getRetCst _                                    = error "should not happen"
 
 
         -- create new variable c for costs

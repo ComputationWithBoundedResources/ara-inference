@@ -18,6 +18,7 @@ cabal-version:       >=1.10
 library
   exposed-modules:     Data.Rewriting.ARA.Constants
                      , Data.Rewriting.ARA.InferTypes
+                     , Data.Rewriting.ARA.CompletelyDefined
                      , Data.Rewriting.ARA.ByInferenceRules.Analyzer
                      , Data.Rewriting.ARA.ByInferenceRules.Analyzer.Ops
                      , Data.Rewriting.ARA.ByInferenceRules.Analyzer.StartingProve

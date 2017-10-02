@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 10:46:58 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:10 2017 (+0200)
+-- Last-Updated: Mon Oct  2 11:17:48 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 99
+--     Update #: 100
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -46,6 +46,9 @@ seperatorDoc = text "-----------------------------------------------------------
 -- Variable
 varPrefix :: String
 varPrefix = "ipvar"
+
+rhsBtmSym :: String
+rhsBtmSym = "btm"
 
 --
 -- Constants.hs ends here

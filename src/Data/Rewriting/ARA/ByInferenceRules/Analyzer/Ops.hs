@@ -9,9 +9,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 17:34:34 2017 (+0200)
+-- Last-Updated: Mon Oct  2 13:39:24 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2843
+--     Update #: 2853
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -55,6 +55,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.InferenceRules.Ops
 import           Data.Rewriting.ARA.ByInferenceRules.Operator
 import           Data.Rewriting.ARA.ByInferenceRules.Prove
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
+import           Data.Rewriting.ARA.CompletelyDefined
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.Typed.Datatype
 import           Data.Rewriting.Typed.Problem
@@ -70,7 +71,8 @@ import           Debug.Trace                                                (tra
 
 import           Control.Exception                                          (throw)
 import           Data.Char                                                  (isNumber)
-import           Data.Maybe                                                 (fromMaybe)
+import           Data.Maybe                                                 (fromMaybe,
+                                                                             isJust)
 import           Text.PrettyPrint
 
 
@@ -192,11 +194,15 @@ convertProblem prob' =
 
 -- | @startingProve prob'@ generates default starting points of the inference
 -- trees for the input problem @prob'@.
-startingProve :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v, Ord v, Read v) =>
+startingProve :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v, Ord v, Read v, Ord f) =>
                  ArgumentOptions -> ProblemSig f v f dt dt f -> Prove f v f dt dt f
 startingProve args prob' =
   (insertConstraints args . updateDatatypesChildCost . createCtrSig) prove0
-  where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] [] [] []) 0 []
+  where prove0 = Prove [] [] 1 prob' [] sigs conds 0 []
+        (conds,sigs) | isJust (lowerboundArg args) =
+                       trace ("STARTING PROVE: " ++ show (mkCompletelyDefinedConds prob'))
+                       mkCompletelyDefinedConds prob'
+                     | otherwise = (ACondition [] [] [] [] [], [])
 
 -- | This function takes a list of proves and checks it for the finished and
 --   successful proves. It either returns a successful prove, or fails.

@@ -8,9 +8,9 @@
 -- Created: Wed Nov  2 15:34:35 2016 (+0100)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 16:15:41 2017 (+0200)
+-- Last-Updated: Mon Sep 11 21:58:55 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 56
+--     Update #: 59
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -58,14 +58,14 @@ import           Debug.Trace
 
 type St f v s sDt = (Problem f v f String String f, M.Map f Int, [f])
 
-inferTypesAndSignature :: (Ord f, Show f, Eq f) =>
+inferTypesAndSignature :: (Pretty f, Pretty v, Ord f, Show f, Eq f) =>
                           Problem f v s sDt dt f
                        -> Problem f v f String String f
 inferTypesAndSignature prob =
   (^._1) $ execState infer (prob { datatypes = Nothing
                                  , signatures = Nothing},M.empty,[])
 
-infer :: (Show f, Ord f) => State (St f v s sDt) ()
+infer :: (Pretty f, Pretty v, Show f, Ord f) => State (St f v s sDt) ()
 infer = do
   inferSigs
   inferTypes
@@ -75,7 +75,7 @@ getProblem = do
   st <- get
   return (st^._1)
 
-inferSigs :: (Show f, Ord f, Eq f) => State (St f v s sDt) ()
+inferSigs :: (Pretty f, Pretty v, Show f, Ord f, Eq f) => State (St f v s sDt) ()
 inferSigs = do
   p <- getProblem
   let syms = nub $ symbols p

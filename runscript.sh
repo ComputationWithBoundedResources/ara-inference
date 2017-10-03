@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # COMMAND="./dist/build/inference-exe/inference-exe $@ "
-# PROG=".stack-work/dist/x86_64-linux-tinfo6/Cabal-1.24.2.0/build/ara-inference-exe/ara-inference-exe"
+# PROG=".stack-work/dist/x86_64-linux-nopie/Cabal-1.24.2.0/build/ara-inference-exe/ara-inference-exe"
+PROG=`which ara-inference-exe`
 COMMAND="$PROG $@ "
 TIMES=1
 # FOLDERS=" ./doc/examples/"
-# FOLDERS=" ./doc/testbed/"
-FOLDERS="/tmp/TPDB-bba590b63ef2/"
+FOLDERS=" ./doc/testbed/"
+# FOLDERS="/tmp/TPDB-bba590b63ef2/"
 # FOLDERS=" ./doc/examples/linear "
 # FOLDERS=" ./doc/tpdb_full/"
 # FOLDERS=" ./doc/tpdb_full/raML/"

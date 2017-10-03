@@ -10,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 235
+--     Update #: 242
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -75,8 +75,8 @@ mkCompletelyDefinedConds p =
   -- trace ("ctrSyms: " ++ show ctrSyms)
   -- trace ("lhss: " ++ show lhssChlds) $
   -- trace ("ctrArities: " ++ show ctrArities)
-  trace ("nRules: " ++ show nRules)
-
+  -- trace ("nRules: " ++ show nRules)
+  -- undefined
   -- trace ("nSigs: " ++ show (addSig <$> signatures p))
   -- undefined
   -- p { rules = (rules p) { strictRules = strictRules (rules p) ++ concat nRules }

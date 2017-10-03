@@ -8,9 +8,9 @@
 -- Created: Sun Sep 14 17:35:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jun 19 17:29:44 2017 (+0200)
+-- Last-Updated: Tue Oct  3 23:19:06 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 456
+--     Update #: 478
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -96,7 +96,9 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
 
   -- trace ("pre:" ++ show groupedPre)
   -- trace ("post:" ++ show groupedPostVars)
-  -- trace ("pre':" ++ show (concat pre'))
+  -- trace ("pre':" ++ show pre')
+  -- trace ("pre'':" ++ show pre'')
+  -- trace ("zipped: " ++ show (zip groupedPre pre'))
   -- trace ("shareConds:" ++ show shareConds)
   -- trace ("post':" ++ show post')
   -- trace ("nr':" ++ show nr')
@@ -129,12 +131,12 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
 
         varPostGroups = group $ sort varsPost
 
-        pre'' = concat pre' ++ filter ((`notElem` varsPost) . fst) pre
+        pre'' = concat pre' -- ++ filter ((`notElem` varsPost) . fst) pre
 
         groupedPre :: [(v, ADatatype dt Int)]
         groupedPre =
           -- groupBy ((==) `on` fst) $
-          sortBy (compare `on` fst) $ -- grouped pre vars
+          sortBy (compare `on` fst) $ -- grouped pre vars-
           filter ((`elem` varsPost) . fst) pre
 
         groupedPostVars :: [[v]]
@@ -155,8 +157,10 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
             | otherwise = Geq
 
 
-        shareConds = foldl shareConds' [] (zip pre pre')
-        shareConds' acc (_, [_]) = acc
+        shareConds = foldl shareConds' [] (zip groupedPre pre')
+        shareConds' acc ((pre,_), [(post,_)])
+          | pre == post = acc
+          | otherwise = error "BUG IN SHARE RULE"
         shareConds' acc (preDt, postDts) =
           acc ++ [(removeDt (snd preDt)
                   ,if isCtrDeriv then Eq else geq
@@ -167,10 +171,10 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
           fromMaybe (error "should not happen")
           (find ((== a) . fst . fst) (zip pre [0..]))
 
-        (pre', nr') =
+        (pre', nr') = -- first (sortBy (compare `on` fst . head)) $
           -- trace ("(zip groupedPre groupedPostVars): " ++ show (zip groupedPre groupedPostVars)) $
           foldl createPre' ([], nr) $
-          sortBy (compare `on` origPreOrd) -- revert original order
+          -- sortBy (compare `on` fst) -- revert original order
           (zip groupedPre groupedPostVars)
 
 
@@ -186,8 +190,8 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
                   where varName = varPrefix ++ show nr''
                         dtVar = actCostDt $ fetchSigValue asigs cfsigs (toADatatypeVector $ snd pres)
                         actCostDt (ActualCost _ dt' _) = dt'
-                        actCostDt (SigRefVar dt' _) = dt'
-                        actCostDt _ = error "should not be possible"
+                        actCostDt (SigRefVar dt' _)    = dt'
+                        actCostDt _                    = error "should not be possible"
 
         subs =
           concat $

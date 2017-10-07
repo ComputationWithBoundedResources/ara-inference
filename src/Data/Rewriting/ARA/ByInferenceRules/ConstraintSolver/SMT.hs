@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Oct  7 11:41:05 2017 (+0200)
+-- Last-Updated: Sat Oct  7 16:09:15 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1812
+--     Update #: 1813
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -257,10 +257,10 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
 
     -- bound growth of constructors
     let growthConstraintsBaseCtr =
-          concatMap (toGrowBoundConstraintsBaseCtr ops probSigs vecLen) constr
+          map (toGrowBoundConstraintsBaseCtr ops probSigs vecLen) constr
 
     let growthConstraints =
-          concatMap (toGrowBoundConstraints ops) (zip [0..] aSigs ++ zip [0..] cfSigs)
+          map (toGrowBoundConstraints ops) (zip [0..] aSigs ++ zip [0..] cfSigs)
 
     -- needed because addition of base ctr can cause problems
     addConstructorGrowthConstraints ops vecLen growthConstraints

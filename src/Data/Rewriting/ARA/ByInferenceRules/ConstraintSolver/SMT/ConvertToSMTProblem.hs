@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Oct  7 15:29:27 2017 (+0200)
+-- Last-Updated: Sat Oct  7 16:17:08 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1467
+--     Update #: 1476
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -449,19 +449,22 @@ addConstraintBy2 f1 f2 c@(lhs, Leq, rhs) = do
 addConstructorGrowthConstraints :: (Monad m) =>
                                 ArgumentOptions
                                 -> Int
-                                -> [(T.Text, ADatatype dt Int, Int, ADatatype dt Int,
-                                     ACostCondition Int, ADatatype dt Int)]
+                                -> [[(T.Text, ADatatype dt Int, Int, ADatatype dt Int,
+                                      ACostCondition Int, ADatatype dt Int)]]
                                 -> StateT SMTProblem m ()
 addConstructorGrowthConstraints ops vecLen xs
-  | lowerbound ops = mapM_ addConstructorGrowthConstraintsLower xs
-  | isJust $ lowerboundArg ops = do
-      vars <- mapM addConstructorGrowthConstraintsLowerArg xs
-      assertionsStr <>= ["(> " +++ T.concat (fromListBy return vars) +++ " 0)"]
-  | otherwise = mapM_ addConstructorGrowthConstraintsUpper xs
+  | lowerbound ops = mapM_ addConstructorGrowthConstraintsLower (concat xs)
+  | isJust $ lowerboundArg ops = forM_ xs $ \ls -> do
+      res <- mapM addConstructorGrowthConstraintsLowerArg ls
+      unless (null res) $ do
+        let vars = map snd res
+            ctrBuilder = fst (head res)
+        assertionsStr <>= [ctrBuilder $ "(> " +++ T.concat (fromListBy return vars) +++ " 0)"]
+  | otherwise = mapM_ addConstructorGrowthConstraintsUpper (concat xs)
   where addConstructorGrowthConstraintsLowerArg :: (Monad m) =>
                                            (T.Text, ADatatype dt Int, Int, ADatatype dt Int,
                                             ACostCondition Int, ADatatype dt Int)
-                                         -> StateT SMTProblem m T.Text
+                                         -> StateT SMTProblem m (T.Text -> T.Text, T.Text)
         addConstructorGrowthConstraintsLowerArg (name,ui,uiNr,ri,p,w) = do
           -- Suppose for all constructor symbols c and for all its annotated
           -- signatures [p_1 × · · · × p_n ] → q ∈ F(c), where q /= 0, there exists
@@ -482,6 +485,7 @@ addConstructorGrowthConstraints ops vecLen xs
           let eqZero x = "(= " +++ x +++ " 0)"
           let eqZeroList = fromListByFun "(and " return . map eqZero
           let ctrBuilder ctr = "(or " +++ T.concat (eqZeroList ws) +++ " " +++ ctr +++ ")"
+
 
           -- Constraint for |r| >= |q| - 1
           let gtZero x = "(> " +++ x +++ " 0)"
@@ -520,7 +524,7 @@ addConstructorGrowthConstraints ops vecLen xs
           assertionsStr <>= [ctr]        -- counterVar = if pi >= q + r then 1 else 0
           assertionsStr <>= [ctrRGeqQM1] -- Def of r:   |r| >= |q|-1
           assertionsStr <>= wRiConstr    -- Def of wRi: wRi_i = w_i + r_i
-          return counterVar
+          return (ctrBuilder, counterVar)
 
         geq = geq' "true"
           where geq' eq [] [] = eq

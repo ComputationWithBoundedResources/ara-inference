@@ -7,9 +7,9 @@
 -- Created: Wed Oct  1 15:42:45 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 17:45:56 2017 (+0200)
+-- Last-Updated: Sat Oct  7 11:22:29 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 127
+--     Update #: 128
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -53,17 +53,17 @@ import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
 data ADatatype dt a = ActualCost Bool dt (ACost a) -- ^ was Cf, data-type and costs
                     | SigRefParam dt Int Int -- ^ m n: the same as the n'th element of the m'th sig
                     | SigRefRet dt Int       -- ^ same return data-type as the m'th signature
-                    | SigRefVar dt String -- ^ datatype and variable name for share rule
+                    | SigRefVar dt String    -- ^ datatype and variable name
                     | SigRefParamCf dt Int Int -- ^ m n: the same as the n'th element of the m'th sig
                     | SigRefRetCf dt Int       -- ^ same return data-type as the m'th signature
 
 toADatatypeVector :: ADatatype dt Int -> ADatatype dt Vector
 toADatatypeVector (ActualCost cf dt (ACost cst)) = ActualCost cf dt (ACost (Vector1 cst))
-toADatatypeVector (SigRefRet dt x)     = SigRefRet dt x
-toADatatypeVector (SigRefParam dt m n) = SigRefParam dt m n
-toADatatypeVector (SigRefVar dt v)  = SigRefVar dt v
-toADatatypeVector (SigRefRetCf dt x) = SigRefRetCf dt x
-toADatatypeVector (SigRefParamCf dt m n) = SigRefParamCf dt m n
+toADatatypeVector (SigRefRet dt x)               = SigRefRet dt x
+toADatatypeVector (SigRefParam dt m n)           = SigRefParam dt m n
+toADatatypeVector (SigRefVar dt v)               = SigRefVar dt v
+toADatatypeVector (SigRefRetCf dt x)             = SigRefRetCf dt x
+toADatatypeVector (SigRefParamCf dt m n)         = SigRefParamCf dt m n
 
 
 toADatatypeVectorString :: (Show dt) => ADatatype dt Int -> ADatatype String Vector

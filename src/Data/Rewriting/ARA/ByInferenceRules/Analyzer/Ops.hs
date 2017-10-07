@@ -9,9 +9,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Oct  3 23:07:37 2017 (+0200)
+-- Last-Updated: Sat Oct  7 15:30:27 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2854
+--     Update #: 2855
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -199,9 +199,7 @@ startingProve :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v, Ord v, Read v, Ord
 startingProve args prob' =
   (insertConstraints args . updateDatatypesChildCost . createCtrSig) prove0
   where prove0 = Prove [] [] 1 prob' [] sigs conds 0 []
-        (conds,sigs) | isJust (lowerboundArg args) =
-                       trace ("STARTING PROVE: " ++ show (mkCompletelyDefinedConds prob'))
-                       mkCompletelyDefinedConds prob'
+        (conds,sigs) | isJust (lowerboundArg args) = mkCompletelyDefinedConds prob'
                      | otherwise = (ACondition [] [] [] [] [], [])
 
 -- | This function takes a list of proves and checks it for the finished and

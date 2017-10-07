@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jul 24 15:28:26 2017 (+0200)
+-- Last-Updated: Sat Oct  7 11:41:05 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1808
+--     Update #: 1812
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -385,75 +385,6 @@ ctrArgNotAllZero (nr, Signature (n,_,True,_) lhs rhs) =
 ctrArgNotAllZero _ = []
 
 
-uniqueBaseCtr :: (Show s) =>
-                 Int
-              -> ASignatureSig s dt
-              -> [((ADatatype dt Vector, ADatatype dt Vector)
-                 , [(ADatatype dt Vector, ADatatype dt Vector)]
-                 , [(ACostCondition Vector, ACostCondition Vector)])]
-uniqueBaseCtr vecLen (Signature (n,_,_,_) lhs _) =
-  map (\(x,y) ->
-         (( SigRefVar undefined $ "rctr_" ++ convertToSMTString n ++ "_" ++ show x
-          , SigRefVar undefined $ "rctr_" ++ convertToSMTString n ++ "_" ++ show y)
-         , map (\pNr ->
-                  (SigRefVar undefined $ "pctr_" ++ convertToSMTString n ++
-                    "_" ++ show pNr ++ "_" ++ show x
-                  , SigRefVar undefined $ "pctr_" ++ convertToSMTString n ++
-                    "_" ++ show pNr ++ "_" ++ show y)) [0..length lhs -1]
-         , [(AVariableCondition $ "kctr_" ++ convertToSMTString n ++ "_" ++ show x
-            ,AVariableCondition $ "kctr_" ++ convertToSMTString n ++ "_" ++ show y)]
-         )
-
-      ) (tuples [1..vecLen]) -- over tuples of all base constructors
-
-
-uniqueSigConstr :: Bool
-                -> Bool
-                -> [ASignatureSig s dt]
-                -> (Int, Int)
-                -> [((ADatatype String Vector, ADatatype String Vector)
-                  , [(ADatatype String Vector, ADatatype String Vector)]
-                  , [(ACostCondition Vector, ACostCondition Vector)])]
-uniqueSigConstr isCf uniqueFunConstr sigs (l, r) =
-  [((sigRefRet isCf "" l,
-     sigRefRet isCf "" r)
-  , zipWith (\a _ -> (sigRefParam isCf "" l a, sigRefParam isCf "" r a)) [0..] (lhsSig lSig)
-  , [(sigRefCst isCf l, sigRefCst isCf r)])
-  | uniqueFunConstr
-  ]
-
-  where lSig = sigs !! l
-        rSig = sigs !! r
-        lIsCtr = (thd4 . lhsRootSym) lSig
-        rIsCtr = (thd4 . lhsRootSym) rSig
-
-
-uniqueSignaturesConstr :: (Eq dt, Ord s) =>
-                          [(Int, ASignatureSig s dt)]
-                       -> [(Int, Int)]
-uniqueSignaturesConstr sigs =
-  concatMap (tuples . map fst) (groupsCSnd sigs)
-  where groupsCSnd sig =
-          groupBy (equalsFunConstr `on` snd) $ sortBy (compareFun `on` snd) sig
-
-equalsFunConstr :: (Eq a1, Eq a) =>
-                  Signature (a, t, t1,d) a1
-                -> Signature (a, t2, t3,d) a1
-                -> Bool
-equalsFunConstr (Signature (n1,_,_,_) _ rhs1 ) (Signature (n2,_,_,_) _ rhs2 )  =
-  n1 == n2 && rhs1 == rhs2
-
-compareFun :: (Ord a1, Ord a) =>
-             Signature (a, t, t1,d) a1
-           -> Signature (a, t2,t3,d) a1
-           -> Ordering
-compareFun (Signature (n1,_,_,_) _ rhs1 ) (Signature (n2,_,_,_) _ rhs2)  =
-  case compare n1 n2 of
-    EQ -> compare rhs1 rhs2
-    LT -> LT
-    GT -> GT
-
-
 shiftConstraints :: (Eq s, Eq sDt, Show s) =>
                     [Signature (s,ACost Int,Bool,Bool) (sDt, [ACost Int])]
                  -> [Signature (s,ACost Int,Bool,Bool) (sDt, [ACost Int])]
@@ -560,7 +491,7 @@ toGrowBoundConstraintsBaseCtr args sigs vecLen (Signature (n,_,_,isCf) lhs rhs)
                 , SigRefVar undefined $ "pctr_" ++ baseCf ++ convertToSMTString n ++
                   "_" ++ show y ++ "_" ++ show v
                 , y
-                , SigRefVar undefined $ "rictr_base_" ++ cf ++ convertToSMTString n
+                , SigRefVar undefined $ "rictr_base_" ++ baseCf ++ convertToSMTString n
                   ++ "_" ++ show y ++ "_" ++ show v
                 , AVariableCondition $ "kctr_" ++ baseCf ++ convertToSMTString n
                   ++ "_" ++ show v
@@ -594,54 +525,6 @@ baseParams args sigs vecLen (Signature (n,_,_,isCf) lhs rhs) =
         baseCf = if isCf && separateBaseCtr args
                  then removeApostrophes (show ctrType) ++ "_cf_"
                  else removeApostrophes (show ctrType) ++ "_"
-
-
--- independencyBaseConstr :: (Show s) =>
---                           ArgumentOptions
---                        -> [SignatureSig s sDt]
---                        -> Int
---                        -> Signature (s, t, Bool,Bool) (ADatatype a)
---                        -> [(String,
---                            String,
---                            String,
---                            String,
---                            ADatatype dt Int,
---                            ADatatype dt Int,
---                            ACostCondition Int,
---                            ACostCondition Int,
---                            [ADatatype dt Int],
---                            [ADatatype dt Int])]
--- independencyBaseConstr args sigs vecLen (Signature (n,_,_,isCf) lhs rhs)
---   | isCf && not (separateBaseCtr args) = []
---   | otherwise =
---       map (\(x,y) ->
---          let varXName1 = "ipvar_indep_" ++ cf ++ convertToSMTString n ++ "_" ++ show x ++
---                          "_" ++ show y ++ "_X1"
---              varXName2 = "ipvar_indep_" ++ cf ++ convertToSMTString n ++ "_" ++ show x ++
---                          "_" ++ show y ++ "_X2"
---              varYName1 = "ipvar_indep_" ++ cf ++ convertToSMTString n ++ "_" ++ show x ++
---                          "_" ++ show y ++ "_Y1"
---              varYName2 = "ipvar_indep_" ++ cf ++ convertToSMTString n ++ "_" ++ show x ++
---                          "_" ++ show y ++ "_Y2"
---          in ( varXName1, varXName2
---             , varYName1, varYName2
---             , SigRefVar undefined $ "rctr_" ++ baseCf ++ convertToSMTString n ++ "_" ++ show x
---             , SigRefVar undefined $ "rctr_" ++ baseCf ++ convertToSMTString n ++ "_" ++ show y
---             , AVariableCondition $ "kctr_" ++ baseCf ++ convertToSMTString n ++ "_" ++ show x
---             , AVariableCondition $ "kctr_" ++ baseCf ++ convertToSMTString n ++ "_" ++ show y
---             , map (\pNr ->
---                      SigRefVar undefined $ "pctr_" ++ baseCf ++ convertToSMTString n ++
---                     "_" ++ show pNr ++ "_" ++ show x) [0..length lhs -1]
---             , map (\pNr ->
---                      SigRefVar undefined $ "pctr_" ++ baseCf ++ convertToSMTString n ++
---                     "_" ++ show pNr ++ "_" ++ show y) [0..length lhs -1]
---             )
-
-
---       ) (tuples [1..vecLen]) -- over tuples of all base constructors
---   where cf = if isCf then "cf_" else ""
---         ctrType = getDt rhs
---         baseCf = if isCf && separateBaseCtr args then ctrType ++ "_cf_" else ctrType ++ "_"
 
 baseConstructors :: (Show s, Show dt) => ArgumentOptions
                  -> [SignatureSig s sDt]

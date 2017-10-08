@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Oct  7 16:09:15 2017 (+0200)
+-- Last-Updated: Sun Oct  8 19:21:25 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1813
+--     Update #: 1818
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -257,7 +257,7 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
 
     -- bound growth of constructors
     let growthConstraintsBaseCtr =
-          map (toGrowBoundConstraintsBaseCtr ops probSigs vecLen) constr
+          concatMap (toGrowBoundConstraintsBaseCtr ops probSigs vecLen) constr
 
     let growthConstraints =
           map (toGrowBoundConstraints ops) (zip [0..] aSigs ++ zip [0..] cfSigs)
@@ -266,17 +266,13 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
     addConstructorGrowthConstraints ops vecLen growthConstraints
     addConstructorGrowthConstraints ops vecLen growthConstraintsBaseCtr
 
-    -- independence constraints:
-    -- let indepConstr = concatMap (independencyBaseConstr ops vecLen) constr
-    -- addIndependenceBaseCtrConstraints vecLen indepConstr -- !!!
-    -- let constrDt = concatMap (baseConstructors ops vecLen) constr
-    -- addIndependenceConstraints vecLen constrDt -- !!!
-
+    -- set max values for base constructors
     let baseCtrs = map (\x -> (convertToSMTStringText (fst4 (lhsRootSym x))
                               ,thd4 (lhsRootSym x)
                               ,length (lhsSig x)
                               ,removeApostrophes $ show $ getDt (rhsSig x))
                        ) constr
+
     setBaseCtrMaxValues ops probSigs vecLen baseCtrs
 
   when (shift ops) $ do
@@ -480,12 +476,12 @@ toGrowBoundConstraintsBaseCtr :: (Show dt, Show s) =>
                               -> [SignatureSig s sDt]
                               -> Int
                               -> Signature (s, t, Bool,Bool) (ADatatype dt a)
-                              -> [(T.Text, ADatatype dt Int, Int, ADatatype dt Int,
-                                  ACostCondition Int, ADatatype dt Int)]
+                              -> [[(T.Text, ADatatype dt Int, Int, ADatatype dt Int,
+                                  ACostCondition Int, ADatatype dt Int)]]
 toGrowBoundConstraintsBaseCtr args sigs vecLen (Signature (n,_,_,isCf) lhs rhs)
   | isCf && not (separateBaseCtr args) = []
   | otherwise =
-    concatMap (\v ->
+    map (\v ->
          map (\y ->
                 ( convertToSMTStringText $ show n ++ "_basectr" ++ cf ++ show v
                 , SigRefVar undefined $ "pctr_" ++ baseCf ++ convertToSMTString n ++

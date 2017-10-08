@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Oct  7 16:17:08 2017 (+0200)
+-- Last-Updated: Sun Oct  8 11:09:36 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1476
+--     Update #: 1482
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -459,7 +459,8 @@ addConstructorGrowthConstraints ops vecLen xs
       unless (null res) $ do
         let vars = map snd res
             ctrBuilder = fst (head res)
-        assertionsStr <>= [ctrBuilder $ "(> " +++ T.concat (fromListBy return vars) +++ " 0)"]
+            ctr = ctrBuilder $ "(> " +++ T.concat (fromListBy return vars) +++ " 0)"
+        assertionsStr <>= [ctr]
   | otherwise = mapM_ addConstructorGrowthConstraintsUpper (concat xs)
   where addConstructorGrowthConstraintsLowerArg :: (Monad m) =>
                                            (T.Text, ADatatype dt Int, Int, ADatatype dt Int,
@@ -526,13 +527,15 @@ addConstructorGrowthConstraints ops vecLen xs
           assertionsStr <>= wRiConstr    -- Def of wRi: wRi_i = w_i + r_i
           return (ctrBuilder, counterVar)
 
-        geq = geq' "true"
-          where geq' eq [] [] = eq
-                geq' eq (l:ls) (r:rs) =
-                  "(or (and " +++ eq +++
-                                " (> " +++ l +++ " " +++ r +++ ")) " +++
-                        geq' ("(and " +++ eq +++ "(= " +++ l +++ " " +++ r +++"))") ls rs +++
-                   ")"
+        geq xs ys = T.concat $ fromListByFun "(and " return $
+                    zipWith (\x y -> "(>= " +++ x +++ " " +++ y +++ ")") xs ys
+        -- geq = geq' "true"
+        --   where geq' eq [] [] = eq
+        --         geq' eq (l:ls) (r:rs) =
+        --           "(or (and " +++ eq +++
+        --                         " (> " +++ l +++ " " +++ r +++ ")) " +++
+        --                 geq' ("(and " +++ eq +++ "(= " +++ l +++ " " +++ r +++"))") ls rs +++
+        --            ")"
 
 
           -- "(or (and " +++ eq +++

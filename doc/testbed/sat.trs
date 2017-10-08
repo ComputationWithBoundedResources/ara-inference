@@ -42,7 +42,7 @@
   verify(nil) -> true
   verify(dd(l,ls)) -> if(member(negate(l),ls), false, verify(ls))
 
-  sat(cnf) -> satck(cnf,guess(cnf))
   satck(cnf,assign) -> if(verify(assign),assign,unsat)
+  sat(cnf) -> satck(cnf,guess(cnf))
 
 )

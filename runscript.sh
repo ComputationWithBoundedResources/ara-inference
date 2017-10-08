@@ -20,7 +20,7 @@ FOLDERS=" ./doc/testbed/"
 # poly strategie
 
 COLWIDTH=10
-TIMEOUT=60
+TIMEOUT=10
 
 function displayUsage {
     echo -e -n "Usage:\n$0 [arguments to analyse program]"

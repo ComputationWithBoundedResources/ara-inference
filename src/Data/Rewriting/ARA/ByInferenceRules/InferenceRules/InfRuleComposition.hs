@@ -8,9 +8,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Oct  7 15:29:49 2017 (+0200)
+-- Last-Updated: Mon Oct  9 15:51:43 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 691
+--     Update #: 692
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -121,7 +121,6 @@ composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun
         dtFunChld = map fst $ concatMap getDtsRhs (zip fc (lhsSig sig))
 
         getDtsRhs (Var _, dt') = [dt']
-        -- getDtsRhs (Fun _ [], dt') = [dt']
         getDtsRhs (Fun f' ch, dt') = concatMap getDtsRhs (zip ch (lhsSig sigF))
           where sigF = getSig f' (fst dt')
 

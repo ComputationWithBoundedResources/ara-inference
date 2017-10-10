@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Oct  8 11:09:36 2017 (+0200)
+-- Last-Updated: Tue Oct 10 23:54:02 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1482
+--     Update #: 1553
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -446,6 +446,55 @@ addConstraintBy2 f1 f2 c@(lhs, Leq, rhs) = do
   let ass = before +++ xs +++ after
   assertionsStr %= (ass :)
 
+
+constantsCostsGt0 :: (Monad m) =>
+                     [ACostCondition Int]
+                  -> StateT SMTProblem m ()
+constantsCostsGt0 costs = do
+  let ks = concatMap fromCostCond costs
+  vars <>+= ks
+  assertions <>= map (\k -> (k, Geq, "1")) ks
+
+
+selectOneArgumentPerConstructor :: (Monad m) =>
+                                   Int
+                                -> [[[ADatatype dt Int]]]
+                                -> StateT SMTProblem m ()
+selectOneArgumentPerConstructor vecLen params = do
+  vars <- concat <$> mapM (selectOneArgumentPerConstructor') params
+  unless (null vars) $ do
+    let ctr = "(= " +++ T.concat (fromListBy return vars) +++ " 1)"
+    assertionsStr <>= [ctr]
+
+  where selectOneArgumentPerConstructor' [] = return []
+        selectOneArgumentPerConstructor' [_] = return []
+        selectOneArgumentPerConstructor' (x:xs) =
+          if length x > 1 then do
+            let ps = map (fromADatatype vecLen) x
+            let psSum = fromListBy (fromADatatype vecLen) x
+            let pssSum = fromListBy id (map (fromListBy (fromADatatype vecLen)) xs)
+            let constr = map (\p -> "(ite (= 0 " +++ head psSum +++ ") (= 0 " +++ p +++
+                                    ") true)") pssSum
+            let counter = "ipvar_base_constr_counter_" +++ head (fromADatatype 1 (head x))
+            let constrCounter = "(= " +++ counter +++ " (ite (= 0 " +++ head psSum +++ ") 0 1))"
+
+            -- (assert (= (= ipvar_base_constr_counter_v1_pctr_A_Cons_0_1
+            -- (ite (= 0 (+ (+ v1_pctr_A_Cons_0_1 v1_pctr_A_Cons_0_2) v1_pctr_A_Cons_0_3)) 0 1)) 1))
+
+            vars <>+= [counter]
+            assertionsStr <>= [constrCounter]
+
+            trace ("x: " ++ show x)
+              trace ("psSum: " ++ show psSum)
+              trace ("pssSum: " ++ show pssSum)
+              trace ("ps: " ++ show ps)
+              trace ("constr: " ++ show constr)
+              trace ("constr: " ++ show constrCounter)
+              assertionsStr <>= constr
+            return [counter]
+          else return []
+
+
 addConstructorGrowthConstraints :: (Monad m) =>
                                 ArgumentOptions
                                 -> Int
@@ -467,10 +516,6 @@ addConstructorGrowthConstraints ops vecLen xs
                                             ACostCondition Int, ADatatype dt Int)
                                          -> StateT SMTProblem m (T.Text -> T.Text, T.Text)
         addConstructorGrowthConstraintsLowerArg (name,ui,uiNr,ri,p,w) = do
-          -- Suppose for all constructor symbols c and for all its annotated
-          -- signatures [p_1 × · · · × p_n ] → q ∈ F(c), where q /= 0, there exists
-          -- i (1 <= i <= n) and r ∈ A such that p_i >= q + r and |r| >= |q| - 1.
-          -- Then for all values v and all annotations q, we have ...
 
           let baseVarI = "ipvar_th32_" +++ name +++ "_" +++ T.pack (show uiNr) +++ "_"
           let counterVar = baseVarI +++ "counter"

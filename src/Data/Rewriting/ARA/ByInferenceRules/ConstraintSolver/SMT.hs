@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Oct  8 19:21:25 2017 (+0200)
+-- Last-Updated: Tue Oct 10 23:08:03 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1818
+--     Update #: 1832
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -258,13 +258,22 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
     -- bound growth of constructors
     let growthConstraintsBaseCtr =
           concatMap (toGrowBoundConstraintsBaseCtr ops probSigs vecLen) constr
-
     let growthConstraints =
           map (toGrowBoundConstraints ops) (zip [0..] aSigs ++ zip [0..] cfSigs)
 
     -- needed because addition of base ctr can cause problems
     addConstructorGrowthConstraints ops vecLen growthConstraints
     addConstructorGrowthConstraints ops vecLen growthConstraintsBaseCtr
+
+    when (isJust $ lowerboundArg ops) $ do
+      let costGt0Base = concatMap (toConstantsCostsBaseCtr ops vecLen) constr
+      let costGt0 = concatMap (toConstantsCosts ops vecLen) (zip [0..] aSigs ++ zip [0..] cfSigs)
+      constantsCostsGt0 costGt0Base
+      let baseConstrParams = map (constrParamsBaseCtr ops vecLen) constr
+      selectOneArgumentPerConstructor vecLen baseConstrParams
+
+      -- constantsCostsGt0 costGt0
+
 
     -- set max values for base constructors
     let baseCtrs = map (\x -> (convertToSMTStringText (fst4 (lhsRootSym x))
@@ -471,6 +480,37 @@ toGrowBoundConstraints args (nr, Signature (n,p,True,isCf) lhs _) =
 
 -- Base constructor looks like: [pctr_l_0 x pctr_l_1] -kctr_l-> rctr_l
 -- Output quadruple: (p(3,0),rictr_3_0_s,k(3),r(3))
+toConstantsCosts :: (Show dt, Show s) =>
+                  ArgumentOptions
+               -> Int
+               -> (Int, Signature (s, t, Bool,Bool) (ADatatype dt a))
+               -> [ACostCondition Int]
+toConstantsCosts args vecLen (nr, Signature (n,_,_,isCf) [] rhs) = [sigRefCst isCf nr]
+  where ctrType = getDt rhs
+        baseCf = if isCf && separateBaseCtr args
+                 then removeApostrophes (show ctrType) ++ "_cf_"
+                 else removeApostrophes (show ctrType) ++ "_"
+toConstantsCosts _ _ _ = []
+
+
+toConstantsCostsBaseCtr :: (Show dt, Show s) =>
+                  ArgumentOptions
+               -> Int
+               -> Signature (s, t, Bool,Bool) (ADatatype dt a)
+               -> [ACostCondition Int]
+toConstantsCostsBaseCtr args vecLen (Signature (n,_,_,isCf) [] rhs) =
+  map (\v -> AVariableCondition $ "kctr_" ++ baseCf ++ convertToSMTString n
+             ++ "_" ++ show v
+      ) [1..vecLen]
+  where ctrType = getDt rhs
+        baseCf = if isCf && separateBaseCtr args
+                 then removeApostrophes (show ctrType) ++ "_cf_"
+                 else removeApostrophes (show ctrType) ++ "_"
+toConstantsCostsBaseCtr _ _ _ = []
+
+
+-- Base constructor looks like: [pctr_l_0 x pctr_l_1] -kctr_l-> rctr_l
+-- Output quadruple: (p(3,0),rictr_3_0_s,k(3),r(3))
 toGrowBoundConstraintsBaseCtr :: (Show dt, Show s) =>
                                  ArgumentOptions
                               -> [SignatureSig s sDt]
@@ -493,6 +533,25 @@ toGrowBoundConstraintsBaseCtr args sigs vecLen (Signature (n,_,_,isCf) lhs rhs)
                   ++ "_" ++ show v
                 , SigRefVar undefined $ "rctr_" ++ baseCf ++ convertToSMTString n ++
                   "_" ++ show v)
+             ) [0..length lhs-1]
+      ) [1..vecLen]
+  where cf = if isCf then "cf_" else ""
+        ctrType = getDt rhs
+        baseCf = if isCf && separateBaseCtr args
+                 then removeApostrophes (show ctrType) ++ "_cf_"
+                 else removeApostrophes (show ctrType) ++ "_"
+
+constrParamsBaseCtr :: (Show dt, Show s) =>
+                       ArgumentOptions
+                    -> Int
+                    -> Signature (s, t, Bool,Bool) (ADatatype dt a)
+                    -> [[ADatatype dt Int]]
+constrParamsBaseCtr args vecLen (Signature (n,_,_,isCf) [] rhs) = []
+constrParamsBaseCtr args vecLen (Signature (n,_,_,isCf) [_] rhs) = []
+constrParamsBaseCtr args vecLen (Signature (n,_,_,isCf) lhs rhs) =
+  map (\v ->
+         map (\y -> SigRefVar undefined $ "pctr_" ++ baseCf ++ convertToSMTString n ++
+                    "_" ++ show y ++ "_" ++ show v
              ) [0..length lhs-1]
       ) [1..vecLen]
   where cf = if isCf then "cf_" else ""

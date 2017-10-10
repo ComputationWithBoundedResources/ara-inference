@@ -10,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 283
+--     Update #: 289
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -76,7 +76,7 @@ mkCompletelyDefinedConds prove =
   -- trace ("ctrSyms: " ++ show ctrSyms)
   -- trace ("lhss: " ++ show lhssChlds) $
   -- trace ("ctrArities: " ++ show ctrArities)
-  trace ("nRules: " ++ show nRules)
+  -- trace ("nRules: " ++ show nRules)
   -- trace ("ctrArities: " ++ show ctrArities)
   -- undefined
   -- trace ("nSigs: " ++ show (addSig <$> signatures p))

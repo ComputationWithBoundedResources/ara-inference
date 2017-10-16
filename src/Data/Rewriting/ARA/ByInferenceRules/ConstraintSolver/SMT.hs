@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Oct 16 11:53:41 2017 (+0200)
+-- Last-Updated: Mon Oct 16 13:06:18 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1836
+--     Update #: 1844
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -267,11 +267,16 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
     when (isJust $ lowerboundArg ops) $ do
       let costGt0Base = concatMap (toConstantsCostsBaseCtr ops vecLen) constr
       let costGt0 = concatMap (toConstantsCosts ops vecLen) (zip [0..] aSigs ++ zip [0..] cfSigs)
-      constantsCostsGt0 costGt0Base
+
+      let nonConstCostsGt0Base = concatMap (toNonConstantsCostsBaseCtr ops vecLen) constr
+
+
+      -- costsGt0 costGt0Base
+      -- costsGt0 costGt0
+      costsGt0 nonConstCostsGt0Base
+
       let baseConstrParams = map (constrParamsBaseCtr ops vecLen) constr
       selectOneArgumentPerConstructor ops vecLen baseConstrParams
-
-      -- constantsCostsGt0 costGt0
 
 
     -- set max values for base constructors
@@ -504,6 +509,23 @@ toConstantsCostsBaseCtr args vecLen (Signature (n,_,_,isCf) [] rhs) =
                  then removeApostrophes (show ctrType) ++ "_cf_"
                  else removeApostrophes (show ctrType) ++ "_"
 toConstantsCostsBaseCtr _ _ _ = []
+
+
+toNonConstantsCostsBaseCtr :: (Show dt, Show s) =>
+                  ArgumentOptions
+               -> Int
+               -> Signature (s, t, Bool,Bool) (ADatatype dt a)
+               -> [ACostCondition Int]
+toNonConstantsCostsBaseCtr args vecLen (Signature (n,_,_,isCf) lhs rhs) =
+  -- | null lhs = []
+  -- | otherwise =
+    map (\v -> AVariableCondition $ "kctr_" ++ baseCf ++ convertToSMTString n
+               ++ "_" ++ show v
+        ) [1..vecLen]
+  where ctrType = getDt rhs
+        baseCf = if isCf && separateBaseCtr args
+                 then removeApostrophes (show ctrType) ++ "_cf_"
+                 else removeApostrophes (show ctrType) ++ "_"
 
 
 -- Base constructor looks like: [pctr_l_0 x pctr_l_1] -kctr_l-> rctr_l

@@ -10,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 303
+--     Update #: 306
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -76,7 +76,7 @@ mkCompletelyDefinedConds prove =
   -- trace ("ctrSyms: " ++ show ctrSyms)
   -- trace ("lhss: " ++ show lhssChlds) $
   -- trace ("ctrArities: " ++ show ctrArities)
-  trace ("nRules: " ++ show nRules)
+  -- trace ("nRules: " ++ show nRules)
   -- trace ("ctrArities: " ++ show ctrArities)
   -- undefined
   -- trace ("nSigs: " ++ show (addSig <$> signatures p))
@@ -174,10 +174,7 @@ mkCompletelyDefinedConds prove =
         lhssChlds = map (map rootTermChlds) grRls
 
         ctrArities = catMaybes $ map arity ctrSyms
-        nRules =
-          trace ("lhssChlds: " ++ show lhssChlds)
-          trace ("defSyms: " ++ show defSyms)
-          map mkCompletelyDefined' (zip defSyms lhssChlds)
+        nRules = map mkCompletelyDefined' (zip defSyms lhssChlds)
         -- mkCompletelyDefined' :: [[Term f v]] -> [Rule f v]
         mkCompletelyDefined' (f,lhss) =
           let maxDepthF (Var x)    = 0
@@ -195,7 +192,7 @@ mkCompletelyDefinedConds prove =
               mkDummyConstr True nr = Var "x"
               mkDummyConstr False _ = Fun f []
 
-          in trace ("lhss: " ++ show (map (all isVar) $ transpose lhss)) $
+          in -- trace ("lhss: " ++ show (map (all isVar) $ transpose lhss)) $
              if and paramVars || all not paramVars
              then []            -- only variables (no need for constraints)
              else [mkRule $ zipWith mkDummyConstr paramVars [1..]]

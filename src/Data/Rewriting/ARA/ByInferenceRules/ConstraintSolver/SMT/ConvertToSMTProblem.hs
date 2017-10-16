@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Oct 13 10:44:07 2017 (+0200)
+-- Last-Updated: Mon Oct 16 13:06:14 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1624
+--     Update #: 1630
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -447,12 +447,10 @@ addConstraintBy2 f1 f2 c@(lhs, Leq, rhs) = do
   assertionsStr %= (ass :)
 
 
-constantsCostsGt0 :: (Monad m) =>
-                     [ACostCondition Int]
-                  -> StateT SMTProblem m ()
-constantsCostsGt0 costs = do
+costsGt0 :: (Monad m) => [ACostCondition Int] -> StateT SMTProblem m ()
+costsGt0 costs = do
   let ks = concatMap fromCostCond costs
-  vars <>+= ks
+  vars <>+= trace ("ks: " ++ show ks) ks
   assertions <>= map (\k -> (k, Geq, "1")) ks
 
 

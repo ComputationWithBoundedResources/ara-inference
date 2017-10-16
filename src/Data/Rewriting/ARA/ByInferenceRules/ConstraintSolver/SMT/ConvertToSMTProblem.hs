@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jul 24 15:34:58 2017 (+0200)
+-- Last-Updated: Mon Oct 16 13:06:14 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1419
+--     Update #: 1630
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -195,7 +195,7 @@ addArgNotAllZeroConstr isCtr vecLen nrOfArgs (nr,name,xs) = do
     -- trace ("vecLen: " ++ show vecLen)
     -- trace ("countVars: " ++ show countVars)
     -- trace (show lastElementG0) undefined
-    trace (">0 constraint: " ++ show (head nonZeroCtr, Geq, T.pack (show nrOfArgs)))
+    -- trace (">0 constraint: " ++ show (head nonZeroCtr, Geq, T.pack (show nrOfArgs)))
     [(head nonZeroCtr, Geq, T.pack (show nrOfArgs))]
 
   -- INFO commented
@@ -435,7 +435,7 @@ addConstraintBy2 f1 f2 (lhs, Geq, rhs) = do
 
   let ass = before +++ xs +++ after
   assertionsStr %= (ass :)
-addConstraintBy2 f1 f2 (lhs, Leq, rhs) = do
+addConstraintBy2 f1 f2 c@(lhs, Leq, rhs) = do
   let lhss = f1 lhs
       rhss = f2 rhs
   let before = T.concat (replicate (length lhss-1) "(and ")
@@ -446,27 +446,102 @@ addConstraintBy2 f1 f2 (lhs, Leq, rhs) = do
   let ass = before +++ xs +++ after
   assertionsStr %= (ass :)
 
+
+costsGt0 :: (Monad m) => [ACostCondition Int] -> StateT SMTProblem m ()
+costsGt0 costs = do
+  let ks = concatMap fromCostCond costs
+  vars <>+= trace ("ks: " ++ show ks) ks
+  assertions <>= map (\k -> (k, Geq, "1")) ks
+
+
+selectOneArgumentPerConstructor :: (Monad m) =>
+                                   ArgumentOptions
+                                -> Int
+                                -> [[[ADatatype dt Int]]]
+                                -> StateT SMTProblem m ()
+selectOneArgumentPerConstructor args vecLen params = do
+  vars <- concat <$> mapM (selectOneArgumentPerConstructor') params
+  mapM_ (addFixedArgumentConstrs vars) (constructorArgSelection args)
+
+  -- unless (null vars) $ do
+  --   let ctr = "(= " +++ T.concat (fromListBy return vars) +++ " 1)"
+  --   assertionsStr <>= [ctr]
+
+
+  -- let argVar = "ipvar_base_constr_argvar_" +++
+  --              T.dropEnd 1  (T.dropWhileEnd (/= '_') (head (fromADatatype 1 (head x))))
+
+  where addFixedArgumentConstrs vars (name, nr) = do
+          let vars' = filter ((==name) . snd . T.breakOnEnd "_") vars
+          when (null vars') $
+            throw $ FatalException $ "Contructor " ++ T.unpack name ++
+              " not found but given as parameter in --ctr-args"
+          assertions <>= map (\v -> (v, Eq, T.pack $ show nr)) vars'
+
+
+        selectOneArgumentPerConstructor' [] = return []
+        selectOneArgumentPerConstructor' xss@(x:xs) =
+          if length x > 1 then do
+            let ps = map (fromADatatype vecLen) x
+            let psSum = fromListBy (fromADatatype vecLen) x
+            let pss = map (map (fromADatatype vecLen)) xss
+            let pss' = map (map (head . fromListBy return)) pss
+            let pssSum = fromListBy id (map (fromListBy (fromADatatype vecLen)) xss)
+            let constr = map (\p -> "(ite (= 0 " +++ head psSum +++ ") (= 0 " +++ p +++
+                                    ") true)") pssSum
+
+            let argVar = "ipvar_base_constr_argvar_" +++
+                  T.dropEnd 1  (T.dropWhileEnd (/= '_') $ T.dropEnd 1 $
+                                T.dropWhileEnd (/= '_') $ head $
+                                fromADatatype 1 (head x))
+
+            let constrFun argNr vecSum = "(ite (= " +++ T.pack (show argNr) +++ " " +++
+                  argVar +++ ") " +++ "true (= 0 " +++ vecSum +++ "))"
+            let constrs = map (zipWith constrFun [1..]) pss'
+
+            vars <>+= [argVar]
+            assertionsStr <>= concat constrs
+
+            -- trace ("x: " ++ show x)
+            --   trace ("xss: " ++ show xss)
+            --   trace ("pss: " ++ show pss)
+            --   trace ("pss': " ++ show pss')
+            --   trace ("constrs: " ++ show constrs)
+            --   trace ("psSum: " ++ show psSum)
+            --   trace ("pssSum: " ++ show pssSum)
+            --   trace ("ps: " ++ show ps)
+            --   trace ("constr: " ++ show constr)
+            --   trace ("constr: " ++ show constrCounter)
+            --   trace ("args: " ++ show (constructorArgSelection args))
+            assertionsStr <>= constr
+            return [argVar]
+          else return []
+
+
 addConstructorGrowthConstraints :: (Monad m) =>
                                 ArgumentOptions
                                 -> Int
-                                -> [(T.Text, ADatatype dt Int, Int, ADatatype dt Int,
-                                     ACostCondition Int, ADatatype dt Int)]
+                                -> [[(T.Text, ADatatype dt Int, Int, ADatatype dt Int,
+                                      ACostCondition Int, ADatatype dt Int)]]
                                 -> StateT SMTProblem m ()
 addConstructorGrowthConstraints ops vecLen xs
-  | lowerbound ops = mapM_ addConstructorGrowthConstraintsLower xs
-  | isJust $ lowerboundArg ops = mapM_ addConstructorGrowthConstraintsLowerArg xs
-  | otherwise = mapM_ addConstructorGrowthConstraintsUpper xs
+  | lowerbound ops = mapM_ addConstructorGrowthConstraintsLower (concat xs)
+  | isJust $ lowerboundArg ops = forM_ xs $ \ls -> do
+      res <- mapM addConstructorGrowthConstraintsLowerArg ls
+      unless (null res) $ do
+        let vars = map snd res
+            ctrBuilder = fst (head res)
+            ctr = ctrBuilder $ "(> " +++ T.concat (fromListBy return vars) +++ " 0)"
+        assertionsStr <>= [ctr]
+  | otherwise = mapM_ addConstructorGrowthConstraintsUpper (concat xs)
   where addConstructorGrowthConstraintsLowerArg :: (Monad m) =>
                                            (T.Text, ADatatype dt Int, Int, ADatatype dt Int,
                                             ACostCondition Int, ADatatype dt Int)
-                                         -> StateT SMTProblem m ()
+                                         -> StateT SMTProblem m (T.Text -> T.Text, T.Text)
         addConstructorGrowthConstraintsLowerArg (name,ui,uiNr,ri,p,w) = do
-          -- Suppose for all constructor symbols c and for all its annotated
-          -- signatures [p_1 × · · · × p_n ] → q ∈ F(c), where q /= 0, there exists
-          -- i (1 <= i <= n) and r ∈ A such that p_i >= q + r and |r| >= |q| - 1.
-          -- Then for all values v and all annotations q, we have ...
 
           let baseVarI = "ipvar_th32_" +++ name +++ "_" +++ T.pack (show uiNr) +++ "_"
+          let counterVar = baseVarI +++ "counter"
           let ws = fromADatatype vecLen w   -- w = q
               wsMaxV = baseVarI +++ "wsmax" -- wsMaxV = r
               wsMaxConstr = "(= " +++ wsMaxV +++ " " +++ maxList ws +++ ")"
@@ -479,6 +554,7 @@ addConstructorGrowthConstraints ops vecLen xs
           let eqZero x = "(= " +++ x +++ " 0)"
           let eqZeroList = fromListByFun "(and " return . map eqZero
           let ctrBuilder ctr = "(or " +++ T.concat (eqZeroList ws) +++ " " +++ ctr +++ ")"
+
 
           -- Constraint for |r| >= |q| - 1
           let gtZero x = "(> " +++ x +++ " 0)"
@@ -494,20 +570,45 @@ addConstructorGrowthConstraints ops vecLen xs
           let ctrRGeqQM1 = ctrRGeqQM1Ctr ctrRGeqQM1Vals
 
           -- Any p_i >= q + r
-          let wRiVars = fromADatatype vecLen $
+          let wRiVars = fromADatatype vecLen
                 (SigRefVar undefined (T.unpack $ baseVarI +++ "wri") :: ADatatype String Int)
           let wRiConstr =
                 map (\(v,w,r) -> "(= " +++ v +++ " (+ " +++ w +++ " " +++ r +++ "))" )
                 (zip3 wRiVars ws ris)
           let ctrPiGeqQr = zipWith (\p qr -> "(>= " +++ p +++ " " +++ qr +++ ")") uis wRiVars
+          let ctr = "(= " +++ counterVar +++ " (ite " +++ geq uis wRiVars +++ " 1 0))"
+
 
           -- Full constraint
-          let ctrs = map ctrBuilder ctrPiGeqQr
+          -- let ctrs =
+          --       trace ("ctrs: " ++ show (map ctrBuilder ctrPiGeqQr))
+          --       trace ("ctrPiGeqQr: " ++ show ctrPiGeqQr)
+          --       trace ("maxList: " ++ show (maxList ctrPiGeqQr))
+          --       trace ("pred: " ++ show (geq uis wRiVars))
+          --       trace ("ctrRGeqQM1: " ++ show ctrRGeqQM1) undefined $
+          --       map ctrBuilder ctrPiGeqQr
 
-          vars <>+= wRiVars ++ ris
-          assertionsStr <>= ctrs         -- Constraint: q == 0 OR pi >= q + r
+          vars <>+= counterVar : wRiVars ++ ris
+          -- assertionsStr <>= ctrs         -- Constraint: q == 0 OR pi >= q + r
+          assertionsStr <>= [ctr]        -- counterVar = if pi >= q + r then 1 else 0
           assertionsStr <>= [ctrRGeqQM1] -- Def of r:   |r| >= |q|-1
           assertionsStr <>= wRiConstr    -- Def of wRi: wRi_i = w_i + r_i
+          return (ctrBuilder, counterVar)
+
+        geq xs ys = T.concat $ fromListByFun "(and " return $
+                    zipWith (\x y -> "(>= " +++ x +++ " " +++ y +++ ")") xs ys
+        -- geq = geq' "true"
+        --   where geq' eq [] [] = eq
+        --         geq' eq (l:ls) (r:rs) =
+        --           "(or (and " +++ eq +++
+        --                         " (> " +++ l +++ " " +++ r +++ ")) " +++
+        --                 geq' ("(and " +++ eq +++ "(= " +++ l +++ " " +++ r +++"))") ls rs +++
+        --            ")"
+
+
+          -- "(or (and " +++ eq +++
+          --      "(and " +++ "(> " +++ vWri +++ " 0) (>= " +++ vPi +++ " " +++ vWri +++ ")))"
+          -- +++ pred ("(and " +++ eq +++ "(= 0 " +++ vWri +++"))") wris pis +++ ")"
 
 
           -- trace ("name: " ++ show name)
@@ -721,15 +822,15 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
               else mapM_ (setMaxOfParamsUpper baseNr) constrNames
         ) [1..vecLen]
 
-  where kGeq1 baseNr (ctrName,isCf,paramLen,ctrType) = do
-          -- when (paramLen > 0) $ do
-          let baseCf = if isCf && separateBaseCtr args
-                       then ctrType ++ "_cf_" else ctrType ++ "_"
-          let var :: ACostCondition Int
-              var = AVariableCondition $
-                    "kctr_" ++ baseCf ++ T.unpack (convertToSMTText ctrName) ++ "_"
-                    ++ show baseNr
-          addConstraint (head (fromCostCond var), Geq, T.pack (show 1))
+  where kGeq1 baseNr (ctrName,isCf,paramLen,ctrType) =
+          when (paramLen > 0) $ do
+            let baseCf = if isCf && separateBaseCtr args
+                         then ctrType ++ "_cf_" else ctrType ++ "_"
+            let var :: ACostCondition Int
+                var = AVariableCondition $
+                      "kctr_" ++ baseCf ++ T.unpack (convertToSMTText ctrName) ++ "_"
+                      ++ show baseNr
+            addConstraint (head (fromCostCond var), Geq, T.pack (show 1))
 
         setRetValuesToIdentiyMatrix baseNr (ctrName,isCf,_,ctrType) = do
           let baseCf = if isCf && separateBaseCtr args

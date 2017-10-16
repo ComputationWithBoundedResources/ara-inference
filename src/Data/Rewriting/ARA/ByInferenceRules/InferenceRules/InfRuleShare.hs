@@ -8,9 +8,9 @@
 -- Created: Sun Sep 14 17:35:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Oct  3 23:19:06 2017 (+0200)
+-- Last-Updated: Mon Oct  9 16:16:08 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 478
+--     Update #: 482
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -131,7 +131,7 @@ share args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun f fc,
 
         varPostGroups = group $ sort varsPost
 
-        pre'' = concat pre' -- ++ filter ((`notElem` varsPost) . fst) pre
+        pre'' = concat pre' ++ filter ((`notElem` varsPost) . fst) pre
 
         groupedPre :: [(v, ADatatype dt Int)]
         groupedPre =

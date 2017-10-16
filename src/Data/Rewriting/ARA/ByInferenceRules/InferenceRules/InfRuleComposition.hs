@@ -8,9 +8,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jun 19 17:31:40 2017 (+0200)
+-- Last-Updated: Mon Oct  9 15:51:43 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 676
+--     Update #: 692
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,23 +66,18 @@ import           Data.Rewriting.Typed.Datatype
 import           Data.Rewriting.Typed.Problem
 import           Data.Rewriting.Typed.Rule
 import           Data.Rewriting.Typed.Signature
-import           Data.Rewriting.Typed.Term
-                                                                                     (isVar)
+import           Data.Rewriting.Typed.Term                                          (isVar)
 import qualified Data.Rewriting.Typed.Term                                          as T
 
 import           Control.Arrow
-import           Control.Exception
-                                                                                     (throw)
-import           Data.List
-                                                                                     (find,
+import           Control.Exception                                                  (throw)
+import           Data.List                                                          (find,
                                                                                      sort,
                                                                                      sortBy,
                                                                                      zip4)
-import           Data.Maybe
-                                                                                     (isJust)
-import           Data.Maybe
-                                                                                     (fromJust,
-                                                                                     fromMaybe)
+import           Data.Maybe                                                         (fromJust,
+                                                                                     fromMaybe,
+                                                                                     isJust)
 import           Text.PrettyPrint
 
 #ifdef DEBUG
@@ -126,18 +121,18 @@ composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun
         dtFunChld = map fst $ concatMap getDtsRhs (zip fc (lhsSig sig))
 
         getDtsRhs (Var _, dt') = [dt']
-        -- getDtsRhs (Fun _ [], dt') = [dt']
         getDtsRhs (Fun f' ch, dt') = concatMap getDtsRhs (zip ch (lhsSig sigF))
           where sigF = getSig f' (fst dt')
 
-        nr' = nr + length fc + length fc
+        nr' = nr + length fc + length fc + 1 -- +1 for dt
 
         conds' = ACondition (costCondition conds ++ nCostCond) (dtConditions conds ++ nDtCond)
                  (dtConditionsInt conds) (shareConditions conds ++ nShareCond) (minus1Vars conds)
 
         nCostCond = [(cst, if isCtrDeriv then Eq else geq,
                       map (AVariableCondition . show) strVarsCost)]
-        nDtCond = []
+        nDtCond = [([removeDt dt' :: ADatatype String Int]
+                   , if isCtrDeriv then Eq else geq, [removeDt dt])]
         nShareCond = []
 
         newVars :: [v]
@@ -147,12 +142,14 @@ composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun
             | otherwise = Geq
 
 
-        strVarsCost = drop (length fc) newVars
-        strVarsNode = take (length fc) newVars
-        -- varsCost = map Var (drop (length fc) newVars)
         varsNode :: [Term f v]
         varsNode = map (Var . read . show) (take (length fc) newVars)
 
+        strVarsNode = take (length fc) newVars
+        strVarsCost = let xs = drop (length fc) newVars in take (length xs-1) xs
+        strVarsRet = last newVars
+
+        dt' = SigRefVar (getDt dt) (show strVarsRet)
 
         funParNode :: InfTreeNode f v dt
         funParNode = InfTreeNode funParNodeParams funParNodeCsts funParNodeFunc i hisFunParNode
@@ -162,7 +159,7 @@ composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun
                                                 (map show strVarsNode))
             funParNodeCsts :: [ACostCondition a]
             funParNodeCsts = [AVariableCondition (show $ head strVarsCost)]
-            funParNodeFunc = Just (Fun f varsNode, dt)
+            funParNodeFunc = Just (Fun f varsNode, dt')
 
 
             hisFunParNode =

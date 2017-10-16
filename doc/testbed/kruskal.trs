@@ -35,7 +35,6 @@
   wt(edge(n,w,m)) -> w
   trg(edge(n,w,m)) -> m
 
-  forrest(graph(N,E)) -> kruskal(sort(E),nil, partitions(N))
 
   partitions(nil) -> nil
   partitions(dd(n,N)) -> dd(dd(n,nil),partitions(N))
@@ -85,9 +84,13 @@
   or(true,false) -> true
   or(false,false) -> false
 
-  kruskal(nil,F,P) -> pair(F,P)
-  kruskal(dd(e,E),F,P) -> kruskal#q(inBlock(e,P),e,E,F,P)
   kruskal#q(true,e,E,F,P) -> kruskal(E,F,P)
   kruskal#q(false,e,E,F,P) -> kruskal(E,dd(e,F),join(e,P,nil))
+
+  kruskal(dd(e,E),F,P) -> kruskal#q(inBlock(e,P),e,E,F,P)
+  kruskal(nil,F,P) -> pair(F,P)
+
+  forrest(graph(N,E)) -> kruskal(sort(E),nil, partitions(N))
+
 
   )

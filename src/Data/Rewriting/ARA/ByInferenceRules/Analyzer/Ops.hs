@@ -9,9 +9,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Oct  3 23:07:37 2017 (+0200)
+-- Last-Updated: Sun Oct  8 17:29:37 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2854
+--     Update #: 2864
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -142,8 +142,9 @@ analyzeProblem args reachability prob =
              print (text "Solution Inference:" $+$ prettyProve solution)
 #endif
 
-
-           return (solution, inferenceTrees)
+           let solution' | isJust (lowerboundArg args) = mkCompletelyDefinedConds solution
+                         | otherwise = solution
+           return (solution', inferenceTrees)
 
    where analyzeProve :: [Prove f v f dt dt f] -> Prove f v f dt dt f
          analyzeProve [] = throw $ WarningException $
@@ -198,11 +199,7 @@ startingProve :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v, Ord v, Read v, Ord
                  ArgumentOptions -> ProblemSig f v f dt dt f -> Prove f v f dt dt f
 startingProve args prob' =
   (insertConstraints args . updateDatatypesChildCost . createCtrSig) prove0
-  where prove0 = Prove [] [] 1 prob' [] sigs conds 0 []
-        (conds,sigs) | isJust (lowerboundArg args) =
-                       trace ("STARTING PROVE: " ++ show (mkCompletelyDefinedConds prob'))
-                       mkCompletelyDefinedConds prob'
-                     | otherwise = (ACondition [] [] [] [] [], [])
+  where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] [] [] []) 0 []
 
 -- | This function takes a list of proves and checks it for the finished and
 --   successful proves. It either returns a successful prove, or fails.

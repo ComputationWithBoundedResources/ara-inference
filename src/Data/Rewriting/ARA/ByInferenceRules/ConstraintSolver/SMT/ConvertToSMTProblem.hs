@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Oct 16 13:06:14 2017 (+0200)
+-- Last-Updated: Mon Oct 16 15:11:01 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1630
+--     Update #: 1636
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -450,7 +450,7 @@ addConstraintBy2 f1 f2 c@(lhs, Leq, rhs) = do
 costsGt0 :: (Monad m) => [ACostCondition Int] -> StateT SMTProblem m ()
 costsGt0 costs = do
   let ks = concatMap fromCostCond costs
-  vars <>+= trace ("ks: " ++ show ks) ks
+  vars <>+= ks
   assertions <>= map (\k -> (k, Geq, "1")) ks
 
 
@@ -460,22 +460,15 @@ selectOneArgumentPerConstructor :: (Monad m) =>
                                 -> [[[ADatatype dt Int]]]
                                 -> StateT SMTProblem m ()
 selectOneArgumentPerConstructor args vecLen params = do
-  vars <- concat <$> mapM (selectOneArgumentPerConstructor') params
+  vars <- concat <$> mapM selectOneArgumentPerConstructor' params
   mapM_ (addFixedArgumentConstrs vars) (constructorArgSelection args)
-
-  -- unless (null vars) $ do
-  --   let ctr = "(= " +++ T.concat (fromListBy return vars) +++ " 1)"
-  --   assertionsStr <>= [ctr]
-
-
-  -- let argVar = "ipvar_base_constr_argvar_" +++
-  --              T.dropEnd 1  (T.dropWhileEnd (/= '_') (head (fromADatatype 1 (head x))))
 
   where addFixedArgumentConstrs vars (name, nr) = do
           let vars' = filter ((==name) . snd . T.breakOnEnd "_") vars
           when (null vars') $
-            throw $ FatalException $ "Contructor " ++ T.unpack name ++
-              " not found but given as parameter in --ctr-args"
+            throw $ FatalException $ "Contructor \"" ++ T.unpack name ++
+              "\" either not found or does not need at least two arguments" ++
+              " but given as parameter in --ctr-args"
           assertions <>= map (\v -> (v, Eq, T.pack $ show nr)) vars'
 
 

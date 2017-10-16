@@ -11,10 +11,21 @@
     equal :: [A x A] -> A
     goal :: [A x A x A] -> A)
 (RULES
+    @(x,x') -> x'
+    game(p1,p2,Nil()) -> @(p1,p2)
+    game(p1,p2,Cons(Swap(),xs)) -> game(p2,p1,xs)
+
+    )
+
+(COMMENTS
+    game(p1,p2,Cons(Cons(x,xs),ys)) -> False
+    game(p1,Nil,moves) -> btm
     @(Cons(x,xs),ys) -> Cons(x ,@(xs,ys))
     @(Nil(),ys) -> ys
+
+
+    goal(p1,p2,moves) -> game(p1 ,p2 ,moves)
     game(p1,Cons(x',xs') ,Cons(Capture(),xs)) -> game(Cons(x',p1),xs',xs)
-    game(p1,p2,Cons(Swap(),xs)) -> game(p2,p1,xs)
-    game(p1,p2,Nil()) -> @(p1,p2)
-    goal(p1,p2,moves) -> game(p1 ,p2 ,moves))
+
+)
 

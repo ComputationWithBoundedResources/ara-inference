@@ -39,7 +39,6 @@
     appendreverse(@toreverse,@sofar) -> appendreverse#1(@toreverse,@sofar)
     appendreverse#1(dd(@a,@as),@sofar) -> appendreverse(@as,dd(@a,@sofar))
     appendreverse#1(nil,@sofar) -> @sofar
-    bfs(@queue,@futurequeue,@x) -> bfs#1(@queue,@futurequeue,@x)
     bfs#1(dd(@t,@ts),@futurequeue,@x) -> bfs#3(@t,@futurequeue,@ts,@x)
     bfs#1(nil,@futurequeue,@x) -> bfs#2(@futurequeue,@x)
     bfs#2(dd(@t,@ts),@x) -> bfs(reverse(dd(@t,@ts)),nil,@x)
@@ -91,4 +90,7 @@
     #eq(node(@x'1,@x'2,@x'3),dd(@y'1,@y'2)) -> #false
     #eq(node(@x'1,@x'2,@x'3),leaf) -> #false
     #eq(node(@x'1,@x'2,@x'3),nil) -> #false
-    #eq(node(@x'1,@x'2,@x'3),node(@y'1,@y'2,@y'3)) -> #and(#eq(@x'1,@y'1),#and(#eq(@x'2,@y'2),#eq(@x'3,@y'3))))
+    #eq(node(@x'1,@x'2,@x'3),node(@y'1,@y'2,@y'3)) -> #and(#eq(@x'1,@y'1),#and(#eq(@x'2,@y'2),#eq(@x'3,@y'3)))
+    bfs(@queue,@futurequeue,@x) -> bfs#1(@queue,@futurequeue,@x)
+
+)

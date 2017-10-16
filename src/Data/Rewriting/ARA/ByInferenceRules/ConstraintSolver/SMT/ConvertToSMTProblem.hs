@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Oct 10 23:54:02 2017 (+0200)
+-- Last-Updated: Fri Oct 13 10:44:07 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1553
+--     Update #: 1624
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -457,41 +457,66 @@ constantsCostsGt0 costs = do
 
 
 selectOneArgumentPerConstructor :: (Monad m) =>
-                                   Int
+                                   ArgumentOptions
+                                -> Int
                                 -> [[[ADatatype dt Int]]]
                                 -> StateT SMTProblem m ()
-selectOneArgumentPerConstructor vecLen params = do
+selectOneArgumentPerConstructor args vecLen params = do
   vars <- concat <$> mapM (selectOneArgumentPerConstructor') params
-  unless (null vars) $ do
-    let ctr = "(= " +++ T.concat (fromListBy return vars) +++ " 1)"
-    assertionsStr <>= [ctr]
+  mapM_ (addFixedArgumentConstrs vars) (constructorArgSelection args)
 
-  where selectOneArgumentPerConstructor' [] = return []
-        selectOneArgumentPerConstructor' [_] = return []
-        selectOneArgumentPerConstructor' (x:xs) =
+  -- unless (null vars) $ do
+  --   let ctr = "(= " +++ T.concat (fromListBy return vars) +++ " 1)"
+  --   assertionsStr <>= [ctr]
+
+
+  -- let argVar = "ipvar_base_constr_argvar_" +++
+  --              T.dropEnd 1  (T.dropWhileEnd (/= '_') (head (fromADatatype 1 (head x))))
+
+  where addFixedArgumentConstrs vars (name, nr) = do
+          let vars' = filter ((==name) . snd . T.breakOnEnd "_") vars
+          when (null vars') $
+            throw $ FatalException $ "Contructor " ++ T.unpack name ++
+              " not found but given as parameter in --ctr-args"
+          assertions <>= map (\v -> (v, Eq, T.pack $ show nr)) vars'
+
+
+        selectOneArgumentPerConstructor' [] = return []
+        selectOneArgumentPerConstructor' xss@(x:xs) =
           if length x > 1 then do
             let ps = map (fromADatatype vecLen) x
             let psSum = fromListBy (fromADatatype vecLen) x
-            let pssSum = fromListBy id (map (fromListBy (fromADatatype vecLen)) xs)
+            let pss = map (map (fromADatatype vecLen)) xss
+            let pss' = map (map (head . fromListBy return)) pss
+            let pssSum = fromListBy id (map (fromListBy (fromADatatype vecLen)) xss)
             let constr = map (\p -> "(ite (= 0 " +++ head psSum +++ ") (= 0 " +++ p +++
                                     ") true)") pssSum
-            let counter = "ipvar_base_constr_counter_" +++ head (fromADatatype 1 (head x))
-            let constrCounter = "(= " +++ counter +++ " (ite (= 0 " +++ head psSum +++ ") 0 1))"
 
-            -- (assert (= (= ipvar_base_constr_counter_v1_pctr_A_Cons_0_1
-            -- (ite (= 0 (+ (+ v1_pctr_A_Cons_0_1 v1_pctr_A_Cons_0_2) v1_pctr_A_Cons_0_3)) 0 1)) 1))
+            let argVar = "ipvar_base_constr_argvar_" +++
+                  T.dropEnd 1  (T.dropWhileEnd (/= '_') $ T.dropEnd 1 $
+                                T.dropWhileEnd (/= '_') $ head $
+                                fromADatatype 1 (head x))
 
-            vars <>+= [counter]
-            assertionsStr <>= [constrCounter]
+            let constrFun argNr vecSum = "(ite (= " +++ T.pack (show argNr) +++ " " +++
+                  argVar +++ ") " +++ "true (= 0 " +++ vecSum +++ "))"
+            let constrs = map (zipWith constrFun [1..]) pss'
 
-            trace ("x: " ++ show x)
-              trace ("psSum: " ++ show psSum)
-              trace ("pssSum: " ++ show pssSum)
-              trace ("ps: " ++ show ps)
-              trace ("constr: " ++ show constr)
-              trace ("constr: " ++ show constrCounter)
-              assertionsStr <>= constr
-            return [counter]
+            vars <>+= [argVar]
+            assertionsStr <>= concat constrs
+
+            -- trace ("x: " ++ show x)
+            --   trace ("xss: " ++ show xss)
+            --   trace ("pss: " ++ show pss)
+            --   trace ("pss': " ++ show pss')
+            --   trace ("constrs: " ++ show constrs)
+            --   trace ("psSum: " ++ show psSum)
+            --   trace ("pssSum: " ++ show pssSum)
+            --   trace ("ps: " ++ show ps)
+            --   trace ("constr: " ++ show constr)
+            --   trace ("constr: " ++ show constrCounter)
+            --   trace ("args: " ++ show (constructorArgSelection args))
+            assertionsStr <>= constr
+            return [argVar]
           else return []
 
 

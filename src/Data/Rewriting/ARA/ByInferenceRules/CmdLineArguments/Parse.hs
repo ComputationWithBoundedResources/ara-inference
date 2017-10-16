@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 -- Parse.hs ---
 --
 -- Filename: Parse.hs
@@ -7,9 +8,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 20:29:56 2017 (+0200)
+-- Last-Updated: Fri Oct 13 10:31:52 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 282
+--     Update #: 307
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -48,6 +49,7 @@ import           Data.List                                                 (sort
 import           Data.Maybe                                                (fromJust,
                                                                             isJust,
                                                                             isNothing)
+import qualified Data.Text                                                 as T
 import           System.Console.GetOpt
 import           System.Environment                                        (getArgs,
                                                                             getProgName)
@@ -70,6 +72,7 @@ defaultOptions = ArgumentOptions {
                  , allowLowerSCC = False
                  , lowerbound = False
                  , lowerboundArg = Nothing
+                 , constructorArgSelection = []
                  , timeout = Nothing
                  , smtSolver = Z3
                  , findStrictRules = Nothing
@@ -108,6 +111,23 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
             then opts
             else opts { lowerbound = True } ))
    "Search for best case lowerbound measured in size instead of upperbound (only works for linear bounds). [Default: False]"
+
+  , Option [] ["ctr-args"]
+   (ReqArg (\str opts -> do
+               let txts = filter (not . T.null) $ T.splitOn "," $ T.pack $ filter (/= '"') str
+                   vals = map (T.breakOnEnd ":") txts
+                   readNr (c,x) =
+                     case reads (T.unpack x) :: [(Int, String)] of
+                       [(v,[])] -> return (T.dropEnd 1 c,v)
+                       _  -> throw $ FatalException $
+                             "Cannot parse --ctr-args argument: " ++ show str
+               args <- mapM readNr vals
+               return $ opts { constructorArgSelection = args ++ constructorArgSelection opts })
+     "LIST")
+
+
+   "Specify a list of which arguments are being used, e.g. --ctr-args  \"cons:2,node:1\" (case sensitive). "
+
 
   , Option ['l'] ["lowerboundArg"]
    (OptArg (\mStr opts -> return $

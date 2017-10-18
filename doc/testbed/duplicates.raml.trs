@@ -32,7 +32,6 @@
     eq#2(nil) -> #true
     eq#3(dd(y,ys),x,xs) -> and(#equal(x,y),eq(xs,ys))
     eq#3(nil,x,xs) -> #false
-    nub(l) -> nub#1(l)
     nub#1(dd(x,xs)) -> dd(x,nub(remove(x,xs)))
     nub#1(nil) -> nil
     remove(x,l) -> remove#1(l,x)
@@ -59,4 +58,7 @@
     #eq(dd(x'1,x'2),dd(y'1,y'2)) -> #and(#eq(x'1,y'1),#eq(x'2,y'2))
     #eq(dd(x'1,x'2),nil) -> #false
     #eq(nil,dd(y'1,y'2)) -> #false
-    #eq(nil,nil) -> #true)
+    #eq(nil,nil) -> #true
+    nub(l) -> nub#1(l)
+
+)

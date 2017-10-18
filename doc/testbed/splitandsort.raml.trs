@@ -60,7 +60,6 @@
     split(l) -> split#1(l)
     split#1(dd(x,xs)) -> insert(x,split(xs))
     split#1(nil) -> nil
-    splitAndSort(l) -> sortAll(split(l))
     splitqs(pivot,l) -> splitqs#1(l,pivot)
     splitqs#1(dd(x,xs),pivot) -> splitqs#2(splitqs(pivot,xs),pivot,x)
     splitqs#1(nil,pivot) -> tuple#2(nil,nil)
@@ -106,4 +105,7 @@
     #eq(nil,tuple#2(y'1,y'2)) -> #false
     #eq(tuple#2(x'1,x'2),dd(y'1,y'2)) -> #false
     #eq(tuple#2(x'1,x'2),nil) -> #false
-    #eq(tuple#2(x'1,x'2),tuple#2(y'1,y'2)) -> #and(#eq(x'1,y'1),#eq(x'2,y'2)))
+    #eq(tuple#2(x'1,x'2),tuple#2(y'1,y'2)) -> #and(#eq(x'1,y'1),#eq(x'2,y'2))
+    splitAndSort(l) -> sortAll(split(l))
+
+)

@@ -41,7 +41,6 @@
     insertD#1(nil,x) -> dd(x,nil)
     insertD#2(#false,x,y,ys) -> dd(x,dd(y,ys))
     insertD#2(#true,x,y,ys) -> dd(y,insertD(x,ys))
-    insertionsort(l) -> insertionsort#1(l)
     insertionsort#1(dd(x,xs)) -> insert(x,insertionsort(xs))
     insertionsort#1(nil) -> nil
     insertionsortD(l) -> insertionsortD#1(l)
@@ -61,4 +60,7 @@
     #compare(#pos(x),#neg(y)) -> #GT
     #compare(#pos(x),#pos(y)) -> #compare(x,y)
     #compare(#s(x),#0) -> #GT
-    #compare(#s(x),#s(y)) -> #compare(x,y))
+    #compare(#s(x),#s(y)) -> #compare(x,y)
+    insertionsort(l) -> insertionsort#1(l)
+
+)

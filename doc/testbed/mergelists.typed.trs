@@ -19,7 +19,6 @@
                                    ,Cons(x',xs')
                                    ,Cons(x,xs))
     merge(Nil(),ys) -> ys
-    goal(xs,ys) -> merge(xs,ys)
     <=(S(x),S(y)) ->= <=(x,y)
     <=(0(),y) ->= True()
     <=(S(x),0()) ->= False()
@@ -29,4 +28,7 @@
                                    ,merge(xs',xs))
     merge[Ite](True()
               ,Cons(x,xs)
-              ,ys) ->= Cons(x,merge(xs,ys)))
+              ,ys) ->= Cons(x,merge(xs,ys))
+    goal(xs,ys) -> merge(xs,ys)
+
+)

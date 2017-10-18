@@ -24,7 +24,6 @@
  )
 
 (RULES
-    mult(x,y) -> 'mult(x,y)
     add(x,y) -> 'add(x,y)
     computeLine(line,m,acc) -> computeLine'1(line,acc,m)
     computeLine'1(dd(x,xs),acc,m) -> computeLine'2(m,acc,x,xs)
@@ -64,4 +63,7 @@
     'succ('0) -> 'pos('s('0))
     'succ('neg('s('0))) -> '0
     'succ('neg('s('s(x)))) -> 'neg('s(x))
-    'succ('pos('s(x))) -> 'pos('s('s(x))))
+    'succ('pos('s(x))) -> 'pos('s('s(x)))
+    mult(x,y) -> 'mult(x,y)
+
+)

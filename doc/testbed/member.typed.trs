@@ -19,7 +19,6 @@
     member(x,Nil()) -> False()
     notEmpty(Cons(x,xs)) -> True()
     notEmpty(Nil()) -> False()
-    goal(x,xs) -> member(x,xs)
     !EQ(S(x),S(y)) ->= !EQ(x,y)
     !EQ(0(),S(y)) ->= False()
     !EQ(S(x),0()) ->= False()
@@ -29,4 +28,7 @@
                           ,Cons(x,xs)) ->= member(x',xs)
     member[Ite][True][Ite](True()
                           ,x
-                          ,xs) ->= True())
+                          ,xs) ->= True()
+    goal(x,xs) -> member(x,xs)
+
+)

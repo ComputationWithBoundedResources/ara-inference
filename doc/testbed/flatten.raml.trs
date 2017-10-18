@@ -30,7 +30,6 @@
     append(l1,l2) -> append'1(l1,l2)
     append'1(dd(x,xs),l2) -> dd(x,append(xs,l2))
     append'1(nil,l2) -> l2
-    flatten(t) -> flatten'1(t)
     flatten'1(leaf) -> nil
     flatten'1(node(l,t1,t2)) -> append(l,append(flatten(t1),flatten(t2)))
     flattensort(t) -> insertionsort(flatten(t))
@@ -56,4 +55,7 @@
     'compare('pos(x),'neg(y)) -> 'GT
     'compare('pos(x),'pos(y)) -> 'compare(x,y)
     'compare('s(x),'0) -> 'GT
-    'compare('s(x),'s(y)) -> 'compare(x,y))
+    'compare('s(x),'s(y)) -> 'compare(x,y)
+    flatten(t) -> flatten'1(t)
+
+)

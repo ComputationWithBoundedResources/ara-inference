@@ -20,5 +20,7 @@
     f(Nil(),y) -> g(Nil(),y)
     f(Cons(x,xs),y) -> h(Cons(x,xs)
                         ,y)
+
+    r(x,y) -> x
     sp1(x,y) -> f(x,y)
-    r(x,y) -> x)
+)

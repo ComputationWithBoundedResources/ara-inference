@@ -17,14 +17,16 @@
                                ,selects(x
                                        ,Cons(x',revprefix)
                                        ,xs))
-    select(Cons(x,xs)) -> selects(x
-                                 ,Nil()
-                                 ,xs)
     revapp(Cons(x,xs),rest) ->
       revapp(xs,Cons(x,rest))
     selects(x,revprefix,Nil()) ->
       Cons(Cons(x
                ,revapp(revprefix,Nil()))
           ,Nil())
+    revapp(Nil(),rest) -> rest
     select(Nil()) -> Nil()
-    revapp(Nil(),rest) -> rest)
+    select(Cons(x,xs)) -> selects(x
+                                 ,Nil()
+                                 ,xs)
+
+)

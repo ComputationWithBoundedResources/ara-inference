@@ -114,7 +114,6 @@
     notEmpty(Nil()) -> False()
     term(xs) -> term[Let](xs
                          ,factor(xs))
-    parsexp(xs) -> expr(xs)
     expr(xs) -> expr[Let](xs
                          ,term(xs))
     and(False(),False()) ->= False()
@@ -184,4 +183,7 @@
     expr[Let](xs,Nil()) ->= Nil()
     member[Ite][True][Ite](True()
                           ,x
-                          ,xs) ->= True())
+                          ,xs) ->= True()
+    parsexp(xs) -> expr(xs)
+
+)

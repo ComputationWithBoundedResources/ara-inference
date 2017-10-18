@@ -16,9 +16,9 @@
  add(0,y) -> y
  add(s(x),y) -> s(add(x,y))
 
- tadd(x,leaf) -> leaf
- tadd(x,node(y,ts)) -> node(add(x,y), mtadd(x,ts))
 
  mtadd(x,nil) -> nil
  mtadd(x,cons(t,ts)) -> cons(tadd(x,t), mtadd(x,ts))
+ tadd(x,leaf) -> leaf
+ tadd(x,node(y,ts)) -> node(add(x,y), mtadd(x,ts))
 )

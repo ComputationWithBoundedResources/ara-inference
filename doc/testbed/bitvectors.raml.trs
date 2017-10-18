@@ -97,7 +97,6 @@
     add''2(dd(y,ys),r,x,xs) -> add''3(sum(x,y,r),xs,ys)
     add''2(nil,r,x,xs) -> nil
     add''3(tuple'2(z,r'),xs,ys) -> dd(z,add'(xs,ys,r'))
-    bitToInt(b) -> bitToInt'(b,'abs('pos('s('0))))
     bitToInt'(b,n) -> bitToInt''1(b,n)
     bitToInt''1(dd(x,xs),n) -> add(mult(x,n),bitToInt'(xs,mult(n,'pos('s('s('0))))))
     bitToInt''1(nil,n) -> 'abs('0)
@@ -246,4 +245,7 @@
     'succ('0) -> 'pos('s('0))
     'succ('neg('s('0))) -> '0
     'succ('neg('s('s(x)))) -> 'neg('s(x))
-    'succ('pos('s(x))) -> 'pos('s('s(x))))
+    'succ('pos('s(x))) -> 'pos('s('s(x)))
+    bitToInt(b) -> bitToInt'(b,'abs('pos('s('0))))
+
+)

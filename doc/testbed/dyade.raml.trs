@@ -19,7 +19,6 @@
 
 (RULES
     mult(x,y) -> #mult(x,y)
-    dyade(l1,l2) -> dyade#1(l1,l2)
     dyade#1(dd(x,xs),l2) -> dd(mult(x,l2),dyade(xs,l2))
     dyade#1(nil,l2) -> nil
     mult(n,l) -> mult#1(l,n)
@@ -50,4 +49,7 @@
     #succ(#0) -> #pos(#s(#0))
     #succ(#neg(#s(#0))) -> #0
     #succ(#neg(#s(#s(x)))) -> #neg(#s(x))
-    #succ(#pos(#s(x))) -> #pos(#s(#s(x))))
+    #succ(#pos(#s(x))) -> #pos(#s(#s(x)))
+    dyade(l1,l2) -> dyade#1(l1,l2)
+
+)

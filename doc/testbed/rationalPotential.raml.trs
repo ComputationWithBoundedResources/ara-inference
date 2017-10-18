@@ -18,7 +18,6 @@
  )
 
 (RULES
-    group3(l) -> group3#1(l)
     group3#1(cons(x,xs)) -> group3#2(xs,x)
     group3#1(nil) -> nil
     group3#2(cons(y,ys),x) -> group3#3(ys,x,y)
@@ -31,4 +30,7 @@
     zip3#2(cons(y,ys),l3,x,xs) -> zip3#3(l3,x,xs,y,ys)
     zip3#2(nil,l3,x,xs) -> nil
     zip3#3(cons(z,zs),x,xs,y,ys) -> cons(tuple#3(x,y,z),zip3(xs,ys,zs))
-    zip3#3(nil,x,xs,y,ys) -> nil)
+    zip3#3(nil,x,xs,y,ys) -> nil
+    group3(l) -> group3#1(l)
+
+)

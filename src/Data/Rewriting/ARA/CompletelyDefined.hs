@@ -10,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 365
+--     Update #: 470
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -76,7 +76,7 @@ mkCompletelyDefinedConds prove =
   -- trace ("ctrSyms: " ++ show ctrSyms)
   -- trace ("lhss: " ++ show lhssChlds) $
   -- trace ("ctrArities: " ++ show ctrArities)
-  -- trace ("nRules: " ++ show nRules)
+  trace ("nRules: " ++ show nRules)
   -- trace ("ctrArities: " ++ show ctrArities)
   -- undefined
   -- trace ("nSigs: " ++ show (addSig <$> signatures p))
@@ -93,33 +93,32 @@ mkCompletelyDefinedConds prove =
         --               [ Constructor (read $ show rhsBtmSym) []]])
         -- addSig = (++ [Signature (read (show rhsBtmSym)) [] (read (show rhsBtmSym))])
         p = problem prove
-        (nCond, nSigM) = foldl mkSigCond (conditions prove, signatureMap prove) nRules
-        mkSigCond acc [] =  acc
-        mkSigCond acc@(cond,sigs) (Rule (Fun _ lhss) (Fun f _):_)
+        (nCond, nSigM) = foldl mkSigCond (conditions prove, signatureMap prove) (concat nRules)
+        mkSigCond acc@(cond,sigs) (Rule (Fun _ lhss) (Fun f _))
           | not (null varParamNrs) = (cond',sigs')
           | otherwise = acc
 
-
-          -- foldl (mkSigCond' f) acc (zip [0..] lhss)
+            -- foldl (mkSigCond' f) acc (zip [0..] lhss)
 
           where (nr,sigs') =
                   case find ((== f) . fst4 . lhsRootSym . fst3 . snd) (zip [0..] sigs) of
-                    Nothing     -> (length sigs, sigs ++ nSig)
+                    Nothing     -> trace ("nsig: " ++ show nSig)
+                                   (length sigs, sigs ++ nSig)
                     Just (nr,_) -> (nr, sigs)
                 sig = getDefSymSignatureByName' (fromJust $ signatures p) f
-                nCondDt pNr = (SigRefParam "" nr pNr, Eq, 0)
+                nCondDt pNr = trace ("nCond p(" ++ show nr ++ "," ++ show pNr ++") == 0")
+                  (SigRefParam "" nr pNr, Eq, 0)
                 nSig = [(Signature (f,ACost (Vector1 0),False, False)
                         (map (\dt -> ActualCost False dt (ACost 0)) pDts)
                         (ActualCost False rDt (ACost 0))
                         ,-1, "to make completely defined")]
                 pDts = map fst $ lhsSig sig
                 rDt = fst $ rhsSig sig
-                isVar Var{} = True
-                isVar _     = False
+
                 cond' = cond { dtConditionsInt = dtConditionsInt cond
                                ++ map nCondDt varParamNrs }
                 varParamNrs :: [Int]
-                varParamNrs = map fst $ filter (isVar . snd) (zip [0..] lhss)
+                varParamNrs = map fst $ filter (hasVars . return . snd) (zip [0..] lhss)
 
         -- mkSigCond' f (cond,sigs) (pNr,lhs) = case lhs of
         --   Var _    ->
@@ -144,6 +143,14 @@ mkCompletelyDefinedConds prove =
         --                , -1, "to make completely defined")]
         --         pDts = map fst $ lhsSig sig
         --         rDt = fst $ rhsSig sig
+
+        isVar Var{} = True
+        isVar _     = False
+        hasVars xs = any isVar xs || any hasVars chlds
+          where chlds = map chld xs
+                chld (Fun _ ch) = ch
+                chld _          = []
+
 
         rls = allRules (rules p)
         rootTerm (Rule (Fun f _) _) = f
@@ -180,12 +187,25 @@ mkCompletelyDefinedConds prove =
           let maxDepthF (Var x)    = 0
               maxDepthF (Fun _ ch) = 1 + maximum (0:map maxDepthF ch)
               maxDepth = maximum $ concatMap (map maxDepthF) lhss
-              arityFuns = concat $ zipWith zipAritiesToFun ctrArities ctrSyms
+              maxDepths = map (maximum . map maxDepthF) (transpose lhss)
+              arityFuns = -- Var "x" :
+                concat (zipWith zipAritiesToFun ctrArities ctrSyms)
+
               paramLen = length (head lhss)
-              ctrCombs = combsTerm arityFuns paramLen -- (length $ filter not paramVars)
-                maxDepth
-              ctrParams = map (map dropAritiesFromFun) ctrCombs
-              filteredParams = foldl filterParams ctrParams lhss
+              ctrCombs0 =  combsTerm arityFuns (length $ filter not paramVars)
+                (map snd $ filter (not.fst) (zip paramVars maxDepths))
+              ctrParams0 = map (map dropAritiesFromFun) ctrCombs0
+              ctrParams = map (\ps -> fst $
+                foldl (\(acc,combs) (var,varsOnly) ->
+                          if varsOnly
+                          then (acc++mkDummyVar varsOnly var,combs)
+                          else (acc++[head combs],tail combs)) ([],ps) (zip [1..] paramVars))
+                          ctrParams0
+              filteredParams = filter hasVars $ foldl filterParams ctrParams lhss
+
+              hasVarsBelRoot = any hasVars . map chld
+                where chld (Fun _ ch) = ch
+                      chld _          = []
               mkRule params = Rule (Fun f params) (Fun  f [])
               isVar Var{} = True
               isVar _     = False
@@ -193,25 +213,33 @@ mkCompletelyDefinedConds prove =
               mkDummyVar True nr = [Var $ read $ show $ "x" ++ show nr]
               mkDummyVar False _ = [Fun f []]
 
-          in trace ("lhss: " ++ show (transpose lhss)) $
-            trace ("filteredParams: " ++ show filteredParams)
-            -- trace ("res: " ++ show (length $ concat $ mergeVars (length ctrSyms) filteredParams)) $
-            trace ("length ctrCombs: " ++ show (length ctrCombs))
-            trace ("length ctrCombs: " ++ show ctrCombs)
-            trace ("maxDepth: " ++ show maxDepth)
-            trace ("merged: " ++ show (mergeVars (length ctrSyms) paramVars filteredParams))
-            trace ("merged: " ++ show (map mkRule $ mergeVars (length ctrSyms) paramVars
-                                       filteredParams))
+          in -- trace ("\n\nf: " ++ show f) $
+             -- -- trace ("lhss: " ++ show lhss) $
+             -- trace ("arityFuns: " ++ show arityFuns) $
 
-            trace ("res: " ++ show (
-                      zipWith3 (\varsOnly var ps ->
-                                  if varsOnly then mkDummyVar varsOnly var
-                                  else trace ("ps: " ++ show ps) ps) paramVars [1..]
-                      (mergeVars (length ctrSyms) paramVars filteredParams))) $
+             -- -- trace ("res: " ++ show (length $ concat $
+             -- -- mergeVars (length ctrSyms) filteredParams)) $
+             -- trace ("length ctrCombs: " ++ show (length ctrCombs0))
+             -- trace ("ctrCombs0: " ++ show ctrCombs0)
+             -- trace ("paramVars: " ++ show paramVars)
+             -- -- trace ("ctrParams0: " ++ show ctrParams0)
+             -- trace ("ctrParams: " ++ show ctrParams)
+             -- trace ("filteredParams: " ++ show (filteredParams)) $
+             -- trace ("length filteredParams: " ++ show (length filteredParams)) $
+             -- trace ("maxDepth: " ++ show maxDepth)
+             -- trace ("merged: " ++ show (mergeVars (length ctrSyms) paramVars filteredParams))
+             -- trace ("merged: " ++ show (map mkRule $ mergeVars (length ctrSyms) paramVars
+             --                            filteredParams)) $
 
-             if and paramVars || all not paramVars
+             -- trace ("res: " ++ show (
+             --           zipWith3 (\varsOnly var ps ->
+             --                       if varsOnly then mkDummyVar varsOnly var
+             --                       else trace ("ps: " ++ show ps) ps) paramVars [1..]
+             --           (mergeVars (length ctrSyms) paramVars filteredParams))) $
+
+             if and paramVars
              then []            -- only variables (no need for constraints)
-             else map mkRule (zipWith mkDummyVar paramVars [1..]) ++
+             else -- map mkRule (zipWith mkDummyVar paramVars [1..]) ++
                   map mkRule (mergeVars (length ctrSyms) paramVars filteredParams)
 
 mergeVars :: (Show f, Show v, Read v, Eq v, Eq f) => Int -> [Bool] -> [[Term f v]] -> [[Term f v]]
@@ -235,7 +263,7 @@ mergeVars nrCtrs paramVars xs@(x:_) =
 
 
 filterParams :: (Show f, Show v, Eq f) => [[Term f v]] -> [Term f v] -> [[Term f v]]
-filterParams [] rule     = trace ("empty ctrPAram: " ++ show rule) []
+filterParams [] rule     = []
 filterParams pCombs rule = filter (rule `notIncludes`) pCombs
 
 notIncludes :: (Eq f) => [Term f v] -> [Term f v] -> Bool
@@ -245,12 +273,13 @@ notIncludes pRules pCombs = or (zipWith notIncludes' pRules pCombs)
         notIncludes' (Fun f ch) (Fun f' ch') = f /= f' || notIncludes ch ch'
 
 
-dropAritiesFromFun :: Term (Int, f) String -> Term f v
+dropAritiesFromFun :: (Read v) => Term (Int, f) String -> Term f v
 dropAritiesFromFun (Fun (_,f) ch) = Fun f (map dropAritiesFromFun ch)
+dropAritiesFromFun Var{}          = Var (read $ show "x")
 
 zipAritiesToFun :: Int -> f -> [Term (Int,f) String]
-zipAritiesToFun arity f | arity == 0 = []
-zipAritiesToFun arity f = return $ Fun (arity,f) []
+-- zipAritiesToFun arity f | arity == 0 = []
+zipAritiesToFun arity f = return $ Fun (arity,f) (replicate arity (Var "x"))
 
 
 combineParamChoices :: (Show v, Show f) => [[Term (Int, f) v]] -> [[Term (Int, f) v]]
@@ -264,24 +293,33 @@ combineParamChoices = combineParamChoices' []
 
 
 addChldsCtr :: (Show v, Show f) => [Term (Int, f) v] -> Term (Int, f) v -> [Term (Int, f) v]
+addChldsCtr ctrs p@Var{} = [p]
 addChldsCtr ctrs p@(Fun (0,_) _)= [p]
-addChldsCtr ctrs p@(Fun (nr,f) []) =
+addChldsCtr ctrs p@(Fun (nr,f) _) =
   -- trace ("\n\npossCombs: " ++ show possCombs)
   -- trace ("outChldCtr: " ++ show (map (\x -> Fun (nr,f) x) possCombs))
   map (Fun (nr,f)) possCombs
   where possCombs = combs ctrs nr
-addChldsCtr ctrs p@(Fun f ch) =
-  -- trace ("combs: " ++ show (map (addChldsCtr ctrs) ch))
-  -- trace ("combs': " ++ show chlds')
-  -- trace ("out: " ++ show (map (Fun f) chlds')) $
-  map (Fun f) chlds'
-  where chlds' = combineParamChoices (map (addChldsCtr ctrs) ch)
+-- addChldsCtr ctrs p@(Fun f ch) =
+--   trace ("p: " ++ show p)
+--   trace ("combs: " ++ show (map (addChldsCtr ctrs) ch))
+--   trace ("combs': " ++ show chlds')
+--   trace ("out: " ++ show (map (Fun f) chlds')) $
+--   map (Fun f) chlds'
+--   where chlds' = combineParamChoices (map (addChldsCtr ctrs) ch)
 
 
-combsTerm :: (Show v, Show f) => [Term (Int,f) v] -> Int -> Int -> [[Term (Int,f) v]]
-combsTerm ctrs argLen maxDepth | argLen < 1 = []
-combsTerm ctrs argLen maxDepth | maxDepth < 1 = []
-combsTerm ctrs argLen maxDepth = combs' [] 0
+combsTerm :: (Show v, Show f) => [Term (Int,f) v] -> Int -> [Int] -> [[Term (Int,f) v]]
+combsTerm  ctrs argLen maxDepths = filter (not.toDeep) (combsTerm'  ctrs argLen (maximum maxDepths))
+  where toDeep xs = or (zipWith isTooDeep maxDepths xs)
+        isTooDeep maxD term = depth term > maxD
+        depth (Fun f ch) = 1 + maximum (0:map depth ch)
+        depth Var{}      = 0
+
+combsTerm' :: (Show v, Show f) => [Term (Int,f) v] -> Int -> Int -> [[Term (Int,f) v]]
+combsTerm' ctrs argLen maxDepth | argLen < 1 = []
+combsTerm' ctrs argLen maxDepth | maxDepth < 1 = []
+combsTerm' ctrs argLen maxDepth = combs' [] 0
   where base = combs ctrs argLen
         combs'  _  0  = combs' base 1
         combs' acc nr

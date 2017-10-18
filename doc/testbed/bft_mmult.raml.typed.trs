@@ -52,10 +52,6 @@
                                             ,::(@a,@sofar))
     appendreverse#1(nil(),@sofar) ->
       @sofar
-    bftMult(@t,@acc) ->
-      bftMult'(tuple#2(::(@t,nil())
-                      ,nil())
-              ,@acc)
     bftMult'(@queue,@acc) ->
       bftMult'#1(bftMult'#2(@queue)
                 ,@acc)
@@ -183,4 +179,11 @@
     #succ(#neg(#s(#s(@x)))) ->=
       #neg(#s(@x))
     #succ(#pos(#s(@x))) ->=
-      #pos(#s(#s(@x))))
+      #pos(#s(#s(@x)))
+    bftMult(@t,@acc) ->
+      bftMult'(tuple#2(::(@t,nil())
+                      ,nil())
+              ,@acc)
+
+
+)

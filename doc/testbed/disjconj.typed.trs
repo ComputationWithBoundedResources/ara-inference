@@ -72,8 +72,10 @@
     getSecond(Or(t1,t2)) -> t1
     getFirst(And(t1,t2)) -> t1
     getFirst(Or(t1,t2)) -> t1
-    disjconj(p) -> disj(p)
     and(False(),False()) ->= False()
     and(True(),False()) ->= False()
     and(False(),True()) ->= False()
-    and(True(),True()) ->= True())
+    and(True(),True()) ->= True()
+    disjconj(p) -> disj(p)
+
+)

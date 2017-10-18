@@ -65,7 +65,6 @@
     makeBase(m) -> makeBase#1(m)
     makeBase#1(dd(l,m')) -> mkBase(l)
     makeBase#1(nil) -> nil
-    matrixMult(m1,m2) -> matrixMult'(m1,transAcc(m2,makeBase(m2)))
     matrixMult'(m1,m2) -> matrixMult'#1(m1,m2)
     matrixMult'#1(dd(l,ls),m2) -> dd(lineMult(l,m2),matrixMult'(ls,m2))
     matrixMult'#1(nil,m2) -> nil
@@ -123,4 +122,7 @@
     #succ(#0) -> #pos(#s(#0))
     #succ(#neg(#s(#0))) -> #0
     #succ(#neg(#s(#s(x)))) -> #neg(#s(x))
-    #succ(#pos(#s(x))) -> #pos(#s(#s(x))))
+    #succ(#pos(#s(x))) -> #pos(#s(#s(x)))
+    matrixMult(m1,m2) -> matrixMult'(m1,transAcc(m2,makeBase(m2)))
+
+)

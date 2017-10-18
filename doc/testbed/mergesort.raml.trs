@@ -36,7 +36,6 @@
     merge'2(nil,x,xs) -> dd(x,xs)
     merge'3('false,x,xs,y,ys) -> dd(y,merge(dd(x,xs),ys))
     merge'3('true,x,xs,y,ys) -> dd(x,merge(xs,dd(y,ys)))
-    mergesort(l) -> mergesort'1(l)
     mergesort'1(dd(x1,xs)) -> mergesort'2(xs,x1)
     mergesort'1(nil) -> nil
     mergesort'2(dd(x2,xs'),x1) -> mergesort'3(msplit(dd(x1,dd(x2,xs'))))
@@ -62,4 +61,7 @@
     'compare('pos(x),'neg(y)) -> 'GT
     'compare('pos(x),'pos(y)) -> 'compare(x,y)
     'compare('s(x),'0) -> 'GT
-    'compare('s(x),'s(y)) -> 'compare(x,y))
+    'compare('s(x),'s(y)) -> 'compare(x,y)
+    mergesort(l) -> mergesort'1(l)
+
+)

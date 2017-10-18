@@ -28,13 +28,14 @@
     lt(s(x),0) -> false
     lt(s(x),s(y)) -> lt(x,y)
 
-    bubblesort(nil) -> nil
-    bubblesort(dd(x,xs)) -> bubblesort'(bubble(dd(x,xs)))
-    bubblesort'(pair(xs,x)) -> append(bubblesort(xs),dd(x,nil))
-
     bubble(dd(x,nil)) -> pair(nil,x)
     bubble(dd(x,dd(x',xs))) -> bubble'(lt(x,x'), x, x', xs)
     bubble'(true, x, x', xs) -> bubble''(x,bubble(dd(x',xs)))
     bubble'(false, x, x', xs) -> bubble''(x',bubble(dd(x,xs)))
     bubble''(x,pair(xs,x')) -> pair(dd(x,xs), x')
+    bubblesort(nil) -> nil
+    bubblesort(dd(x,xs)) -> bubblesort'(bubble(dd(x,xs)))
+    bubblesort'(pair(xs,x)) -> append(bubblesort(xs),dd(x,nil))
+
+
 )

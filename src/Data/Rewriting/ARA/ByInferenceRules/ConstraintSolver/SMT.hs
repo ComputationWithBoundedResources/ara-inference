@@ -8,9 +8,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Oct 16 13:06:18 2017 (+0200)
+-- Last-Updated: Mon Oct 16 16:15:40 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1844
+--     Update #: 1846
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -170,7 +170,7 @@ solveProblem ops probSigs conds aSigs cfSigs = do
                                 evalStateT (solveProblem' ops probSigs conds aSigs cfSigs nr)
                                 prob0))
         (if lowerbound ops
-         then [1,0]
+         then [1]
           else if isJust (lowerboundArg ops)
                then reverse vecLens -- ++ [0]
           else vecLens)
@@ -516,9 +516,9 @@ toNonConstantsCostsBaseCtr :: (Show dt, Show s) =>
                -> Int
                -> Signature (s, t, Bool,Bool) (ADatatype dt a)
                -> [ACostCondition Int]
-toNonConstantsCostsBaseCtr args vecLen (Signature (n,_,_,isCf) lhs rhs) =
-  -- | null lhs = []
-  -- | otherwise =
+toNonConstantsCostsBaseCtr args vecLen (Signature (n,_,_,isCf) lhs rhs)
+  | null lhs = []
+  | otherwise =
     map (\v -> AVariableCondition $ "kctr_" ++ baseCf ++ convertToSMTString n
                ++ "_" ++ show v
         ) [1..vecLen]

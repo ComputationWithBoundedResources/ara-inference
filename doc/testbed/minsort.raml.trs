@@ -29,7 +29,6 @@
     findMin#2(nil,x) -> dd(x,nil)
     findMin#3(#false,x,y,ys) -> dd(y,dd(x,ys))
     findMin#3(#true,x,y,ys) -> dd(x,dd(y,ys))
-    minSort(l) -> minSort#1(findMin(l))
     minSort#1(dd(x,xs)) -> dd(x,minSort(xs))
     minSort#1(nil) -> nil
     #cklt(#EQ) -> #false
@@ -46,4 +45,7 @@
     #compare(#pos(x),#neg(y)) -> #GT
     #compare(#pos(x),#pos(y)) -> #compare(x,y)
     #compare(#s(x),#0) -> #GT
-    #compare(#s(x),#s(y)) -> #compare(x,y))
+    #compare(#s(x),#s(y)) -> #compare(x,y)
+    minSort(l) -> minSort#1(findMin(l))
+
+)

@@ -14,12 +14,6 @@
     overlap[Ite][True][Ite] :: [A x A x A] -> A
     member[Ite][True][Ite] :: [A x A x A] -> A)
 (RULES
-    overlap(Cons(x,xs),ys) ->
-      overlap[Ite][True][Ite](member(x
-                                    ,ys)
-                             ,Cons(x,xs)
-                             ,ys)
-    overlap(Nil(),ys) -> False()
     member(x',Cons(x,xs)) ->
       member[Ite][True][Ite](!EQ(x,x')
                             ,x'
@@ -43,4 +37,13 @@
                            ,ys) ->= True()
     member[Ite][True][Ite](True()
                           ,x
-                          ,xs) ->= True())
+                          ,xs) ->= True()
+
+    overlap(Cons(x,xs),ys) ->
+      overlap[Ite][True][Ite](member(x
+                                    ,ys)
+                             ,Cons(x,xs)
+                             ,ys)
+    overlap(Nil(),ys) -> False()
+
+)

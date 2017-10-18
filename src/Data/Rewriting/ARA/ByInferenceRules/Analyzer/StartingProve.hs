@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Oct  3 23:19:46 2017 (+0200)
+-- Last-Updated: Mon Oct 16 15:17:06 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1662
+--     Update #: 1666
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -225,10 +225,9 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
   -- trace ("varNameKs: " ++ show (varNameKs :: [String]))
   -- trace ("pre: " ++ show pre)
 
-  (if length pre > length preLinear
-   then trace ("nonLL: " ++ filePath args)
-   else id)
-
+  if length pre > length preLinear
+  then throw $ FatalException "TRS is not left-linear"
+  else
   (undefined,
    (nodes ++ [InfTreeNode
               preLinear

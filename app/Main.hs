@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Oct  2 16:29:09 2017 (+0200)
+-- Last-Updated: Mon Oct 16 16:34:19 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1013
+--     Update #: 1014
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -122,7 +122,8 @@ main =
              isMainFun _         = False
          let mainFun = filter (isMainFun.lhs) (allRules $ rules probParse)
          let stricts = strictRules (rules probParse)
-         prob <- if isJust (lowerboundArg args) && null mainFun && not (null stricts)
+         prob <- if (lowerbound args || isJust (lowerboundArg args)) &&
+                    null mainFun && not (null stricts)
                  then do
                    let (Fun f ch) = lhs $ last stricts
                    let sigF = fromMaybe (E.throw $ FatalException $

@@ -39,8 +39,6 @@
 
 (RULES
     'equal(x,y) -> 'eq(x,y)
-    eratos(dd(x,xs)) -> dd(x,eratos(filter(x,xs)))
-    eratos(nil) -> nil
     filter(p,nil) -> nil
     filter(p,dd(x,xs)) -> filter'('equal('mod(x,p),'0), x, filter(p,xs))
     filter'('true,x,xs) -> xs
@@ -129,4 +127,7 @@
     'succ('neg('s('0))) -> '0
     'succ('neg('s('s(x)))) -> 'neg('s(x))
     'succ('pos('s(x))) -> 'pos('s('s(x)))
+    eratos(dd(x,xs)) -> dd(x,eratos(filter(x,xs)))
+    eratos(nil) -> nil
+
 )

@@ -64,7 +64,6 @@
     append#1(dd(x,xs),ys) -> append#2(append(xs,ys),x)
     append#1(nil,ys) -> ys
     append#2(l',x) -> dd(x,l')
-    bitonicMerge(l,direction) -> bitonicMerge#1(l,direction,l)
     bitonicMerge#1(dd(x,xs),direction,l) -> bitonicMerge#2(xs,direction,l)
     bitonicMerge#1(nil,direction,l) -> nil
     bitonicMerge#10(#false,hi,low) -> tuple#2(low,hi)
@@ -135,4 +134,7 @@
     #succ(#0) -> #pos(#s(#0))
     #succ(#neg(#s(#0))) -> #0
     #succ(#neg(#s(#s(x)))) -> #neg(#s(x))
-    #succ(#pos(#s(x))) -> #pos(#s(#s(x))))
+    #succ(#pos(#s(x))) -> #pos(#s(#s(x)))
+    bitonicMerge(l,direction) -> bitonicMerge#1(l,direction,l)
+
+)

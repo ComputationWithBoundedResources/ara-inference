@@ -24,8 +24,6 @@
     gt(0,0)       -> false
     gt(s(x),s(y)) -> gt(x,y)
 
-    quicksort(nil)            -> nil
-    quicksort(dd(z,zs))       -> quicksort'(z,split(z,zs))
     quicksort'(z,pair(xs,ys)) -> append(quicksort(xs),dd(z,quicksort(ys)))
 
     split(pivot,nil)              -> pair(nil,nil)
@@ -35,4 +33,7 @@
 
     append(nil,ys)      -> ys
     append(dd(x,xs),ys) -> dd(x,append(xs,ys))
+    quicksort(nil)            -> nil
+    quicksort(dd(z,zs))       -> quicksort'(z,split(z,zs))
+
 )

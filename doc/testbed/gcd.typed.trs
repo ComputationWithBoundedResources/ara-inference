@@ -49,7 +49,6 @@
                        ,Cons(Nil(),Nil()))
                 ,x
                 ,y)
-    goal(x,y) -> gcd(x,y)
     and(False(),False()) ->= False()
     and(True(),False()) ->= False()
     and(False(),True()) ->= False()
@@ -66,4 +65,7 @@
     gcd[False][Ite](False(),x,y) ->=
       gcd(x,monus(y,x))
     gcd[False][Ite](True(),x,y) ->=
-      gcd(monus(x,y),y))
+      gcd(monus(x,y),y)
+    goal(x,y) -> gcd(x,y)
+
+)

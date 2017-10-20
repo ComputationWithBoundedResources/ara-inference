@@ -1,8 +1,0 @@
-Could not match expected type 'nat option' with actual type 'nat'.
-In the definition 'let memoM v m = ...', namely
-let lookupM = ((liftM (find v)) get)
-and insertM a = (modify (fun c -> Cons(Pair(v,a),c)))
-in ((bind lookupM) (fun r -> (match r with
-   | None() ->   ((bind (m v)) (fun a -> ((bind' (insertM a)) (return a))))
-   | Some(a) ->   (return a))))
-

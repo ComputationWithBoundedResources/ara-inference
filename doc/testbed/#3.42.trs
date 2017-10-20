@@ -5,7 +5,7 @@
     x)
 (DATATYPES
     Nat = µX.< 0, s(X) >
-    L = µX.< snoc(X, Nat), nil >)
+    L = µX.< cons(X, Nat), nil >)
 (SIGNATURES
     half :: [Nat] -> Nat
     lastbit :: [Nat] -> Nat
@@ -19,6 +19,6 @@
     lastbit(s(0)) -> s(0)
     lastbit(s(s(x))) -> lastbit(x)
 
-    conv(0) -> snoc(nil,0)
-    conv(s(x)) -> snoc(conv(half(s(x))) ,lastbit(s(x)))
-    )
+    conv(0) -> cons(nil,0)
+    conv(s(x)) -> cons(conv(half(s(x))) ,lastbit(s(x)))
+)

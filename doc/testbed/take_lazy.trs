@@ -1,0 +1,11 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x2 x1)
+(RULES
+    take_l#2(0()) -> Nil()
+    take_l#2(S(x2)) -> Cons(take_l#2(x2))
+    main(x1) -> take_l#2(x1))
+

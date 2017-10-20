@@ -1,0 +1,12 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x4 x0)
+(RULES
+    flip#1(E()) -> E()
+    flip#1(Z(x4)) -> O(flip#1(x4))
+    flip#1(O(x4)) -> Z(flip#1(x4))
+    main(x0) -> flip#1(x0))
+

@@ -8,9 +8,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Oct 20 07:03:50 2017 (+0200)
+-- Last-Updated: Fri Oct 20 08:27:03 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 315
+--     Update #: 324
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -70,6 +70,7 @@ defaultOptions = ArgumentOptions {
                  , verbose = False
                  , shift = False
                  , allowLowerSCC = False
+                 , allowCf = False
                  , lowerbound = False
                  , lowerboundArg = Nothing
                  , lowerboundNoComplDef = False
@@ -95,8 +96,13 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
    "Print usage information."
 
   , Option ['c'] ["allow-child-sccs"]
-  (NoArg (\opts -> return $ opts { allowLowerSCC = True }))
-  "Allow reachable SCCs in the call graph to use the cost-free inference."
+  (NoArg (\opts -> return $ opts { allowCf = True, allowLowerSCC = True }))
+  "Allow reachable SCCs in the call graph to use the cost-free inference. Enabled -f as well."
+
+  , Option ['a'] ["allow-cf"]
+  (NoArg (\opts -> return $ opts { allowCf = True }))
+  "Allow cost-free signatures. [Default: False]"
+
 
   , Option [] ["verbose"]
    (NoArg (\opts -> return $ opts { verbose = True } ))
@@ -172,7 +178,7 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
     "Minimum length of vectors to use [Default: 1]."
 
   , Option ['f'] ["find-strict"]
-   (OptArg (\mStr opts -> do
+   (OptArg (\mStr opts ->
                case mStr of
                  Nothing -> return $ opts { findStrictRules = Just 1 }
                  Just str -> do
@@ -180,7 +186,7 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
                    if null nr
                      then throw $ FatalException "Cannot parse argument of -f/--find-strict!"
                      else return (opts { findStrictRules = Just $ fst (head nr) })) "INT")
-    "Minimum length of vectors to use [Default: Disabled, when enabled with no argument, 1 is used]."
+    "Minimum number of strict rules to find [Default: Disabled, when enabled with no argument, 1 is used]."
 
 
   , Option ['i'] ["inference-tree"]

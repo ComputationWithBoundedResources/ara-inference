@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:19:36 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Oct 18 14:47:01 2017 (+0200)
+-- Last-Updated: Fri Oct 20 08:22:03 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 91
+--     Update #: 92
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -57,6 +57,7 @@ data ArgumentOptions = ArgumentOptions
     , verbose                 :: Bool
     , shift                   :: Bool
     , allowLowerSCC           :: Bool
+    , allowCf                 :: Bool
     , lowerbound              :: Bool
     , lowerboundArg           :: Maybe Int
     , constructorArgSelection :: [(T.Text,Int)]

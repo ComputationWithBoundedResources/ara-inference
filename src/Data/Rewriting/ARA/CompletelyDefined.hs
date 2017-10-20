@@ -10,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 476
+--     Update #: 479
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,6 +66,10 @@ import           Text.PrettyPrint.ANSI.Leijen                               hidi
 import           Debug.Trace
 
 
+-- import qualified Control.Exception                                          as E
+-- import           Data.Rewriting.ARA.Exception
+
+
 mkCompletelyDefinedConds :: (Ord f, Read v, Eq f, Eq v, Show f, Show dt, Eq dt, Show v) =>
                             Prove f v f dt dt f
                          -> Prove f v f dt dt f
@@ -87,8 +91,6 @@ mkCompletelyDefinedConds prove =
   --   }
   -- undefined
 
-  -- import qualified Control.Exception                                         as E
-  -- import           Data.Rewriting.ARA.Exception
   -- E.throw $ if null (concat nRules) then FatalException "YES" else FatalException "NO"
 
   prove { conditions = nCond, signatureMap = nSigM }

@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Oct 20 07:29:22 2017 (+0200)
+-- Last-Updated: Fri Oct 20 08:14:21 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1018
+--     Update #: 1020
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -280,9 +280,10 @@ main =
                   putStrLn "TIMEOUT"
                   putStrLn txt
                 FatalException txt -> do
-                  putStr "ERROR:"
+                  -- putStr "ERROR:"
                   putStrLn txt
-                  exitFailure
+                  -- exitFailure
+
                 ParseException txt -> do
                   putStr "ERROR:"
                   putStrLn txt

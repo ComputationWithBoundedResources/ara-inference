@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:19:36 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Oct 12 19:04:47 2017 (+0200)
+-- Last-Updated: Wed Oct 18 14:47:01 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 90
+--     Update #: 91
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -60,6 +60,7 @@ data ArgumentOptions = ArgumentOptions
     , lowerbound              :: Bool
     , lowerboundArg           :: Maybe Int
     , constructorArgSelection :: [(T.Text,Int)]
+    , lowerboundNoComplDef    :: Bool
     , timeout                 :: Maybe Int
     , smtSolver               :: SMTSolver
     , findStrictRules         :: Maybe Int

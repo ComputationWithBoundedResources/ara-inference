@@ -10,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 470
+--     Update #: 476
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -76,7 +76,7 @@ mkCompletelyDefinedConds prove =
   -- trace ("ctrSyms: " ++ show ctrSyms)
   -- trace ("lhss: " ++ show lhssChlds) $
   -- trace ("ctrArities: " ++ show ctrArities)
-  trace ("nRules: " ++ show nRules)
+  -- trace ("nRules: " ++ show nRules)
   -- trace ("ctrArities: " ++ show ctrArities)
   -- undefined
   -- trace ("nSigs: " ++ show (addSig <$> signatures p))
@@ -86,6 +86,11 @@ mkCompletelyDefinedConds prove =
   --   , signatures = addSig <$> signatures p
   --   }
   -- undefined
+
+  -- import qualified Control.Exception                                         as E
+  -- import           Data.Rewriting.ARA.Exception
+  -- E.throw $ if null (concat nRules) then FatalException "YES" else FatalException "NO"
+
   prove { conditions = nCond, signatureMap = nSigM }
 
 
@@ -102,11 +107,11 @@ mkCompletelyDefinedConds prove =
 
           where (nr,sigs') =
                   case find ((== f) . fst4 . lhsRootSym . fst3 . snd) (zip [0..] sigs) of
-                    Nothing     -> trace ("nsig: " ++ show nSig)
+                    Nothing     -> -- trace ("nsig: " ++ show nSig)
                                    (length sigs, sigs ++ nSig)
                     Just (nr,_) -> (nr, sigs)
                 sig = getDefSymSignatureByName' (fromJust $ signatures p) f
-                nCondDt pNr = trace ("nCond p(" ++ show nr ++ "," ++ show pNr ++") == 0")
+                nCondDt pNr = -- trace ("nCond p(" ++ show nr ++ "," ++ show pNr ++") == 0")
                   (SigRefParam "" nr pNr, Eq, 0)
                 nSig = [(Signature (f,ACost (Vector1 0),False, False)
                         (map (\dt -> ActualCost False dt (ACost 0)) pDts)
@@ -243,7 +248,8 @@ mkCompletelyDefinedConds prove =
                   map mkRule (mergeVars (length ctrSyms) paramVars filteredParams)
 
 mergeVars :: (Show f, Show v, Read v, Eq v, Eq f) => Int -> [Bool] -> [[Term f v]] -> [[Term f v]]
-mergeVars _ _ [] = trace ("empty mergeVars []" )[]
+mergeVars _ _ [] = -- trace ("empty mergeVars []" )
+  []
 mergeVars nrCtrs paramVars xs@(x:_) =
   nub $ map (zipWith4 mergeVars' paramVars [0..] canBeMerged) xs
   where mergeVars' True nr _ _ = Var (read $ show $ "x" ++ show nr)

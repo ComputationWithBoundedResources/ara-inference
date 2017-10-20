@@ -9,9 +9,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Oct  8 17:29:37 2017 (+0200)
+-- Last-Updated: Wed Oct 18 21:40:35 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2864
+--     Update #: 2866
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -142,7 +142,9 @@ analyzeProblem args reachability prob =
              print (text "Solution Inference:" $+$ prettyProve solution)
 #endif
 
-           let solution' | isJust (lowerboundArg args) = mkCompletelyDefinedConds solution
+           let solution' | (lowerbound args || isJust (lowerboundArg args)) &&
+                           not (lowerboundNoComplDef args) =
+                             mkCompletelyDefinedConds solution
                          | otherwise = solution
            return (solution', inferenceTrees)
 

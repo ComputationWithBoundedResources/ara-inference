@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Oct  9 17:05:52 2017 (+0200)
+-- Last-Updated: Wed Oct 18 15:03:00 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1284
+--     Update #: 1285
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -135,7 +135,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
         nonCfHasCfBranches = not (isConstructor f) && not isCtrDeriv &&
                              not isCfBranch && (f == fn || isInSCCOfStartSig) &&
                              not isInNoCfDefSyms
-                             && False
+                             -- && False
                              -- && isNothing (lowerboundArg args)
         cfBranchNeedSig = isCfBranch && (f /= fn || isInSCCOfStartSig)
         newSigToASig = not isCfBranch && (isConstructor f || f /= fn)

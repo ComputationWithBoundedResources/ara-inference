@@ -8,9 +8,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Oct 13 10:31:52 2017 (+0200)
+-- Last-Updated: Fri Oct 20 07:03:50 2017 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 307
+--     Update #: 315
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -72,6 +72,7 @@ defaultOptions = ArgumentOptions {
                  , allowLowerSCC = False
                  , lowerbound = False
                  , lowerboundArg = Nothing
+                 , lowerboundNoComplDef = False
                  , constructorArgSelection = []
                  , timeout = Nothing
                  , smtSolver = Z3
@@ -111,6 +112,11 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
             then opts
             else opts { lowerbound = True } ))
    "Search for best case lowerbound measured in size instead of upperbound (only works for linear bounds). [Default: False]"
+
+  , Option ['n'] ["noComplDef"]
+   (NoArg (\opts -> return $ opts { lowerboundNoComplDef = True } ))
+   ("Do not add rules to make the TRS completely defined for lowerboundArg analysis " ++
+     "(this assumes that the input can be reduced to a ground constructor term) [Default: False]")
 
   , Option [] ["ctr-args"]
    (ReqArg (\str opts -> do

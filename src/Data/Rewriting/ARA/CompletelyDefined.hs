@@ -10,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 479
+--     Update #: 482
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,8 +66,8 @@ import           Text.PrettyPrint.ANSI.Leijen                               hidi
 import           Debug.Trace
 
 
--- import qualified Control.Exception                                          as E
--- import           Data.Rewriting.ARA.Exception
+import qualified Control.Exception                                          as E
+import           Data.Rewriting.ARA.Exception
 
 
 mkCompletelyDefinedConds :: (Ord f, Read v, Eq f, Eq v, Show f, Show dt, Eq dt, Show v) =>

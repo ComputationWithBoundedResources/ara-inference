@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Oct 20 08:14:21 2017 (+0200)
+-- Last-Updated: Mon Nov  6 14:54:28 2017 (+0100)
 --           By: Manuel Schneckenreither
---     Update #: 1020
+--     Update #: 1027
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -74,7 +74,6 @@ import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode
 import           Data.Rewriting.ARA.ByInferenceRules.Prove
 
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
-import           Data.Rewriting.ARA.CompletelyDefined
 import           Data.Rewriting.ARA.Constants                              (seperatorDoc)
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.ARA.Exception.Pretty                       ()
@@ -289,7 +288,13 @@ main =
                   putStrLn txt
                   exitFailure
                 UnsolveableException txt -> do
-                  putStrLn "BEST_CASE(Omega(1),?)"
+                  maybeArgs <- parseArgOpts :: IO (Maybe ArgumentOptions)
+                  let args = fromMaybe
+                        (E.throw $ FatalException "Command line Arguments where empty")
+                        maybeArgs
+                  putStrLn $ if isJust (lowerboundArg args) || lowerbound args
+                    then  "BEST_CASE(Omega(1),?)"
+                    else  "MAYBE"
                   putStrLn "UNSAT"
                   putStrLn txt
                 SemanticException txt -> do

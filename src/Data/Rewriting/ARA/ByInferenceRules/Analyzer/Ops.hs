@@ -9,9 +9,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Oct 18 21:40:35 2017 (+0200)
+-- Last-Updated: Mon Nov  6 11:58:34 2017 (+0100)
 --           By: Manuel Schneckenreither
---     Update #: 2866
+--     Update #: 2868
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -143,8 +143,7 @@ analyzeProblem args reachability prob =
 #endif
 
            let solution' | (lowerbound args || isJust (lowerboundArg args)) &&
-                           not (lowerboundNoComplDef args) =
-                             mkCompletelyDefinedConds solution
+                           not (lowerboundNoComplDef args) = mkCompletelyDefinedConds solution
                          | otherwise = solution
            return (solution', inferenceTrees)
 

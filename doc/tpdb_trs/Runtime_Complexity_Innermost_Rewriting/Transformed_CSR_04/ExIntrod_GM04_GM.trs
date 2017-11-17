@@ -1,0 +1,27 @@
+(VAR X X1 X2 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        a__nats -> a__adx(a__zeros)
+        a__zeros -> cons(0,zeros)
+        a__incr(cons(X,Y)) -> cons(s(X),incr(Y))
+        a__adx(cons(X,Y)) -> a__incr(cons(X,adx(Y)))
+        a__hd(cons(X,Y)) -> mark(X)
+        a__tl(cons(X,Y)) -> mark(Y)
+        mark(nats) -> a__nats
+        mark(adx(X)) -> a__adx(mark(X))
+        mark(zeros) -> a__zeros
+        mark(incr(X)) -> a__incr(mark(X))
+        mark(hd(X)) -> a__hd(mark(X))
+        mark(tl(X)) -> a__tl(mark(X))
+        mark(cons(X1,X2)) -> cons(X1,X2)
+        mark(0) -> 0
+        mark(s(X)) -> s(X)
+        a__nats -> nats
+        a__adx(X) -> adx(X)
+        a__zeros -> zeros
+        a__incr(X) -> incr(X)
+        a__hd(X) -> hd(X)
+        a__tl(X) -> tl(X)
+        
+)
+    

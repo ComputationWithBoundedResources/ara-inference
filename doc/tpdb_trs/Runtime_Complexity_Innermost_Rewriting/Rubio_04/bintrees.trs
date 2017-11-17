@@ -1,0 +1,11 @@
+(VAR U V W X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        concat(leaf,Y) -> Y
+        concat(cons(U,V),Y) -> cons(U,concat(V,Y))
+        lessleaves(X,leaf) -> false
+        lessleaves(leaf,cons(W,Z)) -> true
+        lessleaves(cons(U,V),cons(W,Z)) -> lessleaves(concat(U,V),concat(W,Z))
+        
+)
+    

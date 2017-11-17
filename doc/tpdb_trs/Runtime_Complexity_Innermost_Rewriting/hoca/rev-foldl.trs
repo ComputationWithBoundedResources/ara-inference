@@ -1,0 +1,9 @@
+(VAR x1 x16 x2 x24 x6 )
+(STRATEGY INNERMOST)
+(RULES 
+        foldl#3(x2,Nil) -> x2
+        foldl#3(x16,Cons(x24,x6)) -> foldl#3(Cons(x24,x16),x6)
+        main(x1) -> foldl#3(Nil,x1)
+        
+)
+    

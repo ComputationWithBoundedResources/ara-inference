@@ -1,0 +1,32 @@
+(VAR X X1 X2 X3 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        a__fact(X) -> a__if(a__zero(mark(X)),s(0),prod(X,fact(p(X))))
+        a__add(0,X) -> mark(X)
+        a__add(s(X),Y) -> s(a__add(mark(X),mark(Y)))
+        a__prod(0,X) -> 0
+        a__prod(s(X),Y) -> a__add(mark(Y),a__prod(mark(X),mark(Y)))
+        a__if(true,X,Y) -> mark(X)
+        a__if(false,X,Y) -> mark(Y)
+        a__zero(0) -> true
+        a__zero(s(X)) -> false
+        a__p(s(X)) -> mark(X)
+        mark(fact(X)) -> a__fact(mark(X))
+        mark(if(X1,X2,X3)) -> a__if(mark(X1),X2,X3)
+        mark(zero(X)) -> a__zero(mark(X))
+        mark(prod(X1,X2)) -> a__prod(mark(X1),mark(X2))
+        mark(p(X)) -> a__p(mark(X))
+        mark(add(X1,X2)) -> a__add(mark(X1),mark(X2))
+        mark(s(X)) -> s(mark(X))
+        mark(0) -> 0
+        mark(true) -> true
+        mark(false) -> false
+        a__fact(X) -> fact(X)
+        a__if(X1,X2,X3) -> if(X1,X2,X3)
+        a__zero(X) -> zero(X)
+        a__prod(X1,X2) -> prod(X1,X2)
+        a__p(X) -> p(X)
+        a__add(X1,X2) -> add(X1,X2)
+        
+)
+    

@@ -1,0 +1,13 @@
+(VAR rest subs x x' xs )
+(STRATEGY INNERMOST)
+(RULES 
+        subsets(Cons(x,xs)) -> subsets[Ite][True][Let](Cons(x,xs),subsets(xs))
+        subsets(Nil) -> Cons(Nil,Nil)
+        mapconsapp(x',Cons(x,xs),rest) -> Cons(Cons(x',x),mapconsapp(x',xs,rest))
+        mapconsapp(x,Nil,rest) -> rest
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        goal(xs) -> subsets(xs)
+        subsets[Ite][True][Let](Cons(x,xs),subs) ->= mapconsapp(x,subs,subs)
+)
+    

@@ -1,0 +1,13 @@
+(VAR x xs ys )
+(STRATEGY INNERMOST)
+(RULES 
+        naiverev(Cons(x,xs)) -> app(naiverev(xs),Cons(x,Nil))
+        app(Cons(x,xs),ys) -> Cons(x,app(xs,ys))
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        naiverev(Nil) -> Nil
+        app(Nil,ys) -> ys
+        goal(xs) -> naiverev(xs)
+        
+)
+    

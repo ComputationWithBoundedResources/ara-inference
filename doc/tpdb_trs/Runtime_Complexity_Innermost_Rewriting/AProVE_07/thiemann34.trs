@@ -1,0 +1,20 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        gt(s(x),0) -> true
+        gt(0,y) -> false
+        gt(s(x),s(y)) -> gt(x,y)
+        divides(x,y) -> div(x,y,y)
+        div(0,0,z) -> true
+        div(0,s(x),z) -> false
+        div(s(x),0,s(z)) -> div(s(x),s(z),s(z))
+        div(s(x),s(y),z) -> div(x,y,z)
+        prime(x) -> test(x,s(s(0)))
+        test(x,y) -> if1(gt(x,y),x,y)
+        if1(true,x,y) -> if2(divides(x,y),x,y)
+        if1(false,x,y) -> true
+        if2(true,x,y) -> false
+        if2(false,x,y) -> test(x,s(y))
+        
+)
+    

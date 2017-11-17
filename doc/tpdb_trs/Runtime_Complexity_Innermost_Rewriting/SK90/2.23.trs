@@ -1,0 +1,16 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        fac(0) -> 1
+        fac(s(x)) -> *(s(x),fac(x))
+        floop(0,y) -> y
+        floop(s(x),y) -> floop(x,*(s(x),y))
+        *(x,0) -> 0
+        *(x,s(y)) -> +(*(x,y),x)
+        +(x,0) -> x
+        +(x,s(y)) -> s(+(x,y))
+        1 -> s(0)
+        fac(0) -> s(0)
+        
+)
+    

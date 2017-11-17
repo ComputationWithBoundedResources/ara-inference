@@ -1,0 +1,16 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(x,0) -> x
+        minus(0,y) -> 0
+        minus(s(x),s(y)) -> minus(p(s(x)),p(s(y)))
+        minus(x,plus(y,z)) -> minus(minus(x,y),z)
+        p(s(s(x))) -> s(p(s(x)))
+        p(0) -> s(s(0))
+        div(s(x),s(y)) -> s(div(minus(x,y),s(y)))
+        div(plus(x,y),z) -> plus(div(x,z),div(y,z))
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(y,minus(s(x),s(0))))
+        
+)
+    

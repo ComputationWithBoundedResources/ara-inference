@@ -1,0 +1,10 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        p(f(f(x))) -> q(f(g(x)))
+        p(g(g(x))) -> q(g(f(x)))
+        q(f(f(x))) -> p(f(g(x)))
+        q(g(g(x))) -> p(g(f(x)))
+        
+)
+    

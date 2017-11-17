@@ -1,0 +1,12 @@
+(VAR x xs )
+(STRATEGY INNERMOST)
+(RULES 
+        inc(Cons(x,xs)) -> Cons(Cons(Nil,Nil),inc(xs))
+        nestinc(Nil) -> number17(Nil)
+        nestinc(Cons(x,xs)) -> nestinc(inc(Cons(x,xs)))
+        inc(Nil) -> Cons(Nil,Nil)
+        number17(x) -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil)))))))))))))))))
+        goal(x) -> nestinc(x)
+        
+)
+    

@@ -1,0 +1,32 @@
+(VAR x x' xs xs' y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        @(Cons(x,xs),ys) -> Cons(x,@(xs,ys))
+        @(Nil,ys) -> ys
+        gt0(Cons(x,xs),Nil) -> True
+        gt0(Cons(x',xs'),Cons(x,xs)) -> gt0(xs',xs)
+        gcd(Nil,Nil) -> Nil
+        gcd(Nil,Cons(x,xs)) -> Nil
+        gcd(Cons(x,xs),Nil) -> Nil
+        gcd(Cons(x',xs'),Cons(x,xs)) -> gcd[Ite](eqList(Cons(x',xs'),Cons(x,xs)),Cons(x',xs'),Cons(x,xs))
+        lgth(Cons(x,xs)) -> @(Cons(Nil,Nil),lgth(xs))
+        eqList(Cons(x,xs),Cons(y,ys)) -> and(eqList(x,y),eqList(xs,ys))
+        eqList(Cons(x,xs),Nil) -> False
+        eqList(Nil,Cons(y,ys)) -> False
+        eqList(Nil,Nil) -> True
+        lgth(Nil) -> Nil
+        gt0(Nil,y) -> False
+        monus(x,y) -> monus[Ite](eqList(lgth(y),Cons(Nil,Nil)),x,y)
+        goal(x,y) -> gcd(x,y)
+        and(False,False) ->= False
+        and(True,False) ->= False
+        and(False,True) ->= False
+        and(True,True) ->= True
+        monus[Ite](False,Cons(x',xs'),Cons(x,xs)) ->= monus(xs',xs)
+        monus[Ite](True,Cons(x,xs),y) ->= xs
+        gcd[Ite](False,x,y) ->= gcd[False][Ite](gt0(x,y),x,y)
+        gcd[Ite](True,x,y) ->= x
+        gcd[False][Ite](False,x,y) ->= gcd(x,monus(y,x))
+        gcd[False][Ite](True,x,y) ->= gcd(monus(x,y),y)
+)
+    

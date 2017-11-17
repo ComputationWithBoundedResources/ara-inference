@@ -1,0 +1,10 @@
+(VAR X )
+(STRATEGY INNERMOST)
+(RULES 
+        from(X) -> cons(X)
+        length -> 0
+        length -> s(length1)
+        length1 -> length
+        
+)
+    

@@ -1,0 +1,17 @@
+(VAR IL L M N X X1 X2 )
+(STRATEGY INNERMOST)
+(RULES 
+        zeros -> cons(0,n__zeros)
+        and(tt,X) -> activate(X)
+        length(nil) -> 0
+        length(cons(N,L)) -> s(length(activate(L)))
+        take(0,IL) -> nil
+        take(s(M),cons(N,IL)) -> cons(N,n__take(M,activate(IL)))
+        zeros -> n__zeros
+        take(X1,X2) -> n__take(X1,X2)
+        activate(n__zeros) -> zeros
+        activate(n__take(X1,X2)) -> take(activate(X1),activate(X2))
+        activate(X) -> X
+        
+)
+    

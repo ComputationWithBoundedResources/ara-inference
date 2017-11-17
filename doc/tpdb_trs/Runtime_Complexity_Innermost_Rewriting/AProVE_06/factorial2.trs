@@ -1,0 +1,21 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        plus(0,x) -> x
+        plus(s(x),y) -> s(plus(x,y))
+        times(0,y) -> 0
+        times(s(x),y) -> plus(y,times(x,y))
+        p(s(x)) -> x
+        p(0) -> 0
+        minus(x,0) -> x
+        minus(0,x) -> 0
+        minus(x,s(y)) -> p(minus(x,y))
+        isZero(0) -> true
+        isZero(s(x)) -> false
+        facIter(x,y) -> if(isZero(x),minus(x,s(0)),y,times(y,x))
+        if(true,x,y,z) -> y
+        if(false,x,y,z) -> facIter(x,z)
+        factorial(x) -> facIter(x,s(0))
+        
+)
+    

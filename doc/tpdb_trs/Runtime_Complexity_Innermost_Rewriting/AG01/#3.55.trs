@@ -1,0 +1,25 @@
+(VAR m n x y )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        quot(0,s(y)) -> 0
+        quot(s(x),s(y)) -> s(quot(minus(x,y),s(y)))
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        app(nil,y) -> y
+        app(add(n,x),y) -> add(n,app(x,y))
+        low(n,nil) -> nil
+        low(n,add(m,x)) -> if_low(le(m,n),n,add(m,x))
+        if_low(true,n,add(m,x)) -> add(m,low(n,x))
+        if_low(false,n,add(m,x)) -> low(n,x)
+        high(n,nil) -> nil
+        high(n,add(m,x)) -> if_high(le(m,n),n,add(m,x))
+        if_high(true,n,add(m,x)) -> high(n,x)
+        if_high(false,n,add(m,x)) -> add(m,high(n,x))
+        quicksort(nil) -> nil
+        quicksort(add(n,x)) -> app(quicksort(low(n,x)),add(n,quicksort(high(n,x))))
+        
+)
+    

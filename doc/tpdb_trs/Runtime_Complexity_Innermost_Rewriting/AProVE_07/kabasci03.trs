@@ -1,0 +1,12 @@
+(VAR w x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        h(c(x,y),c(s(z),z),t(w)) -> h(z,c(y,x),t(t(c(x,c(y,t(w))))))
+        h(x,c(y,z),t(w)) -> h(c(s(y),x),z,t(c(t(w),w)))
+        h(c(s(x),c(s(0),y)),z,t(x)) -> h(y,c(s(0),c(x,z)),t(t(c(x,s(x)))))
+        t(t(x)) -> t(c(t(x),x))
+        t(x) -> x
+        t(x) -> c(0,c(0,c(0,c(0,c(0,x)))))
+        
+)
+    

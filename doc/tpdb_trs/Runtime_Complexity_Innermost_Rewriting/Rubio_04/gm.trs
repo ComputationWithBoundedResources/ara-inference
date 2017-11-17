@@ -1,0 +1,11 @@
+(VAR X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(X,0) -> X
+        minus(s(X),s(Y)) -> p(minus(X,Y))
+        p(s(X)) -> X
+        div(0,s(Y)) -> 0
+        div(s(X),s(Y)) -> s(div(minus(X,Y),s(Y)))
+        
+)
+    

@@ -1,0 +1,25 @@
+(VAR min x x' xs xs' y )
+(STRATEGY INNERMOST)
+(RULES 
+        remove(x',Cons(x,xs)) -> remove[Ite][True][Ite](!EQ(x',x),x',Cons(x,xs))
+        remove(x,Nil) -> Nil
+        minsort(Cons(x,xs)) -> appmin(x,xs,Cons(x,xs))
+        minsort(Nil) -> Nil
+        appmin(min,Cons(x,xs),xs') -> appmin[Ite][True][Ite](<(x,min),min,Cons(x,xs),xs')
+        appmin(min,Nil,xs) -> Cons(min,minsort(remove(min,xs)))
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        goal(xs) -> minsort(xs)
+        !EQ(S(x),S(y)) ->= !EQ(x,y)
+        !EQ(0,S(y)) ->= False
+        !EQ(S(x),0) ->= False
+        !EQ(0,0) ->= True
+        <(S(x),S(y)) ->= <(x,y)
+        <(0,S(y)) ->= True
+        <(x,0) ->= False
+        remove[Ite][True][Ite](False,x',Cons(x,xs)) ->= Cons(x,remove(x',xs))
+        appmin[Ite][True][Ite](True,min,Cons(x,xs),xs') ->= appmin(x,xs,xs')
+        remove[Ite][True][Ite](True,x',Cons(x,xs)) ->= xs
+        appmin[Ite][True][Ite](False,min,Cons(x,xs),xs') ->= appmin(min,xs,xs')
+)
+    

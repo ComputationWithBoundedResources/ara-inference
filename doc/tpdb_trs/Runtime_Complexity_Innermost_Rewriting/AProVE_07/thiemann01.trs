@@ -1,0 +1,18 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(0,y) -> 0
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        plus(0,y) -> y
+        plus(s(x),y) -> plus(x,s(y))
+        zero(s(x)) -> false
+        zero(0) -> true
+        p(s(x)) -> x
+        div(x,y) -> quot(x,y,0)
+        quot(x,y,z) -> if(zero(x),x,y,plus(z,s(0)))
+        if(true,x,y,z) -> p(z)
+        if(false,x,s(y),z) -> quot(minus(x,s(y)),s(y),z)
+        
+)
+    

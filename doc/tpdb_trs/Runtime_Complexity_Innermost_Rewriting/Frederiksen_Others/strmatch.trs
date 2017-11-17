@@ -1,0 +1,30 @@
+(VAR cs n patcs patstr str x x' xs xs' y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        prefix(Cons(x',xs'),Cons(x,xs)) -> and(!EQ(x',x),prefix(xs',xs))
+        domatch(Cons(x,xs),Nil,n) -> Nil
+        domatch(Nil,Nil,n) -> Cons(n,Nil)
+        prefix(Cons(x,xs),Nil) -> False
+        prefix(Nil,cs) -> True
+        domatch(patcs,Cons(x,xs),n) -> domatch[Ite](prefix(patcs,Cons(x,xs)),patcs,Cons(x,xs),n)
+        eqNatList(Cons(x,xs),Cons(y,ys)) -> eqNatList[Ite](!EQ(x,y),y,ys,x,xs)
+        eqNatList(Cons(x,xs),Nil) -> False
+        eqNatList(Nil,Cons(y,ys)) -> False
+        eqNatList(Nil,Nil) -> True
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        strmatch(patstr,str) -> domatch(patstr,str,Nil)
+        and(False,False) ->= False
+        and(True,False) ->= False
+        and(False,True) ->= False
+        and(True,True) ->= True
+        !EQ(S(x),S(y)) ->= !EQ(x,y)
+        !EQ(0,S(y)) ->= False
+        !EQ(S(x),0) ->= False
+        !EQ(0,0) ->= True
+        domatch[Ite](False,patcs,Cons(x,xs),n) ->= domatch(patcs,xs,Cons(n,Cons(Nil,Nil)))
+        domatch[Ite](True,patcs,Cons(x,xs),n) ->= Cons(n,domatch(patcs,xs,Cons(n,Cons(Nil,Nil))))
+        eqNatList[Ite](False,y,ys,x,xs) ->= False
+        eqNatList[Ite](True,y,ys,x,xs) ->= eqNatList(xs,ys)
+)
+    

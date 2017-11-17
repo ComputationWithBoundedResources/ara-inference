@@ -1,0 +1,9 @@
+(VAR X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        f(X) -> if(X,c,f(true))
+        if(true,X,Y) -> X
+        if(false,X,Y) -> Y
+        
+)
+    

@@ -1,0 +1,14 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        cond1(true,x,y,z) -> cond2(gr(y,z),x,y,z)
+        cond2(true,x,y,z) -> cond2(gr(y,z),x,p(y),z)
+        cond2(false,x,y,z) -> cond1(gr(x,z),p(x),y,z)
+        gr(0,x) -> false
+        gr(s(x),0) -> true
+        gr(s(x),s(y)) -> gr(x,y)
+        p(0) -> 0
+        p(s(x)) -> x
+        
+)
+    

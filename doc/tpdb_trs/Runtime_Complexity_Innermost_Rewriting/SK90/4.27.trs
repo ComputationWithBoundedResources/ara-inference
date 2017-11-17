@@ -1,0 +1,12 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        int(0,0) -> .(0,nil)
+        int(0,s(y)) -> .(0,int(s(0),s(y)))
+        int(s(x),0) -> nil
+        int(s(x),s(y)) -> int_list(int(x,y))
+        int_list(nil) -> nil
+        int_list(.(x,y)) -> .(s(x),int_list(y))
+        
+)
+    

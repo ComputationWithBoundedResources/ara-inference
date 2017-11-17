@@ -1,0 +1,16 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        1024 -> 1024_1(0)
+        1024_1(x) -> if(lt(x,10),x)
+        if(true,x) -> double(1024_1(s(x)))
+        if(false,x) -> s(0)
+        lt(0,s(y)) -> true
+        lt(x,0) -> false
+        lt(s(x),s(y)) -> lt(x,y)
+        double(0) -> 0
+        double(s(x)) -> s(s(double(x)))
+        10 -> double(s(double(s(s(0)))))
+        
+)
+    

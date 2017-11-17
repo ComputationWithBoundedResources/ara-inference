@@ -1,0 +1,11 @@
+(VAR x xs y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        mul0(Cons(x,xs),y) -> add0(mul0(xs,y),y)
+        add0(Cons(x,xs),y) -> add0(xs,Cons(S,y))
+        mul0(Nil,y) -> Nil
+        add0(Nil,y) -> y
+        goal(xs,ys) -> mul0(xs,ys)
+        
+)
+    

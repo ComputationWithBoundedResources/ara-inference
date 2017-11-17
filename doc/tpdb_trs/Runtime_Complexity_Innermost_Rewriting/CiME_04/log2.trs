@@ -1,0 +1,35 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        0(#) -> #
+        +(#,x) -> x
+        +(x,#) -> x
+        +(0(x),0(y)) -> 0(+(x,y))
+        +(0(x),1(y)) -> 1(+(x,y))
+        +(1(x),0(y)) -> 1(+(x,y))
+        +(1(x),1(y)) -> 0(+(+(x,y),1(#)))
+        +(+(x,y),z) -> +(x,+(y,z))
+        -(#,x) -> #
+        -(x,#) -> x
+        -(0(x),0(y)) -> 0(-(x,y))
+        -(0(x),1(y)) -> 1(-(-(x,y),1(#)))
+        -(1(x),0(y)) -> 1(-(x,y))
+        -(1(x),1(y)) -> 0(-(x,y))
+        not(true) -> false
+        not(false) -> true
+        if(true,x,y) -> x
+        if(false,x,y) -> y
+        ge(0(x),0(y)) -> ge(x,y)
+        ge(0(x),1(y)) -> not(ge(y,x))
+        ge(1(x),0(y)) -> ge(x,y)
+        ge(1(x),1(y)) -> ge(x,y)
+        ge(x,#) -> true
+        ge(#,0(x)) -> ge(#,x)
+        ge(#,1(x)) -> false
+        log(x) -> -(log'(x),1(#))
+        log'(#) -> #
+        log'(1(x)) -> +(log'(x),1(#))
+        log'(0(x)) -> if(ge(x,1(#)),+(log'(x),1(#)),#)
+        
+)
+    

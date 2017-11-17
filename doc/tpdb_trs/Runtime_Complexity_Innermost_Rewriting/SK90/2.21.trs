@@ -1,0 +1,9 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        bin(x,0) -> s(0)
+        bin(0,s(y)) -> 0
+        bin(s(x),s(y)) -> +(bin(x,s(y)),bin(x,y))
+        
+)
+    

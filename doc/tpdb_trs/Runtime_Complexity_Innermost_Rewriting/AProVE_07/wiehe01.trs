@@ -1,0 +1,19 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        times(x,0) -> 0
+        times(x,s(y)) -> plus(times(x,y),x)
+        plus(s(x),s(y)) -> s(s(plus(if(gt(x,y),x,y),if(not(gt(x,y)),id(x),id(y)))))
+        plus(s(x),x) -> plus(if(gt(x,x),id(x),id(x)),s(x))
+        plus(zero,y) -> y
+        plus(id(x),s(y)) -> s(plus(x,if(gt(s(y),y),y,s(y))))
+        id(x) -> x
+        if(true,x,y) -> x
+        if(false,x,y) -> y
+        not(x) -> if(x,false,true)
+        gt(s(x),zero) -> true
+        gt(zero,y) -> false
+        gt(s(x),s(y)) -> gt(x,y)
+        
+)
+    

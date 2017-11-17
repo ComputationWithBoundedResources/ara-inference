@@ -1,0 +1,19 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        le(0,y,z) -> greater(y,z)
+        le(s(x),0,z) -> false
+        le(s(x),s(y),0) -> false
+        le(s(x),s(y),s(z)) -> le(x,y,z)
+        greater(x,0) -> first
+        greater(0,s(y)) -> second
+        greater(s(x),s(y)) -> greater(x,y)
+        double(0) -> 0
+        double(s(x)) -> s(s(double(x)))
+        triple(x) -> if(le(x,x,double(x)),x,0,0)
+        if(false,x,y,z) -> true
+        if(first,x,y,z) -> if(le(s(x),y,s(z)),s(x),y,s(z))
+        if(second,x,y,z) -> if(le(s(x),s(y),z),s(x),s(y),z)
+        
+)
+    

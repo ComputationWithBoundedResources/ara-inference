@@ -1,0 +1,20 @@
+(VAR X X1 X2 XS )
+(STRATEGY INNERMOST)
+(RULES 
+        active(zeros) -> mark(cons(0,zeros))
+        active(tail(cons(X,XS))) -> mark(XS)
+        active(cons(X1,X2)) -> cons(active(X1),X2)
+        active(tail(X)) -> tail(active(X))
+        cons(mark(X1),X2) -> mark(cons(X1,X2))
+        tail(mark(X)) -> mark(tail(X))
+        proper(zeros) -> ok(zeros)
+        proper(cons(X1,X2)) -> cons(proper(X1),proper(X2))
+        proper(0) -> ok(0)
+        proper(tail(X)) -> tail(proper(X))
+        cons(ok(X1),ok(X2)) -> ok(cons(X1,X2))
+        tail(ok(X)) -> ok(tail(X))
+        top(mark(X)) -> top(proper(X))
+        top(ok(X)) -> top(active(X))
+        
+)
+    

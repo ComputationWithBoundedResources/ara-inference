@@ -1,0 +1,10 @@
+(VAR x xs )
+(STRATEGY INNERMOST)
+(RULES 
+        decrease(Cons(x,xs)) -> decrease(xs)
+        decrease(Nil) -> number42(Nil)
+        number42(x) -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil))))))))))))))))))))))))))))))))))))))))))
+        goal(x) -> decrease(x)
+        
+)
+    

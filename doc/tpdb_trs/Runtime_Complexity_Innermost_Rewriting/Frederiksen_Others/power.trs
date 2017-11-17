@@ -1,0 +1,13 @@
+(VAR x x' y )
+(STRATEGY INNERMOST)
+(RULES 
+        power(x',S(x)) -> mult(x',power(x',x))
+        mult(x',S(x)) -> add0(x',mult(x',x))
+        add0(x',S(x)) -> +(S(0),add0(x',x))
+        power(x,0) -> S(0)
+        mult(x,0) -> 0
+        add0(x,0) -> x
+        +(x,S(0)) ->= S(x)
+        +(S(0),y) ->= S(y)
+)
+    

@@ -1,0 +1,14 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        half(0) -> 0
+        half(s(0)) -> 0
+        half(s(s(x))) -> s(half(x))
+        lastbit(0) -> 0
+        lastbit(s(0)) -> s(0)
+        lastbit(s(s(x))) -> lastbit(x)
+        conv(0) -> cons(nil,0)
+        conv(s(x)) -> cons(conv(half(s(x))),lastbit(s(x)))
+        
+)
+    

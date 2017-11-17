@@ -1,0 +1,25 @@
+(VAR assign clause cnf e l ls t x xs y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        if(true,t,e) -> t
+        if(false,t,e) -> e
+        member(x,nil) -> false
+        member(x,cons(y,ys)) -> if(eq(x,y),true,member(x,ys))
+        eq(nil,nil) -> true
+        eq(O(x),0(y)) -> eq(x,y)
+        eq(0(x),1(y)) -> false
+        eq(1(x),0(y)) -> false
+        eq(1(x),1(y)) -> eq(x,y)
+        negate(0(x)) -> 1(x)
+        negate(1(x)) -> 0(x)
+        choice(cons(x,xs)) -> x
+        choice(cons(x,xs)) -> choice(xs)
+        guess(nil) -> nil
+        guess(cons(clause,cnf)) -> cons(choice(clause),guess(cnf))
+        verify(nil) -> true
+        verify(cons(l,ls)) -> if(member(negate(l),ls),false,verify(ls))
+        sat(cnf) -> satck(cnf,guess(cnf))
+        satck(cnf,assign) -> if(verify(assign),assign,unsat)
+        
+)
+    

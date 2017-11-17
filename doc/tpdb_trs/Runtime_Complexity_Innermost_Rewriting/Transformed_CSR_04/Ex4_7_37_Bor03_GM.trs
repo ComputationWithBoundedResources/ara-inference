@@ -1,0 +1,30 @@
+(VAR N X X1 X2 XS Y YS )
+(STRATEGY INNERMOST)
+(RULES 
+        a__from(X) -> cons(mark(X),from(s(X)))
+        a__sel(0,cons(X,XS)) -> mark(X)
+        a__sel(s(N),cons(X,XS)) -> a__sel(mark(N),mark(XS))
+        a__minus(X,0) -> 0
+        a__minus(s(X),s(Y)) -> a__minus(mark(X),mark(Y))
+        a__quot(0,s(Y)) -> 0
+        a__quot(s(X),s(Y)) -> s(a__quot(a__minus(mark(X),mark(Y)),s(mark(Y))))
+        a__zWquot(XS,nil) -> nil
+        a__zWquot(nil,XS) -> nil
+        a__zWquot(cons(X,XS),cons(Y,YS)) -> cons(a__quot(mark(X),mark(Y)),zWquot(XS,YS))
+        mark(from(X)) -> a__from(mark(X))
+        mark(sel(X1,X2)) -> a__sel(mark(X1),mark(X2))
+        mark(minus(X1,X2)) -> a__minus(mark(X1),mark(X2))
+        mark(quot(X1,X2)) -> a__quot(mark(X1),mark(X2))
+        mark(zWquot(X1,X2)) -> a__zWquot(mark(X1),mark(X2))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(s(X)) -> s(mark(X))
+        mark(0) -> 0
+        mark(nil) -> nil
+        a__from(X) -> from(X)
+        a__sel(X1,X2) -> sel(X1,X2)
+        a__minus(X1,X2) -> minus(X1,X2)
+        a__quot(X1,X2) -> quot(X1,X2)
+        a__zWquot(X1,X2) -> zWquot(X1,X2)
+        
+)
+    

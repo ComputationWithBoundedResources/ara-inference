@@ -1,0 +1,10 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        not(x) -> xor(x,true)
+        implies(x,y) -> xor(and(x,y),xor(x,true))
+        or(x,y) -> xor(and(x,y),xor(x,y))
+        =(x,y) -> xor(x,xor(y,true))
+        
+)
+    

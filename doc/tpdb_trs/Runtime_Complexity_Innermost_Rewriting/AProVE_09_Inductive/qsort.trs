@@ -1,0 +1,21 @@
+(VAR n x xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        qsort(nil) -> nil
+        qsort(cons(x,xs)) -> append(qsort(filterlow(x,cons(x,xs))),cons(x,qsort(filterhigh(x,cons(x,xs)))))
+        filterlow(n,nil) -> nil
+        filterlow(n,cons(x,xs)) -> if1(ge(n,x),n,x,xs)
+        if1(true,n,x,xs) -> filterlow(n,xs)
+        if1(false,n,x,xs) -> cons(x,filterlow(n,xs))
+        filterhigh(n,nil) -> nil
+        filterhigh(n,cons(x,xs)) -> if2(ge(x,n),n,x,xs)
+        if2(true,n,x,xs) -> filterhigh(n,xs)
+        if2(false,n,x,xs) -> cons(x,filterhigh(n,xs))
+        ge(x,0) -> true
+        ge(0,s(x)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        append(nil,ys) -> ys
+        append(cons(x,xs),ys) -> cons(x,append(xs,ys))
+        
+)
+    

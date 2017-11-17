@@ -1,0 +1,22 @@
+(VAR b l l1 l2 m n t t1 t2 )
+(STRATEGY INNERMOST)
+(RULES 
+        lessElements(l,t) -> lessE(l,t,0)
+        lessE(l,t,n) -> if(le(length(l),n),le(length(toList(t)),n),l,t,n)
+        if(true,b,l,t,n) -> l
+        if(false,true,l,t,n) -> t
+        if(false,false,l,t,n) -> lessE(l,t,s(n))
+        length(nil) -> 0
+        length(cons(n,l)) -> s(length(l))
+        toList(leaf) -> nil
+        toList(node(t1,n,t2)) -> append(toList(t1),cons(n,toList(t2)))
+        append(nil,l2) -> l2
+        append(cons(n,l1),l2) -> cons(n,append(l1,l2))
+        le(s(n),0) -> false
+        le(0,m) -> true
+        le(s(n),s(m)) -> le(n,m)
+        a -> c
+        a -> d
+        
+)
+    

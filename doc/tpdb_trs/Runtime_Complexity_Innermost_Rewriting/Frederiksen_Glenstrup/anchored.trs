@@ -1,0 +1,9 @@
+(VAR x xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        anchored(Cons(x,xs),y) -> anchored(xs,Cons(Cons(Nil,Nil),y))
+        anchored(Nil,y) -> y
+        goal(x,y) -> anchored(x,y)
+        
+)
+    

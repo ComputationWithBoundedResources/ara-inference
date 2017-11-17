@@ -1,0 +1,50 @@
+(VAR IL L M N V V1 V2 X X1 X2 )
+(STRATEGY INNERMOST)
+(RULES 
+        zeros -> cons(0,n__zeros)
+        U11(tt) -> tt
+        U21(tt) -> tt
+        U31(tt) -> tt
+        U41(tt,V2) -> U42(isNatIList(activate(V2)))
+        U42(tt) -> tt
+        U51(tt,V2) -> U52(isNatList(activate(V2)))
+        U52(tt) -> tt
+        U61(tt,V2) -> U62(isNatIList(activate(V2)))
+        U62(tt) -> tt
+        U71(tt,L,N) -> U72(isNat(activate(N)),activate(L))
+        U72(tt,L) -> s(length(activate(L)))
+        U81(tt) -> nil
+        U91(tt,IL,M,N) -> U92(isNat(activate(M)),activate(IL),activate(M),activate(N))
+        U92(tt,IL,M,N) -> U93(isNat(activate(N)),activate(IL),activate(M),activate(N))
+        U93(tt,IL,M,N) -> cons(activate(N),n__take(activate(M),activate(IL)))
+        isNat(n__0) -> tt
+        isNat(n__length(V1)) -> U11(isNatList(activate(V1)))
+        isNat(n__s(V1)) -> U21(isNat(activate(V1)))
+        isNatIList(V) -> U31(isNatList(activate(V)))
+        isNatIList(n__zeros) -> tt
+        isNatIList(n__cons(V1,V2)) -> U41(isNat(activate(V1)),activate(V2))
+        isNatList(n__nil) -> tt
+        isNatList(n__cons(V1,V2)) -> U51(isNat(activate(V1)),activate(V2))
+        isNatList(n__take(V1,V2)) -> U61(isNat(activate(V1)),activate(V2))
+        length(nil) -> 0
+        length(cons(N,L)) -> U71(isNatList(activate(L)),activate(L),N)
+        take(0,IL) -> U81(isNatIList(IL))
+        take(s(M),cons(N,IL)) -> U91(isNatIList(activate(IL)),activate(IL),M,N)
+        zeros -> n__zeros
+        take(X1,X2) -> n__take(X1,X2)
+        0 -> n__0
+        length(X) -> n__length(X)
+        s(X) -> n__s(X)
+        cons(X1,X2) -> n__cons(X1,X2)
+        nil -> n__nil
+        activate(n__zeros) -> zeros
+        activate(n__take(X1,X2)) -> take(activate(X1),activate(X2))
+        activate(n__0) -> 0
+        activate(n__length(X)) -> length(activate(X))
+        activate(n__s(X)) -> s(activate(X))
+        activate(n__cons(X1,X2)) -> cons(activate(X1),X2)
+        activate(n__nil) -> nil
+        activate(X) -> X
+        
+)
+    

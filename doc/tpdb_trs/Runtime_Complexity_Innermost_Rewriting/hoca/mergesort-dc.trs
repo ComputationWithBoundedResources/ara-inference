@@ -1,0 +1,33 @@
+(VAR x1 x10 x113 x12 x14 x16 x2 x20 x22 x229 x25 x3 x33 x4 x5 x51 x56 x6 x64 x7 x8 )
+(STRATEGY INNERMOST)
+(RULES 
+        divide_ys#1(x2,x1) -> Cons(take#2(x1,x2),Cons(drop#2(x1,x2),Nil))
+        cond_merge_ys_zs_2(True,Cons(x7,x8),Cons(x5,x6),x4,x3,x2,x1) -> Cons(x4,merge#2(x3,Cons(x5,x6)))
+        cond_merge_ys_zs_2(False,Cons(x7,x8),Cons(x5,x6),x4,x3,x2,x1) -> Cons(x2,merge#2(Cons(x7,x8),x1))
+        merge#2(Nil,x2) -> x2
+        merge#2(Cons(x4,x2),Nil) -> Cons(x4,x2)
+        merge#2(Cons(x8,x6),Cons(x4,x2)) -> cond_merge_ys_zs_2(leq#2(x8,x4),Cons(x8,x6),Cons(x4,x2),x8,x6,x4,x2)
+        dc#1(map,divisible,mergesort_zs_3,divide,const_f,Nil) -> Nil
+        dc#1(map,divisible,mergesort_zs_3,divide,const_f,Cons(x229,Nil)) -> Cons(x229,Nil)
+        dc#1(map,divisible,mergesort_zs_3,divide,const_f,Cons(x51,Cons(x25,x33))) -> const_f#2(Cons(x51,Cons(x25,x33)),map#2(dc(map,divisible,mergesort_zs_3,divide,const_f),divide_ys#1(Cons(x51,Cons(x25,x33)),S(halve#1(length#1(x33))))))
+        drop#2(0,x2) -> x2
+        drop#2(S(0),Nil) -> bot[1]
+        drop#2(S(x10),Cons(x56,x64)) -> drop#2(x10,x64)
+        take#2(0,x2) -> Nil
+        take#2(S(0),Nil) -> Cons(bot[0],Nil)
+        take#2(S(x22),Cons(x56,x64)) -> Cons(x56,take#2(x22,x64))
+        halve#1(0) -> 0
+        halve#1(S(0)) -> S(0)
+        halve#1(S(S(x14))) -> S(halve#1(x14))
+        const_f#2(x3,Cons(x6,Cons(x4,x2))) -> merge#2(x6,x4)
+        leq#2(0,x16) -> True
+        leq#2(S(x20),0) -> False
+        leq#2(S(x4),S(x2)) -> leq#2(x4,x2)
+        length#1(Nil) -> 0
+        length#1(Cons(x6,x8)) -> S(length#1(x8))
+        map#2(dc(x2,x4,x6,x8,x10),Nil) -> Nil
+        map#2(dc(x6,x8,x10,x12,x14),Cons(x4,x2)) -> Cons(dc#1(x6,x8,x10,x12,x14,x4),map#2(dc(x6,x8,x10,x12,x14),x2))
+        main(x113) -> dc#1(map,divisible,mergesort_zs_3,divide,const_f,x113)
+        
+)
+    

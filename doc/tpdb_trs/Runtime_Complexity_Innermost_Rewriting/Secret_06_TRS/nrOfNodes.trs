@@ -1,0 +1,19 @@
+(VAR b l m n r x y )
+(STRATEGY INNERMOST)
+(RULES 
+        isEmpty(empty) -> true
+        isEmpty(node(l,r)) -> false
+        left(empty) -> empty
+        left(node(l,r)) -> l
+        right(empty) -> empty
+        right(node(l,r)) -> r
+        inc(0) -> s(0)
+        inc(s(x)) -> s(inc(x))
+        count(n,x) -> if(isEmpty(n),isEmpty(left(n)),right(n),node(left(left(n)),node(right(left(n)),right(n))),x,inc(x))
+        if(true,b,n,m,x,y) -> x
+        if(false,false,n,m,x,y) -> count(m,x)
+        if(false,true,n,m,x,y) -> count(n,y)
+        nrOfNodes(n) -> count(n,0)
+        
+)
+    

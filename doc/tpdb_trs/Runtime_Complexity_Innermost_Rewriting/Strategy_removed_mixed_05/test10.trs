@@ -1,0 +1,10 @@
+(VAR X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        h(X,Z) -> f(X,s(X),Z)
+        f(X,Y,g(X,Y)) -> h(0,g(X,Y))
+        g(0,Y) -> 0
+        g(X,s(Y)) -> g(X,Y)
+        
+)
+    

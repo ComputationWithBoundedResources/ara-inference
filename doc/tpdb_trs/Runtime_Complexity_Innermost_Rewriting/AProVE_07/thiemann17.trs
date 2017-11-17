@@ -1,0 +1,19 @@
+(VAR b m n x y )
+(STRATEGY INNERMOST)
+(RULES 
+        sum(cons(s(n),x),cons(m,y)) -> sum(cons(n,x),cons(s(m),y))
+        sum(cons(0,x),y) -> sum(x,y)
+        sum(nil,y) -> y
+        empty(nil) -> true
+        empty(cons(n,x)) -> false
+        tail(nil) -> nil
+        tail(cons(n,x)) -> x
+        head(cons(n,x)) -> n
+        weight(x) -> if(empty(x),empty(tail(x)),x)
+        if(true,b,x) -> weight_undefined_error
+        if(false,b,x) -> if2(b,x)
+        if2(true,x) -> head(x)
+        if2(false,x) -> weight(sum(x,cons(0,tail(tail(x)))))
+        
+)
+    

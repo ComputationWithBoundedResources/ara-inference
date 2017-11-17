@@ -1,0 +1,14 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        top(sent(x)) -> top(check(rest(x)))
+        rest(nil) -> sent(nil)
+        rest(cons(x,y)) -> sent(y)
+        check(sent(x)) -> sent(check(x))
+        check(rest(x)) -> rest(check(x))
+        check(cons(x,y)) -> cons(check(x),y)
+        check(cons(x,y)) -> cons(x,check(y))
+        check(cons(x,y)) -> cons(x,y)
+        
+)
+    

@@ -1,0 +1,26 @@
+(VAR c i j u v x y )
+(STRATEGY INNERMOST)
+(RULES 
+        eq(0,0) -> true
+        eq(0,s(x)) -> false
+        eq(s(x),0) -> false
+        eq(s(x),s(y)) -> eq(x,y)
+        or(true,y) -> true
+        or(false,y) -> y
+        and(true,y) -> y
+        and(false,y) -> false
+        size(empty) -> 0
+        size(edge(x,y,i)) -> s(size(i))
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        reachable(x,y,i) -> reach(x,y,0,i,i)
+        reach(x,y,c,i,j) -> if1(eq(x,y),x,y,c,i,j)
+        if1(true,x,y,c,i,j) -> true
+        if1(false,x,y,c,i,j) -> if2(le(c,size(j)),x,y,c,i,j)
+        if2(false,x,y,c,i,j) -> false
+        if2(true,x,y,c,empty,j) -> false
+        if2(true,x,y,c,edge(u,v,i),j) -> or(if2(true,x,y,c,i,j),and(eq(x,u),reach(v,y,s(c),j,j)))
+        
+)
+    

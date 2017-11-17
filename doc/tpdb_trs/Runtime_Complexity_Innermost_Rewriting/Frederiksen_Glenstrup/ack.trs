@@ -1,0 +1,10 @@
+(VAR m n x x' xs xs' )
+(STRATEGY INNERMOST)
+(RULES 
+        ack(Cons(x,xs),Nil) -> ack(xs,Cons(Nil,Nil))
+        ack(Cons(x',xs'),Cons(x,xs)) -> ack(xs',ack(Cons(x',xs'),xs))
+        ack(Nil,n) -> Cons(Cons(Nil,Nil),n)
+        goal(m,n) -> ack(m,n)
+        
+)
+    

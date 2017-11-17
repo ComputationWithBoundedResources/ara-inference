@@ -1,0 +1,37 @@
+(VAR IL L M N X X1 X2 X3 X4 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__zeros -> cons(0,zeros)
+        a__U11(tt,L) -> a__U12(tt,L)
+        a__U12(tt,L) -> s(a__length(mark(L)))
+        a__U21(tt,IL,M,N) -> a__U22(tt,IL,M,N)
+        a__U22(tt,IL,M,N) -> a__U23(tt,IL,M,N)
+        a__U23(tt,IL,M,N) -> cons(mark(N),take(M,IL))
+        a__length(nil) -> 0
+        a__length(cons(N,L)) -> a__U11(tt,L)
+        a__take(0,IL) -> nil
+        a__take(s(M),cons(N,IL)) -> a__U21(tt,IL,M,N)
+        mark(zeros) -> a__zeros
+        mark(U11(X1,X2)) -> a__U11(mark(X1),X2)
+        mark(U12(X1,X2)) -> a__U12(mark(X1),X2)
+        mark(length(X)) -> a__length(mark(X))
+        mark(U21(X1,X2,X3,X4)) -> a__U21(mark(X1),X2,X3,X4)
+        mark(U22(X1,X2,X3,X4)) -> a__U22(mark(X1),X2,X3,X4)
+        mark(U23(X1,X2,X3,X4)) -> a__U23(mark(X1),X2,X3,X4)
+        mark(take(X1,X2)) -> a__take(mark(X1),mark(X2))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(0) -> 0
+        mark(tt) -> tt
+        mark(s(X)) -> s(mark(X))
+        mark(nil) -> nil
+        a__zeros -> zeros
+        a__U11(X1,X2) -> U11(X1,X2)
+        a__U12(X1,X2) -> U12(X1,X2)
+        a__length(X) -> length(X)
+        a__U21(X1,X2,X3,X4) -> U21(X1,X2,X3,X4)
+        a__U22(X1,X2,X3,X4) -> U22(X1,X2,X3,X4)
+        a__U23(X1,X2,X3,X4) -> U23(X1,X2,X3,X4)
+        a__take(X1,X2) -> take(X1,X2)
+        
+)
+    

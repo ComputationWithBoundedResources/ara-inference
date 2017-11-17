@@ -1,0 +1,9 @@
+(VAR X )
+(STRATEGY INNERMOST)
+(RULES 
+        f(0) -> cons(0)
+        f(s(0)) -> f(p(s(0)))
+        p(s(X)) -> X
+        
+)
+    

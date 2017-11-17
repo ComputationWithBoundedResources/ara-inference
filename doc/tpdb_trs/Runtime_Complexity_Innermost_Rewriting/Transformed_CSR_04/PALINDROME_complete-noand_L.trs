@@ -1,0 +1,58 @@
+(VAR X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        __(__(X,Y),Z) -> __(X,__(Y,Z))
+        __(X,nil) -> X
+        __(nil,X) -> X
+        U11(tt) -> U12(isPalListKind)
+        U12(tt) -> U13(isNeList)
+        U13(tt) -> tt
+        U21(tt) -> U22(isPalListKind)
+        U22(tt) -> U23(isPalListKind)
+        U23(tt) -> U24(isPalListKind)
+        U24(tt) -> U25(isList)
+        U25(tt) -> U26(isList)
+        U26(tt) -> tt
+        U31(tt) -> U32(isPalListKind)
+        U32(tt) -> U33(isQid)
+        U33(tt) -> tt
+        U41(tt) -> U42(isPalListKind)
+        U42(tt) -> U43(isPalListKind)
+        U43(tt) -> U44(isPalListKind)
+        U44(tt) -> U45(isList)
+        U45(tt) -> U46(isNeList)
+        U46(tt) -> tt
+        U51(tt) -> U52(isPalListKind)
+        U52(tt) -> U53(isPalListKind)
+        U53(tt) -> U54(isPalListKind)
+        U54(tt) -> U55(isNeList)
+        U55(tt) -> U56(isList)
+        U56(tt) -> tt
+        U61(tt) -> U62(isPalListKind)
+        U62(tt) -> U63(isQid)
+        U63(tt) -> tt
+        U71(tt) -> U72(isPalListKind)
+        U72(tt) -> U73(isPal)
+        U73(tt) -> U74(isPalListKind)
+        U74(tt) -> tt
+        U81(tt) -> U82(isPalListKind)
+        U82(tt) -> U83(isNePal)
+        U83(tt) -> tt
+        U91(tt) -> U92(isPalListKind)
+        U92(tt) -> tt
+        isList -> U11(isPalListKind)
+        isList -> tt
+        isList -> U21(isPalListKind)
+        isNeList -> U31(isPalListKind)
+        isNeList -> U41(isPalListKind)
+        isNeList -> U51(isPalListKind)
+        isNePal -> U61(isPalListKind)
+        isNePal -> U71(isQid)
+        isPal -> U81(isPalListKind)
+        isPal -> tt
+        isPalListKind -> tt
+        isPalListKind -> U91(isPalListKind)
+        isQid -> tt
+        
+)
+    

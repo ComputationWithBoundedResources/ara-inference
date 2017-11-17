@@ -1,0 +1,14 @@
+(VAR x xs y y' ys )
+(STRATEGY INNERMOST)
+(RULES 
+        mul0(C(x,y),y') -> add0(mul0(y,y'),y')
+        mul0(Z,y) -> Z
+        add0(C(x,y),y') -> add0(y,C(S,y'))
+        add0(Z,y) -> y
+        second(C(x,y)) -> y
+        isZero(C(x,y)) -> False
+        isZero(Z) -> True
+        goal(xs,ys) -> mul0(xs,ys)
+        
+)
+    

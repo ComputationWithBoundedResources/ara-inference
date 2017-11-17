@@ -1,0 +1,17 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        f(x,nil) -> g(nil,x)
+        f(x,g(y,z)) -> g(f(x,y),z)
+        ++(x,nil) -> x
+        ++(x,g(y,z)) -> g(++(x,y),z)
+        null(nil) -> true
+        null(g(x,y)) -> false
+        mem(nil,y) -> false
+        mem(g(x,y),z) -> or(=(y,z),mem(x,z))
+        mem(x,max(x)) -> not(null(x))
+        max(g(g(nil,x),y)) -> max'(x,y)
+        max(g(g(g(x,y),z),u)) -> max'(max(g(g(x,y),z)),u)
+        
+)
+    

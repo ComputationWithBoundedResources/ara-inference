@@ -1,0 +1,26 @@
+(VAR b x y )
+(STRATEGY INNERMOST)
+(RULES 
+        empty(nil) -> true
+        empty(cons(x,y)) -> false
+        tail(nil) -> nil
+        tail(cons(x,y)) -> y
+        head(cons(x,y)) -> x
+        zero(0) -> true
+        zero(s(x)) -> false
+        p(0) -> 0
+        p(s(0)) -> 0
+        p(s(s(x))) -> s(p(s(x)))
+        intlist(x) -> if_intlist(empty(x),x)
+        if_intlist(true,x) -> nil
+        if_intlist(false,x) -> cons(s(head(x)),intlist(tail(x)))
+        int(x,y) -> if_int(zero(x),zero(y),x,y)
+        if_int(true,b,x,y) -> if1(b,x,y)
+        if_int(false,b,x,y) -> if2(b,x,y)
+        if1(true,x,y) -> cons(0,nil)
+        if1(false,x,y) -> cons(0,int(s(0),y))
+        if2(true,x,y) -> nil
+        if2(false,x,y) -> intlist(int(p(x),p(y)))
+        
+)
+    

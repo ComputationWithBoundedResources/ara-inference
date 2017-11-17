@@ -1,0 +1,29 @@
+(VAR b l x y )
+(STRATEGY INNERMOST)
+(RULES 
+        car(cons(x,l)) -> x
+        cddr(nil) -> nil
+        cddr(cons(x,nil)) -> nil
+        cddr(cons(x,cons(y,l))) -> l
+        cadr(cons(x,cons(y,l))) -> y
+        isZero(0) -> true
+        isZero(s(x)) -> false
+        plus(x,y) -> ifplus(isZero(x),x,y)
+        ifplus(true,x,y) -> y
+        ifplus(false,x,y) -> s(plus(p(x),y))
+        times(x,y) -> iftimes(isZero(x),x,y)
+        iftimes(true,x,y) -> 0
+        iftimes(false,x,y) -> plus(y,times(p(x),y))
+        p(s(x)) -> x
+        p(0) -> 0
+        shorter(nil,y) -> true
+        shorter(cons(x,l),0) -> false
+        shorter(cons(x,l),s(y)) -> shorter(l,y)
+        prod(l) -> if(shorter(l,0),shorter(l,s(0)),l)
+        if(true,b,l) -> s(0)
+        if(false,b,l) -> if2(b,l)
+        if2(true,l) -> car(l)
+        if2(false,l) -> prod(cons(times(car(l),cadr(l)),cddr(l)))
+        
+)
+    

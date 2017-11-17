@@ -1,0 +1,10 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        rev(a) -> a
+        rev(b) -> b
+        rev(++(x,y)) -> ++(rev(y),rev(x))
+        rev(++(x,x)) -> rev(x)
+        
+)
+    

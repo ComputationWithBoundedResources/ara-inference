@@ -1,0 +1,46 @@
+(VAR I P V V1 V2 X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        __(__(X,Y),Z) -> __(X,__(Y,Z))
+        __(X,nil) -> X
+        __(nil,X) -> X
+        and(tt,X) -> activate(X)
+        isList(V) -> isNeList(activate(V))
+        isList(n__nil) -> tt
+        isList(n____(V1,V2)) -> and(isList(activate(V1)),n__isList(activate(V2)))
+        isNeList(V) -> isQid(activate(V))
+        isNeList(n____(V1,V2)) -> and(isList(activate(V1)),n__isNeList(activate(V2)))
+        isNeList(n____(V1,V2)) -> and(isNeList(activate(V1)),n__isList(activate(V2)))
+        isNePal(V) -> isQid(activate(V))
+        isNePal(n____(I,__(P,I))) -> and(isQid(activate(I)),n__isPal(activate(P)))
+        isPal(V) -> isNePal(activate(V))
+        isPal(n__nil) -> tt
+        isQid(n__a) -> tt
+        isQid(n__e) -> tt
+        isQid(n__i) -> tt
+        isQid(n__o) -> tt
+        isQid(n__u) -> tt
+        nil -> n__nil
+        __(X1,X2) -> n____(X1,X2)
+        isList(X) -> n__isList(X)
+        isNeList(X) -> n__isNeList(X)
+        isPal(X) -> n__isPal(X)
+        a -> n__a
+        e -> n__e
+        i -> n__i
+        o -> n__o
+        u -> n__u
+        activate(n__nil) -> nil
+        activate(n____(X1,X2)) -> __(X1,X2)
+        activate(n__isList(X)) -> isList(X)
+        activate(n__isNeList(X)) -> isNeList(X)
+        activate(n__isPal(X)) -> isPal(X)
+        activate(n__a) -> a
+        activate(n__e) -> e
+        activate(n__i) -> i
+        activate(n__o) -> o
+        activate(n__u) -> u
+        activate(X) -> X
+        
+)
+    

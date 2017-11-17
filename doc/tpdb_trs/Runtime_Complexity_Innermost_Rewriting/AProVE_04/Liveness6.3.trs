@@ -1,0 +1,21 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        rec(rec(x)) -> sent(rec(x))
+        rec(sent(x)) -> sent(rec(x))
+        rec(no(x)) -> sent(rec(x))
+        rec(bot) -> up(sent(bot))
+        rec(up(x)) -> up(rec(x))
+        sent(up(x)) -> up(sent(x))
+        no(up(x)) -> up(no(x))
+        top(rec(up(x))) -> top(check(rec(x)))
+        top(sent(up(x))) -> top(check(rec(x)))
+        top(no(up(x))) -> top(check(rec(x)))
+        check(up(x)) -> up(check(x))
+        check(sent(x)) -> sent(check(x))
+        check(rec(x)) -> rec(check(x))
+        check(no(x)) -> no(check(x))
+        check(no(x)) -> no(x)
+        
+)
+    

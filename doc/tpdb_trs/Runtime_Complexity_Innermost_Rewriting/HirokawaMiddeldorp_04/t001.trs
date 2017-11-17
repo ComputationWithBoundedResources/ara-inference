@@ -1,0 +1,23 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        -(x,0) -> x
+        -(s(x),s(y)) -> -(x,y)
+        *(x,0) -> 0
+        *(x,s(y)) -> +(*(x,y),x)
+        if(true,x,y) -> x
+        if(false,x,y) -> y
+        odd(0) -> false
+        odd(s(0)) -> true
+        odd(s(s(x))) -> odd(x)
+        half(0) -> 0
+        half(s(0)) -> 0
+        half(s(s(x))) -> s(half(x))
+        if(true,x,y) -> true
+        if(false,x,y) -> false
+        pow(x,y) -> f(x,y,s(0))
+        f(x,0,z) -> z
+        f(x,s(y),z) -> if(odd(s(y)),f(x,y,*(x,z)),f(*(x,x),half(s(y)),z))
+        
+)
+    

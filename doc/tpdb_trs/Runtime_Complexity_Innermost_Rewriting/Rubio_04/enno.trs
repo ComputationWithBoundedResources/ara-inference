@@ -1,0 +1,19 @@
+(VAR M N X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        lt(0,s(X)) -> true
+        lt(s(X),0) -> false
+        lt(s(X),s(Y)) -> lt(X,Y)
+        append(nil,Y) -> Y
+        append(add(N,X),Y) -> add(N,append(X,Y))
+        split(N,nil) -> pair(nil,nil)
+        split(N,add(M,Y)) -> f_1(split(N,Y),N,M,Y)
+        f_1(pair(X,Z),N,M,Y) -> f_2(lt(N,M),N,M,Y,X,Z)
+        f_2(true,N,M,Y,X,Z) -> pair(X,add(M,Z))
+        f_2(false,N,M,Y,X,Z) -> pair(add(M,X),Z)
+        qsort(nil) -> nil
+        qsort(add(N,X)) -> f_3(split(N,X),N,X)
+        f_3(pair(Y,Z),N,X) -> append(qsort(Y),add(X,qsort(Z)))
+        
+)
+    

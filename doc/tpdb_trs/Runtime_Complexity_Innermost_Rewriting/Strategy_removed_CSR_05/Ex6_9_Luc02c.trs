@@ -1,0 +1,9 @@
+(VAR X X1 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        2nd(cons1(X,cons(Y,Z))) -> Y
+        2nd(cons(X,X1)) -> 2nd(cons1(X,X1))
+        from(X) -> cons(X,from(s(X)))
+        
+)
+    

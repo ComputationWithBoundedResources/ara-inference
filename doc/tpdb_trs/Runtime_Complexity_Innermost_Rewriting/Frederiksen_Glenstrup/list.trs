@@ -1,0 +1,12 @@
+(VAR x xs )
+(STRATEGY INNERMOST)
+(RULES 
+        list(Cons(x,xs)) -> list(xs)
+        list(Nil) -> True
+        list(Nil) -> isEmpty[Match](Nil)
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        goal(x) -> list(x)
+        
+)
+    

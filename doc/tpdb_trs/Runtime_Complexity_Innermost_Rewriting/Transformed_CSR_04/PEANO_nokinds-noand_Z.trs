@@ -1,0 +1,24 @@
+(VAR M N V1 V2 X X1 X2 )
+(STRATEGY INNERMOST)
+(RULES 
+        U11(tt,V2) -> U12(isNat(activate(V2)))
+        U12(tt) -> tt
+        U21(tt) -> tt
+        U31(tt,N) -> activate(N)
+        U41(tt,M,N) -> U42(isNat(activate(N)),activate(M),activate(N))
+        U42(tt,M,N) -> s(plus(activate(N),activate(M)))
+        isNat(n__0) -> tt
+        isNat(n__plus(V1,V2)) -> U11(isNat(activate(V1)),activate(V2))
+        isNat(n__s(V1)) -> U21(isNat(activate(V1)))
+        plus(N,0) -> U31(isNat(N),N)
+        plus(N,s(M)) -> U41(isNat(M),M,N)
+        0 -> n__0
+        plus(X1,X2) -> n__plus(X1,X2)
+        s(X) -> n__s(X)
+        activate(n__0) -> 0
+        activate(n__plus(X1,X2)) -> plus(X1,X2)
+        activate(n__s(X)) -> s(X)
+        activate(X) -> X
+        
+)
+    

@@ -1,0 +1,15 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        top(free(x)) -> top(check(new(x)))
+        new(free(x)) -> free(new(x))
+        old(free(x)) -> free(old(x))
+        new(serve) -> free(serve)
+        old(serve) -> free(serve)
+        check(free(x)) -> free(check(x))
+        check(new(x)) -> new(check(x))
+        check(old(x)) -> old(check(x))
+        check(old(x)) -> old(x)
+        
+)
+    

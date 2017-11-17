@@ -1,0 +1,20 @@
+(VAR b x y )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        quot(0,s(y)) -> 0
+        quot(s(x),s(y)) -> s(quot(minus(x,y),s(y)))
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        inc(s(x)) -> s(inc(x))
+        inc(0) -> s(0)
+        log(x) -> logIter(x,0)
+        logIter(x,y) -> if(le(s(0),x),le(s(s(0)),x),quot(x,s(s(0))),inc(y))
+        if(false,b,x,y) -> logZeroError
+        if(true,false,x,s(y)) -> y
+        if(true,true,x,y) -> logIter(x,y)
+        
+)
+    

@@ -1,0 +1,29 @@
+(VAR b1 b2 b3 h i x y )
+(STRATEGY INNERMOST)
+(RULES 
+        eq(0,0) -> true
+        eq(0,s(x)) -> false
+        eq(s(x),0) -> false
+        eq(s(x),s(y)) -> eq(x,y)
+        or(true,y) -> true
+        or(false,y) -> y
+        union(empty,h) -> h
+        union(edge(x,y,i),h) -> edge(x,y,union(i,h))
+        isEmpty(empty) -> true
+        isEmpty(edge(x,y,i)) -> false
+        from(edge(x,y,i)) -> x
+        to(edge(x,y,i)) -> y
+        rest(edge(x,y,i)) -> i
+        rest(empty) -> empty
+        reach(x,y,i,h) -> if1(eq(x,y),isEmpty(i),eq(x,from(i)),eq(y,to(i)),x,y,i,h)
+        if1(true,b1,b2,b3,x,y,i,h) -> true
+        if1(false,b1,b2,b3,x,y,i,h) -> if2(b1,b2,b3,x,y,i,h)
+        if2(true,b2,b3,x,y,i,h) -> false
+        if2(false,b2,b3,x,y,i,h) -> if3(b2,b3,x,y,i,h)
+        if3(false,b3,x,y,i,h) -> reach(x,y,rest(i),edge(from(i),to(i),h))
+        if3(true,b3,x,y,i,h) -> if4(b3,x,y,i,h)
+        if4(true,x,y,i,h) -> true
+        if4(false,x,y,i,h) -> or(reach(x,y,rest(i),h),reach(to(i),y,union(rest(i),h),empty))
+        
+)
+    

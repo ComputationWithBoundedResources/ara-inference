@@ -1,0 +1,9 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        c(c(c(y))) -> c(c(a(y,0)))
+        c(a(a(0,x),y)) -> a(c(c(c(0))),y)
+        c(y) -> y
+        
+)
+    

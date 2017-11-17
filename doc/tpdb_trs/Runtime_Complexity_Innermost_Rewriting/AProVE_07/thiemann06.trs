@@ -1,0 +1,20 @@
+(VAR b1 b2 b3 x y )
+(STRATEGY INNERMOST)
+(RULES 
+        p(s(x)) -> x
+        p(0) -> 0
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        average(x,y) -> if(le(x,0),le(y,0),le(y,s(0)),le(y,s(s(0))),x,y)
+        if(true,b1,b2,b3,x,y) -> if2(b1,b2,b3,x,y)
+        if(false,b1,b2,b3,x,y) -> average(p(x),s(y))
+        if2(true,b2,b3,x,y) -> 0
+        if2(false,b2,b3,x,y) -> if3(b2,b3,x,y)
+        if3(true,b3,x,y) -> 0
+        if3(false,b3,x,y) -> if4(b3,x,y)
+        if4(true,x,y) -> s(0)
+        if4(false,x,y) -> average(s(x),p(p(y)))
+        
+)
+    

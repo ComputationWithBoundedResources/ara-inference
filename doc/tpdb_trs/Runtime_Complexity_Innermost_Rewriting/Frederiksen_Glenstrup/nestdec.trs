@@ -1,0 +1,18 @@
+(VAR n x x' xs xs' )
+(STRATEGY INNERMOST)
+(RULES 
+        dec(Cons(Nil,Nil)) -> Nil
+        dec(Cons(Nil,Cons(x,xs))) -> dec(Cons(x,xs))
+        dec(Cons(Cons(x,xs),Nil)) -> dec(Nil)
+        dec(Cons(Cons(x',xs'),Cons(x,xs))) -> dec(Cons(x,xs))
+        isNilNil(Cons(Nil,Nil)) -> True
+        isNilNil(Cons(Nil,Cons(x,xs))) -> False
+        isNilNil(Cons(Cons(x,xs),Nil)) -> False
+        isNilNil(Cons(Cons(x',xs'),Cons(x,xs))) -> False
+        nestdec(Nil) -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil)))))))))))))))))
+        nestdec(Cons(x,xs)) -> nestdec(dec(Cons(x,xs)))
+        number17(n) -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil)))))))))))))))))
+        goal(x) -> nestdec(x)
+        
+)
+    

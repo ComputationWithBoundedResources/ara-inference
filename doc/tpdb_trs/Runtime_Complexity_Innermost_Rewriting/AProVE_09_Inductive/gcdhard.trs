@@ -1,0 +1,19 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(0,x) -> 0
+        minus(s(x),0) -> s(x)
+        minus(s(x),s(y)) -> minus(x,y)
+        mod(x,0) -> 0
+        mod(x,s(y)) -> if(lt(x,s(y)),x,s(y))
+        if(true,x,y) -> x
+        if(false,x,y) -> mod(minus(x,y),y)
+        gcd(x,0) -> x
+        gcd(0,s(y)) -> s(y)
+        gcd(s(x),s(y)) -> gcd(mod(s(x),s(y)),mod(s(y),s(x)))
+        lt(x,0) -> false
+        lt(0,s(x)) -> true
+        lt(s(x),s(y)) -> lt(x,y)
+        
+)
+    

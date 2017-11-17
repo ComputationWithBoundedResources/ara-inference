@@ -1,0 +1,15 @@
+(VAR u v x y )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(x,y) -> cond(equal(min(x,y),y),x,y)
+        cond(true,x,y) -> s(minus(x,s(y)))
+        min(0,v) -> 0
+        min(u,0) -> 0
+        min(s(u),s(v)) -> s(min(u,v))
+        equal(0,0) -> true
+        equal(s(x),0) -> false
+        equal(0,s(y)) -> false
+        equal(s(x),s(y)) -> equal(x,y)
+        
+)
+    

@@ -1,0 +1,10 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        merge(x,nil) -> x
+        merge(nil,y) -> y
+        merge(++(x,y),++(u,v)) -> ++(x,merge(y,++(u,v)))
+        merge(++(x,y),++(u,v)) -> ++(u,merge(++(x,y),v))
+        
+)
+    

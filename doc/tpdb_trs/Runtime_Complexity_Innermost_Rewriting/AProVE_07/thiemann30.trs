@@ -1,0 +1,34 @@
+(VAR m n x y )
+(STRATEGY INNERMOST)
+(RULES 
+        eq(0,0) -> true
+        eq(0,s(x)) -> false
+        eq(s(x),0) -> false
+        eq(s(x),s(y)) -> eq(x,y)
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        app(nil,y) -> y
+        app(add(n,x),y) -> add(n,app(x,y))
+        min(nil) -> 0
+        min(add(n,x)) -> minIter(add(n,x),add(n,x),0)
+        minIter(nil,add(n,y),m) -> minIter(add(n,y),add(n,y),s(m))
+        minIter(add(n,x),y,m) -> if_min(le(n,m),x,y,m)
+        if_min(true,x,y,m) -> m
+        if_min(false,x,y,m) -> minIter(x,y,m)
+        head(add(n,x)) -> n
+        tail(add(n,x)) -> x
+        tail(nil) -> nil
+        null(nil) -> true
+        null(add(n,x)) -> false
+        rm(n,nil) -> nil
+        rm(n,add(m,x)) -> if_rm(eq(n,m),n,add(m,x))
+        if_rm(true,n,add(m,x)) -> rm(n,x)
+        if_rm(false,n,add(m,x)) -> add(m,rm(n,x))
+        minsort(nil,nil) -> nil
+        minsort(add(n,x),y) -> if_minsort(eq(n,min(add(n,x))),add(n,x),y)
+        if_minsort(true,add(n,x),y) -> add(n,minsort(app(rm(n,x),y),nil))
+        if_minsort(false,add(n,x),y) -> minsort(x,add(n,y))
+        
+)
+    

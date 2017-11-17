@@ -1,0 +1,14 @@
+(VAR L X )
+(STRATEGY INNERMOST)
+(RULES 
+        incr(nil) -> nil
+        incr(cons(X,L)) -> cons(s(X),incr(L))
+        adx(nil) -> nil
+        adx(cons(X,L)) -> incr(cons(X,adx(L)))
+        nats -> adx(zeros)
+        zeros -> cons(0,zeros)
+        head(cons(X,L)) -> X
+        tail(cons(X,L)) -> L
+        
+)
+    

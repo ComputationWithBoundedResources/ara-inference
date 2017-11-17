@@ -1,0 +1,20 @@
+(VAR N X X1 X2 XS )
+(STRATEGY INNERMOST)
+(RULES 
+        from(X) -> cons(X,n__from(n__s(X)))
+        head(cons(X,XS)) -> X
+        2nd(cons(X,XS)) -> head(activate(XS))
+        take(0,XS) -> nil
+        take(s(N),cons(X,XS)) -> cons(X,n__take(N,activate(XS)))
+        sel(0,cons(X,XS)) -> X
+        sel(s(N),cons(X,XS)) -> sel(N,activate(XS))
+        from(X) -> n__from(X)
+        s(X) -> n__s(X)
+        take(X1,X2) -> n__take(X1,X2)
+        activate(n__from(X)) -> from(activate(X))
+        activate(n__s(X)) -> s(activate(X))
+        activate(n__take(X1,X2)) -> take(activate(X1),activate(X2))
+        activate(X) -> X
+        
+)
+    

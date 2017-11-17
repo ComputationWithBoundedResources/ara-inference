@@ -1,0 +1,22 @@
+(VAR b x y )
+(STRATEGY INNERMOST)
+(RULES 
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        inc(0) -> 0
+        inc(s(x)) -> s(inc(x))
+        minus(0,y) -> 0
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        quot(0,s(y)) -> 0
+        quot(s(x),s(y)) -> s(quot(minus(x,y),s(y)))
+        log(x) -> log2(x,0)
+        log2(x,y) -> if(le(x,0),le(x,s(0)),x,inc(y))
+        if(true,b,x,y) -> log_undefined
+        if(false,b,x,y) -> if2(b,x,y)
+        if2(true,x,s(y)) -> y
+        if2(false,x,y) -> log2(quot(x,s(s(0))),y)
+        
+)
+    

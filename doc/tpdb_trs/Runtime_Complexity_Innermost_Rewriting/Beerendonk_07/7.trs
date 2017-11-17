@@ -1,0 +1,12 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        cond(true,x) -> cond(odd(x),p(p(p(x))))
+        odd(0) -> false
+        odd(s(0)) -> true
+        odd(s(s(x))) -> odd(x)
+        p(0) -> 0
+        p(s(x)) -> x
+        
+)
+    

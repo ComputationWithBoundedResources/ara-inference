@@ -1,0 +1,14 @@
+(VAR L X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        eq(0,0) -> true
+        eq(s(X),s(Y)) -> eq(X,Y)
+        eq(X,Y) -> false
+        inf(X) -> cons(X,inf(s(X)))
+        take(0,X) -> nil
+        take(s(X),cons(Y,L)) -> cons(Y,take(X,L))
+        length(nil) -> 0
+        length(cons(X,L)) -> s(length(L))
+        
+)
+    

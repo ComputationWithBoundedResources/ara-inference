@@ -1,0 +1,20 @@
+(VAR X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        a__f(X) -> cons(mark(X),f(g(X)))
+        a__g(0) -> s(0)
+        a__g(s(X)) -> s(s(a__g(mark(X))))
+        a__sel(0,cons(X,Y)) -> mark(X)
+        a__sel(s(X),cons(Y,Z)) -> a__sel(mark(X),mark(Z))
+        mark(f(X)) -> a__f(mark(X))
+        mark(g(X)) -> a__g(mark(X))
+        mark(sel(X1,X2)) -> a__sel(mark(X1),mark(X2))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(0) -> 0
+        mark(s(X)) -> s(mark(X))
+        a__f(X) -> f(X)
+        a__g(X) -> g(X)
+        a__sel(X1,X2) -> sel(X1,X2)
+        
+)
+    

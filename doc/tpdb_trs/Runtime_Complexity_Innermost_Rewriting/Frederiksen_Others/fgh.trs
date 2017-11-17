@@ -1,0 +1,15 @@
+(VAR x x' x2 )
+(STRATEGY INNERMOST)
+(RULES 
+        f(S(x'),S(x)) -> h(g(x',S(x)),f(S(S(S(x'))),x))
+        g(S(x),S(x')) -> h(f(S(x),S(x')),g(x,S(S(S(x')))))
+        h(0,S(x)) -> h(0,x)
+        h(0,0) -> 0
+        g(S(x),0) -> 0
+        f(S(x),0) -> 0
+        h(S(x),x2) -> h(x,x2)
+        g(0,x2) -> 0
+        f(0,x2) -> 0
+        
+)
+    

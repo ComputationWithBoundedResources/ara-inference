@@ -1,0 +1,25 @@
+(VAR x xs y z )
+(STRATEGY INNERMOST)
+(RULES 
+        plus(x,y) -> plusIter(x,y,0)
+        plusIter(x,y,z) -> ifPlus(le(x,z),x,y,z)
+        ifPlus(true,x,y,z) -> y
+        ifPlus(false,x,y,z) -> plusIter(x,s(y),s(z))
+        le(s(x),0) -> false
+        le(0,y) -> true
+        le(s(x),s(y)) -> le(x,y)
+        sum(xs) -> sumIter(xs,0)
+        sumIter(xs,x) -> ifSum(isempty(xs),xs,x,plus(x,head(xs)))
+        ifSum(true,xs,x,y) -> x
+        ifSum(false,xs,x,y) -> sumIter(tail(xs),y)
+        isempty(nil) -> true
+        isempty(cons(x,xs)) -> false
+        head(nil) -> error
+        head(cons(x,xs)) -> x
+        tail(nil) -> nil
+        tail(cons(x,xs)) -> xs
+        a -> b
+        a -> c
+        
+)
+    

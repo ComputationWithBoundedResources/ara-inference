@@ -1,0 +1,16 @@
+(VAR a x xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        foldl(x,Cons(S(0),xs)) -> foldl(S(x),xs)
+        foldl(S(0),Cons(x,xs)) -> foldl(S(x),xs)
+        foldr(a,Cons(x,xs)) -> op(x,foldr(a,xs))
+        foldr(a,Nil) -> a
+        foldl(a,Nil) -> a
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        op(x,S(0)) -> S(x)
+        op(S(0),y) -> S(y)
+        fold(a,xs) -> Cons(foldl(a,xs),Cons(foldr(a,xs),Nil))
+        
+)
+    

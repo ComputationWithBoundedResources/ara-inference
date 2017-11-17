@@ -1,0 +1,15 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        active(f(x)) -> mark(f(f(x)))
+        chk(no(f(x))) -> f(chk(mat(f(f(f(f(f(f(f(f(f(f(X)))))))))),x)))
+        mat(f(x),f(y)) -> f(mat(x,y))
+        chk(no(c)) -> active(c)
+        mat(f(x),c) -> no(c)
+        f(active(x)) -> active(f(x))
+        f(no(x)) -> no(f(x))
+        f(mark(x)) -> mark(f(x))
+        tp(mark(x)) -> tp(chk(mat(f(f(f(f(f(f(f(f(f(f(X)))))))))),x)))
+        
+)
+    

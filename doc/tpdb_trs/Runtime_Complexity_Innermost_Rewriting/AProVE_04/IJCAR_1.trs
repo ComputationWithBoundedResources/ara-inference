@@ -1,0 +1,11 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        div(0,y) -> 0
+        div(x,y) -> quot(x,y,y)
+        quot(0,s(y),z) -> 0
+        quot(s(x),s(y),z) -> quot(x,y,z)
+        quot(x,0,s(z)) -> s(div(x,s(z)))
+        
+)
+    

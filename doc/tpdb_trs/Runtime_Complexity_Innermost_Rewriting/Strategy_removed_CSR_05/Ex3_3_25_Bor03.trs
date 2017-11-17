@@ -1,0 +1,13 @@
+(VAR L X XS Y YS )
+(STRATEGY INNERMOST)
+(RULES 
+        app(nil,YS) -> YS
+        app(cons(X,XS),YS) -> cons(X,app(XS,YS))
+        from(X) -> cons(X,from(s(X)))
+        zWadr(nil,YS) -> nil
+        zWadr(XS,nil) -> nil
+        zWadr(cons(X,XS),cons(Y,YS)) -> cons(app(Y,cons(X,nil)),zWadr(XS,YS))
+        prefix(L) -> cons(nil,zWadr(L,prefix(L)))
+        
+)
+    

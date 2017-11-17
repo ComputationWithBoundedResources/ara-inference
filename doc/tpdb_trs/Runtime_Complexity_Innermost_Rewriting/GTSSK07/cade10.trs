@@ -1,0 +1,13 @@
+(VAR u v x y )
+(STRATEGY INNERMOST)
+(RULES 
+        f(true,x,y) -> f(gt(x,y),trunc(x),s(y))
+        trunc(0) -> 0
+        trunc(s(0)) -> 0
+        trunc(s(s(x))) -> s(s(trunc(x)))
+        gt(0,v) -> false
+        gt(s(u),0) -> true
+        gt(s(u),s(v)) -> gt(u,v)
+        
+)
+    

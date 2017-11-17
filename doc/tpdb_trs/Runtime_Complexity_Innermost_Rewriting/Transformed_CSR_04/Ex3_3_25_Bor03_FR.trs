@@ -1,0 +1,26 @@
+(VAR L X X1 X2 XS Y YS )
+(STRATEGY INNERMOST)
+(RULES 
+        app(nil,YS) -> YS
+        app(cons(X,XS),YS) -> cons(X,n__app(activate(XS),YS))
+        from(X) -> cons(X,n__from(n__s(X)))
+        zWadr(nil,YS) -> nil
+        zWadr(XS,nil) -> nil
+        zWadr(cons(X,XS),cons(Y,YS)) -> cons(app(Y,cons(X,n__nil)),n__zWadr(activate(XS),activate(YS)))
+        prefix(L) -> cons(nil,n__zWadr(L,n__prefix(L)))
+        app(X1,X2) -> n__app(X1,X2)
+        from(X) -> n__from(X)
+        s(X) -> n__s(X)
+        nil -> n__nil
+        zWadr(X1,X2) -> n__zWadr(X1,X2)
+        prefix(X) -> n__prefix(X)
+        activate(n__app(X1,X2)) -> app(activate(X1),activate(X2))
+        activate(n__from(X)) -> from(activate(X))
+        activate(n__s(X)) -> s(activate(X))
+        activate(n__nil) -> nil
+        activate(n__zWadr(X1,X2)) -> zWadr(activate(X1),activate(X2))
+        activate(n__prefix(X)) -> prefix(activate(X))
+        activate(X) -> X
+        
+)
+    

@@ -1,0 +1,59 @@
+(VAR L N V V1 V2 X X1 X2 X3 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__zeros -> cons(0,zeros)
+        a__U11(tt) -> tt
+        a__U21(tt) -> tt
+        a__U31(tt) -> tt
+        a__U41(tt,V2) -> a__U42(a__isNatIList(V2))
+        a__U42(tt) -> tt
+        a__U51(tt,V2) -> a__U52(a__isNatList(V2))
+        a__U52(tt) -> tt
+        a__U61(tt,L,N) -> a__U62(a__isNat(N),L)
+        a__U62(tt,L) -> s(a__length(mark(L)))
+        a__isNat(0) -> tt
+        a__isNat(length(V1)) -> a__U11(a__isNatList(V1))
+        a__isNat(s(V1)) -> a__U21(a__isNat(V1))
+        a__isNatIList(V) -> a__U31(a__isNatList(V))
+        a__isNatIList(zeros) -> tt
+        a__isNatIList(cons(V1,V2)) -> a__U41(a__isNat(V1),V2)
+        a__isNatList(nil) -> tt
+        a__isNatList(cons(V1,V2)) -> a__U51(a__isNat(V1),V2)
+        a__length(nil) -> 0
+        a__length(cons(N,L)) -> a__U61(a__isNatList(L),L,N)
+        mark(zeros) -> a__zeros
+        mark(U11(X)) -> a__U11(mark(X))
+        mark(U21(X)) -> a__U21(mark(X))
+        mark(U31(X)) -> a__U31(mark(X))
+        mark(U41(X1,X2)) -> a__U41(mark(X1),X2)
+        mark(U42(X)) -> a__U42(mark(X))
+        mark(isNatIList(X)) -> a__isNatIList(X)
+        mark(U51(X1,X2)) -> a__U51(mark(X1),X2)
+        mark(U52(X)) -> a__U52(mark(X))
+        mark(isNatList(X)) -> a__isNatList(X)
+        mark(U61(X1,X2,X3)) -> a__U61(mark(X1),X2,X3)
+        mark(U62(X1,X2)) -> a__U62(mark(X1),X2)
+        mark(isNat(X)) -> a__isNat(X)
+        mark(length(X)) -> a__length(mark(X))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(0) -> 0
+        mark(tt) -> tt
+        mark(s(X)) -> s(mark(X))
+        mark(nil) -> nil
+        a__zeros -> zeros
+        a__U11(X) -> U11(X)
+        a__U21(X) -> U21(X)
+        a__U31(X) -> U31(X)
+        a__U41(X1,X2) -> U41(X1,X2)
+        a__U42(X) -> U42(X)
+        a__isNatIList(X) -> isNatIList(X)
+        a__U51(X1,X2) -> U51(X1,X2)
+        a__U52(X) -> U52(X)
+        a__isNatList(X) -> isNatList(X)
+        a__U61(X1,X2,X3) -> U61(X1,X2,X3)
+        a__U62(X1,X2) -> U62(X1,X2)
+        a__isNat(X) -> isNat(X)
+        a__length(X) -> length(X)
+        
+)
+    

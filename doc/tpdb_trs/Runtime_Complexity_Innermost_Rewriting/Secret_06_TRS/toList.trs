@@ -1,0 +1,20 @@
+(VAR b l m n r x xs ys )
+(STRATEGY INNERMOST)
+(RULES 
+        isEmpty(empty) -> true
+        isEmpty(node(l,x,r)) -> false
+        left(empty) -> empty
+        left(node(l,x,r)) -> l
+        right(empty) -> empty
+        right(node(l,x,r)) -> r
+        elem(node(l,x,r)) -> x
+        append(nil,x) -> cons(x,nil)
+        append(cons(y,ys),x) -> cons(y,append(ys,x))
+        listify(n,xs) -> if(isEmpty(n),isEmpty(left(n)),right(n),node(left(left(n)),elem(left(n)),node(right(left(n)),elem(n),right(n))),xs,append(xs,n))
+        if(true,b,n,m,xs,ys) -> xs
+        if(false,false,n,m,xs,ys) -> listify(m,xs)
+        if(false,true,n,m,xs,ys) -> listify(n,ys)
+        toList(n) -> listify(n,nil)
+        
+)
+    

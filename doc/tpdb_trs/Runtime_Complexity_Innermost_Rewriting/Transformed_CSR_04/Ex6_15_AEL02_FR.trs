@@ -1,0 +1,41 @@
+(VAR X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        sel(s(X),cons(Y,Z)) -> sel(X,activate(Z))
+        sel(0,cons(X,Z)) -> X
+        first(0,Z) -> nil
+        first(s(X),cons(Y,Z)) -> cons(Y,n__first(X,activate(Z)))
+        from(X) -> cons(X,n__from(n__s(X)))
+        sel1(s(X),cons(Y,Z)) -> sel1(X,activate(Z))
+        sel1(0,cons(X,Z)) -> quote(X)
+        first1(0,Z) -> nil1
+        first1(s(X),cons(Y,Z)) -> cons1(quote(Y),first1(X,activate(Z)))
+        quote(n__0) -> 01
+        quote1(n__cons(X,Z)) -> cons1(quote(activate(X)),quote1(activate(Z)))
+        quote1(n__nil) -> nil1
+        quote(n__s(X)) -> s1(quote(activate(X)))
+        quote(n__sel(X,Z)) -> sel1(activate(X),activate(Z))
+        quote1(n__first(X,Z)) -> first1(activate(X),activate(Z))
+        unquote(01) -> 0
+        unquote(s1(X)) -> s(unquote(X))
+        unquote1(nil1) -> nil
+        unquote1(cons1(X,Z)) -> fcons(unquote(X),unquote1(Z))
+        fcons(X,Z) -> cons(X,Z)
+        first(X1,X2) -> n__first(X1,X2)
+        from(X) -> n__from(X)
+        s(X) -> n__s(X)
+        0 -> n__0
+        cons(X1,X2) -> n__cons(X1,X2)
+        nil -> n__nil
+        sel(X1,X2) -> n__sel(X1,X2)
+        activate(n__first(X1,X2)) -> first(activate(X1),activate(X2))
+        activate(n__from(X)) -> from(activate(X))
+        activate(n__s(X)) -> s(activate(X))
+        activate(n__0) -> 0
+        activate(n__cons(X1,X2)) -> cons(activate(X1),X2)
+        activate(n__nil) -> nil
+        activate(n__sel(X1,X2)) -> sel(activate(X1),activate(X2))
+        activate(X) -> X
+        
+)
+    

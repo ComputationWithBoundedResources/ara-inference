@@ -1,0 +1,15 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        D(t) -> 1
+        D(constant) -> 0
+        D(+(x,y)) -> +(D(x),D(y))
+        D(*(x,y)) -> +(*(y,D(x)),*(x,D(y)))
+        D(-(x,y)) -> -(D(x),D(y))
+        D(minus(x)) -> minus(D(x))
+        D(div(x,y)) -> -(div(D(x),y),div(*(x,D(y)),pow(y,2)))
+        D(ln(x)) -> div(D(x),x)
+        D(pow(x,y)) -> +(*(*(y,pow(x,-(y,1))),D(x)),*(*(pow(x,y),ln(x)),D(y)))
+        
+)
+    

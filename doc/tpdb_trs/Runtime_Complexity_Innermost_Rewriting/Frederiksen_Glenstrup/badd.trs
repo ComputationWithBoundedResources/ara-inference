@@ -1,0 +1,9 @@
+(VAR x x' xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        badd(x',Cons(x,xs)) -> badd(Cons(Nil,Nil),badd(x',xs))
+        badd(x,Nil) -> x
+        goal(x,y) -> badd(x,y)
+        
+)
+    

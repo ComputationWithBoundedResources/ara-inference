@@ -1,0 +1,24 @@
+(VAR N X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        from(X) -> cons(X,n__from(n__s(X)))
+        2ndspos(0,Z) -> rnil
+        2ndspos(s(N),cons(X,Z)) -> 2ndspos(s(N),cons2(X,activate(Z)))
+        2ndspos(s(N),cons2(X,cons(Y,Z))) -> rcons(posrecip(Y),2ndsneg(N,activate(Z)))
+        2ndsneg(0,Z) -> rnil
+        2ndsneg(s(N),cons(X,Z)) -> 2ndsneg(s(N),cons2(X,activate(Z)))
+        2ndsneg(s(N),cons2(X,cons(Y,Z))) -> rcons(negrecip(Y),2ndspos(N,activate(Z)))
+        pi(X) -> 2ndspos(X,from(0))
+        plus(0,Y) -> Y
+        plus(s(X),Y) -> s(plus(X,Y))
+        times(0,Y) -> 0
+        times(s(X),Y) -> plus(Y,times(X,Y))
+        square(X) -> times(X,X)
+        from(X) -> n__from(X)
+        s(X) -> n__s(X)
+        activate(n__from(X)) -> from(activate(X))
+        activate(n__s(X)) -> s(activate(X))
+        activate(X) -> X
+        
+)
+    

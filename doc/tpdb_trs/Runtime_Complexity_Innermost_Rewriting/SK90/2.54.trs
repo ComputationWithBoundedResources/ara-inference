@@ -1,0 +1,8 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        f(x,a) -> x
+        f(x,g(y)) -> f(g(x),y)
+        
+)
+    

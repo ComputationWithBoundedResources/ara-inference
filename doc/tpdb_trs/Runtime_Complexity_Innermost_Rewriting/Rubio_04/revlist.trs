@@ -1,0 +1,13 @@
+(VAR L X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        rev1(0,nil) -> 0
+        rev1(s(X),nil) -> s(X)
+        rev1(X,cons(Y,L)) -> rev1(Y,L)
+        rev(nil) -> nil
+        rev(cons(X,L)) -> cons(rev1(X,L),rev2(X,L))
+        rev2(X,nil) -> nil
+        rev2(X,cons(Y,L)) -> rev(cons(X,rev(rev2(Y,L))))
+        
+)
+    

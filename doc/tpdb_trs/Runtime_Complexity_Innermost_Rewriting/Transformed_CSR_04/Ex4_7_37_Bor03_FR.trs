@@ -1,0 +1,23 @@
+(VAR N X X1 X2 XS Y YS )
+(STRATEGY INNERMOST)
+(RULES 
+        from(X) -> cons(X,n__from(n__s(X)))
+        sel(0,cons(X,XS)) -> X
+        sel(s(N),cons(X,XS)) -> sel(N,activate(XS))
+        minus(X,0) -> 0
+        minus(s(X),s(Y)) -> minus(X,Y)
+        quot(0,s(Y)) -> 0
+        quot(s(X),s(Y)) -> s(quot(minus(X,Y),s(Y)))
+        zWquot(XS,nil) -> nil
+        zWquot(nil,XS) -> nil
+        zWquot(cons(X,XS),cons(Y,YS)) -> cons(quot(X,Y),n__zWquot(activate(XS),activate(YS)))
+        from(X) -> n__from(X)
+        s(X) -> n__s(X)
+        zWquot(X1,X2) -> n__zWquot(X1,X2)
+        activate(n__from(X)) -> from(activate(X))
+        activate(n__s(X)) -> s(activate(X))
+        activate(n__zWquot(X1,X2)) -> zWquot(activate(X1),activate(X2))
+        activate(X) -> X
+        
+)
+    

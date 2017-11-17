@@ -1,0 +1,16 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        nonZero(0) -> false
+        nonZero(s(x)) -> true
+        p(s(0)) -> 0
+        p(s(s(x))) -> s(p(s(x)))
+        id_inc(x) -> x
+        id_inc(x) -> s(x)
+        random(x) -> rand(x,0)
+        rand(x,y) -> if(nonZero(x),x,y)
+        if(false,x,y) -> y
+        if(true,x,y) -> rand(p(x),id_inc(y))
+        
+)
+    

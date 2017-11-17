@@ -1,0 +1,15 @@
+(VAR DDX DX DY X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        din(der(plus(X,Y))) -> u21(din(der(X)),X,Y)
+        u21(dout(DX),X,Y) -> u22(din(der(Y)),X,Y,DX)
+        u22(dout(DY),X,Y,DX) -> dout(plus(DX,DY))
+        din(der(times(X,Y))) -> u31(din(der(X)),X,Y)
+        u31(dout(DX),X,Y) -> u32(din(der(Y)),X,Y,DX)
+        u32(dout(DY),X,Y,DX) -> dout(plus(times(X,DY),times(Y,DX)))
+        din(der(der(X))) -> u41(din(der(X)),X)
+        u41(dout(DX),X) -> u42(din(der(DX)),X,DX)
+        u42(dout(DDX),X,DX) -> dout(DDX)
+        
+)
+    

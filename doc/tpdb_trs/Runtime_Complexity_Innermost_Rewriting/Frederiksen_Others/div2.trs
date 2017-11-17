@@ -1,0 +1,10 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        div2(S(S(x))) -> +(S(0),div2(x))
+        div2(S(0)) -> 0
+        div2(0) -> 0
+        +(x,S(0)) ->= S(x)
+        +(S(0),y) ->= S(y)
+)
+    

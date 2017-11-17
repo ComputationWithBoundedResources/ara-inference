@@ -1,0 +1,18 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        flatten(nil) -> nil
+        flatten(unit(x)) -> flatten(x)
+        flatten(++(x,y)) -> ++(flatten(x),flatten(y))
+        flatten(++(unit(x),y)) -> ++(flatten(x),flatten(y))
+        flatten(flatten(x)) -> flatten(x)
+        rev(nil) -> nil
+        rev(unit(x)) -> unit(x)
+        rev(++(x,y)) -> ++(rev(y),rev(x))
+        rev(rev(x)) -> x
+        ++(x,nil) -> x
+        ++(nil,y) -> y
+        ++(++(x,y),z) -> ++(x,++(y,z))
+        
+)
+    

@@ -1,0 +1,17 @@
+(VAR X X1 X2 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        active(f(g(X),Y)) -> mark(f(X,f(g(X),Y)))
+        active(f(X1,X2)) -> f(active(X1),X2)
+        active(g(X)) -> g(active(X))
+        f(mark(X1),X2) -> mark(f(X1,X2))
+        g(mark(X)) -> mark(g(X))
+        proper(f(X1,X2)) -> f(proper(X1),proper(X2))
+        proper(g(X)) -> g(proper(X))
+        f(ok(X1),ok(X2)) -> ok(f(X1,X2))
+        g(ok(X)) -> ok(g(X))
+        top(mark(X)) -> top(proper(X))
+        top(ok(X)) -> top(active(X))
+        
+)
+    

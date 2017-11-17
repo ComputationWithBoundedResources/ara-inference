@@ -1,0 +1,19 @@
+(VAR accu l orig x y )
+(STRATEGY INNERMOST)
+(RULES 
+        length(nil) -> 0
+        length(cons(x,l)) -> s(length(l))
+        lt(x,0) -> false
+        lt(0,s(y)) -> true
+        lt(s(x),s(y)) -> lt(x,y)
+        head(cons(x,l)) -> x
+        head(nil) -> undefined
+        tail(nil) -> nil
+        tail(cons(x,l)) -> l
+        reverse(l) -> rev(0,l,nil,l)
+        rev(x,l,accu,orig) -> if(lt(x,length(orig)),x,l,accu,orig)
+        if(true,x,l,accu,orig) -> rev(s(x),tail(l),cons(head(l),accu),orig)
+        if(false,x,l,accu,orig) -> accu
+        
+)
+    

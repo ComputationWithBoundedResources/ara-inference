@@ -1,0 +1,13 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        exp(x,0) -> s(0)
+        exp(x,s(y)) -> *(x,exp(x,y))
+        *(0,y) -> 0
+        *(s(x),y) -> +(y,*(x,y))
+        -(0,y) -> 0
+        -(x,0) -> x
+        -(s(x),s(y)) -> -(x,y)
+        
+)
+    

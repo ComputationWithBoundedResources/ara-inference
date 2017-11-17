@@ -1,0 +1,11 @@
+(VAR x1 x12 x2 x4 )
+(STRATEGY INNERMOST)
+(RULES 
+        plus#2(0,x12) -> x12
+        plus#2(S(x4),x2) -> S(plus#2(x4,x2))
+        fold#3(Nil) -> 0
+        fold#3(Cons(x4,x2)) -> plus#2(x4,fold#3(x2))
+        main(x1) -> fold#3(x1)
+        
+)
+    

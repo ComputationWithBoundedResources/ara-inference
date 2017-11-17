@@ -1,0 +1,31 @@
+(VAR u x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        lcm(x,y) -> lcmIter(x,y,0,times(x,y))
+        lcmIter(x,y,z,u) -> if(or(ge(0,x),ge(z,u)),x,y,z,u)
+        if(true,x,y,z,u) -> z
+        if(false,x,y,z,u) -> if2(divisible(z,y),x,y,z,u)
+        if2(true,x,y,z,u) -> z
+        if2(false,x,y,z,u) -> lcmIter(x,y,plus(x,z),u)
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        times(x,y) -> ifTimes(ge(0,x),x,y)
+        ifTimes(true,x,y) -> 0
+        ifTimes(false,x,y) -> plus(y,times(y,p(x)))
+        p(s(x)) -> x
+        p(0) -> s(s(0))
+        ge(x,0) -> true
+        ge(0,s(y)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        or(true,y) -> true
+        or(false,y) -> y
+        divisible(0,s(y)) -> true
+        divisible(s(x),s(y)) -> div(s(x),s(y),s(y))
+        div(x,y,0) -> divisible(x,y)
+        div(0,y,s(z)) -> false
+        div(s(x),y,s(z)) -> div(x,y,z)
+        a -> b
+        a -> c
+        
+)
+    

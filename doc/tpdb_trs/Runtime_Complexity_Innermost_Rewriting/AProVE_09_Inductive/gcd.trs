@@ -1,0 +1,20 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(s(x),y) -> if(gt(s(x),y),x,y)
+        if(true,x,y) -> s(minus(x,y))
+        if(false,x,y) -> 0
+        gcd(x,y) -> if1(ge(x,y),x,y)
+        if1(true,x,y) -> if2(gt(y,0),x,y)
+        if1(false,x,y) -> gcd(y,x)
+        if2(true,x,y) -> gcd(minus(x,y),y)
+        if2(false,x,y) -> x
+        gt(0,y) -> false
+        gt(s(x),0) -> true
+        gt(s(x),s(y)) -> gt(x,y)
+        ge(x,0) -> true
+        ge(0,s(x)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        
+)
+    

@@ -1,0 +1,22 @@
+(VAR x xs y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        +(0,y) -> y
+        +(s(x),y) -> s(+(x,y))
+        ++(nil,ys) -> ys
+        ++(:(x,xs),ys) -> :(x,++(xs,ys))
+        sum(:(x,nil)) -> :(x,nil)
+        sum(:(x,:(y,xs))) -> sum(:(+(x,y),xs))
+        sum(++(xs,:(x,:(y,ys)))) -> sum(++(xs,sum(:(x,:(y,ys)))))
+        -(x,0) -> x
+        -(0,s(y)) -> 0
+        -(s(x),s(y)) -> -(x,y)
+        quot(0,s(y)) -> 0
+        quot(s(x),s(y)) -> s(quot(-(x,y),s(y)))
+        length(nil) -> 0
+        length(:(x,xs)) -> s(length(xs))
+        hd(:(x,xs)) -> x
+        avg(xs) -> quot(hd(sum(xs)),length(xs))
+        
+)
+    

@@ -1,0 +1,29 @@
+(VAR M N X X1 X2 X3 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__U11(tt,M,N) -> a__U12(tt,M,N)
+        a__U12(tt,M,N) -> s(a__plus(mark(N),mark(M)))
+        a__U21(tt,M,N) -> a__U22(tt,M,N)
+        a__U22(tt,M,N) -> a__plus(a__x(mark(N),mark(M)),mark(N))
+        a__plus(N,0) -> mark(N)
+        a__plus(N,s(M)) -> a__U11(tt,M,N)
+        a__x(N,0) -> 0
+        a__x(N,s(M)) -> a__U21(tt,M,N)
+        mark(U11(X1,X2,X3)) -> a__U11(mark(X1),X2,X3)
+        mark(U12(X1,X2,X3)) -> a__U12(mark(X1),X2,X3)
+        mark(plus(X1,X2)) -> a__plus(mark(X1),mark(X2))
+        mark(U21(X1,X2,X3)) -> a__U21(mark(X1),X2,X3)
+        mark(U22(X1,X2,X3)) -> a__U22(mark(X1),X2,X3)
+        mark(x(X1,X2)) -> a__x(mark(X1),mark(X2))
+        mark(tt) -> tt
+        mark(s(X)) -> s(mark(X))
+        mark(0) -> 0
+        a__U11(X1,X2,X3) -> U11(X1,X2,X3)
+        a__U12(X1,X2,X3) -> U12(X1,X2,X3)
+        a__plus(X1,X2) -> plus(X1,X2)
+        a__U21(X1,X2,X3) -> U21(X1,X2,X3)
+        a__U22(X1,X2,X3) -> U22(X1,X2,X3)
+        a__x(X1,X2) -> x(X1,X2)
+        
+)
+    

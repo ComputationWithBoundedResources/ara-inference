@@ -1,0 +1,13 @@
+(VAR x xs )
+(STRATEGY INNERMOST)
+(RULES 
+        odd(Cons(x,xs)) -> even(xs)
+        odd(Nil) -> False
+        even(Cons(x,xs)) -> odd(xs)
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        even(Nil) -> True
+        evenodd(x) -> even(x)
+        
+)
+    

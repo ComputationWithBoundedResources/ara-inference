@@ -1,0 +1,16 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        p(0) -> s(s(0))
+        p(s(x)) -> x
+        p(p(s(x))) -> p(x)
+        le(p(s(x)),x) -> le(x,x)
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        minus(x,y) -> if(le(x,y),x,y)
+        if(true,x,y) -> 0
+        if(false,x,y) -> s(minus(p(x),y))
+        
+)
+    

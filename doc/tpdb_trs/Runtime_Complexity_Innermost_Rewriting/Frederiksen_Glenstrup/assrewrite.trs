@@ -1,0 +1,17 @@
+(VAR a1 b1 c1 exp n opab x y y' )
+(STRATEGY INNERMOST)
+(RULES 
+        rewrite(Op(Val(n),y)) -> Op(rewrite(y),Val(n))
+        rewrite(Op(Op(x,y),y')) -> rewrite[Let](Op(Op(x,y),y'),Op(x,y),rewrite(x))
+        rewrite(Val(n)) -> Val(n)
+        second(Op(x,y)) -> y
+        isOp(Val(n)) -> False
+        isOp(Op(x,y)) -> True
+        first(Val(n)) -> Val(n)
+        first(Op(x,y)) -> x
+        assrewrite(exp) -> rewrite(exp)
+        rewrite[Let](exp,Op(x,y),a1) ->= rewrite[Let][Let](exp,Op(x,y),a1,rewrite(y))
+        rewrite[Let][Let](Op(x,y),opab,a1,b1) ->= rewrite[Let][Let][Let](Op(x,y),a1,b1,rewrite(y))
+        rewrite[Let][Let][Let](exp,a1,b1,c1) ->= rewrite(Op(a1,Op(b1,rewrite(c1))))
+)
+    

@@ -1,0 +1,19 @@
+(VAR x x' xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        bsort(S(x'),Cons(x,xs)) -> bsort(x',bubble(x,xs))
+        len(Cons(x,xs)) -> +(S(0),len(xs))
+        bubble(x',Cons(x,xs)) -> bubble[Ite][False][Ite](<(x',x),x',Cons(x,xs))
+        len(Nil) -> 0
+        bubble(x,Nil) -> Cons(x,Nil)
+        bsort(0,xs) -> xs
+        bubblesort(xs) -> bsort(len(xs),xs)
+        +(x,S(0)) ->= S(x)
+        +(S(0),y) ->= S(y)
+        <(S(x),S(y)) ->= <(x,y)
+        <(0,S(y)) ->= True
+        <(x,0) ->= False
+        bubble[Ite][False][Ite](False,x',Cons(x,xs)) ->= Cons(x,bubble(x',xs))
+        bubble[Ite][False][Ite](True,x',Cons(x,xs)) ->= Cons(x',bubble(x,xs))
+)
+    

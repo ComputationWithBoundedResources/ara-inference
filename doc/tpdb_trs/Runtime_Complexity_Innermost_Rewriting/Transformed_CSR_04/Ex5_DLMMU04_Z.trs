@@ -1,0 +1,28 @@
+(VAR N X X1 X2 XS Y YS )
+(STRATEGY INNERMOST)
+(RULES 
+        pairNs -> cons(0,n__incr(oddNs))
+        oddNs -> incr(pairNs)
+        incr(cons(X,XS)) -> cons(s(X),n__incr(activate(XS)))
+        take(0,XS) -> nil
+        take(s(N),cons(X,XS)) -> cons(X,n__take(N,activate(XS)))
+        zip(nil,XS) -> nil
+        zip(X,nil) -> nil
+        zip(cons(X,XS),cons(Y,YS)) -> cons(pair(X,Y),n__zip(activate(XS),activate(YS)))
+        tail(cons(X,XS)) -> activate(XS)
+        repItems(nil) -> nil
+        repItems(cons(X,XS)) -> cons(X,n__cons(X,n__repItems(activate(XS))))
+        incr(X) -> n__incr(X)
+        take(X1,X2) -> n__take(X1,X2)
+        zip(X1,X2) -> n__zip(X1,X2)
+        cons(X1,X2) -> n__cons(X1,X2)
+        repItems(X) -> n__repItems(X)
+        activate(n__incr(X)) -> incr(X)
+        activate(n__take(X1,X2)) -> take(X1,X2)
+        activate(n__zip(X1,X2)) -> zip(X1,X2)
+        activate(n__cons(X1,X2)) -> cons(X1,X2)
+        activate(n__repItems(X)) -> repItems(X)
+        activate(X) -> X
+        
+)
+    

@@ -1,0 +1,9 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        implies(not(x),y) -> or(x,y)
+        implies(not(x),or(y,z)) -> implies(y,or(x,z))
+        implies(x,or(y,z)) -> or(y,implies(x,z))
+        
+)
+    

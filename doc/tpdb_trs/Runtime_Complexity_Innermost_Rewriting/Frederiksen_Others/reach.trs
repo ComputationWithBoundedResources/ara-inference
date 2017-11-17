@@ -1,0 +1,35 @@
+(VAR e11 e12 e21 e22 edges u v x x' xs xs' y )
+(STRATEGY INNERMOST)
+(RULES 
+        getNodeFromEdge(S(S(x')),E(x,y)) -> y
+        via(u,v,Cons(E(x,y),xs),edges) -> via[Ite](!EQ(u,x),u,v,Cons(E(x,y),xs),edges)
+        getNodeFromEdge(S(0),E(x,y)) -> x
+        member(x',Cons(x,xs)) -> member[Ite](eqEdge(x',x),x',Cons(x,xs))
+        getNodeFromEdge(0,E(x,y)) -> x
+        eqEdge(E(e11,e12),E(e21,e22)) -> eqEdge[Ite](and(!EQ(e11,e21),!EQ(e12,e22)),e21,e22,e11,e12)
+        via(u,v,Nil,edges) -> Nil
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        member(x,Nil) -> False
+        reach(u,v,edges) -> reach[Ite](member(E(u,v),edges),u,v,edges)
+        goal(u,v,edges) -> reach(u,v,edges)
+        !EQ(S(x),S(y)) ->= !EQ(x,y)
+        !EQ(0,S(y)) ->= False
+        !EQ(S(x),0) ->= False
+        !EQ(0,0) ->= True
+        and(False,False) ->= False
+        and(True,False) ->= False
+        and(False,True) ->= False
+        and(True,True) ->= True
+        via[Ite](True,u,v,Cons(E(x,y),xs),edges) ->= via[Let](u,v,Cons(E(x,y),xs),edges,reach(y,v,edges))
+        via[Let](u,v,Cons(x,xs),edges,Nil) ->= via(u,v,xs,edges)
+        via[Let](u,v,Cons(x,xs),edges,Cons(x',xs')) ->= Cons(x,Cons(x',xs'))
+        via[Ite](False,u,v,Cons(x,xs),edges) ->= via(u,v,xs,edges)
+        member[Ite](False,x',Cons(x,xs)) ->= member(x',xs)
+        reach[Ite](False,u,v,edges) ->= via(u,v,edges,edges)
+        reach[Ite](True,u,v,edges) ->= Cons(E(u,v),Nil)
+        member[Ite](True,x,xs) ->= True
+        eqEdge[Ite](False,e21,e22,e11,e12) ->= False
+        eqEdge[Ite](True,e21,e22,e11,e12) ->= True
+)
+    

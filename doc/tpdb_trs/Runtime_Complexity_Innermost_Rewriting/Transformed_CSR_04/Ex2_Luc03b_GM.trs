@@ -1,0 +1,25 @@
+(VAR X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        a__fst(0,Z) -> nil
+        a__fst(s(X),cons(Y,Z)) -> cons(mark(Y),fst(X,Z))
+        a__from(X) -> cons(mark(X),from(s(X)))
+        a__add(0,X) -> mark(X)
+        a__add(s(X),Y) -> s(add(X,Y))
+        a__len(nil) -> 0
+        a__len(cons(X,Z)) -> s(len(Z))
+        mark(fst(X1,X2)) -> a__fst(mark(X1),mark(X2))
+        mark(from(X)) -> a__from(mark(X))
+        mark(add(X1,X2)) -> a__add(mark(X1),mark(X2))
+        mark(len(X)) -> a__len(mark(X))
+        mark(0) -> 0
+        mark(s(X)) -> s(X)
+        mark(nil) -> nil
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        a__fst(X1,X2) -> fst(X1,X2)
+        a__from(X) -> from(X)
+        a__add(X1,X2) -> add(X1,X2)
+        a__len(X) -> len(X)
+        
+)
+    

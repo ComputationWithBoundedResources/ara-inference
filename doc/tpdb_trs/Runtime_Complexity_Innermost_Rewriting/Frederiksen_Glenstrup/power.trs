@@ -1,0 +1,13 @@
+(VAR x x' xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        power(x',Cons(x,xs)) -> mult(x',power(x',xs))
+        mult(x',Cons(x,xs)) -> add0(x',mult(x',xs))
+        add0(x',Cons(x,xs)) -> Cons(Cons(Nil,Nil),add0(x',xs))
+        power(x,Nil) -> Cons(Nil,Nil)
+        mult(x,Nil) -> Nil
+        add0(x,Nil) -> x
+        goal(x,y) -> power(x,y)
+        
+)
+    

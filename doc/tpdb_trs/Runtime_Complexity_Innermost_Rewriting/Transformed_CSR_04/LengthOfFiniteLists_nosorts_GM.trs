@@ -1,0 +1,21 @@
+(VAR L N X X1 X2 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__zeros -> cons(0,zeros)
+        a__and(tt,X) -> mark(X)
+        a__length(nil) -> 0
+        a__length(cons(N,L)) -> s(a__length(mark(L)))
+        mark(zeros) -> a__zeros
+        mark(and(X1,X2)) -> a__and(mark(X1),X2)
+        mark(length(X)) -> a__length(mark(X))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(0) -> 0
+        mark(tt) -> tt
+        mark(nil) -> nil
+        mark(s(X)) -> s(mark(X))
+        a__zeros -> zeros
+        a__and(X1,X2) -> and(X1,X2)
+        a__length(X) -> length(X)
+        
+)
+    

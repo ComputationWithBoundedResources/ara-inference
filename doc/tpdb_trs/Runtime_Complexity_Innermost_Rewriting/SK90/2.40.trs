@@ -1,0 +1,12 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        or(true,y) -> true
+        or(x,true) -> true
+        or(false,false) -> false
+        mem(x,nil) -> false
+        mem(x,set(y)) -> =(x,y)
+        mem(x,union(y,z)) -> or(mem(x,y),mem(x,z))
+        
+)
+    

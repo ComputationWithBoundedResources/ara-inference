@@ -1,0 +1,16 @@
+(VAR a s t u )
+(STRATEGY INNERMOST)
+(RULES 
+        circ(cons(a,s),t) -> cons(msubst(a,t),circ(s,t))
+        circ(cons(lift,s),cons(a,t)) -> cons(a,circ(s,t))
+        circ(cons(lift,s),cons(lift,t)) -> cons(lift,circ(s,t))
+        circ(circ(s,t),u) -> circ(s,circ(t,u))
+        circ(s,id) -> s
+        circ(id,s) -> s
+        circ(cons(lift,s),circ(cons(lift,t),u)) -> circ(cons(lift,circ(s,t)),u)
+        subst(a,id) -> a
+        msubst(a,id) -> a
+        msubst(msubst(a,s),t) -> msubst(a,circ(s,t))
+        
+)
+    

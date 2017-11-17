@@ -1,0 +1,27 @@
+(VAR b x xs xs2 y ys ys2 zs zs2 )
+(STRATEGY INNERMOST)
+(RULES 
+        isEmpty(cons(x,xs)) -> false
+        isEmpty(nil) -> true
+        isZero(0) -> true
+        isZero(s(x)) -> false
+        head(cons(x,xs)) -> x
+        tail(cons(x,xs)) -> xs
+        tail(nil) -> nil
+        append(nil,x) -> cons(x,nil)
+        append(cons(y,ys),x) -> cons(y,append(ys,x))
+        p(s(s(x))) -> s(p(s(x)))
+        p(s(0)) -> 0
+        p(0) -> 0
+        inc(s(x)) -> s(inc(x))
+        inc(0) -> s(0)
+        addLists(xs,ys,zs) -> if(isEmpty(xs),isEmpty(ys),isZero(head(xs)),tail(xs),tail(ys),cons(p(head(xs)),tail(xs)),cons(inc(head(ys)),tail(ys)),zs,append(zs,head(ys)))
+        if(true,true,b,xs,ys,xs2,ys2,zs,zs2) -> zs
+        if(true,false,b,xs,ys,xs2,ys2,zs,zs2) -> differentLengthError
+        if(false,true,b,xs,ys,xs2,ys2,zs,zs2) -> differentLengthError
+        if(false,false,false,xs,ys,xs2,ys2,zs,zs2) -> addLists(xs2,ys2,zs)
+        if(false,false,true,xs,ys,xs2,ys2,zs,zs2) -> addLists(xs,ys,zs2)
+        addList(xs,ys) -> addLists(xs,ys,nil)
+        
+)
+    

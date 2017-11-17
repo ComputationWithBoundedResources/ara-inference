@@ -1,0 +1,54 @@
+(VAR X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        a__sel(s(X),cons(Y,Z)) -> a__sel(mark(X),mark(Z))
+        a__sel(0,cons(X,Z)) -> mark(X)
+        a__first(0,Z) -> nil
+        a__first(s(X),cons(Y,Z)) -> cons(mark(Y),first(X,Z))
+        a__from(X) -> cons(mark(X),from(s(X)))
+        a__sel1(s(X),cons(Y,Z)) -> a__sel1(mark(X),mark(Z))
+        a__sel1(0,cons(X,Z)) -> a__quote(X)
+        a__first1(0,Z) -> nil1
+        a__first1(s(X),cons(Y,Z)) -> cons1(a__quote(Y),a__first1(mark(X),mark(Z)))
+        a__quote(0) -> 01
+        a__quote1(cons(X,Z)) -> cons1(a__quote(X),a__quote1(Z))
+        a__quote1(nil) -> nil1
+        a__quote(s(X)) -> s1(a__quote(X))
+        a__quote(sel(X,Z)) -> a__sel1(mark(X),mark(Z))
+        a__quote1(first(X,Z)) -> a__first1(mark(X),mark(Z))
+        a__unquote(01) -> 0
+        a__unquote(s1(X)) -> s(a__unquote(mark(X)))
+        a__unquote1(nil1) -> nil
+        a__unquote1(cons1(X,Z)) -> a__fcons(a__unquote(mark(X)),a__unquote1(mark(Z)))
+        a__fcons(X,Z) -> cons(mark(X),Z)
+        mark(sel(X1,X2)) -> a__sel(mark(X1),mark(X2))
+        mark(first(X1,X2)) -> a__first(mark(X1),mark(X2))
+        mark(from(X)) -> a__from(mark(X))
+        mark(sel1(X1,X2)) -> a__sel1(mark(X1),mark(X2))
+        mark(quote(X)) -> a__quote(X)
+        mark(first1(X1,X2)) -> a__first1(mark(X1),mark(X2))
+        mark(quote1(X)) -> a__quote1(X)
+        mark(unquote(X)) -> a__unquote(mark(X))
+        mark(unquote1(X)) -> a__unquote1(mark(X))
+        mark(fcons(X1,X2)) -> a__fcons(mark(X1),mark(X2))
+        mark(s(X)) -> s(mark(X))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(0) -> 0
+        mark(nil) -> nil
+        mark(nil1) -> nil1
+        mark(cons1(X1,X2)) -> cons1(mark(X1),mark(X2))
+        mark(01) -> 01
+        mark(s1(X)) -> s1(mark(X))
+        a__sel(X1,X2) -> sel(X1,X2)
+        a__first(X1,X2) -> first(X1,X2)
+        a__from(X) -> from(X)
+        a__sel1(X1,X2) -> sel1(X1,X2)
+        a__quote(X) -> quote(X)
+        a__first1(X1,X2) -> first1(X1,X2)
+        a__quote1(X) -> quote1(X)
+        a__unquote(X) -> unquote(X)
+        a__unquote1(X) -> unquote1(X)
+        a__fcons(X1,X2) -> fcons(X1,X2)
+        
+)
+    

@@ -1,0 +1,20 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(0,y) -> 0
+        minus(s(x),y) -> if(gt(s(x),y),x,y)
+        if(true,x,y) -> s(minus(x,y))
+        if(false,x,y) -> 0
+        mod(x,0) -> 0
+        mod(x,s(y)) -> if1(lt(x,s(y)),x,s(y))
+        if1(true,x,y) -> x
+        if1(false,x,y) -> mod(minus(x,y),y)
+        gt(0,y) -> false
+        gt(s(x),0) -> true
+        gt(s(x),s(y)) -> gt(x,y)
+        lt(x,0) -> false
+        lt(0,s(x)) -> true
+        lt(s(x),s(y)) -> lt(x,y)
+        
+)
+    

@@ -1,0 +1,39 @@
+(VAR M N V1 V2 X X1 X2 )
+(STRATEGY INNERMOST)
+(RULES 
+        U11(tt,V1,V2) -> U12(isNatKind(activate(V1)),activate(V1),activate(V2))
+        U12(tt,V1,V2) -> U13(isNatKind(activate(V2)),activate(V1),activate(V2))
+        U13(tt,V1,V2) -> U14(isNatKind(activate(V2)),activate(V1),activate(V2))
+        U14(tt,V1,V2) -> U15(isNat(activate(V1)),activate(V2))
+        U15(tt,V2) -> U16(isNat(activate(V2)))
+        U16(tt) -> tt
+        U21(tt,V1) -> U22(isNatKind(activate(V1)),activate(V1))
+        U22(tt,V1) -> U23(isNat(activate(V1)))
+        U23(tt) -> tt
+        U31(tt,V2) -> U32(isNatKind(activate(V2)))
+        U32(tt) -> tt
+        U41(tt) -> tt
+        U51(tt,N) -> U52(isNatKind(activate(N)),activate(N))
+        U52(tt,N) -> activate(N)
+        U61(tt,M,N) -> U62(isNatKind(activate(M)),activate(M),activate(N))
+        U62(tt,M,N) -> U63(isNat(activate(N)),activate(M),activate(N))
+        U63(tt,M,N) -> U64(isNatKind(activate(N)),activate(M),activate(N))
+        U64(tt,M,N) -> s(plus(activate(N),activate(M)))
+        isNat(n__0) -> tt
+        isNat(n__plus(V1,V2)) -> U11(isNatKind(activate(V1)),activate(V1),activate(V2))
+        isNat(n__s(V1)) -> U21(isNatKind(activate(V1)),activate(V1))
+        isNatKind(n__0) -> tt
+        isNatKind(n__plus(V1,V2)) -> U31(isNatKind(activate(V1)),activate(V2))
+        isNatKind(n__s(V1)) -> U41(isNatKind(activate(V1)))
+        plus(N,0) -> U51(isNat(N),N)
+        plus(N,s(M)) -> U61(isNat(M),M,N)
+        0 -> n__0
+        plus(X1,X2) -> n__plus(X1,X2)
+        s(X) -> n__s(X)
+        activate(n__0) -> 0
+        activate(n__plus(X1,X2)) -> plus(activate(X1),activate(X2))
+        activate(n__s(X)) -> s(activate(X))
+        activate(X) -> X
+        
+)
+    

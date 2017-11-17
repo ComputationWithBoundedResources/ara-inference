@@ -1,0 +1,17 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        even(0) -> true
+        even(s(0)) -> false
+        even(s(s(x))) -> even(x)
+        half(0) -> 0
+        half(s(s(x))) -> s(half(x))
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        times(0,y) -> 0
+        times(s(x),y) -> if_times(even(s(x)),s(x),y)
+        if_times(true,s(x),y) -> plus(times(half(s(x)),y),times(half(s(x)),y))
+        if_times(false,s(x),y) -> plus(y,times(x,y))
+        
+)
+    

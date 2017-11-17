@@ -1,0 +1,10 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        *(x,*(y,z)) -> *(otimes(x,y),z)
+        *(1,y) -> y
+        *(+(x,y),z) -> oplus(*(x,z),*(y,z))
+        *(x,oplus(y,z)) -> oplus(*(x,y),*(x,z))
+        
+)
+    

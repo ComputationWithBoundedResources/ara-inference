@@ -1,0 +1,13 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        prime(0) -> false
+        prime(s(0)) -> false
+        prime(s(s(x))) -> prime1(s(s(x)),s(x))
+        prime1(x,0) -> false
+        prime1(x,s(0)) -> true
+        prime1(x,s(s(y))) -> and(not(divp(s(s(y)),x)),prime1(x,s(y)))
+        divp(x,y) -> =(rem(x,y),0)
+        
+)
+    

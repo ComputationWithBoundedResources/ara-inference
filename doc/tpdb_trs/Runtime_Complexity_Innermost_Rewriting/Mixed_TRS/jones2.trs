@@ -1,0 +1,9 @@
+(VAR a b c k l x )
+(STRATEGY INNERMOST)
+(RULES 
+        f(empty,l) -> l
+        f(cons(x,k),l) -> g(k,l,cons(x,k))
+        g(a,b,c) -> f(a,cons(b,c))
+        
+)
+    

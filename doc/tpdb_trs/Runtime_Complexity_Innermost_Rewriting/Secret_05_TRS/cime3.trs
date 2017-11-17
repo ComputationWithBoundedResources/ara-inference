@@ -1,0 +1,43 @@
+(VAR X X1 X2 X3 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__a -> a__c
+        a__b -> a__c
+        a__c -> e
+        a__k -> l
+        a__d -> m
+        a__a -> a__d
+        a__b -> a__d
+        a__c -> l
+        a__k -> m
+        a__A -> a__h(a__f(a__a),a__f(a__b))
+        a__h(X,X) -> a__g(mark(X),mark(X),a__f(a__k))
+        a__g(d,X,X) -> a__A
+        a__f(X) -> a__z(mark(X),X)
+        a__z(e,X) -> mark(X)
+        mark(A) -> a__A
+        mark(a) -> a__a
+        mark(b) -> a__b
+        mark(c) -> a__c
+        mark(d) -> a__d
+        mark(k) -> a__k
+        mark(z(X1,X2)) -> a__z(mark(X1),X2)
+        mark(f(X)) -> a__f(mark(X))
+        mark(h(X1,X2)) -> a__h(mark(X1),mark(X2))
+        mark(g(X1,X2,X3)) -> a__g(mark(X1),mark(X2),mark(X3))
+        mark(e) -> e
+        mark(l) -> l
+        mark(m) -> m
+        a__A -> A
+        a__a -> a
+        a__b -> b
+        a__c -> c
+        a__d -> d
+        a__k -> k
+        a__z(X1,X2) -> z(X1,X2)
+        a__f(X) -> f(X)
+        a__h(X1,X2) -> h(X1,X2)
+        a__g(X1,X2,X3) -> g(X1,X2,X3)
+        
+)
+    

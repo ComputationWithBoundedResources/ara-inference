@@ -1,0 +1,34 @@
+(VAR m n x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        eq(0,0) -> true
+        eq(0,s(x)) -> false
+        eq(s(x),0) -> false
+        eq(s(x),s(y)) -> eq(x,y)
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        app(nil,y) -> y
+        app(add(n,x),y) -> add(n,app(x,y))
+        min(add(n,nil)) -> n
+        min(add(n,add(m,x))) -> if_min(le(n,m),add(n,add(m,x)))
+        if_min(true,add(n,add(m,x))) -> min(add(n,x))
+        if_min(false,add(n,add(m,x))) -> min(add(m,x))
+        head(add(n,x)) -> n
+        tail(add(n,x)) -> x
+        tail(nil) -> nil
+        null(nil) -> true
+        null(add(n,x)) -> false
+        rm(n,nil) -> nil
+        rm(n,add(m,x)) -> if_rm(eq(n,m),n,add(m,x))
+        if_rm(true,n,add(m,x)) -> rm(n,x)
+        if_rm(false,n,add(m,x)) -> add(m,rm(n,x))
+        minsort(x) -> mins(x,nil,nil)
+        mins(x,y,z) -> if(null(x),x,y,z)
+        if(true,x,y,z) -> z
+        if(false,x,y,z) -> if2(eq(head(x),min(x)),x,y,z)
+        if2(true,x,y,z) -> mins(app(rm(head(x),tail(x)),y),nil,app(z,add(head(x),nil)))
+        if2(false,x,y,z) -> mins(tail(x),add(head(x),y),z)
+        
+)
+    

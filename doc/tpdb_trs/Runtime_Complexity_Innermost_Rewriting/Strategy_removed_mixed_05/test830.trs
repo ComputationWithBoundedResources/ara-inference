@@ -1,0 +1,10 @@
+(VAR X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        f(s(X)) -> f(X)
+        g(cons(0,Y)) -> g(Y)
+        g(cons(s(X),Y)) -> s(X)
+        h(cons(X,Y)) -> h(g(cons(X,Y)))
+        
+)
+    

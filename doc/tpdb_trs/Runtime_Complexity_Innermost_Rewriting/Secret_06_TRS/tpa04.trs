@@ -1,0 +1,18 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        min(0,y) -> 0
+        min(x,0) -> 0
+        min(s(x),s(y)) -> s(min(x,y))
+        max(0,y) -> y
+        max(x,0) -> x
+        max(s(x),s(y)) -> s(max(x,y))
+        twice(0) -> 0
+        twice(s(x)) -> s(s(twice(x)))
+        -(x,0) -> x
+        -(s(x),s(y)) -> -(x,y)
+        p(s(x)) -> x
+        f(s(x),s(y)) -> f(-(max(s(x),s(y)),min(s(x),s(y))),p(twice(min(x,y))))
+        
+)
+    

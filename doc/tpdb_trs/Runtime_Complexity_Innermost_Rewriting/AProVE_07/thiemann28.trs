@@ -1,0 +1,18 @@
+(VAR b x y )
+(STRATEGY INNERMOST)
+(RULES 
+        ge(x,0) -> true
+        ge(0,s(y)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        minus(x,0) -> x
+        minus(0,y) -> 0
+        minus(s(x),s(y)) -> minus(x,y)
+        id_inc(x) -> x
+        id_inc(x) -> s(x)
+        div(x,y) -> if(ge(y,s(0)),ge(x,y),x,y)
+        if(false,b,x,y) -> div_by_zero
+        if(true,false,x,y) -> 0
+        if(true,true,x,y) -> id_inc(div(minus(x,y),y))
+        
+)
+    

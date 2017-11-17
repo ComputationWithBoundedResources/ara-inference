@@ -1,0 +1,11 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        fib(0) -> 0
+        fib(s(0)) -> s(0)
+        fib(s(s(x))) -> +(fib(s(x)),fib(x))
+        +(x,0) -> x
+        +(x,s(y)) -> s(+(x,y))
+        
+)
+    

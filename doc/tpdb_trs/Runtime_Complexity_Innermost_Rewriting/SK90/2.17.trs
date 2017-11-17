@@ -1,0 +1,10 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        sum(0) -> 0
+        sum(s(x)) -> +(sum(x),s(x))
+        sum1(0) -> 0
+        sum1(s(x)) -> s(+(sum1(x),+(x,x)))
+        
+)
+    

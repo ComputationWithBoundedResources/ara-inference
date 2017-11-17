@@ -1,0 +1,12 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        f(nil) -> nil
+        f(.(nil,y)) -> .(nil,f(y))
+        f(.(.(x,y),z)) -> f(.(x,.(y,z)))
+        g(nil) -> nil
+        g(.(x,nil)) -> .(g(x),nil)
+        g(.(x,.(y,z))) -> g(.(.(x,y),z))
+        
+)
+    

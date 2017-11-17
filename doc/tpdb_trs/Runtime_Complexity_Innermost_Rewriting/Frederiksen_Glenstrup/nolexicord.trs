@@ -1,0 +1,19 @@
+(VAR a1 a2 a3 b1 b2 b3 x x' xs xs' y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        nolexicord(Nil,b1,a2,b2,a3,b3) -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil))))))))))))))))))))))))))))))))))))))))))
+        eqNatList(Cons(x,xs),Cons(y,ys)) -> eqNatList[Match][Cons][Match][Cons][Ite](!EQ(x,y),y,ys,x,xs)
+        eqNatList(Cons(x,xs),Nil) -> False
+        eqNatList(Nil,Cons(y,ys)) -> False
+        eqNatList(Nil,Nil) -> True
+        nolexicord(Cons(x,xs),b1,a2,b2,a3,b3) -> nolexicord[Ite][False][Ite](eqNatList(Cons(x,xs),b1),Cons(x,xs),b1,a2,b2,a3,b3)
+        number42 -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil))))))))))))))))))))))))))))))))))))))))))
+        goal(a1,b1,a2,b2,a3,b3) -> nolexicord(a1,b1,a2,b2,a3,b3)
+        !EQ(S(x),S(y)) ->= !EQ(x,y)
+        !EQ(0,S(y)) ->= False
+        !EQ(S(x),0) ->= False
+        !EQ(0,0) ->= True
+        nolexicord[Ite][False][Ite](False,Cons(x',xs'),Cons(x',xs'),Cons(x',xs'),Cons(x',xs'),Cons(x',xs'),Cons(x,xs)) ->= nolexicord(xs',xs',xs',xs',xs',xs)
+        nolexicord[Ite][False][Ite](True,Cons(x',xs'),Cons(x',xs'),Cons(x',xs'),Cons(x',xs'),Cons(x,xs),Cons(x',xs')) ->= nolexicord(xs',xs',xs',xs',xs',xs)
+)
+    

@@ -1,0 +1,14 @@
+(VAR r x x' xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        isort(Cons(x,xs),r) -> isort(xs,insert(x,r))
+        isort(Nil,r) -> Nil
+        insert(S(x),r) -> insert[Ite](<(S(x),x),S(x),r)
+        inssort(xs) -> isort(xs,Nil)
+        <(S(x),S(y)) ->= <(x,y)
+        <(0,S(y)) ->= True
+        <(x,0) ->= False
+        insert[Ite](False,x',Cons(x,xs)) ->= Cons(x,insert(x',xs))
+        insert[Ite](True,x,r) ->= Cons(x,r)
+)
+    

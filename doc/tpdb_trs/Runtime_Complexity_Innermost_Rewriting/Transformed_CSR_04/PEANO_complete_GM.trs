@@ -1,0 +1,47 @@
+(VAR M N V1 V2 X X1 X2 X3 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__U11(tt,V1,V2) -> a__U12(a__isNat(V1),V2)
+        a__U12(tt,V2) -> a__U13(a__isNat(V2))
+        a__U13(tt) -> tt
+        a__U21(tt,V1) -> a__U22(a__isNat(V1))
+        a__U22(tt) -> tt
+        a__U31(tt,N) -> mark(N)
+        a__U41(tt,M,N) -> s(a__plus(mark(N),mark(M)))
+        a__and(tt,X) -> mark(X)
+        a__isNat(0) -> tt
+        a__isNat(plus(V1,V2)) -> a__U11(a__and(a__isNatKind(V1),isNatKind(V2)),V1,V2)
+        a__isNat(s(V1)) -> a__U21(a__isNatKind(V1),V1)
+        a__isNatKind(0) -> tt
+        a__isNatKind(plus(V1,V2)) -> a__and(a__isNatKind(V1),isNatKind(V2))
+        a__isNatKind(s(V1)) -> a__isNatKind(V1)
+        a__plus(N,0) -> a__U31(a__and(a__isNat(N),isNatKind(N)),N)
+        a__plus(N,s(M)) -> a__U41(a__and(a__and(a__isNat(M),isNatKind(M)),and(isNat(N),isNatKind(N))),M,N)
+        mark(U11(X1,X2,X3)) -> a__U11(mark(X1),X2,X3)
+        mark(U12(X1,X2)) -> a__U12(mark(X1),X2)
+        mark(isNat(X)) -> a__isNat(X)
+        mark(U13(X)) -> a__U13(mark(X))
+        mark(U21(X1,X2)) -> a__U21(mark(X1),X2)
+        mark(U22(X)) -> a__U22(mark(X))
+        mark(U31(X1,X2)) -> a__U31(mark(X1),X2)
+        mark(U41(X1,X2,X3)) -> a__U41(mark(X1),X2,X3)
+        mark(plus(X1,X2)) -> a__plus(mark(X1),mark(X2))
+        mark(and(X1,X2)) -> a__and(mark(X1),X2)
+        mark(isNatKind(X)) -> a__isNatKind(X)
+        mark(tt) -> tt
+        mark(s(X)) -> s(mark(X))
+        mark(0) -> 0
+        a__U11(X1,X2,X3) -> U11(X1,X2,X3)
+        a__U12(X1,X2) -> U12(X1,X2)
+        a__isNat(X) -> isNat(X)
+        a__U13(X) -> U13(X)
+        a__U21(X1,X2) -> U21(X1,X2)
+        a__U22(X) -> U22(X)
+        a__U31(X1,X2) -> U31(X1,X2)
+        a__U41(X1,X2,X3) -> U41(X1,X2,X3)
+        a__plus(X1,X2) -> plus(X1,X2)
+        a__and(X1,X2) -> and(X1,X2)
+        a__isNatKind(X) -> isNatKind(X)
+        
+)
+    

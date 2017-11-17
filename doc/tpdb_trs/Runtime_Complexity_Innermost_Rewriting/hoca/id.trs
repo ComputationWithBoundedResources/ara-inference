@@ -1,0 +1,12 @@
+(VAR x1 x2 x3 x6 x9 )
+(STRATEGY INNERMOST)
+(RULES 
+        compS_f#1(compS_f(x2),x1) -> compS_f#1(x2,S(x1))
+        compS_f#1(id,x3) -> S(x3)
+        iter#3(0) -> id
+        iter#3(S(x6)) -> compS_f(iter#3(x6))
+        main(0) -> 0
+        main(S(x9)) -> compS_f#1(iter#3(x9),0)
+        
+)
+    

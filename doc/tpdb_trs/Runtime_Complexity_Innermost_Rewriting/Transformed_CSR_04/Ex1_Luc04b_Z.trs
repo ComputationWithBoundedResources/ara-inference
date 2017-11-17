@@ -1,0 +1,15 @@
+(VAR X XS )
+(STRATEGY INNERMOST)
+(RULES 
+        nats -> cons(0,n__incr(nats))
+        pairs -> cons(0,n__incr(odds))
+        odds -> incr(pairs)
+        incr(cons(X,XS)) -> cons(s(X),n__incr(activate(XS)))
+        head(cons(X,XS)) -> X
+        tail(cons(X,XS)) -> activate(XS)
+        incr(X) -> n__incr(X)
+        activate(n__incr(X)) -> incr(X)
+        activate(X) -> X
+        
+)
+    

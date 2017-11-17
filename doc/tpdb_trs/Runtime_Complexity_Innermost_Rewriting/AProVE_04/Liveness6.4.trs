@@ -1,0 +1,22 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        top1(free(x),y) -> top2(check(new(x)),y)
+        top1(free(x),y) -> top2(new(x),check(y))
+        top1(free(x),y) -> top2(check(x),new(y))
+        top1(free(x),y) -> top2(x,check(new(y)))
+        top2(x,free(y)) -> top1(check(new(x)),y)
+        top2(x,free(y)) -> top1(new(x),check(y))
+        top2(x,free(y)) -> top1(check(x),new(y))
+        top2(x,free(y)) -> top1(x,check(new(y)))
+        new(free(x)) -> free(new(x))
+        old(free(x)) -> free(old(x))
+        new(serve) -> free(serve)
+        old(serve) -> free(serve)
+        check(free(x)) -> free(check(x))
+        check(new(x)) -> new(check(x))
+        check(old(x)) -> old(check(x))
+        check(old(x)) -> old(x)
+        
+)
+    

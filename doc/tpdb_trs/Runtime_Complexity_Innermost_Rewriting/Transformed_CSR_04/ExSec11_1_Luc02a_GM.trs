@@ -1,0 +1,36 @@
+(VAR N X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        a__terms(N) -> cons(recip(a__sqr(mark(N))),terms(s(N)))
+        a__sqr(0) -> 0
+        a__sqr(s(X)) -> s(a__add(a__sqr(mark(X)),a__dbl(mark(X))))
+        a__dbl(0) -> 0
+        a__dbl(s(X)) -> s(s(a__dbl(mark(X))))
+        a__add(0,X) -> mark(X)
+        a__add(s(X),Y) -> s(a__add(mark(X),mark(Y)))
+        a__first(0,X) -> nil
+        a__first(s(X),cons(Y,Z)) -> cons(mark(Y),first(X,Z))
+        a__half(0) -> 0
+        a__half(s(0)) -> 0
+        a__half(s(s(X))) -> s(a__half(mark(X)))
+        a__half(dbl(X)) -> mark(X)
+        mark(terms(X)) -> a__terms(mark(X))
+        mark(sqr(X)) -> a__sqr(mark(X))
+        mark(add(X1,X2)) -> a__add(mark(X1),mark(X2))
+        mark(dbl(X)) -> a__dbl(mark(X))
+        mark(first(X1,X2)) -> a__first(mark(X1),mark(X2))
+        mark(half(X)) -> a__half(mark(X))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(recip(X)) -> recip(mark(X))
+        mark(s(X)) -> s(mark(X))
+        mark(0) -> 0
+        mark(nil) -> nil
+        a__terms(X) -> terms(X)
+        a__sqr(X) -> sqr(X)
+        a__add(X1,X2) -> add(X1,X2)
+        a__dbl(X) -> dbl(X)
+        a__first(X1,X2) -> first(X1,X2)
+        a__half(X) -> half(X)
+        
+)
+    

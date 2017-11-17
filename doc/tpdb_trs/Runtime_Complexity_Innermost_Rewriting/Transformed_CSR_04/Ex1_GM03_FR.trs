@@ -1,0 +1,23 @@
+(VAR X X1 X2 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        p(0) -> 0
+        p(s(X)) -> X
+        leq(0,Y) -> true
+        leq(s(X),0) -> false
+        leq(s(X),s(Y)) -> leq(X,Y)
+        if(true,X,Y) -> activate(X)
+        if(false,X,Y) -> activate(Y)
+        diff(X,Y) -> if(leq(X,Y),n__0,n__s(n__diff(n__p(X),Y)))
+        0 -> n__0
+        s(X) -> n__s(X)
+        diff(X1,X2) -> n__diff(X1,X2)
+        p(X) -> n__p(X)
+        activate(n__0) -> 0
+        activate(n__s(X)) -> s(activate(X))
+        activate(n__diff(X1,X2)) -> diff(activate(X1),activate(X2))
+        activate(n__p(X)) -> p(activate(X))
+        activate(X) -> X
+        
+)
+    

@@ -1,0 +1,17 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        pred(s(x)) -> x
+        minus(x,0) -> x
+        minus(x,s(y)) -> pred(minus(x,y))
+        gcd(0,y) -> y
+        gcd(s(x),0) -> s(x)
+        gcd(s(x),s(y)) -> if_gcd(le(y,x),s(x),s(y))
+        if_gcd(true,x,y) -> gcd(minus(x,y),y)
+        if_gcd(false,x,y) -> gcd(minus(y,x),x)
+        
+)
+    

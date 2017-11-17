@@ -1,0 +1,21 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        eq(0,0) -> true
+        eq(0,s(y)) -> false
+        eq(s(x),0) -> false
+        eq(s(x),s(y)) -> eq(x,y)
+        if(true,x,y) -> x
+        if(false,x,y) -> y
+        minsort(nil) -> nil
+        minsort(cons(x,y)) -> cons(min(x,y),minsort(del(min(x,y),cons(x,y))))
+        min(x,nil) -> x
+        min(x,cons(y,z)) -> if(le(x,y),min(x,z),min(y,z))
+        del(x,nil) -> nil
+        del(x,cons(y,z)) -> if(eq(x,y),z,cons(y,del(x,z)))
+        
+)
+    

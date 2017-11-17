@@ -1,0 +1,16 @@
+(VAR N X X1 X2 XS )
+(STRATEGY INNERMOST)
+(RULES 
+        a__from(X) -> cons(mark(X),from(s(X)))
+        a__after(0,XS) -> mark(XS)
+        a__after(s(N),cons(X,XS)) -> a__after(mark(N),mark(XS))
+        mark(from(X)) -> a__from(mark(X))
+        mark(after(X1,X2)) -> a__after(mark(X1),mark(X2))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(s(X)) -> s(mark(X))
+        mark(0) -> 0
+        a__from(X) -> from(X)
+        a__after(X1,X2) -> after(X1,X2)
+        
+)
+    

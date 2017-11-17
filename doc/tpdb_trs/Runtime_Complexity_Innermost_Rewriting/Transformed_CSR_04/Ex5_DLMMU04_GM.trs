@@ -1,0 +1,36 @@
+(VAR N X X1 X2 XS Y YS )
+(STRATEGY INNERMOST)
+(RULES 
+        a__pairNs -> cons(0,incr(oddNs))
+        a__oddNs -> a__incr(a__pairNs)
+        a__incr(cons(X,XS)) -> cons(s(mark(X)),incr(XS))
+        a__take(0,XS) -> nil
+        a__take(s(N),cons(X,XS)) -> cons(mark(X),take(N,XS))
+        a__zip(nil,XS) -> nil
+        a__zip(X,nil) -> nil
+        a__zip(cons(X,XS),cons(Y,YS)) -> cons(pair(mark(X),mark(Y)),zip(XS,YS))
+        a__tail(cons(X,XS)) -> mark(XS)
+        a__repItems(nil) -> nil
+        a__repItems(cons(X,XS)) -> cons(mark(X),cons(X,repItems(XS)))
+        mark(pairNs) -> a__pairNs
+        mark(incr(X)) -> a__incr(mark(X))
+        mark(oddNs) -> a__oddNs
+        mark(take(X1,X2)) -> a__take(mark(X1),mark(X2))
+        mark(zip(X1,X2)) -> a__zip(mark(X1),mark(X2))
+        mark(tail(X)) -> a__tail(mark(X))
+        mark(repItems(X)) -> a__repItems(mark(X))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(0) -> 0
+        mark(s(X)) -> s(mark(X))
+        mark(nil) -> nil
+        mark(pair(X1,X2)) -> pair(mark(X1),mark(X2))
+        a__pairNs -> pairNs
+        a__incr(X) -> incr(X)
+        a__oddNs -> oddNs
+        a__take(X1,X2) -> take(X1,X2)
+        a__zip(X1,X2) -> zip(X1,X2)
+        a__tail(X) -> tail(X)
+        a__repItems(X) -> repItems(X)
+        
+)
+    

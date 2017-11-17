@@ -1,0 +1,25 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        minus_active(0,y) -> 0
+        mark(0) -> 0
+        minus_active(s(x),s(y)) -> minus_active(x,y)
+        mark(s(x)) -> s(mark(x))
+        ge_active(x,0) -> true
+        mark(minus(x,y)) -> minus_active(x,y)
+        ge_active(0,s(y)) -> false
+        mark(ge(x,y)) -> ge_active(x,y)
+        ge_active(s(x),s(y)) -> ge_active(x,y)
+        mark(div(x,y)) -> div_active(mark(x),y)
+        div_active(0,s(y)) -> 0
+        mark(if(x,y,z)) -> if_active(mark(x),y,z)
+        div_active(s(x),s(y)) -> if_active(ge_active(x,y),s(div(minus(x,y),s(y))),0)
+        if_active(true,x,y) -> mark(x)
+        minus_active(x,y) -> minus(x,y)
+        if_active(false,x,y) -> mark(y)
+        ge_active(x,y) -> ge(x,y)
+        if_active(x,y,z) -> if(x,y,z)
+        div_active(x,y) -> div(x,y)
+        
+)
+    

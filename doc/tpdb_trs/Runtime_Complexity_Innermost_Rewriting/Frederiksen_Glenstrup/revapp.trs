@@ -1,0 +1,9 @@
+(VAR rest x xs ys )
+(STRATEGY INNERMOST)
+(RULES 
+        revapp(Cons(x,xs),rest) -> revapp(xs,Cons(x,rest))
+        revapp(Nil,rest) -> rest
+        goal(xs,ys) -> revapp(xs,ys)
+        
+)
+    

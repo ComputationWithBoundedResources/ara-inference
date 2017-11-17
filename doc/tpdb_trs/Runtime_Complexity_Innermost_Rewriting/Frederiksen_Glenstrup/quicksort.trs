@@ -1,0 +1,23 @@
+(VAR x x' xs xs1 xs2 y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        quicksort(Cons(x,Cons(x',xs))) -> part(x,Cons(x,Cons(x',xs)),Cons(x,Nil),Nil)
+        quicksort(Cons(x,Nil)) -> Cons(x,Nil)
+        quicksort(Nil) -> Nil
+        part(x',Cons(x,xs),xs1,xs2) -> part[Ite][True][Ite](>(x',x),x',Cons(x,xs),xs1,xs2)
+        part(x,Nil,xs1,xs2) -> app(quicksort(xs1),quicksort(xs2))
+        app(Cons(x,xs),ys) -> Cons(x,app(xs,ys))
+        app(Nil,ys) -> ys
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        goal(xs) -> quicksort(xs)
+        <(S(x),S(y)) ->= <(x,y)
+        <(0,S(y)) ->= True
+        <(x,0) ->= False
+        >(S(x),S(y)) ->= >(x,y)
+        >(0,y) ->= False
+        >(S(x),0) ->= True
+        part[Ite][True][Ite](True,x',Cons(x,xs),xs1,xs2) ->= part(x',xs,Cons(x,xs1),xs2)
+        part[Ite][True][Ite](False,x',Cons(x,xs),xs1,xs2) ->= part[Ite][True][Ite][False][Ite](<(x',x),x',Cons(x,xs),xs1,xs2)
+)
+    

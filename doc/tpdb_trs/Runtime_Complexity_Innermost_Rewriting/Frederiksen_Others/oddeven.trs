@@ -1,0 +1,10 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        odd(S(x)) -> even(x)
+        even(S(x)) -> odd(x)
+        odd(0) -> 0
+        even(0) -> S(0)
+        
+)
+    

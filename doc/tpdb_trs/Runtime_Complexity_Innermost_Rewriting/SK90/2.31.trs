@@ -1,0 +1,13 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        not(true) -> false
+        not(false) -> true
+        odd(0) -> false
+        odd(s(x)) -> not(odd(x))
+        +(x,0) -> x
+        +(x,s(y)) -> s(+(x,y))
+        +(s(x),y) -> s(+(x,y))
+        
+)
+    

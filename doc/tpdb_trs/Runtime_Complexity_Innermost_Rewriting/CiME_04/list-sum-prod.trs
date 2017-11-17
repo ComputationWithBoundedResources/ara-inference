@@ -1,0 +1,16 @@
+(VAR l x y )
+(STRATEGY INNERMOST)
+(RULES 
+        +(x,0) -> x
+        +(0,x) -> x
+        +(s(x),s(y)) -> s(s(+(x,y)))
+        *(x,0) -> 0
+        *(0,x) -> 0
+        *(s(x),s(y)) -> s(+(*(x,y),+(x,y)))
+        sum(nil) -> 0
+        sum(cons(x,l)) -> +(x,sum(l))
+        prod(nil) -> s(0)
+        prod(cons(x,l)) -> *(x,prod(l))
+        
+)
+    

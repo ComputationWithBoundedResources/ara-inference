@@ -1,0 +1,16 @@
+(VAR l n u v x )
+(STRATEGY INNERMOST)
+(RULES 
+        nthtail(n,l) -> cond(ge(n,length(l)),n,l)
+        cond(true,n,l) -> l
+        cond(false,n,l) -> tail(nthtail(s(n),l))
+        tail(nil) -> nil
+        tail(cons(x,l)) -> l
+        length(nil) -> 0
+        length(cons(x,l)) -> s(length(l))
+        ge(u,0) -> true
+        ge(0,s(v)) -> false
+        ge(s(u),s(v)) -> ge(u,v)
+        
+)
+    

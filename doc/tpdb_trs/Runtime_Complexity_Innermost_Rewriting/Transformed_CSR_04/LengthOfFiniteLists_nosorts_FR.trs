@@ -1,0 +1,13 @@
+(VAR L N X )
+(STRATEGY INNERMOST)
+(RULES 
+        zeros -> cons(0,n__zeros)
+        and(tt,X) -> activate(X)
+        length(nil) -> 0
+        length(cons(N,L)) -> s(length(activate(L)))
+        zeros -> n__zeros
+        activate(n__zeros) -> zeros
+        activate(X) -> X
+        
+)
+    

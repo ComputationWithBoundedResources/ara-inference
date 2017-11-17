@@ -1,0 +1,18 @@
+(VAR m n u v x y )
+(STRATEGY INNERMOST)
+(RULES 
+        log(x,s(s(y))) -> cond(le(x,s(s(y))),x,y)
+        cond(true,x,y) -> s(0)
+        cond(false,x,y) -> double(log(x,square(s(s(y)))))
+        le(0,v) -> true
+        le(s(u),0) -> false
+        le(s(u),s(v)) -> le(u,v)
+        double(0) -> 0
+        double(s(x)) -> s(s(double(x)))
+        square(0) -> 0
+        square(s(x)) -> s(plus(square(x),double(x)))
+        plus(n,0) -> n
+        plus(n,s(m)) -> s(plus(n,m))
+        
+)
+    

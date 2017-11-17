@@ -1,0 +1,27 @@
+(VAR u x xs y z )
+(STRATEGY INNERMOST)
+(RULES 
+        prod(xs) -> prodIter(xs,s(0))
+        prodIter(xs,x) -> ifProd(isempty(xs),xs,x)
+        ifProd(true,xs,x) -> x
+        ifProd(false,xs,x) -> prodIter(tail(xs),times(x,head(xs)))
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        times(x,y) -> timesIter(x,y,0,0)
+        timesIter(x,y,z,u) -> ifTimes(ge(u,x),x,y,z,u)
+        ifTimes(true,x,y,z,u) -> z
+        ifTimes(false,x,y,z,u) -> timesIter(x,y,plus(y,z),s(u))
+        isempty(nil) -> true
+        isempty(cons(x,xs)) -> false
+        head(nil) -> error
+        head(cons(x,xs)) -> x
+        tail(nil) -> nil
+        tail(cons(x,xs)) -> xs
+        ge(x,0) -> true
+        ge(0,s(y)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        a -> b
+        a -> c
+        
+)
+    

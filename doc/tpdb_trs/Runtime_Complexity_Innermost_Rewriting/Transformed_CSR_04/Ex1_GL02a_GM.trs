@@ -1,0 +1,28 @@
+(VAR L X X1 X2 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        a__eq(0,0) -> true
+        a__eq(s(X),s(Y)) -> a__eq(X,Y)
+        a__eq(X,Y) -> false
+        a__inf(X) -> cons(X,inf(s(X)))
+        a__take(0,X) -> nil
+        a__take(s(X),cons(Y,L)) -> cons(Y,take(X,L))
+        a__length(nil) -> 0
+        a__length(cons(X,L)) -> s(length(L))
+        mark(eq(X1,X2)) -> a__eq(X1,X2)
+        mark(inf(X)) -> a__inf(mark(X))
+        mark(take(X1,X2)) -> a__take(mark(X1),mark(X2))
+        mark(length(X)) -> a__length(mark(X))
+        mark(0) -> 0
+        mark(true) -> true
+        mark(s(X)) -> s(X)
+        mark(false) -> false
+        mark(cons(X1,X2)) -> cons(X1,X2)
+        mark(nil) -> nil
+        a__eq(X1,X2) -> eq(X1,X2)
+        a__inf(X) -> inf(X)
+        a__take(X1,X2) -> take(X1,X2)
+        a__length(X) -> length(X)
+        
+)
+    

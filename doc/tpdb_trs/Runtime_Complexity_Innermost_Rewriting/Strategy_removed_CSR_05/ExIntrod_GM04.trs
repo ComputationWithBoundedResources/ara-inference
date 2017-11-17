@@ -1,0 +1,12 @@
+(VAR X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        nats -> adx(zeros)
+        zeros -> cons(0,zeros)
+        incr(cons(X,Y)) -> cons(s(X),incr(Y))
+        adx(cons(X,Y)) -> incr(cons(X,adx(Y)))
+        hd(cons(X,Y)) -> X
+        tl(cons(X,Y)) -> Y
+        
+)
+    

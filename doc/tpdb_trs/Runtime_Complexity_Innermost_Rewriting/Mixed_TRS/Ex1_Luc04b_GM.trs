@@ -1,0 +1,28 @@
+(VAR X X1 X2 XS )
+(STRATEGY INNERMOST)
+(RULES 
+        a__nats -> cons(0,incr(nats))
+        a__pairs -> cons(0,incr(odds))
+        a__odds -> a__incr(a__pairs)
+        a__incr(cons(X,XS)) -> cons(s(mark(X)),incr(XS))
+        a__head(cons(X,XS)) -> mark(X)
+        a__tail(cons(X,XS)) -> mark(XS)
+        mark(nats) -> a__nats
+        mark(pairs) -> a__pairs
+        mark(odds) -> a__odds
+        mark(incr(X)) -> a__incr(mark(X))
+        mark(head(X)) -> a__head(mark(X))
+        mark(tail(X)) -> a__tail(mark(X))
+        mark(0) -> 0
+        mark(s(X)) -> s(mark(X))
+        mark(nil) -> nil
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        a__nats -> nats
+        a__pairs -> pairs
+        a__odds -> odds
+        a__incr(X) -> incr(X)
+        a__head(X) -> head(X)
+        a__tail(X) -> tail(X)
+        
+)
+    

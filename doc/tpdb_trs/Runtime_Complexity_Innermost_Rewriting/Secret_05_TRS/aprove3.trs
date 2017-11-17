@@ -1,0 +1,15 @@
+(VAR dummy dummy2 x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        function(iszero,0,dummy,dummy2) -> true
+        function(iszero,s(x),dummy,dummy2) -> false
+        function(p,0,dummy,dummy2) -> 0
+        function(p,s(0),dummy,dummy2) -> 0
+        function(p,s(s(x)),dummy,dummy2) -> s(function(p,s(x),x,x))
+        function(plus,dummy,x,y) -> function(if,function(iszero,x,x,x),x,y)
+        function(if,true,x,y) -> y
+        function(if,false,x,y) -> function(plus,function(third,x,y,y),function(p,x,x,y),s(y))
+        function(third,x,y,z) -> z
+        
+)
+    

@@ -1,0 +1,47 @@
+(VAR IL L M N V V1 V2 X X1 X2 )
+(STRATEGY INNERMOST)
+(RULES 
+        zeros -> cons(0,n__zeros)
+        U11(tt,L) -> s(length(activate(L)))
+        U21(tt) -> nil
+        U31(tt,IL,M,N) -> cons(activate(N),n__take(activate(M),activate(IL)))
+        and(tt,X) -> activate(X)
+        isNat(n__0) -> tt
+        isNat(n__length(V1)) -> isNatList(activate(V1))
+        isNat(n__s(V1)) -> isNat(activate(V1))
+        isNatIList(V) -> isNatList(activate(V))
+        isNatIList(n__zeros) -> tt
+        isNatIList(n__cons(V1,V2)) -> and(isNat(activate(V1)),n__isNatIList(activate(V2)))
+        isNatList(n__nil) -> tt
+        isNatList(n__cons(V1,V2)) -> and(isNat(activate(V1)),n__isNatList(activate(V2)))
+        isNatList(n__take(V1,V2)) -> and(isNat(activate(V1)),n__isNatIList(activate(V2)))
+        length(nil) -> 0
+        length(cons(N,L)) -> U11(and(isNatList(activate(L)),n__isNat(N)),activate(L))
+        take(0,IL) -> U21(isNatIList(IL))
+        take(s(M),cons(N,IL)) -> U31(and(isNatIList(activate(IL)),n__and(n__isNat(M),n__isNat(N))),activate(IL),M,N)
+        zeros -> n__zeros
+        take(X1,X2) -> n__take(X1,X2)
+        0 -> n__0
+        length(X) -> n__length(X)
+        s(X) -> n__s(X)
+        cons(X1,X2) -> n__cons(X1,X2)
+        isNatIList(X) -> n__isNatIList(X)
+        nil -> n__nil
+        isNatList(X) -> n__isNatList(X)
+        isNat(X) -> n__isNat(X)
+        and(X1,X2) -> n__and(X1,X2)
+        activate(n__zeros) -> zeros
+        activate(n__take(X1,X2)) -> take(activate(X1),activate(X2))
+        activate(n__0) -> 0
+        activate(n__length(X)) -> length(activate(X))
+        activate(n__s(X)) -> s(activate(X))
+        activate(n__cons(X1,X2)) -> cons(activate(X1),X2)
+        activate(n__isNatIList(X)) -> isNatIList(X)
+        activate(n__nil) -> nil
+        activate(n__isNatList(X)) -> isNatList(X)
+        activate(n__isNat(X)) -> isNat(X)
+        activate(n__and(X1,X2)) -> and(activate(X1),X2)
+        activate(X) -> X
+        
+)
+    

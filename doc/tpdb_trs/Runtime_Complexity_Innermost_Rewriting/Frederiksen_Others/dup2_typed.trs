@@ -1,0 +1,17 @@
+(VAR x1 x2 y y1 y2 z )
+(STRATEGY INNERMOST)
+(RULES 
+        a(C(x1,x2),y,z) -> C(a(x1,y,z),a(x2,y,y))
+        a(Z,y,z) -> Z
+        eqZList(C(x1,x2),C(y1,y2)) -> and(eqZList(x1,y1),eqZList(x2,y2))
+        eqZList(C(x1,x2),Z) -> False
+        eqZList(Z,C(y1,y2)) -> False
+        eqZList(Z,Z) -> True
+        second(C(x1,x2)) -> x2
+        first(C(x1,x2)) -> x1
+        and(False,False) ->= False
+        and(True,False) ->= False
+        and(False,True) ->= False
+        and(True,True) ->= True
+)
+    

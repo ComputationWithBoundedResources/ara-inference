@@ -1,0 +1,15 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        f(s(x)) -> f(id_inc(c(x,x)))
+        f(c(s(x),y)) -> g(c(x,y))
+        g(c(s(x),y)) -> g(c(y,x))
+        g(c(x,s(y))) -> g(c(y,x))
+        g(c(x,x)) -> f(x)
+        id_inc(c(x,y)) -> c(id_inc(x),id_inc(y))
+        id_inc(s(x)) -> s(id_inc(x))
+        id_inc(0) -> 0
+        id_inc(0) -> s(0)
+        
+)
+    

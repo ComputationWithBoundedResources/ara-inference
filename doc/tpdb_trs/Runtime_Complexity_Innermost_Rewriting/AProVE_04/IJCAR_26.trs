@@ -1,0 +1,31 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        p(s(x)) -> x
+        plus(x,0) -> x
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        plus(s(x),y) -> s(plus(p(s(x)),y))
+        plus(x,s(y)) -> s(plus(x,p(s(y))))
+        times(0,y) -> 0
+        times(s(0),y) -> y
+        times(s(x),y) -> plus(y,times(x,y))
+        div(0,y) -> 0
+        div(x,y) -> quot(x,y,y)
+        quot(0,s(y),z) -> 0
+        quot(s(x),s(y),z) -> quot(x,y,z)
+        quot(x,0,s(z)) -> s(div(x,s(z)))
+        div(div(x,y),z) -> div(x,times(y,z))
+        eq(0,0) -> true
+        eq(s(x),0) -> false
+        eq(0,s(y)) -> false
+        eq(s(x),s(y)) -> eq(x,y)
+        divides(y,x) -> eq(x,times(div(x,y),y))
+        prime(s(s(x))) -> pr(s(s(x)),s(x))
+        pr(x,s(0)) -> true
+        pr(x,s(s(y))) -> if(divides(s(s(y)),x),x,s(y))
+        if(true,x,y) -> false
+        if(false,x,y) -> pr(x,y)
+        
+)
+    

@@ -1,0 +1,10 @@
+(VAR M N X )
+(STRATEGY INNERMOST)
+(RULES 
+        and(tt,X) -> activate(X)
+        plus(N,0) -> N
+        plus(N,s(M)) -> s(plus(N,M))
+        activate(X) -> X
+        
+)
+    

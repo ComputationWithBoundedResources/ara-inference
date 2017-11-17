@@ -1,0 +1,25 @@
+(VAR x xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        max(nil) -> 0
+        max(cons(x,nil)) -> x
+        max(cons(x,cons(y,xs))) -> if1(ge(x,y),x,y,xs)
+        if1(true,x,y,xs) -> max(cons(x,xs))
+        if1(false,x,y,xs) -> max(cons(y,xs))
+        del(x,nil) -> nil
+        del(x,cons(y,xs)) -> if2(eq(x,y),x,y,xs)
+        if2(true,x,y,xs) -> xs
+        if2(false,x,y,xs) -> cons(y,del(x,xs))
+        eq(0,0) -> true
+        eq(0,s(y)) -> false
+        eq(s(x),0) -> false
+        eq(s(x),s(y)) -> eq(x,y)
+        sort(nil) -> nil
+        sort(cons(x,xs)) -> cons(max(cons(x,xs)),sort(del(max(cons(x,xs)),cons(x,xs))))
+        ge(0,0) -> true
+        ge(s(x),0) -> true
+        ge(0,s(x)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        
+)
+    

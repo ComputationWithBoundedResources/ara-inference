@@ -1,0 +1,25 @@
+(VAR x x' xs xs1 xs2 y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        qs(x',Cons(x,xs)) -> app(Cons(x,Nil),Cons(x',quicksort(xs)))
+        quicksort(Cons(x,Cons(x',xs))) -> qs(x,part(x,Cons(x',xs),Nil,Nil))
+        quicksort(Cons(x,Nil)) -> Cons(x,Nil)
+        quicksort(Nil) -> Nil
+        part(x',Cons(x,xs),xs1,xs2) -> part[Ite](>(x',x),x',Cons(x,xs),xs1,xs2)
+        part(x,Nil,xs1,xs2) -> app(xs1,xs2)
+        app(Cons(x,xs),ys) -> Cons(x,app(xs,ys))
+        app(Nil,ys) -> ys
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        <(S(x),S(y)) ->= <(x,y)
+        <(0,S(y)) ->= True
+        <(x,0) ->= False
+        >(S(x),S(y)) ->= >(x,y)
+        >(0,y) ->= False
+        >(S(x),0) ->= True
+        part[Ite](True,x',Cons(x,xs),xs1,xs2) ->= part(x',xs,Cons(x,xs1),xs2)
+        part[False][Ite](True,x',Cons(x,xs),xs1,xs2) ->= part(x',xs,xs1,Cons(x,xs2))
+        part[Ite](False,x',Cons(x,xs),xs1,xs2) ->= part[False][Ite](<(x',x),x',Cons(x,xs),xs1,xs2)
+        part[False][Ite](False,x',Cons(x,xs),xs1,xs2) ->= part(x',xs,xs1,xs2)
+)
+    

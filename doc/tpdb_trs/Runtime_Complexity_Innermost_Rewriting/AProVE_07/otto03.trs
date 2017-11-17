@@ -1,0 +1,13 @@
+(VAR c x y )
+(STRATEGY INNERMOST)
+(RULES 
+        lt(0,s(x)) -> true
+        lt(x,0) -> false
+        lt(s(x),s(y)) -> lt(x,y)
+        fac(x) -> help(x,0)
+        help(x,c) -> if(lt(c,x),x,c)
+        if(true,x,c) -> times(s(c),help(x,s(c)))
+        if(false,x,c) -> s(0)
+        
+)
+    

@@ -1,0 +1,27 @@
+(VAR l l1 l2 l3 x y )
+(STRATEGY INNERMOST)
+(RULES 
+        if(true,x,y) -> x
+        if(false,x,y) -> y
+        eq(0,0) -> true
+        eq(0,s(x)) -> false
+        eq(s(x),0) -> false
+        eq(s(x),s(y)) -> eq(x,y)
+        app(nil,l) -> l
+        app(cons(x,l1),l2) -> cons(x,app(l1,l2))
+        app(app(l1,l2),l3) -> app(l1,app(l2,l3))
+        mem(x,nil) -> false
+        mem(x,cons(y,l)) -> ifmem(eq(x,y),x,l)
+        ifmem(true,x,l) -> true
+        ifmem(false,x,l) -> mem(x,l)
+        inter(x,nil) -> nil
+        inter(nil,x) -> nil
+        inter(app(l1,l2),l3) -> app(inter(l1,l3),inter(l2,l3))
+        inter(l1,app(l2,l3)) -> app(inter(l1,l2),inter(l1,l3))
+        inter(cons(x,l1),l2) -> ifinter(mem(x,l2),x,l1,l2)
+        inter(l1,cons(x,l2)) -> ifinter(mem(x,l1),x,l2,l1)
+        ifinter(true,x,l1,l2) -> cons(x,inter(l1,l2))
+        ifinter(false,x,l1,l2) -> inter(l1,l2)
+        
+)
+    

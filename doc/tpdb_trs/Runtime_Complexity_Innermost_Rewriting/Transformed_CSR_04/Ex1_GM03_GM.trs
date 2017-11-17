@@ -1,0 +1,26 @@
+(VAR X X1 X2 X3 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        a__p(0) -> 0
+        a__p(s(X)) -> mark(X)
+        a__leq(0,Y) -> true
+        a__leq(s(X),0) -> false
+        a__leq(s(X),s(Y)) -> a__leq(mark(X),mark(Y))
+        a__if(true,X,Y) -> mark(X)
+        a__if(false,X,Y) -> mark(Y)
+        a__diff(X,Y) -> a__if(a__leq(mark(X),mark(Y)),0,s(diff(p(X),Y)))
+        mark(p(X)) -> a__p(mark(X))
+        mark(leq(X1,X2)) -> a__leq(mark(X1),mark(X2))
+        mark(if(X1,X2,X3)) -> a__if(mark(X1),X2,X3)
+        mark(diff(X1,X2)) -> a__diff(mark(X1),mark(X2))
+        mark(0) -> 0
+        mark(s(X)) -> s(mark(X))
+        mark(true) -> true
+        mark(false) -> false
+        a__p(X) -> p(X)
+        a__leq(X1,X2) -> leq(X1,X2)
+        a__if(X1,X2,X3) -> if(X1,X2,X3)
+        a__diff(X1,X2) -> diff(X1,X2)
+        
+)
+    

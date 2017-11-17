@@ -1,0 +1,50 @@
+(VAR a1 a2 o1 o2 p t1 t2 x1 x2 y1 y2 )
+(STRATEGY INNERMOST)
+(RULES 
+        disj(T) -> True
+        disj(F) -> True
+        conj(Or(o1,o2)) -> False
+        conj(T) -> True
+        conj(F) -> True
+        disj(And(a1,a2)) -> conj(And(a1,a2))
+        disj(Or(t1,t2)) -> and(conj(t1),disj(t1))
+        conj(And(t1,t2)) -> and(disj(t1),conj(t1))
+        bool(T) -> True
+        bool(F) -> True
+        bool(And(a1,a2)) -> False
+        bool(Or(o1,o2)) -> False
+        isConsTerm(T,T) -> True
+        isConsTerm(T,F) -> False
+        isConsTerm(T,And(y1,y2)) -> False
+        isConsTerm(T,Or(x1,x2)) -> False
+        isConsTerm(F,T) -> False
+        isConsTerm(F,F) -> True
+        isConsTerm(F,And(y1,y2)) -> False
+        isConsTerm(F,Or(x1,x2)) -> False
+        isConsTerm(And(a1,a2),T) -> False
+        isConsTerm(And(a1,a2),F) -> False
+        isConsTerm(And(a1,a2),And(y1,y2)) -> True
+        isConsTerm(And(a1,a2),Or(x1,x2)) -> False
+        isConsTerm(Or(o1,o2),T) -> False
+        isConsTerm(Or(o1,o2),F) -> False
+        isConsTerm(Or(o1,o2),And(y1,y2)) -> False
+        isConsTerm(Or(o1,o2),Or(x1,x2)) -> True
+        isOp(T) -> False
+        isOp(F) -> False
+        isOp(And(t1,t2)) -> True
+        isOp(Or(t1,t2)) -> True
+        isAnd(T) -> False
+        isAnd(F) -> False
+        isAnd(And(t1,t2)) -> True
+        isAnd(Or(t1,t2)) -> False
+        getSecond(And(t1,t2)) -> t1
+        getSecond(Or(t1,t2)) -> t1
+        getFirst(And(t1,t2)) -> t1
+        getFirst(Or(t1,t2)) -> t1
+        disjconj(p) -> disj(p)
+        and(False,False) ->= False
+        and(True,False) ->= False
+        and(False,True) ->= False
+        and(True,True) ->= True
+)
+    

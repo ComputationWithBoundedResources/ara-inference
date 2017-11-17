@@ -1,0 +1,34 @@
+(VAR b x xs y z )
+(STRATEGY INNERMOST)
+(RULES 
+        times(x,y) -> sum(generate(x,y))
+        generate(x,y) -> gen(x,y,0)
+        gen(x,y,z) -> if(ge(z,x),x,y,z)
+        if(true,x,y,z) -> nil
+        if(false,x,y,z) -> cons(y,gen(x,y,s(z)))
+        sum(xs) -> sum2(xs,0)
+        sum2(xs,y) -> ifsum(isNil(xs),isZero(head(xs)),xs,y)
+        ifsum(true,b,xs,y) -> y
+        ifsum(false,b,xs,y) -> ifsum2(b,xs,y)
+        ifsum2(true,xs,y) -> sum2(tail(xs),y)
+        ifsum2(false,xs,y) -> sum2(cons(p(head(xs)),tail(xs)),s(y))
+        isNil(nil) -> true
+        isNil(cons(x,xs)) -> false
+        tail(nil) -> nil
+        tail(cons(x,xs)) -> xs
+        head(cons(x,xs)) -> x
+        head(nil) -> error
+        isZero(0) -> true
+        isZero(s(0)) -> false
+        isZero(s(s(x))) -> isZero(s(x))
+        p(0) -> s(s(0))
+        p(s(0)) -> 0
+        p(s(s(x))) -> s(p(s(x)))
+        ge(x,0) -> true
+        ge(0,s(y)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        a -> c
+        a -> d
+        
+)
+    

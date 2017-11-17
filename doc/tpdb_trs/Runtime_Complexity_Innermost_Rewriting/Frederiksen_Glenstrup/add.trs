@@ -1,0 +1,11 @@
+(VAR x x' xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        add0(x',Cons(x,xs)) -> add0(Cons(Cons(Nil,Nil),x'),xs)
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        add0(x,Nil) -> x
+        goal(x,y) -> add0(x,y)
+        
+)
+    

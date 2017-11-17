@@ -1,0 +1,17 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        division(x,y) -> div(x,y,0)
+        div(x,y,z) -> if(lt(x,y),x,y,inc(z))
+        if(true,x,y,z) -> z
+        if(false,x,s(y),z) -> div(minus(x,s(y)),s(y),z)
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        lt(x,0) -> false
+        lt(0,s(y)) -> true
+        lt(s(x),s(y)) -> lt(x,y)
+        inc(0) -> s(0)
+        inc(s(x)) -> s(inc(x))
+        
+)
+    

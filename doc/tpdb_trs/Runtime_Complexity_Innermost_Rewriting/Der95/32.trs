@@ -1,0 +1,13 @@
+(VAR v w x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        sort(nil) -> nil
+        sort(cons(x,y)) -> insert(x,sort(y))
+        insert(x,nil) -> cons(x,nil)
+        insert(x,cons(v,w)) -> choose(x,cons(v,w),x,v)
+        choose(x,cons(v,w),y,0) -> cons(x,cons(v,w))
+        choose(x,cons(v,w),0,s(z)) -> cons(v,insert(x,w))
+        choose(x,cons(v,w),s(y),s(z)) -> choose(x,cons(v,w),y,z)
+        
+)
+    

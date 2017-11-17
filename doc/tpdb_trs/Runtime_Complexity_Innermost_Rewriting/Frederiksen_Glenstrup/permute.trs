@@ -1,0 +1,15 @@
+(VAR rest revprefix x x' xs )
+(STRATEGY INNERMOST)
+(RULES 
+        select(x',revprefix,Cons(x,xs)) -> mapconsapp(x',permute(revapp(revprefix,Cons(x,xs))),select(x,Cons(x',revprefix),xs))
+        revapp(Cons(x,xs),rest) -> revapp(xs,Cons(x,rest))
+        permute(Cons(x,xs)) -> select(x,Nil,xs)
+        mapconsapp(x',Cons(x,xs),rest) -> Cons(Cons(x',x),mapconsapp(x',xs,rest))
+        select(x,revprefix,Nil) -> mapconsapp(x,permute(revapp(revprefix,Nil)),Nil)
+        revapp(Nil,rest) -> rest
+        permute(Nil) -> Cons(Nil,Nil)
+        mapconsapp(x,Nil,rest) -> rest
+        goal(xs) -> permute(xs)
+        
+)
+    

@@ -1,0 +1,12 @@
+(VAR rest revprefix x x' xs )
+(STRATEGY INNERMOST)
+(RULES 
+        selects(x',revprefix,Cons(x,xs)) -> Cons(Cons(x',revapp(revprefix,Cons(x,xs))),selects(x,Cons(x',revprefix),xs))
+        select(Cons(x,xs)) -> selects(x,Nil,xs)
+        revapp(Cons(x,xs),rest) -> revapp(xs,Cons(x,rest))
+        selects(x,revprefix,Nil) -> Cons(Cons(x,revapp(revprefix,Nil)),Nil)
+        select(Nil) -> Nil
+        revapp(Nil,rest) -> rest
+        
+)
+    

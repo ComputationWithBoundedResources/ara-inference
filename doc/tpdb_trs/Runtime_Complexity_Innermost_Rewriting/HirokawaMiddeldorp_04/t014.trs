@@ -1,0 +1,17 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        -(x,0) -> x
+        -(0,s(y)) -> 0
+        -(s(x),s(y)) -> -(x,y)
+        lt(x,0) -> false
+        lt(0,s(y)) -> true
+        lt(s(x),s(y)) -> lt(x,y)
+        if(true,x,y) -> x
+        if(false,x,y) -> y
+        div(x,0) -> 0
+        div(0,y) -> 0
+        div(s(x),s(y)) -> if(lt(x,y),0,s(div(-(x,y),s(y))))
+        
+)
+    

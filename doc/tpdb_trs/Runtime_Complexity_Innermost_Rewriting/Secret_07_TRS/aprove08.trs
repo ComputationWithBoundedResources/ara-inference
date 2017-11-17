@@ -1,0 +1,26 @@
+(VAR b1 b2 b3 i x y )
+(STRATEGY INNERMOST)
+(RULES 
+        gcd(x,y) -> gcd2(x,y,0)
+        gcd2(x,y,i) -> if1(le(x,0),le(y,0),le(x,y),le(y,x),x,y,inc(i))
+        if1(true,b1,b2,b3,x,y,i) -> pair(result(y),neededIterations(i))
+        if1(false,b1,b2,b3,x,y,i) -> if2(b1,b2,b3,x,y,i)
+        if2(true,b2,b3,x,y,i) -> pair(result(x),neededIterations(i))
+        if2(false,b2,b3,x,y,i) -> if3(b2,b3,x,y,i)
+        if3(false,b3,x,y,i) -> gcd2(minus(x,y),y,i)
+        if3(true,b3,x,y,i) -> if4(b3,x,y,i)
+        if4(false,x,y,i) -> gcd2(x,minus(y,x),i)
+        if4(true,x,y,i) -> pair(result(x),neededIterations(i))
+        inc(0) -> 0
+        inc(s(i)) -> s(inc(i))
+        le(s(x),0) -> false
+        le(0,y) -> true
+        le(s(x),s(y)) -> le(x,y)
+        minus(x,0) -> x
+        minus(0,y) -> 0
+        minus(s(x),s(y)) -> minus(x,y)
+        a -> b
+        a -> c
+        
+)
+    

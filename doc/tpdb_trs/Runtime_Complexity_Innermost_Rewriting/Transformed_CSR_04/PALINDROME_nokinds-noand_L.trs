@@ -1,0 +1,32 @@
+(VAR X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        __(__(X,Y),Z) -> __(X,__(Y,Z))
+        __(X,nil) -> X
+        __(nil,X) -> X
+        U11(tt) -> tt
+        U21(tt) -> U22(isList)
+        U22(tt) -> tt
+        U31(tt) -> tt
+        U41(tt) -> U42(isNeList)
+        U42(tt) -> tt
+        U51(tt) -> U52(isList)
+        U52(tt) -> tt
+        U61(tt) -> tt
+        U71(tt) -> U72(isPal)
+        U72(tt) -> tt
+        U81(tt) -> tt
+        isList -> U11(isNeList)
+        isList -> tt
+        isList -> U21(isList)
+        isNeList -> U31(isQid)
+        isNeList -> U41(isList)
+        isNeList -> U51(isNeList)
+        isNePal -> U61(isQid)
+        isNePal -> U71(isQid)
+        isPal -> U81(isNePal)
+        isPal -> tt
+        isQid -> tt
+        
+)
+    

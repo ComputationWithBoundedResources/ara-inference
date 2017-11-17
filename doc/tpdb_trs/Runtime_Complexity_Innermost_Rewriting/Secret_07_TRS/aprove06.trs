@@ -1,0 +1,30 @@
+(VAR x xs y ys z )
+(STRATEGY INNERMOST)
+(RULES 
+        le(s(x),0) -> false
+        le(0,y) -> true
+        le(s(x),s(y)) -> le(x,y)
+        double(0) -> 0
+        double(s(x)) -> s(s(double(x)))
+        log(0) -> logError
+        log(s(x)) -> loop(s(x),s(0),0)
+        loop(x,s(y),z) -> if(le(x,s(y)),x,s(y),z)
+        if(true,x,y,z) -> z
+        if(false,x,y,z) -> loop(x,double(y),s(z))
+        maplog(xs) -> mapIter(xs,nil)
+        mapIter(xs,ys) -> ifmap(isempty(xs),xs,ys)
+        ifmap(true,xs,ys) -> ys
+        ifmap(false,xs,ys) -> mapIter(droplast(xs),cons(log(last(xs)),ys))
+        isempty(nil) -> true
+        isempty(cons(x,xs)) -> false
+        last(nil) -> error
+        last(cons(x,nil)) -> x
+        last(cons(x,cons(y,xs))) -> last(cons(y,xs))
+        droplast(nil) -> nil
+        droplast(cons(x,nil)) -> nil
+        droplast(cons(x,cons(y,xs))) -> cons(x,droplast(cons(y,xs)))
+        a -> b
+        a -> c
+        
+)
+    

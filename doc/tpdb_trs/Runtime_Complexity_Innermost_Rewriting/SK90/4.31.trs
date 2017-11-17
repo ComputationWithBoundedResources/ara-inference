@@ -1,0 +1,10 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        purge(nil) -> nil
+        purge(.(x,y)) -> .(x,purge(remove(x,y)))
+        remove(x,nil) -> nil
+        remove(x,.(y,z)) -> if(=(x,y),remove(x,z),.(y,remove(x,z)))
+        
+)
+    

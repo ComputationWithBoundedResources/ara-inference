@@ -1,0 +1,24 @@
+(VAR L X X1 X2 XS Y YS )
+(STRATEGY INNERMOST)
+(RULES 
+        a__app(nil,YS) -> mark(YS)
+        a__app(cons(X,XS),YS) -> cons(mark(X),app(XS,YS))
+        a__from(X) -> cons(mark(X),from(s(X)))
+        a__zWadr(nil,YS) -> nil
+        a__zWadr(XS,nil) -> nil
+        a__zWadr(cons(X,XS),cons(Y,YS)) -> cons(a__app(mark(Y),cons(mark(X),nil)),zWadr(XS,YS))
+        a__prefix(L) -> cons(nil,zWadr(L,prefix(L)))
+        mark(app(X1,X2)) -> a__app(mark(X1),mark(X2))
+        mark(from(X)) -> a__from(mark(X))
+        mark(zWadr(X1,X2)) -> a__zWadr(mark(X1),mark(X2))
+        mark(prefix(X)) -> a__prefix(mark(X))
+        mark(nil) -> nil
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(s(X)) -> s(mark(X))
+        a__app(X1,X2) -> app(X1,X2)
+        a__from(X) -> from(X)
+        a__zWadr(X1,X2) -> zWadr(X1,X2)
+        a__prefix(X) -> prefix(X)
+        
+)
+    

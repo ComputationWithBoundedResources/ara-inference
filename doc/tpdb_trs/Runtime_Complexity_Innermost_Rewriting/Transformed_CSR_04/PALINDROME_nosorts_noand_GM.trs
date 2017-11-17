@@ -1,0 +1,22 @@
+(VAR I P X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        a____(__(X,Y),Z) -> a____(mark(X),a____(mark(Y),mark(Z)))
+        a____(X,nil) -> mark(X)
+        a____(nil,X) -> mark(X)
+        a__U11(tt) -> a__U12(tt)
+        a__U12(tt) -> tt
+        a__isNePal(__(I,__(P,I))) -> a__U11(tt)
+        mark(__(X1,X2)) -> a____(mark(X1),mark(X2))
+        mark(U11(X)) -> a__U11(mark(X))
+        mark(U12(X)) -> a__U12(mark(X))
+        mark(isNePal(X)) -> a__isNePal(mark(X))
+        mark(nil) -> nil
+        mark(tt) -> tt
+        a____(X1,X2) -> __(X1,X2)
+        a__U11(X) -> U11(X)
+        a__U12(X) -> U12(X)
+        a__isNePal(X) -> isNePal(X)
+        
+)
+    

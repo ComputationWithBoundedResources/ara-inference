@@ -1,0 +1,8 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        letexp(x,y) -> letexp(Cons(Cons(Nil,Nil),x),y)
+        goal(x,y) -> letexp(x,y)
+        
+)
+    

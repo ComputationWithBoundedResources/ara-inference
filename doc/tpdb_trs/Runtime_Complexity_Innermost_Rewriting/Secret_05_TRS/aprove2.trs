@@ -1,0 +1,16 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        ge(x,0) -> true
+        ge(0,s(x)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        div(x,y) -> ify(ge(y,s(0)),x,y)
+        ify(false,x,y) -> divByZeroError
+        ify(true,x,y) -> if(ge(x,y),x,y)
+        if(false,x,y) -> 0
+        if(true,x,y) -> s(div(minus(x,y),y))
+        
+)
+    

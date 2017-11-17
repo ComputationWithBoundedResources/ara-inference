@@ -1,0 +1,16 @@
+(VAR k l x y )
+(STRATEGY INNERMOST)
+(RULES 
+        app(nil,k) -> k
+        app(l,nil) -> l
+        app(cons(x,l),k) -> cons(x,app(l,k))
+        sum(cons(x,nil)) -> cons(x,nil)
+        sum(cons(x,cons(y,l))) -> sum(cons(plus(x,y),l))
+        sum(app(l,cons(x,cons(y,k)))) -> sum(app(l,sum(cons(x,cons(y,k)))))
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        sum(plus(cons(0,x),cons(y,l))) -> pred(sum(cons(s(x),cons(y,l))))
+        pred(cons(s(x),nil)) -> cons(x,nil)
+        
+)
+    

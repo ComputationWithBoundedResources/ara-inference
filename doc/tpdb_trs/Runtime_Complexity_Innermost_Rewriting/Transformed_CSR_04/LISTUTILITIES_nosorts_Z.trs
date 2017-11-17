@@ -1,0 +1,22 @@
+(VAR N X XS Y YS ZS )
+(STRATEGY INNERMOST)
+(RULES 
+        U11(tt,N,X,XS) -> U12(splitAt(activate(N),activate(XS)),activate(X))
+        U12(pair(YS,ZS),X) -> pair(cons(activate(X),YS),ZS)
+        afterNth(N,XS) -> snd(splitAt(N,XS))
+        and(tt,X) -> activate(X)
+        fst(pair(X,Y)) -> X
+        head(cons(N,XS)) -> N
+        natsFrom(N) -> cons(N,n__natsFrom(s(N)))
+        sel(N,XS) -> head(afterNth(N,XS))
+        snd(pair(X,Y)) -> Y
+        splitAt(0,XS) -> pair(nil,XS)
+        splitAt(s(N),cons(X,XS)) -> U11(tt,N,X,activate(XS))
+        tail(cons(N,XS)) -> activate(XS)
+        take(N,XS) -> fst(splitAt(N,XS))
+        natsFrom(X) -> n__natsFrom(X)
+        activate(n__natsFrom(X)) -> natsFrom(X)
+        activate(X) -> X
+        
+)
+    

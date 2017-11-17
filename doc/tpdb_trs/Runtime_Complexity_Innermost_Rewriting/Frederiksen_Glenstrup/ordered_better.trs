@@ -1,0 +1,16 @@
+(VAR x x' xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        ordered(Cons(x',Cons(x,xs))) -> ordered[Ite](<(x',x),Cons(x',Cons(x,xs)))
+        ordered(Cons(x,Nil)) -> True
+        ordered(Nil) -> True
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        goal(xs) -> ordered(xs)
+        <(S(x),S(y)) ->= <(x,y)
+        <(0,S(y)) ->= True
+        <(x,0) ->= False
+        ordered[Ite](True,Cons(x,xs)) ->= ordered(xs)
+        ordered[Ite](False,xs) ->= False
+)
+    

@@ -1,0 +1,18 @@
+(VAR a1 ab b1 c c1 exp n x y )
+(STRATEGY INNERMOST)
+(RULES 
+        rw(Val(n),c) -> Op(Val(n),rewrite(c))
+        rewrite(Op(x,y)) -> rw(x,y)
+        rw(Op(x,y),c) -> rw[Let](Op(x,y),c,rewrite(x))
+        rewrite(Val(n)) -> Val(n)
+        second(Op(x,y)) -> y
+        isOp(Val(n)) -> False
+        isOp(Op(x,y)) -> True
+        first(Val(n)) -> Val(n)
+        first(Op(x,y)) -> x
+        assrewrite(exp) -> rewrite(exp)
+        rw[Let](Op(x,y),c,a1) ->= rw[Let][Let](Op(x,y),c,a1,rewrite(y))
+        rw[Let][Let](ab,c,a1,b1) ->= rw[Let][Let][Let](c,a1,b1,rewrite(c))
+        rw[Let][Let][Let](c,a1,b1,c1) ->= rw(a1,Op(b1,c1))
+)
+    

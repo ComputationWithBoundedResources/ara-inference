@@ -1,0 +1,15 @@
+(VAR m n u v x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        div(x,s(y)) -> d(x,s(y),0)
+        d(x,s(y),z) -> cond(ge(x,z),x,y,z)
+        cond(true,x,y,z) -> s(d(x,s(y),plus(s(y),z)))
+        cond(false,x,y,z) -> 0
+        ge(u,0) -> true
+        ge(0,s(v)) -> false
+        ge(s(u),s(v)) -> ge(u,v)
+        plus(n,0) -> n
+        plus(n,s(m)) -> s(plus(n,m))
+        
+)
+    

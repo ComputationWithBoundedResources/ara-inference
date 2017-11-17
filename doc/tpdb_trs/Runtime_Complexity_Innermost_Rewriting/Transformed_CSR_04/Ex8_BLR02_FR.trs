@@ -1,0 +1,17 @@
+(VAR N X X1 X2 XS Y )
+(STRATEGY INNERMOST)
+(RULES 
+        fib(N) -> sel(N,fib1(s(0),s(0)))
+        fib1(X,Y) -> cons(X,n__fib1(Y,n__add(X,Y)))
+        add(0,X) -> X
+        add(s(X),Y) -> s(add(X,Y))
+        sel(0,cons(X,XS)) -> X
+        sel(s(N),cons(X,XS)) -> sel(N,activate(XS))
+        fib1(X1,X2) -> n__fib1(X1,X2)
+        add(X1,X2) -> n__add(X1,X2)
+        activate(n__fib1(X1,X2)) -> fib1(activate(X1),activate(X2))
+        activate(n__add(X1,X2)) -> add(activate(X1),activate(X2))
+        activate(X) -> X
+        
+)
+    

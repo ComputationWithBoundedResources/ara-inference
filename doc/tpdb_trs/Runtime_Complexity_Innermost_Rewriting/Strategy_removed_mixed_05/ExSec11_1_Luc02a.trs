@@ -1,0 +1,19 @@
+(VAR N X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        terms(N) -> cons(recip(sqr(N)),terms(s(N)))
+        sqr(0) -> 0
+        sqr(s(X)) -> s(add(sqr(X),dbl(X)))
+        dbl(0) -> 0
+        dbl(s(X)) -> s(s(dbl(X)))
+        add(0,X) -> X
+        add(s(X),Y) -> s(add(X,Y))
+        first(0,X) -> nil
+        first(s(X),cons(Y,Z)) -> cons(Y,first(X,Z))
+        half(0) -> 0
+        half(s(0)) -> 0
+        half(s(s(X))) -> s(half(X))
+        half(dbl(X)) -> X
+        
+)
+    

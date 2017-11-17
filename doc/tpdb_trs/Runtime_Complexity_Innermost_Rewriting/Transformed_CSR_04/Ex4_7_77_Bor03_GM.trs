@@ -1,0 +1,14 @@
+(VAR X X1 X2 XS )
+(STRATEGY INNERMOST)
+(RULES 
+        a__zeros -> cons(0,zeros)
+        a__tail(cons(X,XS)) -> mark(XS)
+        mark(zeros) -> a__zeros
+        mark(tail(X)) -> a__tail(mark(X))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(0) -> 0
+        a__zeros -> zeros
+        a__tail(X) -> tail(X)
+        
+)
+    

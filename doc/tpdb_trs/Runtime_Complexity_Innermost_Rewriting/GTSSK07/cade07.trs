@@ -1,0 +1,12 @@
+(VAR u v x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        f(true,x,y,z) -> g(gt(x,y),x,y,z)
+        g(true,x,y,z) -> f(gt(x,z),x,s(y),z)
+        g(true,x,y,z) -> f(gt(x,z),x,y,s(z))
+        gt(0,v) -> false
+        gt(s(u),0) -> true
+        gt(s(u),s(v)) -> gt(u,v)
+        
+)
+    

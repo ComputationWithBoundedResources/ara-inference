@@ -1,0 +1,18 @@
+(VAR x1 x2 x4 x5 x8 )
+(STRATEGY INNERMOST)
+(RULES 
+        sum#1(Nil) -> 0
+        sum#1(Cons(x2,x1)) -> plus#2(x2,sum#1(x1))
+        map#2(Nil) -> Nil
+        map#2(Cons(x2,x5)) -> Cons(mult#2(x2,x2),map#2(x5))
+        unfoldr#2(0) -> Nil
+        unfoldr#2(S(x2)) -> Cons(x2,unfoldr#2(x2))
+        mult#2(0,x2) -> 0
+        mult#2(S(x4),x2) -> plus#2(x2,mult#2(x4,x2))
+        plus#2(0,x8) -> x8
+        plus#2(S(x4),x2) -> S(plus#2(x4,x2))
+        main(0) -> 0
+        main(S(x1)) -> sum#1(map#2(Cons(S(x1),unfoldr#2(S(x1)))))
+        
+)
+    

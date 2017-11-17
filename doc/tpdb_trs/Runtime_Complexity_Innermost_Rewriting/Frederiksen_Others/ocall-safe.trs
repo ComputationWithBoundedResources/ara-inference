@@ -1,0 +1,10 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        dbl(S(0),S(0)) -> S(S(S(S(0))))
+        save(S(x)) -> dbl(0,save(x))
+        save(0) -> 0
+        dbl(0,y) -> y
+        
+)
+    

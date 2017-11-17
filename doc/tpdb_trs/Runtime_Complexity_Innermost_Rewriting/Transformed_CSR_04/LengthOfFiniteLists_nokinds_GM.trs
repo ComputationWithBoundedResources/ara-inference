@@ -1,0 +1,38 @@
+(VAR L N V V1 V2 X X1 X2 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__zeros -> cons(0,zeros)
+        a__U11(tt,L) -> s(a__length(mark(L)))
+        a__and(tt,X) -> mark(X)
+        a__isNat(0) -> tt
+        a__isNat(length(V1)) -> a__isNatList(V1)
+        a__isNat(s(V1)) -> a__isNat(V1)
+        a__isNatIList(V) -> a__isNatList(V)
+        a__isNatIList(zeros) -> tt
+        a__isNatIList(cons(V1,V2)) -> a__and(a__isNat(V1),isNatIList(V2))
+        a__isNatList(nil) -> tt
+        a__isNatList(cons(V1,V2)) -> a__and(a__isNat(V1),isNatList(V2))
+        a__length(nil) -> 0
+        a__length(cons(N,L)) -> a__U11(a__and(a__isNatList(L),isNat(N)),L)
+        mark(zeros) -> a__zeros
+        mark(U11(X1,X2)) -> a__U11(mark(X1),X2)
+        mark(length(X)) -> a__length(mark(X))
+        mark(and(X1,X2)) -> a__and(mark(X1),X2)
+        mark(isNat(X)) -> a__isNat(X)
+        mark(isNatList(X)) -> a__isNatList(X)
+        mark(isNatIList(X)) -> a__isNatIList(X)
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(0) -> 0
+        mark(tt) -> tt
+        mark(s(X)) -> s(mark(X))
+        mark(nil) -> nil
+        a__zeros -> zeros
+        a__U11(X1,X2) -> U11(X1,X2)
+        a__length(X) -> length(X)
+        a__and(X1,X2) -> and(X1,X2)
+        a__isNat(X) -> isNat(X)
+        a__isNatList(X) -> isNatList(X)
+        a__isNatIList(X) -> isNatIList(X)
+        
+)
+    

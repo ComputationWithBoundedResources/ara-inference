@@ -1,0 +1,12 @@
+(VAR X )
+(STRATEGY INNERMOST)
+(RULES 
+        f(0) -> cons(0,n__f(s(0)))
+        f(s(0)) -> f(p(s(0)))
+        p(s(0)) -> 0
+        f(X) -> n__f(X)
+        activate(n__f(X)) -> f(X)
+        activate(X) -> X
+        
+)
+    

@@ -1,0 +1,9 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(minus(x)) -> x
+        minus(h(x)) -> h(minus(x))
+        minus(f(x,y)) -> f(minus(y),minus(x))
+        
+)
+    

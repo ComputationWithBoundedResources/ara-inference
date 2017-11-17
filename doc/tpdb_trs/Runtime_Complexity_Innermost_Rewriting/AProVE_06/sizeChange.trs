@@ -1,0 +1,10 @@
+(VAR w ws xs y ys z zs )
+(STRATEGY INNERMOST)
+(RULES 
+        r(xs,ys,zs,nil) -> xs
+        r(xs,nil,zs,cons(w,ws)) -> r(xs,xs,cons(succ(zero),zs),ws)
+        r(xs,cons(y,ys),nil,cons(w,ws)) -> r(xs,xs,cons(succ(zero),nil),ws)
+        r(xs,cons(y,ys),cons(z,zs),cons(w,ws)) -> r(ys,cons(y,ys),zs,cons(succ(zero),cons(w,ws)))
+        
+)
+    

@@ -1,0 +1,12 @@
+(VAR X X1 X2 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        f(g(X),Y) -> f(X,n__f(n__g(X),activate(Y)))
+        f(X1,X2) -> n__f(X1,X2)
+        g(X) -> n__g(X)
+        activate(n__f(X1,X2)) -> f(activate(X1),X2)
+        activate(n__g(X)) -> g(activate(X))
+        activate(X) -> X
+        
+)
+    

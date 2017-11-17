@@ -1,0 +1,16 @@
+(VAR X )
+(STRATEGY INNERMOST)
+(RULES 
+        f(f(X)) -> c(n__f(n__g(n__f(X))))
+        c(X) -> d(activate(X))
+        h(X) -> c(n__d(X))
+        f(X) -> n__f(X)
+        g(X) -> n__g(X)
+        d(X) -> n__d(X)
+        activate(n__f(X)) -> f(activate(X))
+        activate(n__g(X)) -> g(X)
+        activate(n__d(X)) -> d(X)
+        activate(X) -> X
+        
+)
+    

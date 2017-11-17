@@ -1,0 +1,21 @@
+(VAR X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        primes -> sieve(from(s(s(0))))
+        from(X) -> cons(X,n__from(s(X)))
+        head(cons(X,Y)) -> X
+        tail(cons(X,Y)) -> activate(Y)
+        if(true,X,Y) -> activate(X)
+        if(false,X,Y) -> activate(Y)
+        filter(s(s(X)),cons(Y,Z)) -> if(divides(s(s(X)),Y),n__filter(s(s(X)),activate(Z)),n__cons(Y,n__filter(X,sieve(Y))))
+        sieve(cons(X,Y)) -> cons(X,n__filter(X,sieve(activate(Y))))
+        from(X) -> n__from(X)
+        filter(X1,X2) -> n__filter(X1,X2)
+        cons(X1,X2) -> n__cons(X1,X2)
+        activate(n__from(X)) -> from(X)
+        activate(n__filter(X1,X2)) -> filter(X1,X2)
+        activate(n__cons(X1,X2)) -> cons(X1,X2)
+        activate(X) -> X
+        
+)
+    

@@ -1,0 +1,11 @@
+(VAR m n x y )
+(STRATEGY INNERMOST)
+(RULES 
+        sum(cons(s(n),x),cons(m,y)) -> sum(cons(n,x),cons(s(m),y))
+        sum(cons(0,x),y) -> sum(x,y)
+        sum(nil,y) -> y
+        weight(cons(n,cons(m,x))) -> weight(sum(cons(n,cons(m,x)),cons(0,x)))
+        weight(cons(n,nil)) -> n
+        
+)
+    

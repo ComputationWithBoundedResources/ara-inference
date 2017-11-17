@@ -1,0 +1,17 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        plus(0,x) -> x
+        plus(s(x),y) -> s(plus(p(s(x)),y))
+        times(0,y) -> 0
+        times(s(x),y) -> plus(y,times(p(s(x)),y))
+        exp(x,0) -> s(0)
+        exp(x,s(y)) -> times(x,exp(x,y))
+        p(s(0)) -> 0
+        p(s(s(x))) -> s(p(s(x)))
+        tower(x,y) -> towerIter(x,y,s(0))
+        towerIter(0,y,z) -> z
+        towerIter(s(x),y,z) -> towerIter(p(s(x)),y,exp(y,z))
+        
+)
+    

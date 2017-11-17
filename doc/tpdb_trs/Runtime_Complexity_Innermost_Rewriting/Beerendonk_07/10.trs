@@ -1,0 +1,21 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        cond1(true,x) -> cond2(even(x),x)
+        cond2(true,x) -> cond1(neq(x,0),div2(x))
+        cond2(false,x) -> cond1(neq(x,0),p(x))
+        neq(0,0) -> false
+        neq(0,s(x)) -> true
+        neq(s(x),0) -> true
+        neq(s(x),s(y)) -> neq(x,y)
+        even(0) -> true
+        even(s(0)) -> false
+        even(s(s(x))) -> even(x)
+        div2(0) -> 0
+        div2(s(0)) -> 0
+        div2(s(s(x))) -> s(div2(x))
+        p(0) -> 0
+        p(s(x)) -> x
+        
+)
+    

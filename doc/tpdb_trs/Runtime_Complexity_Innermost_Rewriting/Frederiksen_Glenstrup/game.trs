@@ -1,0 +1,16 @@
+(VAR moves p1 p2 x x' xs xs' ys )
+(STRATEGY INNERMOST)
+(RULES 
+        @(Cons(x,xs),ys) -> Cons(x,@(xs,ys))
+        @(Nil,ys) -> ys
+        game(p1,Cons(x',xs'),Cons(Capture,xs)) -> game(Cons(x',p1),xs',xs)
+        game(p1,p2,Cons(Swap,xs)) -> game(p2,p1,xs)
+        equal(Capture,Capture) -> True
+        equal(Capture,Swap) -> False
+        equal(Swap,Capture) -> False
+        equal(Swap,Swap) -> True
+        game(p1,p2,Nil) -> @(p1,p2)
+        goal(p1,p2,moves) -> game(p1,p2,moves)
+        
+)
+    

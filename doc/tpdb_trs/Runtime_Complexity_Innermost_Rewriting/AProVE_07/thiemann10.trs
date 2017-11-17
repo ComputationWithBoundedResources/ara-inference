@@ -1,0 +1,18 @@
+(VAR l x )
+(STRATEGY INNERMOST)
+(RULES 
+        half(0) -> 0
+        half(s(0)) -> 0
+        half(s(s(x))) -> s(half(x))
+        lastbit(0) -> 0
+        lastbit(s(0)) -> s(0)
+        lastbit(s(s(x))) -> lastbit(x)
+        zero(0) -> true
+        zero(s(x)) -> false
+        conv(x) -> conviter(x,cons(0,nil))
+        conviter(x,l) -> if(zero(x),x,l)
+        if(true,x,l) -> l
+        if(false,x,l) -> conviter(half(x),cons(lastbit(x),l))
+        
+)
+    

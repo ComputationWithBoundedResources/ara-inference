@@ -1,0 +1,16 @@
+(VAR u v x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        quot(x,0) -> quotZeroErro
+        quot(x,s(y)) -> quotIter(x,s(y),0,0,0)
+        quotIter(x,s(y),z,u,v) -> if(le(x,z),x,s(y),z,u,v)
+        if(true,x,y,z,u,v) -> v
+        if(false,x,y,z,u,v) -> if2(le(y,s(u)),x,y,s(z),s(u),v)
+        if2(false,x,y,z,u,v) -> quotIter(x,y,z,u,v)
+        if2(true,x,y,z,u,v) -> quotIter(x,y,z,0,s(v))
+        
+)
+    

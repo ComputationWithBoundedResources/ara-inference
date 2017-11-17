@@ -1,0 +1,20 @@
+(VAR M N X X1 X2 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__and(tt,X) -> mark(X)
+        a__plus(N,0) -> mark(N)
+        a__plus(N,s(M)) -> s(a__plus(mark(N),mark(M)))
+        a__x(N,0) -> 0
+        a__x(N,s(M)) -> a__plus(a__x(mark(N),mark(M)),mark(N))
+        mark(and(X1,X2)) -> a__and(mark(X1),X2)
+        mark(plus(X1,X2)) -> a__plus(mark(X1),mark(X2))
+        mark(x(X1,X2)) -> a__x(mark(X1),mark(X2))
+        mark(tt) -> tt
+        mark(0) -> 0
+        mark(s(X)) -> s(mark(X))
+        a__and(X1,X2) -> and(X1,X2)
+        a__plus(X1,X2) -> plus(X1,X2)
+        a__x(X1,X2) -> x(X1,X2)
+        
+)
+    

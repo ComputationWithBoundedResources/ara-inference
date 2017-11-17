@@ -1,0 +1,13 @@
+(VAR x xs ys )
+(STRATEGY INNERMOST)
+(RULES 
+        shuffle(Cons(x,xs)) -> Cons(x,shuffle(reverse(xs)))
+        reverse(Cons(x,xs)) -> append(reverse(xs),Cons(x,Nil))
+        append(Cons(x,xs),ys) -> Cons(x,append(xs,ys))
+        shuffle(Nil) -> Nil
+        reverse(Nil) -> Nil
+        append(Nil,ys) -> ys
+        goal(xs) -> shuffle(xs)
+        
+)
+    

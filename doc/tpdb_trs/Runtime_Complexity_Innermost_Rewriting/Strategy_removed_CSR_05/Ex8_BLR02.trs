@@ -1,0 +1,12 @@
+(VAR N X XS Y )
+(STRATEGY INNERMOST)
+(RULES 
+        fib(N) -> sel(N,fib1(s(0),s(0)))
+        fib1(X,Y) -> cons(X,fib1(Y,add(X,Y)))
+        add(0,X) -> X
+        add(s(X),Y) -> s(add(X,Y))
+        sel(0,cons(X,XS)) -> X
+        sel(s(N),cons(X,XS)) -> sel(N,XS)
+        
+)
+    

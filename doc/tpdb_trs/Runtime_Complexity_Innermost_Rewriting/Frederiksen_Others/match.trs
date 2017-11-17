@@ -1,0 +1,15 @@
+(VAR p pp s ss x x' xs xs' y )
+(STRATEGY INNERMOST)
+(RULES 
+        loop(Cons(x,xs),Nil,pp,ss) -> False
+        loop(Cons(x',xs'),Cons(x,xs),pp,ss) -> loop[Ite](!EQ(x',x),Cons(x',xs'),Cons(x,xs),pp,ss)
+        loop(Nil,s,pp,ss) -> True
+        match1(p,s) -> loop(p,s,p,s)
+        !EQ(S(x),S(y)) ->= !EQ(x,y)
+        !EQ(0,S(y)) ->= False
+        !EQ(S(x),0) ->= False
+        !EQ(0,0) ->= True
+        loop[Ite](False,p,s,pp,Cons(x,xs)) ->= loop(pp,xs,pp,xs)
+        loop[Ite](True,Cons(x',xs'),Cons(x,xs),pp,ss) ->= loop(xs',xs,pp,ss)
+)
+    

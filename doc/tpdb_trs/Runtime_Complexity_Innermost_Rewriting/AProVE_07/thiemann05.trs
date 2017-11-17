@@ -1,0 +1,17 @@
+(VAR b u v y )
+(STRATEGY INNERMOST)
+(RULES 
+        isLeaf(leaf) -> true
+        isLeaf(cons(u,v)) -> false
+        left(cons(u,v)) -> u
+        right(cons(u,v)) -> v
+        concat(leaf,y) -> y
+        concat(cons(u,v),y) -> cons(u,concat(v,y))
+        less_leaves(u,v) -> if1(isLeaf(u),isLeaf(v),u,v)
+        if1(b,true,u,v) -> false
+        if1(b,false,u,v) -> if2(b,u,v)
+        if2(true,u,v) -> true
+        if2(false,u,v) -> less_leaves(concat(left(u),right(u)),concat(left(v),right(v)))
+        
+)
+    

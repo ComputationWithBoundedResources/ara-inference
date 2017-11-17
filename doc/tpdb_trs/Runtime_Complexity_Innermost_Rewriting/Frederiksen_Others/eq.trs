@@ -1,0 +1,10 @@
+(VAR x x' )
+(STRATEGY INNERMOST)
+(RULES 
+        eq0(S(x'),S(x)) -> eq0(x',x)
+        eq0(S(x),0) -> 0
+        eq0(0,S(x)) -> 0
+        eq0(0,0) -> S(0)
+        
+)
+    

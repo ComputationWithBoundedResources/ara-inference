@@ -1,0 +1,9 @@
+(VAR x xs )
+(STRATEGY INNERMOST)
+(RULES 
+        duplicate(Cons(x,xs)) -> Cons(x,Cons(x,duplicate(xs)))
+        duplicate(Nil) -> Nil
+        goal(x) -> duplicate(x)
+        
+)
+    

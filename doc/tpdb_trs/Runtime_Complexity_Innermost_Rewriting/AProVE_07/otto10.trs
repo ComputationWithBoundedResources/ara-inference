@@ -1,0 +1,17 @@
+(VAR c l x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        ge(x,0) -> true
+        ge(0,s(y)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        rev(x) -> if(x,eq(0,length(x)),nil,0,length(x))
+        if(x,true,z,c,l) -> z
+        if(x,false,z,c,l) -> help(s(c),l,x,z)
+        help(c,l,cons(x,y),z) -> if(append(y,cons(x,nil)),ge(c,l),cons(x,z),c,l)
+        append(nil,y) -> y
+        append(cons(x,y),z) -> cons(x,append(y,z))
+        length(nil) -> 0
+        length(cons(x,y)) -> s(length(y))
+        
+)
+    

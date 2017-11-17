@@ -1,0 +1,10 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        *(x,+(y,z)) -> +(*(x,y),*(x,z))
+        *(+(x,y),z) -> +(*(x,z),*(y,z))
+        *(x,1) -> x
+        *(1,y) -> y
+        
+)
+    

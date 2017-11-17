@@ -1,0 +1,14 @@
+(VAR X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        f(X) -> if(X,c,n__f(n__true))
+        if(true,X,Y) -> X
+        if(false,X,Y) -> activate(Y)
+        f(X) -> n__f(X)
+        true -> n__true
+        activate(n__f(X)) -> f(activate(X))
+        activate(n__true) -> true
+        activate(X) -> X
+        
+)
+    

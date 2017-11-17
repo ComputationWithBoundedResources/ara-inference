@@ -1,0 +1,9 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        ack(0,y) -> s(y)
+        ack(s(x),0) -> ack(x,s(0))
+        ack(s(x),s(y)) -> ack(x,ack(s(x),y))
+        
+)
+    

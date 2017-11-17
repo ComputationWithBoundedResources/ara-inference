@@ -1,0 +1,16 @@
+(VAR x xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        sub(0,0) -> 0
+        sub(s(x),0) -> s(x)
+        sub(0,s(x)) -> 0
+        sub(s(x),s(y)) -> sub(x,y)
+        zero(nil) -> zero2(0,nil)
+        zero(cons(x,xs)) -> zero2(sub(x,x),cons(x,xs))
+        zero2(0,nil) -> nil
+        zero2(0,cons(x,xs)) -> cons(sub(x,x),zero(xs))
+        zero2(s(y),nil) -> zero(nil)
+        zero2(s(y),cons(x,xs)) -> zero(cons(x,xs))
+        
+)
+    

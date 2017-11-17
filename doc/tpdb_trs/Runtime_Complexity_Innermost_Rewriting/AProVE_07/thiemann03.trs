@@ -1,0 +1,19 @@
+(VAR n x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        null(nil) -> true
+        null(add(n,x)) -> false
+        tail(add(n,x)) -> x
+        tail(nil) -> nil
+        head(add(n,x)) -> n
+        app(nil,y) -> y
+        app(add(n,x),y) -> add(n,app(x,y))
+        reverse(nil) -> nil
+        reverse(add(n,x)) -> app(reverse(x),add(n,nil))
+        shuffle(x) -> shuff(x,nil)
+        shuff(x,y) -> if(null(x),x,y,app(y,add(head(x),nil)))
+        if(true,x,y,z) -> y
+        if(false,x,y,z) -> shuff(reverse(tail(x)),z)
+        
+)
+    

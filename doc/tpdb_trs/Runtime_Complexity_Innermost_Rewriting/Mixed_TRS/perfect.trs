@@ -1,0 +1,12 @@
+(VAR u x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        perfectp(0) -> false
+        perfectp(s(x)) -> f(x,s(0),s(x),s(x))
+        f(0,y,0,u) -> true
+        f(0,y,s(z),u) -> false
+        f(s(x),0,z,u) -> f(x,u,minus(z,s(x)),u)
+        f(s(x),s(y),z,u) -> if(le(x,y),f(s(x),minus(y,x),z,u),f(x,u,z,u))
+        
+)
+    

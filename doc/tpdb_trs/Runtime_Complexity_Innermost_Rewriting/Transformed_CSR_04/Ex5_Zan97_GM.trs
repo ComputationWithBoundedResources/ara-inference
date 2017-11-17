@@ -1,0 +1,16 @@
+(VAR X X1 X2 X3 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        a__f(X) -> a__if(mark(X),c,f(true))
+        a__if(true,X,Y) -> mark(X)
+        a__if(false,X,Y) -> mark(Y)
+        mark(f(X)) -> a__f(mark(X))
+        mark(if(X1,X2,X3)) -> a__if(mark(X1),mark(X2),X3)
+        mark(c) -> c
+        mark(true) -> true
+        mark(false) -> false
+        a__f(X) -> f(X)
+        a__if(X1,X2,X3) -> if(X1,X2,X3)
+        
+)
+    

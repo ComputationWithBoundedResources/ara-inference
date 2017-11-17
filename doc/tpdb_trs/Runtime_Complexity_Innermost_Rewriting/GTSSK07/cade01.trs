@@ -1,0 +1,12 @@
+(VAR u v x y )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(x,y) -> cond(gt(x,y),x,y)
+        cond(false,x,y) -> 0
+        cond(true,x,y) -> s(minus(x,s(y)))
+        gt(0,v) -> false
+        gt(s(u),0) -> true
+        gt(s(u),s(v)) -> gt(u,v)
+        
+)
+    

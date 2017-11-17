@@ -1,0 +1,29 @@
+(VAR n r rest x x1 x2 )
+(STRATEGY INNERMOST)
+(RULES 
+        revconsapp(C(x1,x2),r) -> revconsapp(x2,C(x1,r))
+        deeprevapp(C(x1,x2),rest) -> deeprevapp(x2,C(x1,rest))
+        deeprevapp(V(n),rest) -> revconsapp(rest,V(n))
+        deeprevapp(N,rest) -> rest
+        revconsapp(V(n),r) -> r
+        revconsapp(N,r) -> r
+        deeprev(C(x1,x2)) -> deeprevapp(C(x1,x2),N)
+        deeprev(V(n)) -> V(n)
+        deeprev(N) -> N
+        second(V(n)) -> N
+        second(C(x1,x2)) -> x2
+        isVal(C(x1,x2)) -> False
+        isVal(V(n)) -> True
+        isVal(N) -> False
+        isNotEmptyT(C(x1,x2)) -> True
+        isNotEmptyT(V(n)) -> False
+        isNotEmptyT(N) -> False
+        isEmptyT(C(x1,x2)) -> False
+        isEmptyT(V(n)) -> False
+        isEmptyT(N) -> True
+        first(V(n)) -> N
+        first(C(x1,x2)) -> x1
+        goal(x) -> deeprev(x)
+        
+)
+    

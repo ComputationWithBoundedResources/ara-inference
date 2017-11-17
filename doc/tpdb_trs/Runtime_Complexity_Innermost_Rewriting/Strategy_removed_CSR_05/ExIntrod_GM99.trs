@@ -1,0 +1,14 @@
+(VAR X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        primes -> sieve(from(s(s(0))))
+        from(X) -> cons(X,from(s(X)))
+        head(cons(X,Y)) -> X
+        tail(cons(X,Y)) -> Y
+        if(true,X,Y) -> X
+        if(false,X,Y) -> Y
+        filter(s(s(X)),cons(Y,Z)) -> if(divides(s(s(X)),Y),filter(s(s(X)),Z),cons(Y,filter(X,sieve(Y))))
+        sieve(cons(X,Y)) -> cons(X,filter(X,sieve(Y)))
+        
+)
+    

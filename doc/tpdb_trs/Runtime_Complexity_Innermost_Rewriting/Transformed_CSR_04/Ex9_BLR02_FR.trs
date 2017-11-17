@@ -1,0 +1,21 @@
+(VAR M N X X1 X2 X3 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        filter(cons(X,Y),0,M) -> cons(0,n__filter(activate(Y),M,M))
+        filter(cons(X,Y),s(N),M) -> cons(X,n__filter(activate(Y),N,M))
+        sieve(cons(0,Y)) -> cons(0,n__sieve(activate(Y)))
+        sieve(cons(s(N),Y)) -> cons(s(N),n__sieve(n__filter(activate(Y),N,N)))
+        nats(N) -> cons(N,n__nats(n__s(N)))
+        zprimes -> sieve(nats(s(s(0))))
+        filter(X1,X2,X3) -> n__filter(X1,X2,X3)
+        sieve(X) -> n__sieve(X)
+        nats(X) -> n__nats(X)
+        s(X) -> n__s(X)
+        activate(n__filter(X1,X2,X3)) -> filter(activate(X1),activate(X2),activate(X3))
+        activate(n__sieve(X)) -> sieve(activate(X))
+        activate(n__nats(X)) -> nats(activate(X))
+        activate(n__s(X)) -> s(activate(X))
+        activate(X) -> X
+        
+)
+    

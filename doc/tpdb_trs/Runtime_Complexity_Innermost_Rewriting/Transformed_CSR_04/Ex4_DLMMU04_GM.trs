@@ -1,0 +1,48 @@
+(VAR IL L M N T X X1 X2 X3 X4 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__and(tt,T) -> mark(T)
+        a__isNatIList(IL) -> a__isNatList(IL)
+        a__isNat(0) -> tt
+        a__isNat(s(N)) -> a__isNat(N)
+        a__isNat(length(L)) -> a__isNatList(L)
+        a__isNatIList(zeros) -> tt
+        a__isNatIList(cons(N,IL)) -> a__and(a__isNat(N),a__isNatIList(IL))
+        a__isNatList(nil) -> tt
+        a__isNatList(cons(N,L)) -> a__and(a__isNat(N),a__isNatList(L))
+        a__isNatList(take(N,IL)) -> a__and(a__isNat(N),a__isNatIList(IL))
+        a__zeros -> cons(0,zeros)
+        a__take(0,IL) -> a__uTake1(a__isNatIList(IL))
+        a__uTake1(tt) -> nil
+        a__take(s(M),cons(N,IL)) -> a__uTake2(a__and(a__isNat(M),a__and(a__isNat(N),a__isNatIList(IL))),M,N,IL)
+        a__uTake2(tt,M,N,IL) -> cons(mark(N),take(M,IL))
+        a__length(cons(N,L)) -> a__uLength(a__and(a__isNat(N),a__isNatList(L)),L)
+        a__uLength(tt,L) -> s(a__length(mark(L)))
+        mark(and(X1,X2)) -> a__and(mark(X1),mark(X2))
+        mark(isNatIList(X)) -> a__isNatIList(X)
+        mark(isNatList(X)) -> a__isNatList(X)
+        mark(isNat(X)) -> a__isNat(X)
+        mark(length(X)) -> a__length(mark(X))
+        mark(zeros) -> a__zeros
+        mark(take(X1,X2)) -> a__take(mark(X1),mark(X2))
+        mark(uTake1(X)) -> a__uTake1(mark(X))
+        mark(uTake2(X1,X2,X3,X4)) -> a__uTake2(mark(X1),X2,X3,X4)
+        mark(uLength(X1,X2)) -> a__uLength(mark(X1),X2)
+        mark(tt) -> tt
+        mark(0) -> 0
+        mark(s(X)) -> s(mark(X))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(nil) -> nil
+        a__and(X1,X2) -> and(X1,X2)
+        a__isNatIList(X) -> isNatIList(X)
+        a__isNatList(X) -> isNatList(X)
+        a__isNat(X) -> isNat(X)
+        a__length(X) -> length(X)
+        a__zeros -> zeros
+        a__take(X1,X2) -> take(X1,X2)
+        a__uTake1(X) -> uTake1(X)
+        a__uTake2(X1,X2,X3,X4) -> uTake2(X1,X2,X3,X4)
+        a__uLength(X1,X2) -> uLength(X1,X2)
+        
+)
+    

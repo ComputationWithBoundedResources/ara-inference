@@ -1,0 +1,23 @@
+(VAR b x xs y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        isEmpty(cons(x,xs)) -> false
+        isEmpty(nil) -> true
+        isZero(0) -> true
+        isZero(s(x)) -> false
+        head(cons(x,xs)) -> x
+        tail(cons(x,xs)) -> xs
+        tail(nil) -> nil
+        p(s(s(x))) -> s(p(s(x)))
+        p(s(0)) -> 0
+        p(0) -> 0
+        inc(s(x)) -> s(inc(x))
+        inc(0) -> s(0)
+        sumList(xs,y) -> if(isEmpty(xs),isZero(head(xs)),y,tail(xs),cons(p(head(xs)),tail(xs)),inc(y))
+        if(true,b,y,xs,ys,x) -> y
+        if(false,true,y,xs,ys,x) -> sumList(xs,y)
+        if(false,false,y,xs,ys,x) -> sumList(ys,x)
+        sum(xs) -> sumList(xs,0)
+        
+)
+    

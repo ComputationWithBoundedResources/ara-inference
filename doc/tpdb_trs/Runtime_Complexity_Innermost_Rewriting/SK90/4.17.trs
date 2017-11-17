@@ -1,0 +1,9 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        fac(s(x)) -> *(fac(p(s(x))),s(x))
+        p(s(0)) -> 0
+        p(s(s(x))) -> s(p(s(x)))
+        
+)
+    

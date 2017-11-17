@@ -1,0 +1,45 @@
+(VAR X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        a__dbl(0) -> 0
+        a__dbl(s(X)) -> s(s(dbl(X)))
+        a__dbls(nil) -> nil
+        a__dbls(cons(X,Y)) -> cons(dbl(X),dbls(Y))
+        a__sel(0,cons(X,Y)) -> mark(X)
+        a__sel(s(X),cons(Y,Z)) -> a__sel(mark(X),mark(Z))
+        a__indx(nil,X) -> nil
+        a__indx(cons(X,Y),Z) -> cons(sel(X,Z),indx(Y,Z))
+        a__from(X) -> cons(X,from(s(X)))
+        a__dbl1(0) -> 01
+        a__dbl1(s(X)) -> s1(s1(a__dbl1(mark(X))))
+        a__sel1(0,cons(X,Y)) -> mark(X)
+        a__sel1(s(X),cons(Y,Z)) -> a__sel1(mark(X),mark(Z))
+        a__quote(0) -> 01
+        a__quote(s(X)) -> s1(a__quote(mark(X)))
+        a__quote(dbl(X)) -> a__dbl1(mark(X))
+        a__quote(sel(X,Y)) -> a__sel1(mark(X),mark(Y))
+        mark(dbl(X)) -> a__dbl(mark(X))
+        mark(dbls(X)) -> a__dbls(mark(X))
+        mark(sel(X1,X2)) -> a__sel(mark(X1),mark(X2))
+        mark(indx(X1,X2)) -> a__indx(mark(X1),X2)
+        mark(from(X)) -> a__from(X)
+        mark(dbl1(X)) -> a__dbl1(mark(X))
+        mark(sel1(X1,X2)) -> a__sel1(mark(X1),mark(X2))
+        mark(quote(X)) -> a__quote(mark(X))
+        mark(0) -> 0
+        mark(s(X)) -> s(X)
+        mark(nil) -> nil
+        mark(cons(X1,X2)) -> cons(X1,X2)
+        mark(01) -> 01
+        mark(s1(X)) -> s1(mark(X))
+        a__dbl(X) -> dbl(X)
+        a__dbls(X) -> dbls(X)
+        a__sel(X1,X2) -> sel(X1,X2)
+        a__indx(X1,X2) -> indx(X1,X2)
+        a__from(X) -> from(X)
+        a__dbl1(X) -> dbl1(X)
+        a__sel1(X1,X2) -> sel1(X1,X2)
+        a__quote(X) -> quote(X)
+        
+)
+    

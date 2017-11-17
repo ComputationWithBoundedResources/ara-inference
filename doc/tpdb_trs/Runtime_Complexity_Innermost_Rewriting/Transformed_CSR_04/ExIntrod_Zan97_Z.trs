@@ -1,0 +1,21 @@
+(VAR X X1 X2 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        fact(X) -> if(zero(X),n__s(0),n__prod(X,fact(p(X))))
+        add(0,X) -> X
+        add(s(X),Y) -> s(add(X,Y))
+        prod(0,X) -> 0
+        prod(s(X),Y) -> add(Y,prod(X,Y))
+        if(true,X,Y) -> activate(X)
+        if(false,X,Y) -> activate(Y)
+        zero(0) -> true
+        zero(s(X)) -> false
+        p(s(X)) -> X
+        s(X) -> n__s(X)
+        prod(X1,X2) -> n__prod(X1,X2)
+        activate(n__s(X)) -> s(X)
+        activate(n__prod(X1,X2)) -> prod(X1,X2)
+        activate(X) -> X
+        
+)
+    

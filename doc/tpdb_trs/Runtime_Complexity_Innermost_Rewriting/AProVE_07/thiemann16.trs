@@ -1,0 +1,22 @@
+(VAR u x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        check(0) -> zero
+        check(s(0)) -> odd
+        check(s(s(0))) -> even
+        check(s(s(s(x)))) -> check(s(x))
+        half(0) -> 0
+        half(s(0)) -> 0
+        half(s(s(x))) -> s(half(x))
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        times(x,y) -> timesIter(x,y,0)
+        timesIter(x,y,z) -> if(check(x),x,y,z,plus(z,y))
+        p(s(x)) -> x
+        p(0) -> 0
+        if(zero,x,y,z,u) -> z
+        if(odd,x,y,z,u) -> timesIter(p(x),y,u)
+        if(even,x,y,z,u) -> plus(timesIter(half(x),y,half(z)),timesIter(half(x),y,half(s(z))))
+        
+)
+    

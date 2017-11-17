@@ -1,0 +1,42 @@
+(VAR N X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        a__from(X) -> cons(mark(X),from(s(X)))
+        a__2ndspos(0,Z) -> rnil
+        a__2ndspos(s(N),cons(X,Z)) -> a__2ndspos(s(mark(N)),cons2(X,mark(Z)))
+        a__2ndspos(s(N),cons2(X,cons(Y,Z))) -> rcons(posrecip(mark(Y)),a__2ndsneg(mark(N),mark(Z)))
+        a__2ndsneg(0,Z) -> rnil
+        a__2ndsneg(s(N),cons(X,Z)) -> a__2ndsneg(s(mark(N)),cons2(X,mark(Z)))
+        a__2ndsneg(s(N),cons2(X,cons(Y,Z))) -> rcons(negrecip(mark(Y)),a__2ndspos(mark(N),mark(Z)))
+        a__pi(X) -> a__2ndspos(mark(X),a__from(0))
+        a__plus(0,Y) -> mark(Y)
+        a__plus(s(X),Y) -> s(a__plus(mark(X),mark(Y)))
+        a__times(0,Y) -> 0
+        a__times(s(X),Y) -> a__plus(mark(Y),a__times(mark(X),mark(Y)))
+        a__square(X) -> a__times(mark(X),mark(X))
+        mark(from(X)) -> a__from(mark(X))
+        mark(2ndspos(X1,X2)) -> a__2ndspos(mark(X1),mark(X2))
+        mark(2ndsneg(X1,X2)) -> a__2ndsneg(mark(X1),mark(X2))
+        mark(pi(X)) -> a__pi(mark(X))
+        mark(plus(X1,X2)) -> a__plus(mark(X1),mark(X2))
+        mark(times(X1,X2)) -> a__times(mark(X1),mark(X2))
+        mark(square(X)) -> a__square(mark(X))
+        mark(0) -> 0
+        mark(s(X)) -> s(mark(X))
+        mark(posrecip(X)) -> posrecip(mark(X))
+        mark(negrecip(X)) -> negrecip(mark(X))
+        mark(nil) -> nil
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(cons2(X1,X2)) -> cons2(X1,mark(X2))
+        mark(rnil) -> rnil
+        mark(rcons(X1,X2)) -> rcons(mark(X1),mark(X2))
+        a__from(X) -> from(X)
+        a__2ndspos(X1,X2) -> 2ndspos(X1,X2)
+        a__2ndsneg(X1,X2) -> 2ndsneg(X1,X2)
+        a__pi(X) -> pi(X)
+        a__plus(X1,X2) -> plus(X1,X2)
+        a__times(X1,X2) -> times(X1,X2)
+        a__square(X) -> square(X)
+        
+)
+    

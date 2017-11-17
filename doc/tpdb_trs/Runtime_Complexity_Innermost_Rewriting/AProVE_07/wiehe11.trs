@@ -1,0 +1,30 @@
+(VAR k l x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        quot(0,s(y)) -> 0
+        quot(s(x),s(y)) -> s(quot(minus(x,y),s(y)))
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        minus(minus(x,y),z) -> minus(x,plus(y,z))
+        app(nil,k) -> k
+        app(l,nil) -> l
+        app(cons(x,l),k) -> cons(x,app(l,k))
+        sum(cons(x,nil)) -> cons(x,nil)
+        sum(cons(x,cons(y,l))) -> sum(cons(plus(x,y),l))
+        sum(app(l,cons(x,cons(y,k)))) -> sum(app(l,sum(cons(x,cons(y,k)))))
+        plus(s(x),s(y)) -> s(s(plus(if(gt(x,y),x,y),if(not(gt(x,y)),id(x),id(y)))))
+        plus(s(x),x) -> plus(if(gt(x,x),id(x),id(x)),s(x))
+        plus(zero,y) -> y
+        plus(id(x),s(y)) -> s(plus(x,if(gt(s(y),y),y,s(y))))
+        id(x) -> x
+        if(true,x,y) -> x
+        if(false,x,y) -> y
+        not(x) -> if(x,false,true)
+        gt(s(x),zero) -> true
+        gt(zero,y) -> false
+        gt(s(x),s(y)) -> gt(x,y)
+        
+)
+    

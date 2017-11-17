@@ -1,0 +1,10 @@
+(VAR ap n xs y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        f(node(s(n),xs)) -> f(addchild(select(xs),node(n,xs)))
+        select(cons(ap,xs)) -> ap
+        select(cons(ap,xs)) -> select(xs)
+        addchild(node(y,ys),node(n,xs)) -> node(y,cons(node(n,xs),ys))
+        
+)
+    

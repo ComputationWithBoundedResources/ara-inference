@@ -1,0 +1,23 @@
+(VAR X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        nats -> adx(zeros)
+        zeros -> cons(n__0,n__zeros)
+        incr(cons(X,Y)) -> cons(n__s(activate(X)),n__incr(activate(Y)))
+        adx(cons(X,Y)) -> incr(cons(activate(X),n__adx(activate(Y))))
+        hd(cons(X,Y)) -> activate(X)
+        tl(cons(X,Y)) -> activate(Y)
+        0 -> n__0
+        zeros -> n__zeros
+        s(X) -> n__s(X)
+        incr(X) -> n__incr(X)
+        adx(X) -> n__adx(X)
+        activate(n__0) -> 0
+        activate(n__zeros) -> zeros
+        activate(n__s(X)) -> s(X)
+        activate(n__incr(X)) -> incr(X)
+        activate(n__adx(X)) -> adx(X)
+        activate(X) -> X
+        
+)
+    

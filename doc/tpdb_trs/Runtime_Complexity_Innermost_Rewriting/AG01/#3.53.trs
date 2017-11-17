@@ -1,0 +1,21 @@
+(VAR n u v w x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        quot(0,s(y)) -> 0
+        quot(s(x),s(y)) -> s(quot(minus(x,y),s(y)))
+        app(nil,y) -> y
+        app(add(n,x),y) -> add(n,app(x,y))
+        reverse(nil) -> nil
+        reverse(add(n,x)) -> app(reverse(x),add(n,nil))
+        shuffle(nil) -> nil
+        shuffle(add(n,x)) -> add(n,shuffle(reverse(x)))
+        concat(leaf,y) -> y
+        concat(cons(u,v),y) -> cons(u,concat(v,y))
+        less_leaves(x,leaf) -> false
+        less_leaves(leaf,cons(w,z)) -> true
+        less_leaves(cons(u,v),cons(w,z)) -> less_leaves(concat(u,v),concat(w,z))
+        
+)
+    

@@ -1,0 +1,14 @@
+(VAR x x' xs xs' y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        merge(Cons(x,xs),Nil) -> Cons(x,xs)
+        merge(Cons(x',xs'),Cons(x,xs)) -> merge[Ite](<=(x',x),Cons(x',xs'),Cons(x,xs))
+        merge(Nil,ys) -> ys
+        goal(xs,ys) -> merge(xs,ys)
+        <=(S(x),S(y)) ->= <=(x,y)
+        <=(0,y) ->= True
+        <=(S(x),0) ->= False
+        merge[Ite](False,xs',Cons(x,xs)) ->= Cons(x,merge(xs',xs))
+        merge[Ite](True,Cons(x,xs),ys) ->= Cons(x,merge(xs,ys))
+)
+    

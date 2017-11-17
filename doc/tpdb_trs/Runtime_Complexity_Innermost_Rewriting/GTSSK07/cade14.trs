@@ -1,0 +1,18 @@
+(VAR u v x y )
+(STRATEGY INNERMOST)
+(RULES 
+        diff(x,y) -> cond1(equal(x,y),x,y)
+        cond1(true,x,y) -> 0
+        cond1(false,x,y) -> cond2(gt(x,y),x,y)
+        cond2(true,x,y) -> s(diff(x,s(y)))
+        cond2(false,x,y) -> s(diff(s(x),y))
+        gt(0,v) -> false
+        gt(s(u),0) -> true
+        gt(s(u),s(v)) -> gt(u,v)
+        equal(0,0) -> true
+        equal(s(x),0) -> false
+        equal(0,s(y)) -> false
+        equal(s(x),s(y)) -> equal(x,y)
+        
+)
+    

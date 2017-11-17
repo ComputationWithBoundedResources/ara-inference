@@ -1,0 +1,16 @@
+(VAR X X1 X2 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__f(0) -> cons(0,f(s(0)))
+        a__f(s(0)) -> a__f(a__p(s(0)))
+        a__p(s(X)) -> mark(X)
+        mark(f(X)) -> a__f(mark(X))
+        mark(p(X)) -> a__p(mark(X))
+        mark(0) -> 0
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(s(X)) -> s(mark(X))
+        a__f(X) -> f(X)
+        a__p(X) -> p(X)
+        
+)
+    

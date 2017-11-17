@@ -1,0 +1,21 @@
+(VAR c x xs y ys z )
+(STRATEGY INNERMOST)
+(RULES 
+        min(0,y) -> 0
+        min(s(x),0) -> 0
+        min(s(x),s(y)) -> min(x,y)
+        len(nil) -> 0
+        len(cons(x,xs)) -> s(len(xs))
+        sum(x,0) -> x
+        sum(x,s(y)) -> s(sum(x,y))
+        le(0,x) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        take(0,cons(y,ys)) -> y
+        take(s(x),cons(y,ys)) -> take(x,ys)
+        addList(x,y) -> if(le(0,min(len(x),len(y))),0,x,y,nil)
+        if(false,c,x,y,z) -> z
+        if(true,c,xs,ys,z) -> if(le(s(c),min(len(xs),len(ys))),s(c),xs,ys,cons(sum(take(c,xs),take(c,ys)),z))
+        
+)
+    

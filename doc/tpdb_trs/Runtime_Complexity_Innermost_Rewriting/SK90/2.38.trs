@@ -1,0 +1,10 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        ++(nil,y) -> y
+        ++(x,nil) -> x
+        ++(.(x,y),z) -> .(x,++(y,z))
+        ++(++(x,y),z) -> ++(x,++(y,z))
+        
+)
+    

@@ -1,0 +1,18 @@
+(VAR l x y )
+(STRATEGY INNERMOST)
+(RULES 
+        empty(nil) -> true
+        empty(cons(x,l)) -> false
+        head(cons(x,l)) -> x
+        tail(nil) -> nil
+        tail(cons(x,l)) -> l
+        rev(nil) -> nil
+        rev(cons(x,l)) -> cons(rev1(x,l),rev2(x,l))
+        last(x,l) -> if(empty(l),x,l)
+        if(true,x,l) -> x
+        if(false,x,l) -> last(head(l),tail(l))
+        rev2(x,nil) -> nil
+        rev2(x,cons(y,l)) -> rev(cons(x,rev2(y,l)))
+        
+)
+    

@@ -1,0 +1,38 @@
+(VAR m n x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        average(x,y) -> if(ge(x,y),x,y)
+        if(true,x,y) -> averIter(y,x,y)
+        if(false,x,y) -> averIter(x,y,x)
+        averIter(x,y,z) -> ifIter(ge(x,y),x,y,z)
+        ifIter(true,x,y,z) -> z
+        ifIter(false,x,y,z) -> averIter(plus(x,s(s(s(0)))),plus(y,s(0)),plus(z,s(0)))
+        append(nil,y) -> y
+        append(cons(n,x),y) -> cons(n,app(x,y))
+        low(n,nil) -> nil
+        low(n,cons(m,x)) -> if_low(ge(m,n),n,cons(m,x))
+        if_low(false,n,cons(m,x)) -> cons(m,low(n,x))
+        if_low(true,n,cons(m,x)) -> low(n,x)
+        high(n,nil) -> nil
+        high(n,cons(m,x)) -> if_high(ge(m,n),n,cons(m,x))
+        if_high(false,n,cons(m,x)) -> high(n,x)
+        if_high(true,n,cons(m,x)) -> cons(average(m,m),high(n,x))
+        quicksort(x) -> ifquick(isempty(x),x)
+        ifquick(true,x) -> nil
+        ifquick(false,x) -> append(quicksort(low(head(x),tail(x))),cons(tail(x),quicksort(high(head(x),tail(x)))))
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        isempty(nil) -> true
+        isempty(cons(n,x)) -> false
+        head(nil) -> error
+        head(cons(n,x)) -> n
+        tail(nil) -> nil
+        tail(cons(n,x)) -> x
+        ge(x,0) -> true
+        ge(0,s(y)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        a -> b
+        a -> c
+        
+)
+    

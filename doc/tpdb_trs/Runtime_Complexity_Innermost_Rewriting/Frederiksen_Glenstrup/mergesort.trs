@@ -1,0 +1,21 @@
+(VAR x x' xs xs' xs1 xs2 y )
+(STRATEGY INNERMOST)
+(RULES 
+        mergesort(Cons(x',Cons(x,xs))) -> splitmerge(Cons(x',Cons(x,xs)),Nil,Nil)
+        mergesort(Cons(x,Nil)) -> Cons(x,Nil)
+        merge(Cons(x',xs'),Cons(x,xs)) -> merge[Ite](<=(x',x),Cons(x',xs'),Cons(x,xs))
+        merge(Cons(x,xs),Nil) -> Cons(x,xs)
+        splitmerge(Cons(x,xs),xs1,xs2) -> splitmerge(xs,Cons(x,xs2),xs1)
+        splitmerge(Nil,xs1,xs2) -> merge(mergesort(xs1),mergesort(xs2))
+        mergesort(Nil) -> Nil
+        merge(Nil,xs2) -> xs2
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        goal(xs) -> mergesort(xs)
+        <=(S(x),S(y)) ->= <=(x,y)
+        <=(0,y) ->= True
+        <=(S(x),0) ->= False
+        merge[Ite](False,xs1,Cons(x,xs)) ->= Cons(x,merge(xs1,xs))
+        merge[Ite](True,Cons(x,xs),xs2) ->= Cons(x,merge(xs,xs2))
+)
+    

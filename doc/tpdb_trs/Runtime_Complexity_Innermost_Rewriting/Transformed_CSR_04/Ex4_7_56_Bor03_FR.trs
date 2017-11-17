@@ -1,0 +1,14 @@
+(VAR N X XS )
+(STRATEGY INNERMOST)
+(RULES 
+        from(X) -> cons(X,n__from(n__s(X)))
+        after(0,XS) -> XS
+        after(s(N),cons(X,XS)) -> after(N,activate(XS))
+        from(X) -> n__from(X)
+        s(X) -> n__s(X)
+        activate(n__from(X)) -> from(activate(X))
+        activate(n__s(X)) -> s(activate(X))
+        activate(X) -> X
+        
+)
+    

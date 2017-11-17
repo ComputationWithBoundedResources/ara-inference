@@ -1,0 +1,34 @@
+(VAR M N NzM NzN )
+(STRATEGY INNERMOST)
+(RULES 
+        p(s(N)) -> N
+        +(N,0) -> N
+        +(s(N),s(M)) -> s(s(+(N,M)))
+        *(N,0) -> 0
+        *(s(N),s(M)) -> s(+(N,+(M,*(N,M))))
+        gt(0,M) -> False
+        gt(NzN,0) -> u_4(is_NzNat(NzN))
+        u_4(True) -> True
+        is_NzNat(0) -> False
+        is_NzNat(s(N)) -> True
+        gt(s(N),s(M)) -> gt(N,M)
+        lt(N,M) -> gt(M,N)
+        d(0,N) -> N
+        d(s(N),s(M)) -> d(N,M)
+        quot(N,NzM) -> u_11(is_NzNat(NzM),N,NzM)
+        u_11(True,N,NzM) -> u_1(gt(N,NzM),N,NzM)
+        u_1(True,N,NzM) -> s(quot(d(N,NzM),NzM))
+        quot(NzM,NzM) -> u_01(is_NzNat(NzM))
+        u_01(True) -> s(0)
+        quot(N,NzM) -> u_21(is_NzNat(NzM),NzM,N)
+        u_21(True,NzM,N) -> u_2(gt(NzM,N))
+        u_2(True) -> 0
+        gcd(0,N) -> 0
+        gcd(NzM,NzM) -> u_02(is_NzNat(NzM),NzM)
+        u_02(True,NzM) -> NzM
+        gcd(NzN,NzM) -> u_31(is_NzNat(NzN),is_NzNat(NzM),NzN,NzM)
+        u_31(True,True,NzN,NzM) -> u_3(gt(NzN,NzM),NzN,NzM)
+        u_3(True,NzN,NzM) -> gcd(d(NzN,NzM),NzM)
+        
+)
+    

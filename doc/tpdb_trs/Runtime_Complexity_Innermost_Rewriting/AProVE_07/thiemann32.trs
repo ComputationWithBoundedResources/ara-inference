@@ -1,0 +1,21 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        table -> gen(s(0))
+        gen(x) -> if1(le(x,10),x)
+        if1(false,x) -> nil
+        if1(true,x) -> if2(x,x)
+        if2(x,y) -> if3(le(y,10),x,y)
+        if3(true,x,y) -> cons(entry(x,y,times(x,y)),if2(x,s(y)))
+        if3(false,x,y) -> gen(s(x))
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        times(0,y) -> 0
+        times(s(x),y) -> plus(y,times(x,y))
+        10 -> s(s(s(s(s(s(s(s(s(s(0))))))))))
+        
+)
+    

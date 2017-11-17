@@ -1,0 +1,16 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        double(0) -> 0
+        double(s(x)) -> s(s(double(x)))
+        half(0) -> 0
+        half(s(0)) -> 0
+        half(s(s(x))) -> s(half(x))
+        -(x,0) -> x
+        -(s(x),s(y)) -> -(x,y)
+        if(0,y,z) -> y
+        if(s(x),y,z) -> z
+        half(double(x)) -> x
+        
+)
+    

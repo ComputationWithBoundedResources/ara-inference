@@ -1,0 +1,10 @@
+(VAR e p x x' xs xs' )
+(STRATEGY INNERMOST)
+(RULES 
+        lookup(Cons(x',xs'),Cons(x,xs)) -> lookup(xs',xs)
+        lookup(Nil,Cons(x,xs)) -> x
+        run(e,p) -> intlookup(e,p)
+        intlookup(e,p) -> intlookup(lookup(e,p),p)
+        
+)
+    

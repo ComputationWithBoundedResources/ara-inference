@@ -1,0 +1,17 @@
+(VAR sum x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        gt(0,y) -> false
+        gt(s(x),0) -> true
+        gt(s(x),s(y)) -> gt(x,y)
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        double(0) -> 0
+        double(s(x)) -> s(s(double(x)))
+        average(x,y) -> aver(plus(x,y),0)
+        aver(sum,z) -> if(gt(sum,double(z)),sum,z)
+        if(true,sum,z) -> aver(sum,s(z))
+        if(false,sum,z) -> z
+        
+)
+    

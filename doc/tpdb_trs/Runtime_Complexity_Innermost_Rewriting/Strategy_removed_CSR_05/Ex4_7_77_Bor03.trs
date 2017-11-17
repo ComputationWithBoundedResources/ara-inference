@@ -1,0 +1,8 @@
+(VAR X XS )
+(STRATEGY INNERMOST)
+(RULES 
+        zeros -> cons(0,zeros)
+        tail(cons(X,XS)) -> XS
+        
+)
+    

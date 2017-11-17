@@ -1,0 +1,27 @@
+(VAR x x' x'' x1 x2 x3 x4 x5 )
+(STRATEGY INNERMOST)
+(RULES 
+        f4(S(x''),S(x'),x3,x4,S(x)) -> f2(S(x''),x',x3,x4,x)
+        f4(S(x'),0,x3,x4,S(x)) -> f3(x',0,x3,x4,x)
+        f2(x1,x2,S(x''),S(x'),S(x)) -> f5(x1,x2,S(x''),x',x)
+        f2(x1,x2,S(x'),0,S(x)) -> f3(x1,x2,x',0,x)
+        f4(S(x'),S(x),x3,x4,0) -> 0
+        f4(S(x),0,x3,x4,0) -> 0
+        f2(x1,x2,S(x'),S(x),0) -> 0
+        f2(x1,x2,S(x),0,0) -> 0
+        f0(x1,S(x'),x3,S(x),x5) -> f1(x',S(x'),x,S(x),S(x))
+        f0(x1,S(x),x3,0,x5) -> 0
+        f6(x1,x2,x3,x4,S(x)) -> f0(x1,x2,x4,x3,x)
+        f5(x1,x2,x3,x4,S(x)) -> f6(x2,x1,x3,x4,x)
+        f3(x1,x2,x3,x4,S(x)) -> f4(x1,x2,x4,x3,x)
+        f1(x1,x2,x3,x4,S(x)) -> f2(x2,x1,x3,x4,x)
+        f6(x1,x2,x3,x4,0) -> 0
+        f5(x1,x2,x3,x4,0) -> 0
+        f4(0,x2,x3,x4,x5) -> 0
+        f3(x1,x2,x3,x4,0) -> 0
+        f2(x1,x2,0,x4,x5) -> 0
+        f1(x1,x2,x3,x4,0) -> 0
+        f0(x1,0,x3,x4,x5) -> 0
+        
+)
+    

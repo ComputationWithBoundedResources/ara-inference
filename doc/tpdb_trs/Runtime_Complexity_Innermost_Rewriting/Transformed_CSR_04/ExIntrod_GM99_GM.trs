@@ -1,0 +1,34 @@
+(VAR X X1 X2 X3 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        a__primes -> a__sieve(a__from(s(s(0))))
+        a__from(X) -> cons(mark(X),from(s(X)))
+        a__head(cons(X,Y)) -> mark(X)
+        a__tail(cons(X,Y)) -> mark(Y)
+        a__if(true,X,Y) -> mark(X)
+        a__if(false,X,Y) -> mark(Y)
+        a__filter(s(s(X)),cons(Y,Z)) -> a__if(divides(s(s(mark(X))),mark(Y)),filter(s(s(X)),Z),cons(Y,filter(X,sieve(Y))))
+        a__sieve(cons(X,Y)) -> cons(mark(X),filter(X,sieve(Y)))
+        mark(primes) -> a__primes
+        mark(sieve(X)) -> a__sieve(mark(X))
+        mark(from(X)) -> a__from(mark(X))
+        mark(head(X)) -> a__head(mark(X))
+        mark(tail(X)) -> a__tail(mark(X))
+        mark(if(X1,X2,X3)) -> a__if(mark(X1),X2,X3)
+        mark(filter(X1,X2)) -> a__filter(mark(X1),mark(X2))
+        mark(s(X)) -> s(mark(X))
+        mark(0) -> 0
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(true) -> true
+        mark(false) -> false
+        mark(divides(X1,X2)) -> divides(mark(X1),mark(X2))
+        a__primes -> primes
+        a__sieve(X) -> sieve(X)
+        a__from(X) -> from(X)
+        a__head(X) -> head(X)
+        a__tail(X) -> tail(X)
+        a__if(X1,X2,X3) -> if(X1,X2,X3)
+        a__filter(X1,X2) -> filter(X1,X2)
+        
+)
+    

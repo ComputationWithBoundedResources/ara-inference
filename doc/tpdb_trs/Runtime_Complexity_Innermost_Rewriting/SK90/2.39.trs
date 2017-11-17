@@ -1,0 +1,14 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        rev(nil) -> nil
+        rev(.(x,y)) -> ++(rev(y),.(x,nil))
+        car(.(x,y)) -> x
+        cdr(.(x,y)) -> y
+        null(nil) -> true
+        null(.(x,y)) -> false
+        ++(nil,y) -> y
+        ++(.(x,y),z) -> .(x,++(y,z))
+        
+)
+    

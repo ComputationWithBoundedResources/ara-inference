@@ -1,0 +1,12 @@
+(VAR M N X )
+(STRATEGY INNERMOST)
+(RULES 
+        filter(cons(X),0,M) -> cons(0)
+        filter(cons(X),s(N),M) -> cons(X)
+        sieve(cons(0)) -> cons(0)
+        sieve(cons(s(N))) -> cons(s(N))
+        nats(N) -> cons(N)
+        zprimes -> sieve(nats(s(s(0))))
+        
+)
+    

@@ -1,0 +1,13 @@
+(VAR X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        fst(0,Z) -> nil
+        fst(s(X),cons(Y,Z)) -> cons(Y,fst(X,Z))
+        from(X) -> cons(X,from(s(X)))
+        add(0,X) -> X
+        add(s(X),Y) -> s(add(X,Y))
+        len(nil) -> 0
+        len(cons(X,Z)) -> s(len(Z))
+        
+)
+    

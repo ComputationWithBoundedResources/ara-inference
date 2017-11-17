@@ -1,0 +1,9 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        f(s(s(s(s(s(s(s(s(x)))))))),y,y) -> f(id(s(s(s(s(s(s(s(s(x))))))))),y,y)
+        id(s(x)) -> s(id(x))
+        id(0) -> 0
+        
+)
+    

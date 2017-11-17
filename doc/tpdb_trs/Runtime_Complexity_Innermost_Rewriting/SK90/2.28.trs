@@ -1,0 +1,7 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        dfib(s(s(x)),y) -> dfib(s(x),dfib(x,y))
+        
+)
+    

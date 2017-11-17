@@ -1,0 +1,41 @@
+(VAR A B F F1 F2 Fs G1 G2 Gs Left NF Right V X X0 X1 Xs Ys )
+(STRATEGY INNERMOST)
+(RULES 
+        intersect'ii'in(cons(X,X0),cons(X,X1)) -> intersect'ii'out
+        intersect'ii'in(Xs,cons(X0,Ys)) -> u'1'1(intersect'ii'in(Xs,Ys))
+        u'1'1(intersect'ii'out) -> intersect'ii'out
+        intersect'ii'in(cons(X0,Xs),Ys) -> u'2'1(intersect'ii'in(Xs,Ys))
+        u'2'1(intersect'ii'out) -> intersect'ii'out
+        reduce'ii'in(sequent(cons(if(A,B),Fs),Gs),NF) -> u'3'1(reduce'ii'in(sequent(cons(x'2b(x'2d(B),A),Fs),Gs),NF))
+        u'3'1(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(cons(iff(A,B),Fs),Gs),NF) -> u'4'1(reduce'ii'in(sequent(cons(x'2a(if(A,B),if(B,A)),Fs),Gs),NF))
+        u'4'1(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(cons(x'2a(F1,F2),Fs),Gs),NF) -> u'5'1(reduce'ii'in(sequent(cons(F1,cons(F2,Fs)),Gs),NF))
+        u'5'1(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(cons(x'2b(F1,F2),Fs),Gs),NF) -> u'6'1(reduce'ii'in(sequent(cons(F1,Fs),Gs),NF),F2,Fs,Gs,NF)
+        u'6'1(reduce'ii'out,F2,Fs,Gs,NF) -> u'6'2(reduce'ii'in(sequent(cons(F2,Fs),Gs),NF))
+        u'6'2(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(cons(x'2d(F1),Fs),Gs),NF) -> u'7'1(reduce'ii'in(sequent(Fs,cons(F1,Gs)),NF))
+        u'7'1(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(Fs,cons(if(A,B),Gs)),NF) -> u'8'1(reduce'ii'in(sequent(Fs,cons(x'2b(x'2d(B),A),Gs)),NF))
+        u'8'1(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(Fs,cons(iff(A,B),Gs)),NF) -> u'9'1(reduce'ii'in(sequent(Fs,cons(x'2a(if(A,B),if(B,A)),Gs)),NF))
+        u'9'1(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(cons(p(V),Fs),Gs),sequent(Left,Right)) -> u'10'1(reduce'ii'in(sequent(Fs,Gs),sequent(cons(p(V),Left),Right)))
+        u'10'1(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(Fs,cons(x'2b(G1,G2),Gs)),NF) -> u'11'1(reduce'ii'in(sequent(Fs,cons(G1,cons(G2,Gs))),NF))
+        u'11'1(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(Fs,cons(x'2a(G1,G2),Gs)),NF) -> u'12'1(reduce'ii'in(sequent(Fs,cons(G1,Gs)),NF),Fs,G2,Gs,NF)
+        u'12'1(reduce'ii'out,Fs,G2,Gs,NF) -> u'12'2(reduce'ii'in(sequent(Fs,cons(G2,Gs)),NF))
+        u'12'2(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(Fs,cons(x'2d(G1),Gs)),NF) -> u'13'1(reduce'ii'in(sequent(cons(G1,Fs),Gs),NF))
+        u'13'1(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(nil,cons(p(V),Gs)),sequent(Left,Right)) -> u'14'1(reduce'ii'in(sequent(nil,Gs),sequent(Left,cons(p(V),Right))))
+        u'14'1(reduce'ii'out) -> reduce'ii'out
+        reduce'ii'in(sequent(nil,nil),sequent(F1,F2)) -> u'15'1(intersect'ii'in(F1,F2))
+        u'15'1(intersect'ii'out) -> reduce'ii'out
+        tautology'i'in(F) -> u'16'1(reduce'ii'in(sequent(nil,cons(F,nil)),sequent(nil,nil)))
+        u'16'1(reduce'ii'out) -> tautology'i'out
+        
+)
+    

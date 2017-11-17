@@ -1,0 +1,19 @@
+(VAR a b x x' y )
+(STRATEGY INNERMOST)
+(RULES 
+        monus(S(x'),S(x)) -> monus(x',x)
+        gcd(x,y) -> gcd[Ite](equal0(x,y),x,y)
+        equal0(a,b) -> equal0[Ite](<(a,b),a,b)
+        <(S(x),S(y)) ->= <(x,y)
+        <(0,S(y)) ->= True
+        <(x,0) ->= False
+        gcd[Ite](False,x,y) ->= gcd[False][Ite](<(x,y),x,y)
+        gcd[Ite](True,x,y) ->= x
+        gcd[False][Ite](False,x,y) ->= gcd(y,monus(y,x))
+        gcd[False][Ite](True,x,y) ->= gcd(monus(x,y),y)
+        equal0[Ite](False,a,b) ->= False
+        equal0[Ite](True,a,b) ->= equal0[True][Ite](<(b,a),a,b)
+        equal0[True][Ite](False,a,b) ->= False
+        equal0[True][Ite](True,a,b) ->= True
+)
+    

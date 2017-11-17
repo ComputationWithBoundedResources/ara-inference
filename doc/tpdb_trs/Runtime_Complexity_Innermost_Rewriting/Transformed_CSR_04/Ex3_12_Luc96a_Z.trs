@@ -1,0 +1,12 @@
+(VAR X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        from(X) -> cons(X,n__from(s(X)))
+        sel(0,cons(X,Y)) -> X
+        sel(s(X),cons(Y,Z)) -> sel(X,activate(Z))
+        from(X) -> n__from(X)
+        activate(n__from(X)) -> from(X)
+        activate(X) -> X
+        
+)
+    

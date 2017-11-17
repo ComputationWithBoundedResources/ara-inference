@@ -1,0 +1,13 @@
+(VAR X X1 X2 X3 )
+(STRATEGY INNERMOST)
+(RULES 
+        a__f(a,X,X) -> a__f(X,a__b,b)
+        a__b -> a
+        mark(f(X1,X2,X3)) -> a__f(X1,mark(X2),X3)
+        mark(b) -> a__b
+        mark(a) -> a
+        a__f(X1,X2,X3) -> f(X1,X2,X3)
+        a__b -> b
+        
+)
+    

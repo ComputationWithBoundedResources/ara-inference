@@ -1,0 +1,7 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        and(not(not(x)),y,not(z)) -> and(y,band(x,z),x)
+        
+)
+    

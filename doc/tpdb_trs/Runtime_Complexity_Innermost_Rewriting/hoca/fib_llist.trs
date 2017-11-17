@@ -1,0 +1,20 @@
+(VAR x1 x12 x16 x18 x2 x3 x4 x5 x7 x8 )
+(STRATEGY INNERMOST)
+(RULES 
+        fibs_2#1(zipwith_l,plus,tail_l,x3) -> ConsL(S(0),zipwith_l#3(fibs,fibs_2(zipwith_l,plus,tail_l)))
+        cond_take_l_n_xs(ConsL(x16,x18),0) -> Nil
+        cond_take_l_n_xs(ConsL(x7,fibs_2(x4,x8,x12)),S(x16)) -> Cons(x7,cond_take_l_n_xs(fibs_2#1(x4,x8,x12,bot[0]),x16))
+        cond_take_l_n_xs(ConsL(x7,zipwith_l_f_xs_ys(x4,x8,x12)),S(x16)) -> Cons(x7,cond_take_l_n_xs(zipwith_l_f_xs_ys#1(x4,x8,x12,bot[0]),x16))
+        plus#2(0,x12) -> x12
+        plus#2(S(x4),x2) -> S(plus#2(x4,x2))
+        cond_zipwith_l_f_xs_ys_1(ConsL(x4,x3),x2,x1) -> ConsL(plus#2(x2,x4),zipwith_l#3(x1,x3))
+        cond_zipwith_l_f_xs_ys(ConsL(x5,x4),zipwith_l_f_xs_ys(x1,x2,x3)) -> cond_zipwith_l_f_xs_ys_1(zipwith_l_f_xs_ys#1(x1,x2,x3,bot[6]),x5,x4)
+        cond_zipwith_l_f_xs_ys(ConsL(x5,x4),fibs_2(x1,x2,x3)) -> cond_zipwith_l_f_xs_ys_1(fibs_2#1(x1,x2,x3,bot[6]),x5,x4)
+        zipwith_l_f_xs_ys#1(plus,fibs,x5,x3) -> cond_zipwith_l_f_xs_ys(ConsL(0,fibs_2(zipwith_l,plus,tail_l)),x5)
+        zipwith_l_f_xs_ys#1(plus,fibs_2(x3,x4,x5),x2,x1) -> cond_zipwith_l_f_xs_ys(fibs_2#1(x3,x4,x5,bot[7]),x2)
+        zipwith_l_f_xs_ys#1(plus,zipwith_l_f_xs_ys(x3,x4,x5),x2,x1) -> cond_zipwith_l_f_xs_ys(zipwith_l_f_xs_ys#1(x3,x4,x5,bot[7]),x2)
+        zipwith_l#3(x8,x4) -> zipwith_l_f_xs_ys(plus,x8,x4)
+        main(x12) -> cond_take_l_n_xs(ConsL(0,fibs_2(zipwith_l,plus,tail_l)),x12)
+        
+)
+    

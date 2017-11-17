@@ -1,0 +1,19 @@
+(VAR a b c t x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        g(A) -> A
+        g(B) -> A
+        g(B) -> B
+        g(C) -> A
+        g(C) -> B
+        g(C) -> C
+        foldf(x,nil) -> x
+        foldf(x,cons(y,z)) -> f(foldf(x,z),y)
+        f(t,x) -> f'(t,g(x))
+        f'(triple(a,b,c),C) -> triple(a,b,cons(C,c))
+        f'(triple(a,b,c),B) -> f(triple(a,b,c),A)
+        f'(triple(a,b,c),A) -> f''(foldf(triple(cons(A,a),nil,c),b))
+        f''(triple(a,b,c)) -> foldf(triple(a,b,nil),c)
+        
+)
+    

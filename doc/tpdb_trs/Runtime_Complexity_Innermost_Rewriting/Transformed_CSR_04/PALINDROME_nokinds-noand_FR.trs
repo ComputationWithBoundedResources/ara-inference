@@ -1,0 +1,51 @@
+(VAR I P V V1 V2 X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        __(__(X,Y),Z) -> __(X,__(Y,Z))
+        __(X,nil) -> X
+        __(nil,X) -> X
+        U11(tt) -> tt
+        U21(tt,V2) -> U22(isList(activate(V2)))
+        U22(tt) -> tt
+        U31(tt) -> tt
+        U41(tt,V2) -> U42(isNeList(activate(V2)))
+        U42(tt) -> tt
+        U51(tt,V2) -> U52(isList(activate(V2)))
+        U52(tt) -> tt
+        U61(tt) -> tt
+        U71(tt,P) -> U72(isPal(activate(P)))
+        U72(tt) -> tt
+        U81(tt) -> tt
+        isList(V) -> U11(isNeList(activate(V)))
+        isList(n__nil) -> tt
+        isList(n____(V1,V2)) -> U21(isList(activate(V1)),activate(V2))
+        isNeList(V) -> U31(isQid(activate(V)))
+        isNeList(n____(V1,V2)) -> U41(isList(activate(V1)),activate(V2))
+        isNeList(n____(V1,V2)) -> U51(isNeList(activate(V1)),activate(V2))
+        isNePal(V) -> U61(isQid(activate(V)))
+        isNePal(n____(I,n____(P,I))) -> U71(isQid(activate(I)),activate(P))
+        isPal(V) -> U81(isNePal(activate(V)))
+        isPal(n__nil) -> tt
+        isQid(n__a) -> tt
+        isQid(n__e) -> tt
+        isQid(n__i) -> tt
+        isQid(n__o) -> tt
+        isQid(n__u) -> tt
+        nil -> n__nil
+        __(X1,X2) -> n____(X1,X2)
+        a -> n__a
+        e -> n__e
+        i -> n__i
+        o -> n__o
+        u -> n__u
+        activate(n__nil) -> nil
+        activate(n____(X1,X2)) -> __(activate(X1),activate(X2))
+        activate(n__a) -> a
+        activate(n__e) -> e
+        activate(n__i) -> i
+        activate(n__o) -> o
+        activate(n__u) -> u
+        activate(X) -> X
+        
+)
+    

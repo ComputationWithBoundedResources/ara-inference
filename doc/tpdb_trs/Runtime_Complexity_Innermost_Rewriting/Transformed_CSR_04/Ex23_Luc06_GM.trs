@@ -1,0 +1,12 @@
+(VAR X )
+(STRATEGY INNERMOST)
+(RULES 
+        a__f(f(a)) -> c(f(g(f(a))))
+        mark(f(X)) -> a__f(mark(X))
+        mark(a) -> a
+        mark(c(X)) -> c(X)
+        mark(g(X)) -> g(mark(X))
+        a__f(X) -> f(X)
+        
+)
+    

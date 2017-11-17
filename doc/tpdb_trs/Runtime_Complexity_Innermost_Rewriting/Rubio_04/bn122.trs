@@ -1,0 +1,8 @@
+(VAR X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        plus(plus(X,Y),Z) -> plus(X,plus(Y,Z))
+        times(X,s(Y)) -> plus(X,times(Y,X))
+        
+)
+    

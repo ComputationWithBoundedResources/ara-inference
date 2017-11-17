@@ -1,0 +1,15 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        g(x,0) -> 0
+        g(d,s(x)) -> s(s(g(d,x)))
+        g(h,s(0)) -> 0
+        g(h,s(s(x))) -> s(g(h,x))
+        double(x) -> g(d,x)
+        half(x) -> g(h,x)
+        f(s(x),y) -> f(half(s(x)),double(y))
+        f(s(0),y) -> y
+        id(x) -> f(x,s(0))
+        
+)
+    

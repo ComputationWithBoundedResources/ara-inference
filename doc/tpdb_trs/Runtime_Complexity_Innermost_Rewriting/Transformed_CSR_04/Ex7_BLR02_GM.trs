@@ -1,0 +1,27 @@
+(VAR N X X1 X2 XS )
+(STRATEGY INNERMOST)
+(RULES 
+        a__from(X) -> cons(mark(X),from(s(X)))
+        a__head(cons(X,XS)) -> mark(X)
+        a__2nd(cons(X,XS)) -> a__head(mark(XS))
+        a__take(0,XS) -> nil
+        a__take(s(N),cons(X,XS)) -> cons(mark(X),take(N,XS))
+        a__sel(0,cons(X,XS)) -> mark(X)
+        a__sel(s(N),cons(X,XS)) -> a__sel(mark(N),mark(XS))
+        mark(from(X)) -> a__from(mark(X))
+        mark(head(X)) -> a__head(mark(X))
+        mark(2nd(X)) -> a__2nd(mark(X))
+        mark(take(X1,X2)) -> a__take(mark(X1),mark(X2))
+        mark(sel(X1,X2)) -> a__sel(mark(X1),mark(X2))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(s(X)) -> s(mark(X))
+        mark(0) -> 0
+        mark(nil) -> nil
+        a__from(X) -> from(X)
+        a__head(X) -> head(X)
+        a__2nd(X) -> 2nd(X)
+        a__take(X1,X2) -> take(X1,X2)
+        a__sel(X1,X2) -> sel(X1,X2)
+        
+)
+    

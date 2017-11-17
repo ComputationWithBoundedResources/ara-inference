@@ -1,0 +1,16 @@
+(VAR m n u v x y )
+(STRATEGY INNERMOST)
+(RULES 
+        f(true,x,y) -> f(and(gt(x,y),gt(y,s(s(0)))),plus(s(0),x),double(y))
+        gt(0,v) -> false
+        gt(s(u),0) -> true
+        gt(s(u),s(v)) -> gt(u,v)
+        and(x,true) -> x
+        and(x,false) -> false
+        plus(n,0) -> n
+        plus(n,s(m)) -> s(plus(n,m))
+        double(0) -> 0
+        double(s(x)) -> s(s(double(x)))
+        
+)
+    

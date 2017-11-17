@@ -1,0 +1,25 @@
+(VAR L X X1 X2 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        eq(n__0,n__0) -> true
+        eq(n__s(X),n__s(Y)) -> eq(activate(X),activate(Y))
+        eq(X,Y) -> false
+        inf(X) -> cons(X,n__inf(n__s(X)))
+        take(0,X) -> nil
+        take(s(X),cons(Y,L)) -> cons(activate(Y),n__take(activate(X),activate(L)))
+        length(nil) -> 0
+        length(cons(X,L)) -> s(n__length(activate(L)))
+        0 -> n__0
+        s(X) -> n__s(X)
+        inf(X) -> n__inf(X)
+        take(X1,X2) -> n__take(X1,X2)
+        length(X) -> n__length(X)
+        activate(n__0) -> 0
+        activate(n__s(X)) -> s(X)
+        activate(n__inf(X)) -> inf(activate(X))
+        activate(n__take(X1,X2)) -> take(activate(X1),activate(X2))
+        activate(n__length(X)) -> length(activate(X))
+        activate(X) -> X
+        
+)
+    

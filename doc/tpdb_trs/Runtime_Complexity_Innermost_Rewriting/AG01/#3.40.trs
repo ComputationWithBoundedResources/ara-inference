@@ -1,0 +1,14 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        quot(0,s(y)) -> 0
+        quot(s(x),s(y)) -> s(quot(minus(x,y),s(y)))
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        plus(minus(x,s(0)),minus(y,s(s(z)))) -> plus(minus(y,s(s(z))),minus(x,s(0)))
+        plus(plus(x,s(0)),plus(y,s(s(z)))) -> plus(plus(y,s(s(z))),plus(x,s(0)))
+        
+)
+    

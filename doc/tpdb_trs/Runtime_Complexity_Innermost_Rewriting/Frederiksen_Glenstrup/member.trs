@@ -1,0 +1,16 @@
+(VAR x x' xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        member(x',Cons(x,xs)) -> member[Ite][True][Ite](!EQ(x',x),x',Cons(x,xs))
+        member(x,Nil) -> False
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        goal(x,xs) -> member(x,xs)
+        !EQ(S(x),S(y)) ->= !EQ(x,y)
+        !EQ(0,S(y)) ->= False
+        !EQ(S(x),0) ->= False
+        !EQ(0,0) ->= True
+        member[Ite][True][Ite](False,x',Cons(x,xs)) ->= member(x',xs)
+        member[Ite][True][Ite](True,x,xs) ->= True
+)
+    

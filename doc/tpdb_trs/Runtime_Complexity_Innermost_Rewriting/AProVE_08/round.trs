@@ -1,0 +1,11 @@
+(VAR x )
+(STRATEGY INNERMOST)
+(RULES 
+        f(s(x),x) -> f(s(x),round(s(x)))
+        round(0) -> 0
+        round(0) -> s(0)
+        round(s(0)) -> s(0)
+        round(s(s(x))) -> s(s(round(x)))
+        
+)
+    

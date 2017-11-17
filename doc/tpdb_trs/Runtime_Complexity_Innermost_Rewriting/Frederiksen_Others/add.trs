@@ -1,0 +1,9 @@
+(VAR x x2 y )
+(STRATEGY INNERMOST)
+(RULES 
+        add0(S(x),x2) -> +(S(0),add0(x2,x))
+        add0(0,x2) -> x2
+        +(x,S(0)) ->= S(x)
+        +(S(0),y) ->= S(y)
+)
+    

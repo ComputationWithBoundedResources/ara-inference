@@ -1,0 +1,27 @@
+(VAR l m n u v x y )
+(STRATEGY INNERMOST)
+(RULES 
+        sort(l) -> st(0,l)
+        st(n,l) -> cond1(member(n,l),n,l)
+        cond1(true,n,l) -> cons(n,st(s(n),l))
+        cond1(false,n,l) -> cond2(gt(n,max(l)),n,l)
+        cond2(true,n,l) -> nil
+        cond2(false,n,l) -> st(s(n),l)
+        member(n,nil) -> false
+        member(n,cons(m,l)) -> or(equal(n,m),member(n,l))
+        or(x,true) -> true
+        or(x,false) -> x
+        equal(0,0) -> true
+        equal(s(x),0) -> false
+        equal(0,s(y)) -> false
+        equal(s(x),s(y)) -> equal(x,y)
+        gt(0,v) -> false
+        gt(s(u),0) -> true
+        gt(s(u),s(v)) -> gt(u,v)
+        max(nil) -> 0
+        max(cons(u,l)) -> if(gt(u,max(l)),u,max(l))
+        if(true,u,v) -> u
+        if(false,u,v) -> v
+        
+)
+    

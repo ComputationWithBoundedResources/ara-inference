@@ -1,0 +1,12 @@
+(VAR n x xs )
+(STRATEGY INNERMOST)
+(RULES 
+        nesteql(Nil) -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil)))))))))))))))))
+        nesteql(Cons(x,xs)) -> nesteql(eql(Cons(x,xs)))
+        eql(Nil) -> Nil
+        eql(Cons(x,xs)) -> eql(Cons(x,xs))
+        number17(n) -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil)))))))))))))))))
+        goal(x) -> nesteql(x)
+        
+)
+    

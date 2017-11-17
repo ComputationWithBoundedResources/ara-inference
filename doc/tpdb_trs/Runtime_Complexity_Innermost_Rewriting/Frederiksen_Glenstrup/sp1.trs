@@ -1,0 +1,14 @@
+(VAR x xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        g(Cons(x,xs),y) -> Cons(x,xs)
+        h(Nil,y) -> h(Nil,y)
+        h(Cons(x,xs),y) -> f(Cons(x,xs),y)
+        g(Nil,y) -> h(Nil,y)
+        f(Nil,y) -> g(Nil,y)
+        f(Cons(x,xs),y) -> h(Cons(x,xs),y)
+        sp1(x,y) -> f(x,y)
+        r(x,y) -> x
+        
+)
+    

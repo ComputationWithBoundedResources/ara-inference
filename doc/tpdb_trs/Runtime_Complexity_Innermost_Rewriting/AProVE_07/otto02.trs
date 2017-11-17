@@ -1,0 +1,22 @@
+(VAR c l x y ys zs )
+(STRATEGY INNERMOST)
+(RULES 
+        app(x,y) -> helpa(0,plus(length(x),length(y)),x,y)
+        plus(x,0) -> x
+        plus(x,s(y)) -> s(plus(x,y))
+        length(nil) -> 0
+        length(cons(x,y)) -> s(length(y))
+        helpa(c,l,ys,zs) -> if(ge(c,l),c,l,ys,zs)
+        ge(x,0) -> true
+        ge(0,s(x)) -> false
+        ge(s(x),s(y)) -> ge(x,y)
+        if(true,c,l,ys,zs) -> nil
+        if(false,c,l,ys,zs) -> helpb(c,l,ys,zs)
+        take(0,cons(x,xs),ys) -> x
+        take(0,nil,cons(y,ys)) -> y
+        take(s(c),cons(x,xs),ys) -> take(c,xs,ys)
+        take(s(c),nil,cons(y,ys)) -> take(c,nil,ys)
+        helpb(c,l,ys,zs) -> cons(take(c,ys,zs),helpa(s(c),l,ys,zs))
+        
+)
+    

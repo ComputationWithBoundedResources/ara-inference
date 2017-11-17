@@ -1,0 +1,20 @@
+(VAR n x x' xs xs' y )
+(STRATEGY INNERMOST)
+(RULES 
+        lt0(Nil,Cons(x',xs)) -> True
+        lt0(Cons(x',xs'),Cons(x,xs)) -> lt0(xs',xs)
+        g(x,Nil) -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil))))
+        f(x,Nil) -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil))))
+        notEmpty(Cons(x,xs)) -> True
+        notEmpty(Nil) -> False
+        lt0(x,Nil) -> False
+        g(x,Cons(x',xs)) -> g[Ite][False][Ite](lt0(x,Cons(Nil,Nil)),x,Cons(x',xs))
+        f(x,Cons(x',xs)) -> f[Ite][False][Ite](lt0(x,Cons(Nil,Nil)),x,Cons(x',xs))
+        number4(n) -> Cons(Nil,Cons(Nil,Cons(Nil,Cons(Nil,Nil))))
+        goal(x,y) -> Cons(f(x,y),Cons(g(x,y),Nil))
+        g[Ite][False][Ite](False,Cons(x,xs),y) ->= g(xs,Cons(Cons(Nil,Nil),y))
+        g[Ite][False][Ite](True,x',Cons(x,xs)) ->= g(x',xs)
+        f[Ite][False][Ite](False,Cons(x,xs),y) ->= f(xs,Cons(Cons(Nil,Nil),y))
+        f[Ite][False][Ite](True,x',Cons(x,xs)) ->= f(x',xs)
+)
+    

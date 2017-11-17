@@ -1,0 +1,11 @@
+(VAR X XS )
+(STRATEGY INNERMOST)
+(RULES 
+        zeros -> cons(0,n__zeros)
+        tail(cons(X,XS)) -> activate(XS)
+        zeros -> n__zeros
+        activate(n__zeros) -> zeros
+        activate(X) -> X
+        
+)
+    

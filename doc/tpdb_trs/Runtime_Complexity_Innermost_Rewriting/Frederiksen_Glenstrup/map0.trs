@@ -1,0 +1,15 @@
+(VAR x xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        map(Cons(x,xs)) -> Cons(f(x),map(xs))
+        map(Nil) -> Nil
+        goal(xs) -> map(xs)
+        f(x) -> *(x,x)
+        +Full(S(x),y) -> +Full(x,S(y))
+        +Full(0,y) -> y
+        *(x,S(S(y))) ->= +(x,*(x,S(y)))
+        *(x,S(0)) ->= x
+        *(x,0) ->= 0
+        *(0,y) ->= 0
+)
+    

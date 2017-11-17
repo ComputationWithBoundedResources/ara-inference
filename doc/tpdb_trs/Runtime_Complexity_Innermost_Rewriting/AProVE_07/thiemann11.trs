@@ -1,0 +1,22 @@
+(VAR b1 b2 x y )
+(STRATEGY INNERMOST)
+(RULES 
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        zero(0) -> true
+        zero(s(x)) -> false
+        id(0) -> 0
+        id(s(x)) -> s(id(x))
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        mod(x,y) -> if_mod(zero(x),zero(y),le(y,x),id(x),id(y))
+        if_mod(true,b1,b2,x,y) -> 0
+        if_mod(false,b1,b2,x,y) -> if2(b1,b2,x,y)
+        if2(true,b2,x,y) -> 0
+        if2(false,b2,x,y) -> if3(b2,x,y)
+        if3(true,x,y) -> mod(minus(x,y),s(y))
+        if3(false,x,y) -> x
+        
+)
+    

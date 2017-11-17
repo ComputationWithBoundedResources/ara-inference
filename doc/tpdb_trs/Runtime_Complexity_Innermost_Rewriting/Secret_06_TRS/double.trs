@@ -1,0 +1,23 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        double(x) -> permute(x,x,a)
+        permute(x,y,a) -> permute(isZero(x),x,b)
+        permute(false,x,b) -> permute(ack(x,x),p(x),c)
+        permute(true,x,b) -> 0
+        permute(y,x,c) -> s(s(permute(x,y,a)))
+        p(0) -> 0
+        p(s(x)) -> x
+        ack(0,x) -> plus(x,s(0))
+        ack(s(x),0) -> ack(x,s(0))
+        ack(s(x),s(y)) -> ack(x,ack(s(x),y))
+        plus(0,y) -> y
+        plus(s(x),y) -> plus(x,s(y))
+        plus(x,s(s(y))) -> s(plus(s(x),y))
+        plus(x,s(0)) -> s(x)
+        plus(x,0) -> x
+        isZero(0) -> true
+        isZero(s(x)) -> false
+        
+)
+    

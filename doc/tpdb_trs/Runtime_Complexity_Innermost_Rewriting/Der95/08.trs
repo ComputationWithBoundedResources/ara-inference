@@ -1,0 +1,11 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        D(t) -> 1
+        D(constant) -> 0
+        D(+(x,y)) -> +(D(x),D(y))
+        D(*(x,y)) -> +(*(y,D(x)),*(x,D(y)))
+        D(-(x,y)) -> -(D(x),D(y))
+        
+)
+    

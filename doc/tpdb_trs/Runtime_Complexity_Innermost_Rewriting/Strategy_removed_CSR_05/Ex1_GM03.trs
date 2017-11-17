@@ -1,0 +1,14 @@
+(VAR X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        p(0) -> 0
+        p(s(X)) -> X
+        leq(0,Y) -> true
+        leq(s(X),0) -> false
+        leq(s(X),s(Y)) -> leq(X,Y)
+        if(true,X,Y) -> X
+        if(false,X,Y) -> Y
+        diff(X,Y) -> if(leq(X,Y),0,s(diff(p(X),Y)))
+        
+)
+    

@@ -1,0 +1,11 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        -(x,0) -> x
+        -(s(x),s(y)) -> -(x,y)
+        p(s(x)) -> x
+        f(s(x),y) -> f(p(-(s(x),y)),p(-(y,s(x))))
+        f(x,s(y)) -> f(p(-(x,s(y))),p(-(s(y),x)))
+        
+)
+    

@@ -1,0 +1,26 @@
+(VAR u x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        inc(s(x)) -> s(inc(x))
+        inc(0) -> s(0)
+        plus(x,y) -> ifPlus(eq(x,0),minus(x,s(0)),x,inc(x))
+        ifPlus(false,x,y,z) -> plus(x,z)
+        ifPlus(true,x,y,z) -> y
+        minus(s(x),s(y)) -> minus(x,y)
+        minus(0,x) -> 0
+        minus(x,0) -> x
+        minus(x,x) -> 0
+        eq(s(x),s(y)) -> eq(x,y)
+        eq(0,s(x)) -> false
+        eq(s(x),0) -> false
+        eq(0,0) -> true
+        eq(x,x) -> true
+        times(x,y) -> timesIter(x,y,0)
+        timesIter(x,y,z) -> ifTimes(eq(x,0),minus(x,s(0)),y,z,plus(y,z))
+        ifTimes(true,x,y,z,u) -> z
+        ifTimes(false,x,y,z,u) -> timesIter(x,y,u)
+        f -> g
+        f -> h
+        
+)
+    

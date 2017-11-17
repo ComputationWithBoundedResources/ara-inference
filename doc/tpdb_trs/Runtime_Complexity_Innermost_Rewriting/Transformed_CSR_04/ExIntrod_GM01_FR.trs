@@ -1,0 +1,21 @@
+(VAR L X )
+(STRATEGY INNERMOST)
+(RULES 
+        incr(nil) -> nil
+        incr(cons(X,L)) -> cons(s(X),n__incr(activate(L)))
+        adx(nil) -> nil
+        adx(cons(X,L)) -> incr(cons(X,n__adx(activate(L))))
+        nats -> adx(zeros)
+        zeros -> cons(0,n__zeros)
+        head(cons(X,L)) -> X
+        tail(cons(X,L)) -> activate(L)
+        incr(X) -> n__incr(X)
+        adx(X) -> n__adx(X)
+        zeros -> n__zeros
+        activate(n__incr(X)) -> incr(activate(X))
+        activate(n__adx(X)) -> adx(activate(X))
+        activate(n__zeros) -> zeros
+        activate(X) -> X
+        
+)
+    

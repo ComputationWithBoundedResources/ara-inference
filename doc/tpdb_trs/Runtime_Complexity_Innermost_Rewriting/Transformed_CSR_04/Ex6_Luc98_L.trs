@@ -1,0 +1,9 @@
+(VAR X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        first(0,X) -> nil
+        first(s(X),cons(Y)) -> cons(Y)
+        from(X) -> cons(X)
+        
+)
+    

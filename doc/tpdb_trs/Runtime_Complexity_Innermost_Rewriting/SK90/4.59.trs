@@ -1,0 +1,12 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        qsort(nil) -> nil
+        qsort(.(x,y)) -> ++(qsort(lowers(x,y)),.(x,qsort(greaters(x,y))))
+        lowers(x,nil) -> nil
+        lowers(x,.(y,z)) -> if(<=(y,x),.(y,lowers(x,z)),lowers(x,z))
+        greaters(x,nil) -> nil
+        greaters(x,.(y,z)) -> if(<=(y,x),greaters(x,z),.(y,greaters(x,z)))
+        
+)
+    

@@ -1,0 +1,20 @@
+(VAR b x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        le(s(x),0) -> false
+        le(0,y) -> true
+        le(s(x),s(y)) -> le(x,y)
+        plus(0,y) -> y
+        plus(s(x),y) -> s(plus(x,y))
+        times(0,y) -> 0
+        times(s(x),y) -> plus(y,times(x,y))
+        log(x,0) -> baseError
+        log(x,s(0)) -> baseError
+        log(0,s(s(b))) -> logZeroError
+        log(s(x),s(s(b))) -> loop(s(x),s(s(b)),s(0),0)
+        loop(x,s(s(b)),s(y),z) -> if(le(x,s(y)),x,s(s(b)),s(y),z)
+        if(true,x,b,y,z) -> z
+        if(false,x,b,y,z) -> loop(x,b,times(b,y),s(z))
+        
+)
+    

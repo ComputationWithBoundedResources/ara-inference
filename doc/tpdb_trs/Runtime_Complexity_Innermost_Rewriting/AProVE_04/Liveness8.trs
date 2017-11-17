@@ -1,0 +1,21 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        active(f(x)) -> mark(x)
+        top(active(c)) -> top(mark(c))
+        top(mark(x)) -> top(check(x))
+        check(f(x)) -> f(check(x))
+        check(x) -> start(match(f(X),x))
+        match(f(x),f(y)) -> f(match(x,y))
+        match(X,x) -> proper(x)
+        proper(c) -> ok(c)
+        proper(f(x)) -> f(proper(x))
+        f(ok(x)) -> ok(f(x))
+        start(ok(x)) -> found(x)
+        f(found(x)) -> found(f(x))
+        top(found(x)) -> top(active(x))
+        active(f(x)) -> f(active(x))
+        f(mark(x)) -> mark(f(x))
+        
+)
+    

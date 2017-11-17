@@ -1,0 +1,49 @@
+(VAR a e e1 e2 exp f i1 i2 int l1 l2 name t1 t11 t12 t2 t21 t22 term v1 v2 var x y )
+(STRATEGY INNERMOST)
+(RULES 
+        subst(x,a,App(e1,e2)) -> mkapp(subst(x,a,e1),subst(x,a,e2))
+        subst(x,a,Lam(var,exp)) -> subst[True][Ite](eqTerm(x,V(var)),x,a,Lam(var,exp))
+        red(App(e1,e2)) -> red[Let](App(e1,e2),red(e1))
+        red(Lam(int,term)) -> Lam(int,term)
+        subst(x,a,V(int)) -> subst[Ite](eqTerm(x,V(int)),x,a,V(int))
+        red(V(int)) -> V(int)
+        eqTerm(App(t11,t12),App(t21,t22)) -> and(eqTerm(t11,t21),eqTerm(t12,t22))
+        eqTerm(App(t11,t12),Lam(i2,l2)) -> False
+        eqTerm(App(t11,t12),V(v2)) -> False
+        eqTerm(Lam(i1,l1),App(t21,t22)) -> False
+        eqTerm(Lam(i1,l1),Lam(i2,l2)) -> and(!EQ(i1,i2),eqTerm(l1,l2))
+        eqTerm(Lam(i1,l1),V(v2)) -> False
+        eqTerm(V(v1),App(t21,t22)) -> False
+        eqTerm(V(v1),Lam(i2,l2)) -> False
+        eqTerm(V(v1),V(v2)) -> !EQ(v1,v2)
+        mklam(V(name),e) -> Lam(name,e)
+        lamvar(Lam(var,exp)) -> V(var)
+        lambody(Lam(var,exp)) -> exp
+        isvar(App(t1,t2)) -> False
+        isvar(Lam(int,term)) -> False
+        isvar(V(int)) -> True
+        islam(App(t1,t2)) -> False
+        islam(Lam(int,term)) -> True
+        islam(V(int)) -> False
+        appe2(App(e1,e2)) -> e2
+        appe1(App(e1,e2)) -> e1
+        mkapp(e1,e2) -> App(e1,e2)
+        lambdaint(e) -> red(e)
+        and(False,False) ->= False
+        and(True,False) ->= False
+        and(False,True) ->= False
+        and(True,True) ->= True
+        !EQ(S(x),S(y)) ->= !EQ(x,y)
+        !EQ(0,S(y)) ->= False
+        !EQ(S(x),0) ->= False
+        !EQ(0,0) ->= True
+        red[Let][Let](e,Lam(var,exp),a) ->= red(subst(V(var),a,exp))
+        subst[True][Ite](False,x,a,Lam(var,exp)) ->= mklam(V(var),subst(x,a,exp))
+        red[Let][Let](e,App(t1,t2),e2) ->= App(App(t1,t2),e2)
+        red[Let][Let](e,V(int),e2) ->= App(V(int),e2)
+        red[Let](App(e1,e2),f) ->= red[Let][Let](App(e1,e2),f,red(e2))
+        subst[True][Ite](True,x,a,e) ->= e
+        subst[Ite](False,x,a,e) ->= e
+        subst[Ite](True,x,a,e) ->= a
+)
+    

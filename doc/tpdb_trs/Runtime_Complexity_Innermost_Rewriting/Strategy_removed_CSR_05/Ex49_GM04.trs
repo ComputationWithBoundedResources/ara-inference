@@ -1,0 +1,15 @@
+(VAR X Y )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(0,Y) -> 0
+        minus(s(X),s(Y)) -> minus(X,Y)
+        geq(X,0) -> true
+        geq(0,s(Y)) -> false
+        geq(s(X),s(Y)) -> geq(X,Y)
+        div(0,s(Y)) -> 0
+        div(s(X),s(Y)) -> if(geq(X,Y),s(div(minus(X,Y),s(Y))),0)
+        if(true,X,Y) -> X
+        if(false,X,Y) -> Y
+        
+)
+    

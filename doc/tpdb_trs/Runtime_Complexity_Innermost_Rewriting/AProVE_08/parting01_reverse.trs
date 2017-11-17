@@ -1,0 +1,19 @@
+(VAR x xs y )
+(STRATEGY INNERMOST)
+(RULES 
+        last(nil) -> 0
+        last(cons(x,nil)) -> x
+        last(cons(x,cons(y,xs))) -> last(cons(y,xs))
+        del(x,nil) -> nil
+        del(x,cons(y,xs)) -> if(eq(x,y),x,y,xs)
+        if(true,x,y,xs) -> xs
+        if(false,x,y,xs) -> cons(y,del(x,xs))
+        eq(0,0) -> true
+        eq(0,s(y)) -> false
+        eq(s(x),0) -> false
+        eq(s(x),s(y)) -> eq(x,y)
+        reverse(nil) -> nil
+        reverse(cons(x,xs)) -> cons(last(cons(x,xs)),reverse(del(last(cons(x,xs)),cons(x,xs))))
+        
+)
+    

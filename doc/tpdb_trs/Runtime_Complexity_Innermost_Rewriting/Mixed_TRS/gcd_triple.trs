@@ -1,0 +1,20 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        min(x,0) -> 0
+        min(0,y) -> 0
+        min(s(x),s(y)) -> s(min(x,y))
+        max(x,0) -> x
+        max(0,y) -> y
+        max(s(x),s(y)) -> s(max(x,y))
+        -(x,0) -> x
+        -(s(x),s(y)) -> -(x,y)
+        gcd(s(x),s(y),z) -> gcd(-(max(x,y),min(x,y)),s(min(x,y)),z)
+        gcd(x,s(y),s(z)) -> gcd(x,-(max(y,z),min(y,z)),s(min(y,z)))
+        gcd(s(x),y,s(z)) -> gcd(-(max(x,z),min(x,z)),y,s(min(x,z)))
+        gcd(x,0,0) -> x
+        gcd(0,y,0) -> y
+        gcd(0,0,z) -> z
+        
+)
+    

@@ -1,0 +1,17 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        minus(x,x) -> 0
+        minus(0,x) -> 0
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        le(0,y) -> true
+        le(s(x),0) -> false
+        le(s(x),s(y)) -> le(x,y)
+        quot(x,y) -> if_quot(minus(x,y),y,le(y,0),le(y,x))
+        if_quot(x,y,true,z) -> divByZeroError
+        if_quot(x,y,false,true) -> s(quot(x,y))
+        if_quot(x,y,false,false) -> 0
+        
+)
+    

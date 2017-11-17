@@ -1,0 +1,15 @@
+(VAR ALPHA BETA X )
+(STRATEGY INNERMOST)
+(RULES 
+        dx(X) -> one
+        dx(a) -> zero
+        dx(plus(ALPHA,BETA)) -> plus(dx(ALPHA),dx(BETA))
+        dx(times(ALPHA,BETA)) -> plus(times(BETA,dx(ALPHA)),times(ALPHA,dx(BETA)))
+        dx(minus(ALPHA,BETA)) -> minus(dx(ALPHA),dx(BETA))
+        dx(neg(ALPHA)) -> neg(dx(ALPHA))
+        dx(div(ALPHA,BETA)) -> minus(div(dx(ALPHA),BETA),times(ALPHA,div(dx(BETA),exp(BETA,two))))
+        dx(ln(ALPHA)) -> div(dx(ALPHA),ALPHA)
+        dx(exp(ALPHA,BETA)) -> plus(times(BETA,times(exp(ALPHA,minus(BETA,one)),dx(ALPHA))),times(exp(ALPHA,BETA),times(ln(ALPHA),dx(BETA))))
+        
+)
+    

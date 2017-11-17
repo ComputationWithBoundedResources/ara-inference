@@ -1,0 +1,9 @@
+(VAR x xs y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        append(Cons(x,xs),ys) -> Cons(x,append(xs,ys))
+        append(Nil,ys) -> ys
+        goal(x,y) -> append(x,y)
+        
+)
+    

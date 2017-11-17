@@ -1,0 +1,34 @@
+(VAR lists x xs y ys )
+(STRATEGY INNERMOST)
+(RULES 
+        eq(0,0) -> true
+        eq(0,s(y)) -> false
+        eq(s(x),0) -> false
+        eq(s(x),s(y)) -> eq(x,y)
+        lt(0,s(y)) -> true
+        lt(x,0) -> false
+        lt(s(x),s(y)) -> lt(x,y)
+        bin2s(nil) -> 0
+        bin2s(cons(x,xs)) -> bin2ss(x,xs)
+        bin2ss(x,nil) -> x
+        bin2ss(x,cons(0,xs)) -> bin2ss(double(x),xs)
+        bin2ss(x,cons(1,xs)) -> bin2ss(s(double(x)),xs)
+        half(0) -> 0
+        half(s(0)) -> 0
+        half(s(s(x))) -> s(half(x))
+        log(0) -> 0
+        log(s(0)) -> 0
+        log(s(s(x))) -> s(log(half(s(s(x)))))
+        more(nil) -> nil
+        more(cons(xs,ys)) -> cons(cons(0,xs),cons(cons(1,xs),cons(xs,ys)))
+        s2bin(x) -> s2bin1(x,0,cons(nil,nil))
+        s2bin1(x,y,lists) -> if1(lt(y,log(x)),x,y,lists)
+        if1(true,x,y,lists) -> s2bin1(x,s(y),more(lists))
+        if1(false,x,y,lists) -> s2bin2(x,lists)
+        s2bin2(x,nil) -> bug_list_not
+        s2bin2(x,cons(xs,ys)) -> if2(eq(x,bin2s(xs)),x,xs,ys)
+        if2(true,x,xs,ys) -> xs
+        if2(false,x,xs,ys) -> s2bin2(x,ys)
+        
+)
+    

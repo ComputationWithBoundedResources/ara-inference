@@ -1,0 +1,23 @@
+(VAR X Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        dbl(0) -> 0
+        dbl(s(X)) -> s(s(dbl(X)))
+        dbls(nil) -> nil
+        dbls(cons(X,Y)) -> cons(dbl(X),dbls(Y))
+        sel(0,cons(X,Y)) -> X
+        sel(s(X),cons(Y,Z)) -> sel(X,Z)
+        indx(nil,X) -> nil
+        indx(cons(X,Y),Z) -> cons(sel(X,Z),indx(Y,Z))
+        from(X) -> cons(X,from(s(X)))
+        dbl1(0) -> 01
+        dbl1(s(X)) -> s1(s1(dbl1(X)))
+        sel1(0,cons(X,Y)) -> X
+        sel1(s(X),cons(Y,Z)) -> sel1(X,Z)
+        quote(0) -> 01
+        quote(s(X)) -> s1(quote(X))
+        quote(dbl(X)) -> dbl1(X)
+        quote(sel(X,Y)) -> sel1(X,Y)
+        
+)
+    

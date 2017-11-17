@@ -1,0 +1,26 @@
+(VAR N X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        terms(N) -> cons(recip(sqr(N)),n__terms(s(N)))
+        sqr(0) -> 0
+        sqr(s(X)) -> s(n__add(sqr(activate(X)),dbl(activate(X))))
+        dbl(0) -> 0
+        dbl(s(X)) -> s(n__s(n__dbl(activate(X))))
+        add(0,X) -> X
+        add(s(X),Y) -> s(n__add(activate(X),Y))
+        first(0,X) -> nil
+        first(s(X),cons(Y,Z)) -> cons(Y,n__first(activate(X),activate(Z)))
+        terms(X) -> n__terms(X)
+        add(X1,X2) -> n__add(X1,X2)
+        s(X) -> n__s(X)
+        dbl(X) -> n__dbl(X)
+        first(X1,X2) -> n__first(X1,X2)
+        activate(n__terms(X)) -> terms(X)
+        activate(n__add(X1,X2)) -> add(X1,X2)
+        activate(n__s(X)) -> s(X)
+        activate(n__dbl(X)) -> dbl(X)
+        activate(n__first(X1,X2)) -> first(X1,X2)
+        activate(X) -> X
+        
+)
+    

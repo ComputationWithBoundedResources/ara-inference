@@ -1,0 +1,18 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        active(f(b,c,x)) -> mark(f(x,x,x))
+        active(f(x,y,z)) -> f(x,y,active(z))
+        active(d) -> m(b)
+        f(x,y,mark(z)) -> mark(f(x,y,z))
+        active(d) -> mark(c)
+        proper(b) -> ok(b)
+        proper(c) -> ok(c)
+        proper(d) -> ok(d)
+        proper(f(x,y,z)) -> f(proper(x),proper(y),proper(z))
+        f(ok(x),ok(y),ok(z)) -> ok(f(x,y,z))
+        top(mark(x)) -> top(proper(x))
+        top(ok(x)) -> top(active(x))
+        
+)
+    

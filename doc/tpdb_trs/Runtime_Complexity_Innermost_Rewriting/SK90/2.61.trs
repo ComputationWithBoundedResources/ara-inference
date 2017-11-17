@@ -1,0 +1,14 @@
+(VAR u x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        f(j(x,y),y) -> g(f(x,k(y)))
+        f(x,h1(y,z)) -> h2(0,x,h1(y,z))
+        g(h2(x,y,h1(z,u))) -> h2(s(x),y,h1(z,u))
+        h2(x,j(y,h1(z,u)),h1(z,u)) -> h2(s(x),y,h1(s(z),u))
+        i(f(x,h(y))) -> y
+        i(h2(s(x),y,h1(x,z))) -> z
+        k(h(x)) -> h1(0,x)
+        k(h1(x,y)) -> h1(s(x),y)
+        
+)
+    

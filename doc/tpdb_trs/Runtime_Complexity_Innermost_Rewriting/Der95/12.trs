@@ -1,0 +1,11 @@
+(VAR x y z )
+(STRATEGY INNERMOST)
+(RULES 
+        not(not(x)) -> x
+        not(or(x,y)) -> and(not(x),not(y))
+        not(and(x,y)) -> or(not(x),not(y))
+        and(x,or(y,z)) -> or(and(x,y),and(x,z))
+        and(or(y,z),x) -> or(and(x,y),and(x,z))
+        
+)
+    

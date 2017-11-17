@@ -1,0 +1,17 @@
+(VAR X X1 X2 Y )
+(STRATEGY INNERMOST)
+(RULES 
+        from(X) -> cons(X,n__from(s(X)))
+        length(n__nil) -> 0
+        length(n__cons(X,Y)) -> s(length1(activate(Y)))
+        length1(X) -> length(activate(X))
+        from(X) -> n__from(X)
+        nil -> n__nil
+        cons(X1,X2) -> n__cons(X1,X2)
+        activate(n__from(X)) -> from(X)
+        activate(n__nil) -> nil
+        activate(n__cons(X1,X2)) -> cons(X1,X2)
+        activate(X) -> X
+        
+)
+    

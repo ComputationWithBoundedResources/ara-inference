@@ -1,0 +1,35 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        g(s(x),s(y)) -> if(and(f(s(x)),f(s(y))),t(g(k(minus(m(x,y),n(x,y)),s(s(0))),k(n(s(x),s(y)),s(s(0))))),g(minus(m(x,y),n(x,y)),n(s(x),s(y))))
+        n(0,y) -> 0
+        n(x,0) -> 0
+        n(s(x),s(y)) -> s(n(x,y))
+        m(0,y) -> y
+        m(x,0) -> x
+        m(s(x),s(y)) -> s(m(x,y))
+        k(0,s(y)) -> 0
+        k(s(x),s(y)) -> s(k(minus(x,y),s(y)))
+        t(x) -> p(x,x)
+        p(s(x),s(y)) -> s(s(p(if(gt(x,y),x,y),if(not(gt(x,y)),id(x),id(y)))))
+        p(s(x),x) -> p(if(gt(x,x),id(x),id(x)),s(x))
+        p(0,y) -> y
+        p(id(x),s(y)) -> s(p(x,if(gt(s(y),y),y,s(y))))
+        minus(x,0) -> x
+        minus(s(x),s(y)) -> minus(x,y)
+        id(x) -> x
+        if(true,x,y) -> x
+        if(false,x,y) -> y
+        not(x) -> if(x,false,true)
+        and(x,false) -> false
+        and(true,true) -> true
+        f(0) -> true
+        f(s(x)) -> h(x)
+        h(0) -> false
+        h(s(x)) -> f(x)
+        gt(s(x),0) -> true
+        gt(0,y) -> false
+        gt(s(x),s(y)) -> gt(x,y)
+        
+)
+    

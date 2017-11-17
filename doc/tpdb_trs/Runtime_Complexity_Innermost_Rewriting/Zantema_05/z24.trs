@@ -1,0 +1,12 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        f(x,a(b(y))) -> f(a(b(x)),y)
+        f(x,b(c(y))) -> f(b(c(x)),y)
+        f(x,c(a(y))) -> f(c(a(x)),y)
+        f(a(x),y) -> f(x,a(y))
+        f(b(x),y) -> f(x,b(y))
+        f(c(x),y) -> f(x,c(y))
+        
+)
+    

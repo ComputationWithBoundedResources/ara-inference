@@ -1,0 +1,15 @@
+(VAR x y )
+(STRATEGY INNERMOST)
+(RULES 
+        plus(0,x) -> x
+        plus(s(x),y) -> s(plus(p(s(x)),y))
+        times(0,y) -> 0
+        times(s(x),y) -> plus(y,times(p(s(x)),y))
+        p(s(0)) -> 0
+        p(s(s(x))) -> s(p(s(x)))
+        fac(0,x) -> x
+        fac(s(x),y) -> fac(p(s(x)),times(s(x),y))
+        factorial(x) -> fac(x,s(0))
+        
+)
+    

@@ -1,0 +1,16 @@
+(VAR X X1 X2 Y Z )
+(STRATEGY INNERMOST)
+(RULES 
+        a__2nd(cons1(X,cons(Y,Z))) -> mark(Y)
+        a__2nd(cons(X,X1)) -> a__2nd(cons1(mark(X),mark(X1)))
+        a__from(X) -> cons(mark(X),from(s(X)))
+        mark(2nd(X)) -> a__2nd(mark(X))
+        mark(from(X)) -> a__from(mark(X))
+        mark(cons(X1,X2)) -> cons(mark(X1),X2)
+        mark(s(X)) -> s(mark(X))
+        mark(cons1(X1,X2)) -> cons1(mark(X1),mark(X2))
+        a__2nd(X) -> 2nd(X)
+        a__from(X) -> from(X)
+        
+)
+    

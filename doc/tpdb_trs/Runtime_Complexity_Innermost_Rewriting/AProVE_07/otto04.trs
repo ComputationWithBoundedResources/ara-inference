@@ -1,0 +1,19 @@
+(VAR a b c x y )
+(STRATEGY INNERMOST)
+(RULES 
+        lt(0,s(x)) -> true
+        lt(x,0) -> false
+        lt(s(x),s(y)) -> lt(x,y)
+        fibo(0) -> fib(0)
+        fibo(s(0)) -> fib(s(0))
+        fibo(s(s(x))) -> sum(fibo(s(x)),fibo(x))
+        fib(0) -> s(0)
+        fib(s(0)) -> s(0)
+        fib(s(s(x))) -> if(true,0,s(s(x)),0,0)
+        if(true,c,s(s(x)),a,b) -> if(lt(s(c),s(s(x))),s(c),s(s(x)),b,c)
+        if(false,c,s(s(x)),a,b) -> sum(fibo(a),fibo(b))
+        sum(x,0) -> x
+        sum(x,s(y)) -> s(sum(x,y))
+        
+)
+    

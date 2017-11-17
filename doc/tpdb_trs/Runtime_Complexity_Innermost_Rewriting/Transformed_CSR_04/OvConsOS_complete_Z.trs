@@ -1,0 +1,67 @@
+(VAR IL L M N V V1 V2 X X1 X2 )
+(STRATEGY INNERMOST)
+(RULES 
+        zeros -> cons(0,n__zeros)
+        U11(tt,V1) -> U12(isNatList(activate(V1)))
+        U12(tt) -> tt
+        U21(tt,V1) -> U22(isNat(activate(V1)))
+        U22(tt) -> tt
+        U31(tt,V) -> U32(isNatList(activate(V)))
+        U32(tt) -> tt
+        U41(tt,V1,V2) -> U42(isNat(activate(V1)),activate(V2))
+        U42(tt,V2) -> U43(isNatIList(activate(V2)))
+        U43(tt) -> tt
+        U51(tt,V1,V2) -> U52(isNat(activate(V1)),activate(V2))
+        U52(tt,V2) -> U53(isNatList(activate(V2)))
+        U53(tt) -> tt
+        U61(tt,V1,V2) -> U62(isNat(activate(V1)),activate(V2))
+        U62(tt,V2) -> U63(isNatIList(activate(V2)))
+        U63(tt) -> tt
+        U71(tt,L) -> s(length(activate(L)))
+        U81(tt) -> nil
+        U91(tt,IL,M,N) -> cons(activate(N),n__take(activate(M),activate(IL)))
+        and(tt,X) -> activate(X)
+        isNat(n__0) -> tt
+        isNat(n__length(V1)) -> U11(isNatIListKind(activate(V1)),activate(V1))
+        isNat(n__s(V1)) -> U21(isNatKind(activate(V1)),activate(V1))
+        isNatIList(V) -> U31(isNatIListKind(activate(V)),activate(V))
+        isNatIList(n__zeros) -> tt
+        isNatIList(n__cons(V1,V2)) -> U41(and(isNatKind(activate(V1)),n__isNatIListKind(activate(V2))),activate(V1),activate(V2))
+        isNatIListKind(n__nil) -> tt
+        isNatIListKind(n__zeros) -> tt
+        isNatIListKind(n__cons(V1,V2)) -> and(isNatKind(activate(V1)),n__isNatIListKind(activate(V2)))
+        isNatIListKind(n__take(V1,V2)) -> and(isNatKind(activate(V1)),n__isNatIListKind(activate(V2)))
+        isNatKind(n__0) -> tt
+        isNatKind(n__length(V1)) -> isNatIListKind(activate(V1))
+        isNatKind(n__s(V1)) -> isNatKind(activate(V1))
+        isNatList(n__nil) -> tt
+        isNatList(n__cons(V1,V2)) -> U51(and(isNatKind(activate(V1)),n__isNatIListKind(activate(V2))),activate(V1),activate(V2))
+        isNatList(n__take(V1,V2)) -> U61(and(isNatKind(activate(V1)),n__isNatIListKind(activate(V2))),activate(V1),activate(V2))
+        length(nil) -> 0
+        length(cons(N,L)) -> U71(and(and(isNatList(activate(L)),n__isNatIListKind(activate(L))),n__and(isNat(N),n__isNatKind(N))),activate(L))
+        take(0,IL) -> U81(and(isNatIList(IL),n__isNatIListKind(IL)))
+        take(s(M),cons(N,IL)) -> U91(and(and(isNatIList(activate(IL)),n__isNatIListKind(activate(IL))),n__and(and(isNat(M),n__isNatKind(M)),n__and(isNat(N),n__isNatKind(N)))),activate(IL),M,N)
+        zeros -> n__zeros
+        take(X1,X2) -> n__take(X1,X2)
+        0 -> n__0
+        length(X) -> n__length(X)
+        s(X) -> n__s(X)
+        cons(X1,X2) -> n__cons(X1,X2)
+        isNatIListKind(X) -> n__isNatIListKind(X)
+        nil -> n__nil
+        and(X1,X2) -> n__and(X1,X2)
+        isNatKind(X) -> n__isNatKind(X)
+        activate(n__zeros) -> zeros
+        activate(n__take(X1,X2)) -> take(X1,X2)
+        activate(n__0) -> 0
+        activate(n__length(X)) -> length(X)
+        activate(n__s(X)) -> s(X)
+        activate(n__cons(X1,X2)) -> cons(X1,X2)
+        activate(n__isNatIListKind(X)) -> isNatIListKind(X)
+        activate(n__nil) -> nil
+        activate(n__and(X1,X2)) -> and(X1,X2)
+        activate(n__isNatKind(X)) -> isNatKind(X)
+        activate(X) -> X
+        
+)
+    

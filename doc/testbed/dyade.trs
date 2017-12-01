@@ -1,0 +1,15 @@
+(VAR
+    x y n ls xs)
+
+(RULES
+
+  add(0,y) -> y
+  add(s(x),y) -> s(add(x,y))
+  times(0,y) -> 0
+  times(s(x),y) -> add(y,times(x,y))
+  mult(n,nil) -> nil
+  mult(n,cons(x,xs)) -> cons(times(n,x),mult(n,xs))
+  dyade(nil,ls) -> nil
+  dyade(cons(x,xs),ls) -> cons(mult(x,ls),dyade(xs,ls))
+
+)

@@ -119,14 +119,15 @@ let rec compare b1 b2 =
 			let r = compare xs ys in
 			(
 			if (r = 0) then
-				if ((x:int) < (y:int)) then 0-1
-				else if ((y:int) < (x:int)) then 1
+				if ((x) < (y)) then 0-1
+				else if ((y) < (x)) then 1
 				else 0
 			else r)
 ;;
 let leq b1 b2 =
 	( compare b1 b2 < 1)
 ()
+
 
 
 

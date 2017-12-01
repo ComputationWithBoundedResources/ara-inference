@@ -1,0 +1,3 @@
+"./raml1/splitandsort.raml" (line 30, column 12):
+unexpected "v"
+expecting "(*", whitespace, keyword 'rec' or variable

@@ -1,0 +1,17 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x8 x12 x3 x2 x1 x24 x14 x32 x6)
+(RULES
+    foldr#3(x8,x12,Nil()) -> x12
+    foldr#3(lam2_ms(x3),Nil(),Cons(x2,x1)) -> foldr#3(lam1_n(x2)
+                                                     ,foldr#3(lam2_ms(x3)
+                                                             ,Nil()
+                                                             ,x1)
+                                                     ,x3)
+    foldr#3(lam1_n(x24),x14,Cons(x32,x6)) -> Cons(Pair(x24,x32)
+                                                 ,foldr#3(lam1_n(x24),x14,x6))
+    main(x2,x1) -> foldr#3(lam2_ms(x2),Nil(),x1))
+

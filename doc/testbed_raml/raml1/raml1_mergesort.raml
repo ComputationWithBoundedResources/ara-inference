@@ -58,7 +58,7 @@ let rec merge l1 l2 =
 		| Nil -> Cons(x,xs)
 		| Cons(y,ys) ->
 			(
-			if ((x:int) < (y:int)) then Cons(x,merge) xs (Cons(y,ys))
+			if ((x) < (y)) then Cons(x,merge) xs (Cons(y,ys))
 			else Cons(y,merge) (Cons(x,xs)) ys)
 ;;
 let rec mergesortBuggy l =
@@ -79,6 +79,7 @@ let rec mergesort l =
 			( merge (mergesort l1) (mergesort l2))
 
 mergesort [0;4;5;9;7;1;2;8;6;3]
+
 
 
 

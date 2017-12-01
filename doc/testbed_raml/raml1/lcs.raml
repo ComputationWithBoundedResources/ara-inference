@@ -49,7 +49,7 @@ let right l =
 	| Cons(x,xs) -> ( x)
 ;;
 let max a b =
-	if ((a:int) > (b:int)) then a else b
+	if ((a) > (b)) then a else b
 ;;
 let rec newline y lastline l =
 	match l with
@@ -63,7 +63,7 @@ let rec newline y lastline l =
 			let rightVal = right nl in
 			let diagVal = right lastline' in
 			let elem =
-				if ((x:int) = (y:int)) then diagVal + 1
+				if ((x) = (y)) then diagVal + 1
 				else max belowVal rightVal
 				in
 				Cons(elem,nl))
@@ -87,6 +87,7 @@ let lcs l1 l2 =
 		| len::_ -> ( len)
 
 lcs [1;2;3;4;5;6;7;8;9;10] [5;3;2;6;7;1;8;0;9;11]
+
 
 
 

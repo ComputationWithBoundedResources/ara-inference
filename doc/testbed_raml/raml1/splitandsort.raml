@@ -33,7 +33,7 @@ let rec insert x l =
 	| Cons(l1,ls) ->
 		(
 		let(vals1, key1) = l1 in
-		if ((key1:int) = (keyX:int))
+		if ((key1) = (keyX))
 		then
 			Pair(Cons(valX,vals1), key1)Cons(,ls)
 		else
@@ -51,7 +51,7 @@ let rec splitqs q =
 	| Cons(x,xs) ->
 		(
 		let(ls, rs) = splitqs(pivot, xs) in
-		if ((x:int) > (pivot:int))
+		if ((x) > (pivot))
 		then
 			(ls, Cons(x,rs))
 		else
@@ -97,6 +97,7 @@ let l =
   ]
 in
 splitAndSort l
+
 
 
 

@@ -1,0 +1,11 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x6 x7 x8 x10 x4 x2)
+(RULES
+    app_xs#1(Nil(),x6) -> x6
+    app_xs#1(Cons(x7,x8),x10) -> Cons(x7,app_xs#1(x8,x10))
+    main(x4,x2) -> app_xs#1(x4,app_xs#1(x4,x2)))
+

@@ -37,7 +37,7 @@ let rec eq l1 l2 =
 
 		match l2 with
 		| Nil -> false
-		| Cons(y,ys) -> ( ((x:int) = (y:int)) && (eq xs ys))
+		| Cons(y,ys) -> ( ((x) = (y)) && (eq xs ys))
 
 ;;
 let rec remove x l =
@@ -54,6 +54,7 @@ let rec nub l =
 	| Cons(x,xs) -> ( Cons(x,nub) (remove x xs))
 
 nub [[1];[2];[3];[4];[5];[3];[1];[6];[7];[4];[1];[5];[8];[9];[8];[8];[8]]
+
 
 
 

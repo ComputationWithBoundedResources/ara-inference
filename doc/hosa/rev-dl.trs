@@ -1,0 +1,11 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x4 x7 x20)
+(RULES
+    walk#1(Nil()) -> id()
+    walk#1(Cons(x4,x7)) -> comp_f_g(walk#1(x7),cons1_x(x4))
+    main(x20) -> walk#1(x20))
+

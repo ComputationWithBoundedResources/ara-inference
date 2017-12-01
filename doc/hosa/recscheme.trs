@@ -1,0 +1,11 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x10 x16 x24 x1)
+(RULES
+    scheme#2(Nil()) -> Nil()
+    scheme#2(Cons(x10,Cons(x16,x24))) -> scheme#2(x24)
+    main(x1) -> scheme#2(x1))
+

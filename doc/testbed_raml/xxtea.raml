@@ -6,7 +6,7 @@ type 'a list = Nil | Cons of 'a * 'a list
 ;;
 type Unit = Unit
 ;;
-let array_of_list (l : int list) =
+let array_of_list l =
   let rec aol l n =
     match l with
     | Nil -> Rarray.make n 0
@@ -40,29 +40,29 @@ let power_table =
   in
   array_of_list l
 ;;
-let array_get Pair((a : int Rarray.t), i) =
+let array_get Pair(a, i) =
   Rarray.get a (Rnat.of_int i)
 
 exception Invalid_Operand
 exception Out_of_Bounds
 ;;
-let reverse (l : int list) =
+let reverse l =
   let rec reverse_aux a l' =
-    Raml.tick(32.0);
+    
     match l' with
     | Nil -> a
     | Cons(h,t) -> reverse_aux (Cons(h,a)) t
   in reverse_aux Nil l
 ;;
-let rec size (l : int list) =
-  Raml.tick(32.0);
+let rec size l =
+  
   match l with
   | Nil -> Rnat.zero
   | Cons(x,xs) -> Rnat.succ (size xs)
 ;;
 let get_elem(l, i) =
   let rec get_elem_aux r l' i' =
-    Raml.tick(32.0);
+    
     match l' with
     | Nil ->
       if i' >= 0 then r (*raise Out_of_Bounds*)
@@ -72,9 +72,9 @@ let get_elem(l, i) =
       else get_elem_aux r xs (i'-1)
   in get_elem_aux 0 l i
 ;;
-let replace ((l : int list), i , v) =
+let replace (l, i , v) =
   let rec replace_aux r l' i' =
-    Raml.tick(32.0);
+    
     match l' with
     | Nil ->
       if i' >= 0 then reverse r (*raise Out_of_Bounds*)
@@ -86,8 +86,8 @@ let replace ((l : int list), i , v) =
 ;;
 let ocaml_bitwidth = Rnat.to_int (Rarray.length power_table)
 ;;
-let bitwidth_mask (v, nbits) =
-  Raml.tick 32.0;
+let bitwidth_mask(v, nbits) =
+  
   let m = ((array_get Pair(power_table, nbits)) - 1) in
   let rec bitwidth_mask_aux c x v' m' =
       if x >= ocaml_bitwidth then
@@ -100,8 +100,8 @@ let bitwidth_mask (v, nbits) =
         in bitwidth_mask_aux c2 (x+1) (2*v') (2*m')
     in bitwidth_mask_aux 0 0 v m
 ;;
-let bitwise_and (a, b) =
-  Raml.tick(32.0);
+let bitwise_and(a, b) =
+  
   let rec bitwise_and_aux c x a' b' =
     if x >= ocaml_bitwidth then
       c
@@ -114,7 +114,7 @@ let bitwise_and (a, b) =
   in bitwise_and_aux 0 0 a b
 ;;
 let bitwise_or (a, b, nbits) =
-  Raml.tick(32.0);
+  
   let rec bitwise_or_aux c x a' b' =
     if x >= ocaml_bitwidth then
       c
@@ -128,7 +128,7 @@ let bitwise_or (a, b, nbits) =
   in bitwise_or_aux 0 0 (bitwidth_mask(a, nbits)) (bitwidth_mask(b, nbits))
 ;;
 let bitwise_xor (a, b, nbits) =
-  Raml.tick(32.0);
+  
   let rec bitwise_xor_aux c x a' b' =
     if x >= ocaml_bitwidth then
       c
@@ -142,13 +142,13 @@ let bitwise_xor (a, b, nbits) =
   in bitwise_xor_aux 0 0 (bitwidth_mask(a, nbits)) (bitwidth_mask(b, nbits))
 ;;
 let shift_left (v, n, nbits) =
-  Raml.tick(32.0);
-  if n >= ocaml_bitwidth then (Raml.tick 32.0; 0)
+  
+  if n >= ocaml_bitwidth then ( 0)
   else
     bitwidth_mask (v * (array_get Pair(power_table, n)), nbits)
 ;;
 let shift_right_zero_fill (v, n, nbits) =
-  Raml.tick(32.0);
+  
   let v_masked = bitwidth_mask(v, nbits) in
   if n >= ocaml_bitwidth then 0
   else if n > 0 then
@@ -161,8 +161,8 @@ let shift_right_zero_fill (v, n, nbits) =
   else
     v_masked
 ;;
-let shift_right_arithmetic (v, n) =
-  Raml.tick(32.0);
+let shift_right_arithmetic(v, n) =
+  
   if n >= ocaml_bitwidth then
     if v < 0 then -1
     else 0
@@ -179,9 +179,9 @@ let shift_right_arithmetic (v, n) =
 let bitwise_complement a nbits =
   (-1) - (bitwidth_mask(a, nbits))
 ;;
-let twobang (a:int) = if a = 0 then 0 else 1
+let twobang (a) = if a = 0 then 0 else 1
 ;;
-let modi (a:int) (b:int) = a - (a/b)*b
+let modi (a) (b) = a - (a/b)*b
 ;;
 let tea_encrypt v k q_nat =
   let n_nat = size v in
@@ -272,6 +272,7 @@ let key = [4;5;6;7]
 let x = tea_encrypt [1;2] key (Rnat.of_int 4)
 let y = tea_decrypt x key (Rnat.of_int 4)
 let unused = Pair(x, y)
+
 
 
 ;;

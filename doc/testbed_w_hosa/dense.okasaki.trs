@@ -1,0 +1,17 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x2 x4 x6 x8 x1)
+(RULES
+    add#2(x2,Nil()) -> x2
+    add#2(Nil(),Cons(x4,x2)) -> Cons(x4,x2)
+    add#2(Cons(x6,x4),Cons(Zero(),x2)) -> Cons(x6,add#2(x4,x2))
+    add#2(Cons(Zero(),x4),Cons(One(),x2)) -> Cons(One(),add#2(x4,x2))
+    add#2(Cons(One(),x4),Cons(One(),x2)) -> Cons(Zero(),inc#1(add#2(x4,x2)))
+    inc#1(Nil()) -> Cons(One(),Nil())
+    inc#1(Cons(Zero(),x8)) -> Cons(One(),x8)
+    inc#1(Cons(One(),x8)) -> Cons(Zero(),inc#1(x8))
+    main(x2,x1) -> add#2(x2,x1))
+

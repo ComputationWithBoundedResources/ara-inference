@@ -1,0 +1,19 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x xs)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil, True, isEmpty[Match](X), False >)
+(SIGNATURES
+    list :: [A] -> A
+    notEmpty :: [A] -> A
+    goal :: [A] -> A)
+(RULES
+    list(Cons(x,xs)) -> list(xs)
+    list(Nil()) -> True()
+    list(Nil()) ->
+      isEmpty[Match](Nil())
+    notEmpty(Cons(x,xs)) -> True()
+    notEmpty(Nil()) -> False()
+    goal(x) -> list(x))

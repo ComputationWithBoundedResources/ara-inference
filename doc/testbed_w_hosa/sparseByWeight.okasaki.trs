@@ -1,0 +1,38 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x4 x3 x2 x1 x8 x6 x16)
+(RULES
+    cond_add_ws1'_ws2'_3(True(),x4,x3,x2,x1) -> Cons(x4,add#2(Cons(x2,x1),x3))
+    cond_add_ws1'_ws2'_3(False(),x4,x3,x2,x1) -> carry#2(mult#2(S(S(0())),x2)
+                                                        ,add#2(x1,x3))
+    cond_add_ws1'_ws2'_2(True(),x4,x3,x2,x1) -> Cons(x2,add#2(x1,Cons(x4,x3)))
+    cond_add_ws1'_ws2'_2(False(),x4,x3,x2,x1) -> cond_add_ws1'_ws2'_3(lt#2(x4
+                                                                          ,x2)
+                                                                     ,x4
+                                                                     ,x3
+                                                                     ,x2
+                                                                     ,x1)
+    add#2(x2,Nil()) -> x2
+    add#2(Nil(),Cons(x4,x2)) -> Cons(x4,x2)
+    add#2(Cons(x8,x6),Cons(x4,x2)) -> cond_add_ws1'_ws2'_2(lt#2(x8,x4)
+                                                          ,x4
+                                                          ,x2
+                                                          ,x8
+                                                          ,x6)
+    cond_carry_w_xs_1(True(),x3,x2,x1) -> Cons(x3,Cons(x2,x1))
+    cond_carry_w_xs_1(False(),x3,x2,x1) -> carry#2(mult#2(S(S(0())),x3),x1)
+    carry#2(x2,Nil()) -> Cons(x2,Nil())
+    carry#2(x6,Cons(x4,x2)) -> cond_carry_w_xs_1(lt#2(x6,x4),x6,x4,x2)
+    mult#2(0(),x2) -> 0()
+    mult#2(S(x4),x2) -> addNat#2(mult#2(x4,x2),x2)
+    addNat#2(0(),x16) -> x16
+    addNat#2(S(x4),x2) -> S(addNat#2(x4,x2))
+    lt#2(0(),0()) -> False()
+    lt#2(0(),S(x16)) -> True()
+    lt#2(S(x4),S(x2)) -> lt#2(x4,x2)
+    lt#2(S(x16),0()) -> False()
+    main(x2,x1) -> add#2(x2,x1))
+

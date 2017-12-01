@@ -1,0 +1,96 @@
+(VAR N E P F p q n m e f w)
+
+(DATATYPES
+   a = < graph(d,d) >
+   b = < pair(d,d) >
+   c = < true, false >
+   d = µX. < edge(X,X,X), nil, dd(X,X), 0, s(X) >
+ )
+
+(SIGNATURES
+   src :: d -> d
+   wt :: d -> d
+   trg :: d -> d
+   forrest :: a -> b
+   sort :: d -> d
+   partitions :: d -> d
+   kruskal :: d x d x d -> b
+   inBlock :: d x d -> c
+   kruskal#q :: c x d x d x d x d -> b
+   join :: d x d x d -> d
+   elem :: d x d -> c
+   and :: c x c -> c
+   or :: c x c -> c
+   join#q :: c x d x d x d x d -> d
+   pp :: d x d -> d
+   eq :: d x d -> c
+   insert :: d x d -> d
+   leq :: d x d -> c
+   insert#q :: c x d x d x d -> d
+ )
+
+
+(RULES
+  src(edge(n,w,m)) -> n
+  wt(edge(n,w,m)) -> w
+  trg(edge(n,w,m)) -> m
+
+
+  partitions(nil) -> nil
+  partitions(dd(n,N)) -> dd(dd(n,nil),partitions(N))
+
+
+  inBlock(e,nil) -> false
+  inBlock(e,dd(p,P)) -> or(and(elem(src(e),p),elem(trg(e),p))
+                            , inBlock(e,P))
+
+  join(e,nil,q) -> dd(q,nil)
+  join(e,dd(p,P),q) -> join#q(or(elem(src(e),p),elem(trg(e),p)), e, p,P,q)
+  join#q(true, e, p,P,q) -> join(e,P,pp(p,q))
+  join#q(false, e, p,P,q) -> dd(p,join(e,P,q))
+
+  elem(n,nil) -> false
+  elem(n,dd(m,p)) -> or(eq(n,m),elem(n,p))
+
+  pp(nil,q) -> q
+  pp(dd(n,p),q) -> dd(n,pp(p,q))
+
+  sort(nil)        -> nil
+  sort(dd(e,E))  -> insert(e,sort(E))
+
+  insert(e,nil)      -> dd(e,nil)
+  insert(e,dd(f,E)) -> insert#q(leq(wt(e),wt(f)), e, f,E)
+
+  insert#q(true , e, f, E)  -> dd(e,dd(f,E))
+  insert#q(false, e, f, E)  -> dd(f,insert(e,E))
+
+  eq(0,0) -> true
+  eq(s(n),0) -> false
+  eq(0,s(m)) -> false
+  eq(s(n),s(m)) -> eq(n,m)
+
+  leq(0,0)       -> true
+  leq(s(n), 0)   -> false
+  leq(0,s(m))    -> true
+  leq(s(n),s(m)) -> leq(n,m)
+
+  and(true,true) -> true
+  and(false,true) -> false
+  and(true,false) -> false
+  and(false,false) -> false
+
+  or(true,true) -> true
+  or(false,true) -> true
+  or(true,false) -> true
+  or(false,false) -> false
+
+  kruskal#q(true,e,E,F,P) -> kruskal(E,F,P)
+  kruskal#q(false,e,E,F,P) -> kruskal(E,dd(e,F),join(e,P,nil))
+
+  kruskal(dd(e,E),F,P) -> kruskal#q(inBlock(e,P),e,E,F,P)
+  kruskal(nil,F,P) -> pair(F,P)
+
+  forrest(graph(N,E)) -> kruskal(sort(E),nil, partitions(N))
+
+
+  )

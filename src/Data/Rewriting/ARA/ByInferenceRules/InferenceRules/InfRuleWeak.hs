@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 11:39:45 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Jun 18 20:02:40 2017 (+0200)
+-- Last-Updated: Fri Dec  1 18:34:29 2017 (+0100)
 --           By: Manuel Schneckenreither
---     Update #: 160
+--     Update #: 162
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -61,11 +61,10 @@ import           Data.Rewriting.Typed.Term                                      
 import qualified Data.Rewriting.Typed.Term                                          as T
 
 import           Control.Arrow
-import           Data.List
-                                                                                     (nub)
+import           Data.List                                                          (nub)
+import           Data.Maybe                                                         (isJust)
 
-import           Debug.Trace
-                                                                                     (trace)
+import           Debug.Trace                                                        (trace)
 
 weak :: forall f v dt . (Eq v, Eq dt, Read v, Ord v, Show v, Show dt, Show f) =>
         ArgumentOptions
@@ -83,7 +82,9 @@ weak args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (term, dt))
 
   where pre' = filter (\x -> fst x `elem` varsTerm) pre
         filteredPre = filter (\x -> fst x `notElem` varsTerm) pre
-        nDtConds = map (\x -> (removeDt (snd x), Eq, 0)) filteredPre
+        nDtConds | isLower = map (\x -> (removeDt (snd x), Eq, 0)) filteredPre
+                 | otherwise = []
+        isLower = isJust (lowerboundArg args) || lowerbound args
         conds'
           | isCtrDeriv = conds
           | otherwise = conds { dtConditionsInt = dtConditionsInt conds ++ nDtConds }

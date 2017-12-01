@@ -1,0 +1,66 @@
+(VAR
+    var l x xs y ys)
+
+(DATATYPES
+   a = < #false, #true >
+   b = µX. < #0, #neg(X), #pos(X), #s(X) >
+   c = µX. < dd(b,X), nil >
+   d = < #EQ, #GT, #LT >
+ )
+
+(SIGNATURES
+   #abs :: b -> b
+   #less :: b x b -> a
+   #compare :: b x b -> d
+   #cklt :: d -> a
+   insert :: b x c -> c
+   insert#1 :: c x b -> c
+   insert#2 :: a x b x b x c -> c
+   insertD :: b x c -> c
+   insertD#1 :: c x b -> c
+   insertD#2 :: a x b x b x c -> c
+   insertionsort :: c -> c
+   insertionsort#1 :: c -> c
+   insertionsortD :: c -> c
+   insertionsortD#1 :: c -> c
+ )
+
+(RULES
+    #abs(#0) -> #0
+    #abs(#neg(x)) -> #pos(x)
+    #abs(#pos(x)) -> #pos(x)
+    #abs(#s(x)) -> #pos(#s(x))
+    #less(x,y) -> #cklt(#compare(x,y))
+    insert(x,l) -> insert#1(l,x)
+    insert#1(dd(y,ys),x) -> insert#2(#less(y,x),x,y,ys)
+    insert#1(nil,x) -> dd(x,nil)
+    insert#2(#false,x,y,ys) -> dd(x,dd(y,ys))
+    insert#2(#true,x,y,ys) -> dd(y,insert(x,ys))
+    insertD(x,l) -> insertD#1(l,x)
+    insertD#1(dd(y,ys),x) -> insertD#2(#less(y,x),x,y,ys)
+    insertD#1(nil,x) -> dd(x,nil)
+    insertD#2(#false,x,y,ys) -> dd(x,dd(y,ys))
+    insertD#2(#true,x,y,ys) -> dd(y,insertD(x,ys))
+    insertionsort#1(dd(x,xs)) -> insert(x,insertionsort(xs))
+    insertionsort#1(nil) -> nil
+    insertionsortD(l) -> insertionsortD#1(l)
+    insertionsortD#1(dd(x,xs)) -> insertD(x,insertionsortD(xs))
+    insertionsortD#1(nil) -> nil
+    #cklt(#EQ) -> #false
+    #cklt(#GT) -> #false
+    #cklt(#LT) -> #true
+    #compare(#0,#0) -> #EQ
+    #compare(#0,#neg(y)) -> #GT
+    #compare(#0,#pos(y)) -> #LT
+    #compare(#0,#s(y)) -> #LT
+    #compare(#neg(x),#0) -> #LT
+    #compare(#neg(x),#neg(y)) -> #compare(y,x)
+    #compare(#neg(x),#pos(y)) -> #LT
+    #compare(#pos(x),#0) -> #GT
+    #compare(#pos(x),#neg(y)) -> #GT
+    #compare(#pos(x),#pos(y)) -> #compare(x,y)
+    #compare(#s(x),#0) -> #GT
+    #compare(#s(x),#s(y)) -> #compare(x,y)
+    insertionsort(l) -> insertionsort#1(l)
+
+)

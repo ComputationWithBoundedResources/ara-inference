@@ -1,0 +1,21 @@
+(VAR x y)
+
+(DATATYPES
+  Nat = µX.< 0, s(X) >
+)
+
+(SIGNATURES
+  add :: Nat x Nat -> Nat
+  main :: Nat x Nat -> Nat
+)
+
+
+(RULES
+  add(0, y) -> y
+  add(s(x), y) -> s(add(x,y))
+  main(x,y) -> add(x,y)
+)
+(COMMENT
+
+)
+

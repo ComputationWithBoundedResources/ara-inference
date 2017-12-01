@@ -1,0 +1,27 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x2 x6 x4 x7 x8 x5 x3 x1 x12)
+(RULES
+    foldl#3(x2,Nil()) -> x2
+    foldl#3(x6,Cons(x4,x2)) -> foldl#3(mrg#2(x6,x4),x2)
+    cond_mrg_xs_ys_2(True(),Cons(x7,x8),Cons(x5,x6),x4,x3,x2,x1) ->
+      Cons(x4,mrg#2(x3,Cons(x5,x6)))
+    cond_mrg_xs_ys_2(False(),Cons(x7,x8),Cons(x5,x6),x4,x3,x2,x1) ->
+      Cons(x2,mrg#2(Cons(x7,x8),x1))
+    mrg#2(Nil(),x2) -> x2
+    mrg#2(Cons(x4,x2),Nil()) -> Cons(x4,x2)
+    mrg#2(Cons(x8,x6),Cons(x4,x2)) -> cond_mrg_xs_ys_2(leq#2(x8,x4)
+                                                      ,Cons(x8,x6)
+                                                      ,Cons(x4,x2)
+                                                      ,x8
+                                                      ,x6
+                                                      ,x4
+                                                      ,x2)
+    leq#2(0(),x8) -> True()
+    leq#2(S(x4),S(x2)) -> leq#2(x4,x2)
+    leq#2(S(x12),0()) -> False()
+    main(MS(x4,x2)) -> foldl#3(Nil(),x2))
+

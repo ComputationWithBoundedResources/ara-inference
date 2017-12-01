@@ -1,0 +1,48 @@
+(VAR t e x xs y ys cnf clause assign l ls)
+
+(DATATYPES
+   a = µX. < true, false, nil, dd(X,X), O(X), #1(X), #0(X), unsat >
+ )
+
+(SIGNATURES
+   if :: a x a x a -> a
+   member :: a x a -> a
+   eq :: a x a -> a
+   negate :: a -> a
+   choice :: a -> a
+   guess :: a -> a
+   verify :: a -> a
+   sat :: a -> a
+   satck :: a x a -> a
+ )
+
+
+(RULES
+  if(true, t, e) -> t
+  if(false, t, e) -> e
+
+  member(x, nil) -> false
+  member(x, dd(y,ys)) -> if(eq(x,y), true, member(x,ys))
+
+  eq(nil,nil)    -> true
+  eq(O(x), O(y)) -> eq(x,y)
+  eq(O(x), #1(y)) -> false
+  eq(#1(x), O(y)) -> false
+  eq(#1(x), #1(y)) -> eq(x,y)
+
+  negate(#0(x)) -> #1(x)
+  negate(#1(x)) -> #0(x)
+
+  choice(dd(x,xs))  -> x
+  choice(dd(x,xs))  -> choice(xs)
+
+  guess(nil) -> nil
+  guess(dd(clause,cnf)) -> dd(choice(clause), guess(cnf))
+
+  verify(nil) -> true
+  verify(dd(l,ls)) -> if(member(negate(l),ls), false, verify(ls))
+
+  satck(cnf,assign) -> if(verify(assign),assign,unsat)
+  sat(cnf) -> satck(cnf,guess(cnf))
+
+)

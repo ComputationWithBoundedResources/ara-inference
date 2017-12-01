@@ -1,0 +1,51 @@
+(VAR
+    l x xs y ys)
+
+(DATATYPES
+   a = < #false, #true >
+   b = µX. < #0, #neg(X), #pos(X), #s(X) >
+   c = µX. < dd(b,X), nil >
+   d = < #EQ, #GT, #LT >
+ )
+
+(SIGNATURES
+   #less :: b x b -> a
+   #compare :: b x b -> d
+   #cklt :: d -> a
+   findMin :: c -> c
+   findMin#1 :: c -> c
+   findMin#2 :: c x b -> c
+   findMin#3 :: a x b x b x c -> c
+   minSort :: c -> c
+   minSort#1 :: c -> c
+ )
+
+(RULES
+    #less(x,y) -> #cklt(#compare(x,y))
+    findMin(l) -> findMin#1(l)
+    findMin#1(dd(x,xs)) -> findMin#2(findMin(xs),x)
+    findMin#1(nil) -> nil
+    findMin#2(dd(y,ys),x) -> findMin#3(#less(x,y),x,y,ys)
+    findMin#2(nil,x) -> dd(x,nil)
+    findMin#3(#false,x,y,ys) -> dd(y,dd(x,ys))
+    findMin#3(#true,x,y,ys) -> dd(x,dd(y,ys))
+    minSort#1(dd(x,xs)) -> dd(x,minSort(xs))
+    minSort#1(nil) -> nil
+    #cklt(#EQ) -> #false
+    #cklt(#GT) -> #false
+    #cklt(#LT) -> #true
+    #compare(#0,#0) -> #EQ
+    #compare(#0,#neg(y)) -> #GT
+    #compare(#0,#pos(y)) -> #LT
+    #compare(#0,#s(y)) -> #LT
+    #compare(#neg(x),#0) -> #LT
+    #compare(#neg(x),#neg(y)) -> #compare(y,x)
+    #compare(#neg(x),#pos(y)) -> #LT
+    #compare(#pos(x),#0) -> #GT
+    #compare(#pos(x),#neg(y)) -> #GT
+    #compare(#pos(x),#pos(y)) -> #compare(x,y)
+    #compare(#s(x),#0) -> #GT
+    #compare(#s(x),#s(y)) -> #compare(x,y)
+    minSort(l) -> minSort#1(findMin(l))
+
+)

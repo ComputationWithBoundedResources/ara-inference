@@ -1,0 +1,11 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x8 x6 x4 x2 x1)
+(RULES
+    rev#2(Nil(),x8) -> x8
+    rev#2(Cons(x6,x4),x2) -> rev#2(x4,Cons(x6,x2))
+    main(x1) -> rev#2(x1,Nil()))
+

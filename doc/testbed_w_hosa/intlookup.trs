@@ -1,0 +1,17 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    e p x x' xs xs')
+(DATATYPES
+    A = µX.< Cons(X, X), Nil >)
+(SIGNATURES
+    lookup :: [A x A] -> A
+    run :: [A x A] -> A
+    intlookup :: [A x A] -> A)
+(RULES
+    lookup(Cons(x',xs'),Cons(x,xs)) -> lookup(xs',xs)
+    lookup(Nil(),Cons(x,xs)) -> x
+    intlookup(e,p) -> intlookup(lookup(e,p),p)
+    run(e,p) -> intlookup(e,p)
+)

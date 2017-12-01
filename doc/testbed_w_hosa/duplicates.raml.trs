@@ -1,0 +1,64 @@
+(VAR
+    l l1 l2 x x'1 x'2 xs y y'1 y'2 ys)
+
+(DATATYPES
+   a = < #false, #true >
+   b = µX. < dd(X,X), nil, #0, #neg(X), #pos(X), #s(X) >
+ )
+
+(SIGNATURES
+   #equal :: b x b -> a
+   #eq :: b x b -> a
+   and :: a x a -> a
+   #and :: a x a -> a
+   eq :: b x b -> a
+   eq#1 :: b x b -> a
+   eq#3 :: b x b x b -> a
+   eq#2 :: b -> a
+   nub :: b -> b
+   nub#1 :: b -> b
+   remove :: b x b -> b
+   remove#1 :: b x b -> b
+   remove#2 :: a x b x b x b -> b
+ )
+
+(RULES
+    #equal(x,y) -> #eq(x,y)
+    and(x,y) -> #and(x,y)
+    eq(l1,l2) -> eq#1(l1,l2)
+    eq#1(dd(x,xs),l2) -> eq#3(l2,x,xs)
+    eq#1(nil,l2) -> eq#2(l2)
+    eq#2(dd(y,ys)) -> #false
+    eq#2(nil) -> #true
+    eq#3(dd(y,ys),x,xs) -> and(#equal(x,y),eq(xs,ys))
+    eq#3(nil,x,xs) -> #false
+    nub#1(dd(x,xs)) -> dd(x,nub(remove(x,xs)))
+    nub#1(nil) -> nil
+    remove(x,l) -> remove#1(l,x)
+    remove#1(dd(y,ys),x) -> remove#2(eq(x,y),x,y,ys)
+    remove#1(nil,x) -> nil
+    remove#2(#false,x,y,ys) -> dd(y,remove(x,ys))
+    remove#2(#true,x,y,ys) -> remove(x,ys)
+    #and(#false,#false) -> #false
+    #and(#false,#true) -> #false
+    #and(#true,#false) -> #false
+    #and(#true,#true) -> #true
+    #eq(#0,#0) -> #true
+    #eq(#0,#neg(y)) -> #false
+    #eq(#0,#pos(y)) -> #false
+    #eq(#0,#s(y)) -> #false
+    #eq(#neg(x),#0) -> #false
+    #eq(#neg(x),#neg(y)) -> #eq(x,y)
+    #eq(#neg(x),#pos(y)) -> #false
+    #eq(#pos(x),#0) -> #false
+    #eq(#pos(x),#neg(y)) -> #false
+    #eq(#pos(x),#pos(y)) -> #eq(x,y)
+    #eq(#s(x),#0) -> #false
+    #eq(#s(x),#s(y)) -> #eq(x,y)
+    #eq(dd(x'1,x'2),dd(y'1,y'2)) -> #and(#eq(x'1,y'1),#eq(x'2,y'2))
+    #eq(dd(x'1,x'2),nil) -> #false
+    #eq(nil,dd(y'1,y'2)) -> #false
+    #eq(nil,nil) -> #true
+    nub(l) -> nub#1(l)
+
+)

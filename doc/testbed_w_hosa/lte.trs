@@ -1,0 +1,32 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x x' xs xs' y)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil, False, True >)
+(SIGNATURES
+    lte :: [A x A] -> A
+    even :: [A] -> A
+    notEmpty :: [A] -> A
+    goal :: [A x A] -> A
+    and :: [A x A] -> A)
+(RULES
+    lte(Cons(x',xs'),Cons(x,xs)) ->
+      lte(xs',xs)
+    lte(Cons(x,xs),Nil()) -> False()
+    even(Cons(x,Nil())) -> False()
+    even(Cons(x',Cons(x,xs))) ->
+      even(xs)
+    notEmpty(Cons(x,xs)) -> True()
+    notEmpty(Nil()) -> False()
+    lte(Nil(),y) -> True()
+    even(Nil()) -> True()
+    and(False(),False()) ->= False()
+    and(True(),False()) ->= False()
+    and(False(),True()) ->= False()
+    and(True(),True()) ->= True()
+    goal(x,y) -> and(lte(x,y)
+                    ,even(x))
+
+)

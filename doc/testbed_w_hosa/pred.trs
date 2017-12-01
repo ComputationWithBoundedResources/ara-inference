@@ -1,0 +1,10 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x4)
+(RULES
+    main(0()) -> 0()
+    main(S(x4)) -> x4)
+

@@ -1,0 +1,26 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x xs y)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil >)
+(SIGNATURES
+    g :: [A x A] -> A
+    h :: [A x A] -> A
+    f :: [A x A] -> A
+    sp1 :: [A x A] -> A
+    r :: [A x A] -> A)
+(RULES
+    g(Cons(x,xs),y) -> Cons(x,xs)
+    h(Nil(),y) -> h(Nil(),y)
+    h(Cons(x,xs),y) -> f(Cons(x,xs)
+                        ,y)
+    g(Nil(),y) -> h(Nil(),y)
+    f(Nil(),y) -> g(Nil(),y)
+    f(Cons(x,xs),y) -> h(Cons(x,xs)
+                        ,y)
+
+    r(x,y) -> x
+    sp1(x,y) -> f(x,y)
+)

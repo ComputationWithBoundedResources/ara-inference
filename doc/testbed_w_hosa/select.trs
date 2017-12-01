@@ -1,0 +1,32 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    rest revprefix x x' xs)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil >)
+(SIGNATURES
+    selects :: [A x A x A] -> A
+    select :: [A] -> A
+    revapp :: [A x A] -> A)
+(RULES
+    selects(x'
+           ,revprefix
+           ,Cons(x,xs)) -> Cons(Cons(x'
+                                    ,revapp(revprefix,Cons(x,xs)))
+                               ,selects(x
+                                       ,Cons(x',revprefix)
+                                       ,xs))
+    revapp(Cons(x,xs),rest) ->
+      revapp(xs,Cons(x,rest))
+    selects(x,revprefix,Nil()) ->
+      Cons(Cons(x
+               ,revapp(revprefix,Nil()))
+          ,Nil())
+    revapp(Nil(),rest) -> rest
+    select(Nil()) -> Nil()
+    select(Cons(x,xs)) -> selects(x
+                                 ,Nil()
+                                 ,xs)
+
+)

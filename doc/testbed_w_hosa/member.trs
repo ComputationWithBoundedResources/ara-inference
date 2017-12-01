@@ -1,0 +1,34 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x x' xs y)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil, False, True, S(X), 0 >)
+(SIGNATURES
+    member :: [A x A] -> A
+    notEmpty :: [A] -> A
+    goal :: [A x A] -> A
+    !EQ :: [A x A] -> A
+    member[Ite][True][Ite] :: [A x A x A] -> A)
+(RULES
+    member(x',Cons(x,xs)) ->
+      member[Ite][True][Ite](!EQ(x',x)
+                            ,x'
+                            ,Cons(x,xs))
+    member(x,Nil()) -> False()
+    notEmpty(Cons(x,xs)) -> True()
+    notEmpty(Nil()) -> False()
+    !EQ(S(x),S(y)) ->= !EQ(x,y)
+    !EQ(0(),S(y)) ->= False()
+    !EQ(S(x),0()) ->= False()
+    !EQ(0(),0()) ->= True()
+    member[Ite][True][Ite](False()
+                          ,x'
+                          ,Cons(x,xs)) ->= member(x',xs)
+    member[Ite][True][Ite](True()
+                          ,x
+                          ,xs) ->= True()
+    goal(x,xs) -> member(x,xs)
+
+)

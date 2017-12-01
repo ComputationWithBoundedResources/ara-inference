@@ -1,0 +1,28 @@
+(GOAL COMPLEXITY)
+(STARTTERM CONSTRUCTOR-BASED)
+(VAR x xs y ys)
+(RULES
+    qs(nil) -> nil
+    qs(cons(x, xs)) -> concat(qs(low(x, xs)), cons(x, qs(high(x, xs))))
+
+    low(x, nil) -> nil
+    low(x, cons(y, ys)) -> ifLow(leq(x, y), x, cons(y, ys))
+
+    ifLow(true, x, cons(y, ys)) -> low(x, ys)
+    ifLow(false, x, cons(y, ys)) -> cons(y, low(x, ys))
+
+    high(x, nil) -> nil
+    high(x, cons(y, ys)) -> ifHigh(leq(x, y), x, cons(y, ys))
+
+    ifHigh(true, x, cons(y, ys)) -> cons(y, high(x, ys))
+    ifHigh(false, x, cons(y, ys)) -> high(x, ys)
+
+    leq(0, x) -> true
+    leq(s(x), 0) -> false
+    leq(s(x), s(y)) -> leq(x, y)
+
+    concat(nil, ys) -> ys
+    concat(cons(x, xs), ys) -> cons(x, concat(xs, ys))
+
+    goal(xs) -> qs(xs)
+)

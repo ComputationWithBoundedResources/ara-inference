@@ -1,0 +1,31 @@
+(VAR x xs y ys)
+
+(DATATYPES
+   a = µX. < 0, s(X) >
+   b = µX. < nil, cons(a,X) >
+   c = < true, false >
+ )
+
+(SIGNATURES
+   sort :: b -> b
+   insert :: a x b -> b
+   leq :: a x a -> c
+   if'insert :: c x a x a x b -> b
+ )
+
+
+(RULES
+
+  insert(x,nil)              -> cons(x,nil)
+  insert(x,cons(y,ys))       -> if'insert(leq(x,y), x, y, ys)
+  if'insert(true, x, y, ys)  -> cons(x,cons(y,ys))
+  if'insert(false, x, y, ys) -> cons(y,insert(x,ys))
+
+  leq(0,y)       -> true
+  leq(s(x), 0)   -> false
+  leq(s(x),s(y)) -> leq(x,y)
+
+  sort(nil)        -> nil
+  sort(cons(x,xs)) -> insert(x,sort(xs))
+)
+

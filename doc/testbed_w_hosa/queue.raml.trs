@@ -1,0 +1,77 @@
+
+(VAR
+    @'@9 @a @b @breadth@1 @breadth@2 @breadth@7 @breadth@8 @children@3 @children@4 @children@5 @children@6 @copyover@1 @copyover@2 @dequeue@1 @dequeue@2 @dequeue@3 @dequeue@4 @elem @inq @l @l1 @l2 @outq @queue @queue' @x @xs @y @ys @z)
+
+(DATATYPES
+   a = < #unit >
+   b = µX. < tuple#2(X,X), dd(X,X), nil, tuple#4(X,X,X,X) >
+ )
+
+(SIGNATURES
+   breadth :: b x b -> b
+   dequeue :: b x b -> b
+   breadth#1 :: b -> b
+   breadth#2 :: b x b -> b
+   breadth#4 :: b -> b
+   breadth#3 :: b x b -> b
+   enqueues :: b x b -> b
+   breadth#5 :: b -> b
+   children :: b x b x b x b -> b
+   children#1 :: b x b x b -> b
+   children#3 :: b x b x b x b -> b
+   children#2 :: b x b -> b
+   copyover :: b x b -> b
+   copyover#1 :: b -> b
+   copyover#2 :: b x b -> b
+   dequeue#1 :: b -> b
+   dequeue#2 :: b x b -> b
+   dequeue#3 :: b -> b
+   dequeue#4 :: b -> b
+   empty :: a -> b
+   enqueue :: b x b -> b
+   enqueue#1 :: b x b -> b
+   enqueues#1 :: b x b -> b
+   startBreadth :: b -> b
+   startBreadth#1 :: b -> b
+   startBreadth#2 :: b -> b
+ )
+
+
+(RULES
+    breadth(@breadth@1,@breadth@2) -> breadth#1(dequeue(@breadth@1,@breadth@2))
+    breadth#1(tuple#2(@queue',@elem)) -> breadth#2(@elem,@queue')
+    breadth#2(dd(@z,@'@9),@queue') -> breadth#3(breadth#4(@z),@queue')
+    breadth#2(nil,@queue') -> nil
+    breadth#3(tuple#2(@x,@ys),@queue') -> dd(@x,breadth#5(enqueues(@ys,@queue')))
+    breadth#4(tuple#4(@children@3,@children@4,@children@5,@children@6)) -> children(@children@3,@children@4,@children@5,@children@6)
+    breadth#5(tuple#2(@breadth@7,@breadth@8)) -> breadth(@breadth@7,@breadth@8)
+    children(@a,@b,@l1,@l2) -> tuple#2(tuple#2(@a,@b),children#1(@l1,@b,@l2))
+    children#1(dd(@x,@xs),@b,@l2) -> children#3(@l2,@b,@x,@xs)
+    children#1(nil,@b,@l2) -> children#2(@l2,@b)
+    children#2(dd(@y,@ys),@b) -> dd(tuple#4(@y,@b,nil,@ys),nil)
+    children#2(nil,@b) -> nil
+    children#3(dd(@y,@ys),@b,@x,@xs) -> dd(tuple#4(@x,@b,nil,@xs),dd(tuple#4(@x,@y,@xs,@ys),nil))
+    children#3(nil,@b,@x,@xs) -> nil
+    copyover(@copyover@1,@copyover@2) -> copyover#1(tuple#2(@copyover@1,@copyover@2))
+    copyover#1(tuple#2(@inq,@outq)) -> copyover#2(@inq,@outq)
+    copyover#2(dd(@x,@xs),@outq) -> copyover(@xs,dd(@x,@outq))
+    copyover#2(nil,@outq) -> tuple#2(nil,@outq)
+    dequeue(@dequeue@1,@dequeue@2) -> dequeue#1(tuple#2(@dequeue@1,@dequeue@2))
+    dequeue#1(tuple#2(@inq,@outq)) -> dequeue#2(@outq,@inq)
+    dequeue#2(dd(@y,@ys),@inq) -> tuple#2(tuple#2(@inq,@ys),dd(@y,nil))
+    dequeue#2(nil,@inq) -> dequeue#3(@inq)
+    dequeue#3(dd(@x,@xs)) -> dequeue#4(copyover(dd(@x,@xs),nil))
+    dequeue#3(nil) -> tuple#2(tuple#2(nil,nil),nil)
+    dequeue#4(tuple#2(@dequeue@3,@dequeue@4)) -> dequeue(@dequeue@3,@dequeue@4)
+    empty(@x) -> tuple#2(nil,nil)
+    enqueue#1(tuple#2(@inq,@outq),@x) -> tuple#2(dd(@x,@inq),@outq)
+    enqueues(@l,@queue) -> enqueues#1(@l,@queue)
+    enqueues#1(dd(@x,@xs),@queue) -> enqueues(@xs,enqueue(@x,@queue))
+    enqueues#1(nil,@queue) -> @queue
+    startBreadth(@xs) -> startBreadth#1(@xs)
+    startBreadth#1(dd(@x,@xs)) -> startBreadth#2(enqueue(tuple#4(@x,@x,@xs,@xs),empty(#unit)))
+    startBreadth#1(nil) -> nil
+    startBreadth#2(tuple#2(@breadth@1,@breadth@2)) -> breadth(@breadth@1,@breadth@2)
+    enqueue(@x,@queue) -> enqueue#1(@queue,@x)
+)
+

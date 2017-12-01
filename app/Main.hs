@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Nov  6 14:54:28 2017 (+0100)
+-- Last-Updated: Fri Dec  1 18:33:03 2017 (+0100)
 --           By: Manuel Schneckenreither
---     Update #: 1027
+--     Update #: 1029
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -143,7 +143,6 @@ main =
 
          -- Find out SCCs
          let reachability = analyzeReachability prob
-
 
          (prove, infTrees) <- analyzeProblem args reachability prob
 

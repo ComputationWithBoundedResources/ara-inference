@@ -1,0 +1,67 @@
+(VAR
+    l l1 l2 x x1 x2 xs xs' y ys)
+
+(DATATYPES
+   a = < 'false, 'true >
+   b = µX. < dd(c,X), nil >
+   c = µX. < '0, 'neg(X), 'pos(X), 's(X) >
+   d = < tuple'2(b,b) >
+   e = < 'EQ, 'GT, 'LT >
+ )
+
+(SIGNATURES
+   'less :: c x c -> a
+   'compare :: c x c -> e
+   'cklt :: e -> a
+   merge :: b x b -> b
+   merge'1 :: b x b -> b
+   merge'2 :: b x c x b -> b
+   merge'3 :: a x c x b x c x b -> b
+   mergesort :: b -> b
+   mergesort'1 :: b -> b
+   mergesort'2 :: b x c -> b
+   msplit :: b -> d
+   mergesort'3 :: d -> b
+   msplit'1 :: b -> d
+   msplit'2 :: b x c -> d
+   msplit'3 :: d x c x c -> d
+ )
+
+(RULES
+    'less(x,y) -> 'cklt('compare(x,y))
+    merge(l1,l2) -> merge'1(l1,l2)
+    merge'1(dd(x,xs),l2) -> merge'2(l2,x,xs)
+    merge'1(nil,l2) -> l2
+    merge'2(dd(y,ys),x,xs) -> merge'3('less(x,y),x,xs,y,ys)
+    merge'2(nil,x,xs) -> dd(x,xs)
+    merge'3('false,x,xs,y,ys) -> dd(y,merge(dd(x,xs),ys))
+    merge'3('true,x,xs,y,ys) -> dd(x,merge(xs,dd(y,ys)))
+    mergesort'1(dd(x1,xs)) -> mergesort'2(xs,x1)
+    mergesort'1(nil) -> nil
+    mergesort'2(dd(x2,xs'),x1) -> mergesort'3(msplit(dd(x1,dd(x2,xs'))))
+    mergesort'2(nil,x1) -> dd(x1,nil)
+    mergesort'3(tuple'2(l1,l2)) -> merge(mergesort(l1),mergesort(l2))
+    msplit(l) -> msplit'1(l)
+    msplit'1(dd(x1,xs)) -> msplit'2(xs,x1)
+    msplit'1(nil) -> tuple'2(nil,nil)
+    msplit'2(dd(x2,xs'),x1) -> msplit'3(msplit(xs'),x1,x2)
+    msplit'2(nil,x1) -> tuple'2(dd(x1,nil),nil)
+    msplit'3(tuple'2(l1,l2),x1,x2) -> tuple'2(dd(x1,l1),dd(x2,l2))
+    'cklt('EQ) -> 'false
+    'cklt('GT) -> 'false
+    'cklt('LT) -> 'true
+    'compare('0,'0) -> 'EQ
+    'compare('0,'neg(y)) -> 'GT
+    'compare('0,'pos(y)) -> 'LT
+    'compare('0,'s(y)) -> 'LT
+    'compare('neg(x),'0) -> 'LT
+    'compare('neg(x),'neg(y)) -> 'compare(y,x)
+    'compare('neg(x),'pos(y)) -> 'LT
+    'compare('pos(x),'0) -> 'GT
+    'compare('pos(x),'neg(y)) -> 'GT
+    'compare('pos(x),'pos(y)) -> 'compare(x,y)
+    'compare('s(x),'0) -> 'GT
+    'compare('s(x),'s(y)) -> 'compare(x,y)
+    mergesort(l) -> mergesort'1(l)
+
+)

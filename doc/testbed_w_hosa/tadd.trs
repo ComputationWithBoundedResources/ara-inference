@@ -1,0 +1,24 @@
+(VAR x y t ts)
+
+(DATATYPES
+   a = < leaf, node(b,c) >
+   b = µX. < 0, s(X) >
+   c = µX. < nil, cons(a,X) >
+ )
+
+(SIGNATURES
+   add :: b x b -> b
+   tadd :: b x a -> a
+   mtadd :: b x c -> c
+ )
+
+(RULES
+ add(0,y) -> y
+ add(s(x),y) -> s(add(x,y))
+
+
+ mtadd(x,nil) -> nil
+ mtadd(x,cons(t,ts)) -> cons(tadd(x,t), mtadd(x,ts))
+ tadd(x,leaf) -> leaf
+ tadd(x,node(y,ts)) -> node(add(x,y), mtadd(x,ts))
+)

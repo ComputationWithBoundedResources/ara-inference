@@ -1,0 +1,30 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    rest revprefix x x' xs)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil >)
+(SIGNATURES
+    select :: [A x A x A] -> A
+    revapp :: [A x A] -> A
+    permute :: [A] -> A
+    mapconsapp :: [A x A x A] -> A
+    goal :: [A] -> A)
+(RULES
+    select(x' ,revprefix
+          ,Cons(x,xs)) -> mapconsapp(x' ,permute(revapp(revprefix ,Cons(x,xs)))
+                                    ,select(x,Cons(x',revprefix) ,xs))
+
+    revapp(Cons(x,xs),rest) -> revapp(xs,Cons(x,rest))
+    revapp(Nil(),rest) -> rest
+
+    permute(Cons(x,xs)) -> select(x ,Nil() ,xs)
+    permute(Nil()) -> Cons(Nil(),Nil())
+
+    mapconsapp(x' ,Cons(x,xs) ,rest) -> Cons(Cons(x',x) ,mapconsapp(x',xs,rest))
+    mapconsapp(x,Nil(),rest) -> rest
+
+    select(x,revprefix,Nil()) -> mapconsapp(x ,permute(revapp(revprefix ,Nil())) ,Nil())
+
+    goal(xs) -> permute(xs))

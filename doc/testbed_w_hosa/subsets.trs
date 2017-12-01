@@ -1,0 +1,23 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    rest subs x x' xs)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil, True, False >)
+(SIGNATURES
+    subsets :: [A] -> A
+    mapconsapp :: [A x A x A] -> A
+    notEmpty :: [A] -> A
+    goal :: [A] -> A
+    subsets[Ite][True][Let] :: [A x A] -> A)
+(RULES
+    subsets(Cons(x,xs)) -> subsets[Ite][True][Let](Cons(x ,xs) ,subsets(xs))
+    subsets(Nil()) -> Cons(Nil() ,Nil())
+    mapconsapp(x',Cons(x,xs) ,rest) -> Cons(Cons(x',x) ,mapconsapp(x',xs,rest))
+    mapconsapp(x,Nil(),rest) -> rest
+    notEmpty(Cons(x,xs)) -> True()
+    notEmpty(Nil()) -> False()
+    subsets[Ite][True][Let](Cons(x ,xs) ,subs) ->= mapconsapp(x ,subs ,subs)
+    goal(xs) -> subsets(xs)
+)

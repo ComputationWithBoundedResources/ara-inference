@@ -1,0 +1,28 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x xs y)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil, S(X), 0, +(X, X) >)
+(SIGNATURES
+    map :: [A] -> A
+    goal :: [A] -> A
+    f :: [A] -> A
+    +Full :: [A x A] -> A
+    * :: [A x A] -> A)
+(RULES
+    f(x) -> *(x,x)
+    +Full(S(x),y) -> +Full(x,S(y))
+    +Full(0(),y) -> y
+    *(x,S(S(y))) ->= +(x,*(x,S(y)))
+    *(x,S(0())) ->= x
+    *(x,0()) ->= 0()
+    *(0(),y) ->= 0()
+
+    map(Cons(x,xs)) -> Cons(f(x)
+                           ,map(xs))
+    map(Nil()) -> Nil()
+    goal(xs) -> map(xs)
+
+)

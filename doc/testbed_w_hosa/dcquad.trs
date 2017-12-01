@@ -1,0 +1,29 @@
+(VAR x y z u)
+
+(DATATYPES b = µX. < s(X), 0 >
+ )
+
+(SIGNATURES
+   q :: b x b -> b
+   p :: b x b x b x b -> b
+   add :: b x b -> b
+   main :: b x b -> b
+ )
+
+(RULES
+ add(0,x) -> x
+ add(s(x),y) -> s(add(x,y))
+ p(s(x),y,z,u) -> p(x,s(y),s(s(z)),u)
+ p(0,s(x),y,z) -> q(x,add(x,z))
+ q(s(x),y) -> p(s(x),0,s(0),y)
+)
+
+(COMMENT
+ p(s(x),y,z,u) -> p(x,s(y),s(s(z)),u)
+ p(0,s(x),y,z) -> q(x,add(x,z))
+ q(x,y) -> y
+ q(s(x),y) -> p(s(x),0,s(0),y)
+ add(0,x) -> x
+ add(s(x),y) -> s(add(x,y))
+ main(x,y) -> add(x,y)
+)

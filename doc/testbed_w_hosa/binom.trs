@@ -1,0 +1,24 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    k x x' xs xs' y ys)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil >)
+(SIGNATURES
+    @ :: [A x A] -> A
+    binom :: [A x A] -> A
+    goal :: [A x A] -> A)
+(RULES
+    @(Cons(x,xs),ys) -> Cons(x
+                            ,@(xs,ys))
+    @(Nil(),ys) -> ys
+    binom(Cons(x,xs)
+         ,Cons(x',xs')) -> @(binom(xs
+                                  ,xs')
+                            ,binom(xs,Cons(x',xs')))
+    binom(Cons(x,xs),Nil()) ->
+      Cons(Nil(),Nil())
+    binom(Nil(),k) -> Cons(Nil()
+                          ,Nil())
+    goal(x,y) -> binom(x,y))

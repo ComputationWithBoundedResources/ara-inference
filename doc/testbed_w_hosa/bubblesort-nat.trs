@@ -1,0 +1,41 @@
+(VAR
+    x y x' xs ys)
+
+(DATATYPES
+   a = < false, true >
+   b = µX. < nil, dd(c,X) >
+   c = µX. < 0, s(X) >
+   d = < pair(b,c) >
+ )
+
+(SIGNATURES
+   append :: b x b -> b
+   lt :: c x c -> a
+   bubblesort :: b -> b
+   bubble :: b -> d
+   bubblesort' :: d -> b
+   bubble' :: a x c x c x b -> d
+   bubble'' :: c x d -> d
+ )
+
+(RULES
+
+    append(nil,ys)      -> ys
+    append(dd(x,xs),ys) -> dd(x,append(xs,ys))
+
+    lt(0,0)    -> false
+    lt(0,s(y)) -> true
+    lt(s(x),0) -> false
+    lt(s(x),s(y)) -> lt(x,y)
+
+    bubble(dd(x,nil)) -> pair(nil,x)
+    bubble(dd(x,dd(x',xs))) -> bubble'(lt(x,x'), x, x', xs)
+    bubble'(true, x, x', xs) -> bubble''(x,bubble(dd(x',xs)))
+    bubble'(false, x, x', xs) -> bubble''(x',bubble(dd(x,xs)))
+    bubble''(x,pair(xs,x')) -> pair(dd(x,xs), x')
+    bubblesort(nil) -> nil
+    bubblesort(dd(x,xs)) -> bubblesort'(bubble(dd(x,xs)))
+    bubblesort'(pair(xs,x)) -> append(bubblesort(xs),dd(x,nil))
+
+
+)

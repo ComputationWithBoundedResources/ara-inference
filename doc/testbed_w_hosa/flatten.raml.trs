@@ -1,0 +1,61 @@
+(VAR
+    l l1 l2 t t1 t2 x xs y ys)
+
+(DATATYPES
+   a = µX. < leaf, node(d,X,X) >
+   b = < 'false, 'true >
+   c = µX. < '0, 'neg(X), 'pos(X), 's(X) >
+   d = µX. < dd(c,X), nil >
+   e = < 'EQ, 'GT, 'LT >
+ )
+
+(SIGNATURES
+   'less :: c x c -> b
+   'compare :: c x c -> e
+   'cklt :: e -> b
+   append :: d x d -> d
+   append'1 :: d x d -> d
+   flatten :: a -> d
+   flatten'1 :: a -> d
+   flattensort :: a -> d
+   insertionsort :: d -> d
+   insert :: c x d -> d
+   insert'1 :: d x c -> d
+   insert'2 :: b x c x c x d -> d
+   insertionsort'1 :: d -> d
+ )
+
+(RULES
+    'less(x,y) -> 'cklt('compare(x,y))
+    append(l1,l2) -> append'1(l1,l2)
+    append'1(dd(x,xs),l2) -> dd(x,append(xs,l2))
+    append'1(nil,l2) -> l2
+    flatten'1(leaf) -> nil
+    flatten'1(node(l,t1,t2)) -> append(l,append(flatten(t1),flatten(t2)))
+    flattensort(t) -> insertionsort(flatten(t))
+    insert(x,l) -> insert'1(l,x)
+    insert'1(dd(y,ys),x) -> insert'2('less(y,x),x,y,ys)
+    insert'1(nil,x) -> dd(x,nil)
+    insert'2('false,x,y,ys) -> dd(x,dd(y,ys))
+    insert'2('true,x,y,ys) -> dd(y,insert(x,ys))
+    insertionsort(l) -> insertionsort'1(l)
+    insertionsort'1(dd(x,xs)) -> insert(x,insertionsort(xs))
+    insertionsort'1(nil) -> nil
+    'cklt('EQ) -> 'false
+    'cklt('GT) -> 'false
+    'cklt('LT) -> 'true
+    'compare('0,'0) -> 'EQ
+    'compare('0,'neg(y)) -> 'GT
+    'compare('0,'pos(y)) -> 'LT
+    'compare('0,'s(y)) -> 'LT
+    'compare('neg(x),'0) -> 'LT
+    'compare('neg(x),'neg(y)) -> 'compare(y,x)
+    'compare('neg(x),'pos(y)) -> 'LT
+    'compare('pos(x),'0) -> 'GT
+    'compare('pos(x),'neg(y)) -> 'GT
+    'compare('pos(x),'pos(y)) -> 'compare(x,y)
+    'compare('s(x),'0) -> 'GT
+    'compare('s(x),'s(y)) -> 'compare(x,y)
+    flatten(t) -> flatten'1(t)
+
+)

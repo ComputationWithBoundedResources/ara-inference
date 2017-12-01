@@ -1,0 +1,21 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x2 x1 x4 x8 x6 x16)
+(RULES
+    cond_string_dec_s_s0_3(True(),x2,x1) -> string_dec#2(x2,x1)
+    cond_string_dec_s_s0_3(False(),x2,x1) -> False()
+    string_dec#2(Nil(),Nil()) -> True()
+    string_dec#2(Nil(),Cons(x4,x2)) -> False()
+    string_dec#2(Cons(x4,x2),Nil()) -> False()
+    string_dec#2(Cons(x8,x6),Cons(x4,x2)) -> cond_string_dec_s_s0_3(eq#2(x8,x4)
+                                                                   ,x6
+                                                                   ,x2)
+    eq#2(0(),0()) -> True()
+    eq#2(0(),S(x16)) -> False()
+    eq#2(S(x16),0()) -> False()
+    eq#2(S(x4),S(x2)) -> eq#2(x4,x2)
+    main(x2,x1) -> string_dec#2(x2,x1))
+

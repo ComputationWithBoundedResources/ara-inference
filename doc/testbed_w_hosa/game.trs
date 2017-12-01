@@ -1,0 +1,19 @@
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    moves p1 p2 x x' xs xs' ys)
+(DATATYPES
+    A = µX.< Cons(X, X), Nil, Capture, Swap >)
+(SIGNATURES
+    @ :: [A x A] -> A
+    game :: [A x A x A] -> A
+    goal :: [A x A x A] -> A)
+(RULES
+    @(Cons(x,xs),ys) -> Cons(x,@(xs,ys))
+    @(Nil(),ys) -> ys
+    game(p1,Cons(x',xs'),Cons(Capture(),xs)) -> game(Cons(x',p1),xs',xs)
+    game(p1,p2,Cons(Swap(),xs)) -> game(p2,p1,xs)
+    game(p1,p2,Nil()) -> @(p1,p2)
+    goal(p1,p2,moves) -> game(p1,p2,moves)
+)

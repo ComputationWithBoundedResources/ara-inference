@@ -1,0 +1,12 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x6 x17 x10 x12 x14 x0)
+(RULES
+    findMin#1(E()) -> ErrorElem()
+    findMin#1(T(E(),x6,x17)) -> x6
+    findMin#1(T(T(x10,x12,x14),x6,x17)) -> findMin#1(T(x10,x12,x14))
+    main(x0) -> findMin#1(x0))
+

@@ -1,0 +1,128 @@
+(VAR
+    acc base l l1 l2 line ls m m' m1 m2 m3 mm ms x xs xss y ys)
+
+(DATATYPES
+   a = < tuple#2(b,b) >
+   b = µX. < #0, #neg(X), #pos(X), #s(X), dd(X,X), nil >
+ )
+
+(SIGNATURES
+   #abs :: b -> b
+   #mult :: b x b -> b
+   add :: b x b -> b
+   #add :: b x b -> b
+   attach :: b x b -> b
+   attach#1 :: b x b -> b
+   attach#2 :: b x b x b -> b
+   lineMult :: b x b -> b
+   lineMult#1 :: b x b -> b
+   mult :: b x b -> b
+   makeBase :: b -> b
+   makeBase#1 :: b -> b
+   mkBase :: b -> b
+   matrixMult :: b x b -> b
+   transAcc :: b x b -> b
+   matrixMult' :: b x b -> b
+   matrixMult'#1 :: b x b -> b
+   matrixMult3 :: b x b x b -> b
+   matrixMultList :: b x b -> b
+   matrixMultList#1 :: b x b -> b
+   matrixMultOld :: b x b -> b
+   transpose :: b -> b
+   mkBase#1 :: b -> b
+   mult#1 :: b x b -> b
+   mult#2 :: b x b x b -> b
+   split :: b -> a
+   split#1 :: b -> a
+   split#2 :: b x b -> a
+   split#3 :: a x b x b -> a
+   transAcc#1 :: b x b -> b
+   transpose#1 :: b x b -> b
+   transpose#2 :: a -> b
+   transpose#3 :: b x b -> b
+   transpose' :: b -> b
+   #pred :: b -> b
+   #succ :: b -> b
+   #natmult :: b x b -> b
+   #natadd :: b x b -> b
+ )
+
+(RULES
+    #abs(#0) -> #0
+    #abs(#neg(x)) -> #pos(x)
+    #abs(#pos(x)) -> #pos(x)
+    #abs(#s(x)) -> #pos(#s(x))
+    mult(x,y) -> #mult(x,y)
+    add(x,y) -> #add(x,y)
+    attach(line,m) -> attach#1(line,m)
+    attach#1(dd(x,xs),m) -> attach#2(m,x,xs)
+    attach#1(nil,m) -> nil
+    attach#2(dd(l,ls),x,xs) -> dd(dd(x,l),attach(xs,ls))
+    attach#2(nil,x,xs) -> nil
+    lineMult(l,m2) -> lineMult#1(m2,l)
+    lineMult#1(dd(x,xs),l) -> dd(mult(l,x),lineMult(l,xs))
+    lineMult#1(nil,l) -> nil
+    makeBase(m) -> makeBase#1(m)
+    makeBase#1(dd(l,m')) -> mkBase(l)
+    makeBase#1(nil) -> nil
+    matrixMult'(m1,m2) -> matrixMult'#1(m1,m2)
+    matrixMult'#1(dd(l,ls),m2) -> dd(lineMult(l,m2),matrixMult'(ls,m2))
+    matrixMult'#1(nil,m2) -> nil
+    matrixMult3(m1,m2,m3) -> matrixMult(matrixMult(m1,m2),m3)
+    matrixMultList(acc,mm) -> matrixMultList#1(mm,acc)
+    matrixMultList#1(dd(m,ms),acc) -> matrixMultList(matrixMult(acc,m),ms)
+    matrixMultList#1(nil,acc) -> acc
+    matrixMultOld(m1,m2) -> matrixMult'(m1,transpose(m2))
+    mkBase(m) -> mkBase#1(m)
+    mkBase#1(dd(l,m')) -> dd(nil,mkBase(m'))
+    mkBase#1(nil) -> nil
+    mult(l1,l2) -> mult#1(l1,l2)
+    mult#1(dd(x,xs),l2) -> mult#2(l2,x,xs)
+    mult#1(nil,l2) -> #abs(#0)
+    mult#2(dd(y,ys),x,xs) -> add(mult(x,y),mult(xs,ys))
+    mult#2(nil,x,xs) -> #abs(#0)
+    split(m) -> split#1(m)
+    split#1(dd(l,ls)) -> split#2(l,ls)
+    split#1(nil) -> tuple#2(nil,nil)
+    split#2(dd(x,xs),ls) -> split#3(split(ls),x,xs)
+    split#2(nil,ls) -> tuple#2(nil,nil)
+    split#3(tuple#2(ys,m'),x,xs) -> tuple#2(dd(x,ys),dd(xs,m'))
+    transAcc(m,base) -> transAcc#1(m,base)
+    transAcc#1(dd(l,m'),base) -> attach(l,transAcc(m',base))
+    transAcc#1(nil,base) -> base
+    transpose(m) -> transpose#1(m,m)
+    transpose#1(dd(xs,xss),m) -> transpose#2(split(m))
+    transpose#1(nil,m) -> nil
+    transpose#2(tuple#2(l,m')) -> transpose#3(m',l)
+    transpose#3(dd(y,ys),l) -> dd(l,transpose(dd(y,ys)))
+    transpose#3(nil,l) -> nil
+    transpose'(m) -> transAcc(m,makeBase(m))
+    #add(#0,y) -> y
+    #add(#neg(#s(#0)),y) -> #pred(y)
+    #add(#neg(#s(#s(x))),y) -> #pred(#add(#pos(#s(x)),y))
+    #add(#pos(#s(#0)),y) -> #succ(y)
+    #add(#pos(#s(#s(x))),y) -> #succ(#add(#pos(#s(x)),y))
+    #mult(#0,#0) -> #0
+    #mult(#0,#neg(y)) -> #0
+    #mult(#0,#pos(y)) -> #0
+    #mult(#neg(x),#0) -> #0
+    #mult(#neg(x),#neg(y)) -> #pos(#natmult(x,y))
+    #mult(#neg(x),#pos(y)) -> #neg(#natmult(x,y))
+    #mult(#pos(x),#0) -> #0
+    #mult(#pos(x),#neg(y)) -> #neg(#natmult(x,y))
+    #mult(#pos(x),#pos(y)) -> #pos(#natmult(x,y))
+    #natadd(#0,y) -> y
+    #natadd(#s(x),y) -> #s(#natadd(x,y))
+    #natmult(#0,y) -> #0
+    #natmult(#s(x),y) -> #natadd(y,#natmult(x,y))
+    #pred(#0) -> #neg(#s(#0))
+    #pred(#neg(#s(x))) -> #neg(#s(#s(x)))
+    #pred(#pos(#s(#0))) -> #0
+    #pred(#pos(#s(#s(x)))) -> #pos(#s(x))
+    #succ(#0) -> #pos(#s(#0))
+    #succ(#neg(#s(#0))) -> #0
+    #succ(#neg(#s(#s(x)))) -> #neg(#s(x))
+    #succ(#pos(#s(x))) -> #pos(#s(#s(x)))
+    matrixMult(m1,m2) -> matrixMult'(m1,transAcc(m2,makeBase(m2)))
+
+)

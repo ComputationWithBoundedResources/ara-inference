@@ -1,0 +1,23 @@
+(VAR x y)
+
+(DATATYPES
+  Nat = µX.< 0, s(X) >
+)
+
+(SIGNATURES
+  minus :: Nat x Nat -> Nat
+  quot :: Nat x Nat -> Nat
+)
+
+(RULES
+  minus(x, 0) -> x
+  minus(s(x), s(y)) -> minus(x, y)
+  quot(0, y) -> 0
+  quot(s(x), s(y)) -> s(quot(minus(x, y), s(y)))
+)
+(COMMENT
+  minus(0,s(x)) -> BTM
+  quot(s(x),0) -> BTM
+)
+
+

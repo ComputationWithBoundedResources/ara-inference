@@ -1,0 +1,29 @@
+(VAR
+    l1 l2 t t1 t2 x xs)
+
+(DATATYPES
+   a = µX. < leaf, node(b,X,X) >
+   b = < >
+   c = µX. < cons(a,X), nil >
+ )
+
+(SIGNATURES
+   append :: c x c -> c
+   append#1 :: c x c -> c
+   subtrees :: a -> c
+   subtrees#1 :: a -> c
+   subtrees#2 :: c x a x a x b -> c
+   subtrees#3 :: c x c x a x a x b -> c
+ )
+
+(RULES
+    append(l1,l2) -> append#1(l1,l2)
+    append#1(cons(x,xs),l2) -> cons(x,append(xs,l2))
+    append#1(nil,l2) -> l2
+    subtrees#1(leaf) -> nil
+    subtrees#1(node(x,t1,t2)) -> subtrees#2(subtrees(t1),t1,t2,x)
+    subtrees#2(l1,t1,t2,x) -> subtrees#3(subtrees(t2),l1,t1,t2,x)
+    subtrees#3(l2,l1,t1,t2,x) -> cons(node(x,t1,t2),append(l1,l2))
+    subtrees(t) -> subtrees#1(t)
+
+)

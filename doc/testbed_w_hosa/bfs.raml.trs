@@ -1,0 +1,96 @@
+(VAR @a @as @futurequeue @queue @sofar @t @t' @t1 @t2 @toreverse @ts @x @x'1 @x'2 @x'3 @xs @y @y'1 @y'2 @y'3)
+
+(DATATYPES
+   a = < #false, #true >
+   b = µX. < dd(X,X),
+             nil,
+             leaf,
+             node(X,X,X),
+             #0,
+             #neg(X),
+             #pos(X),
+             #s(X) >
+ )
+
+(SIGNATURES
+   #equal :: b x b -> a
+   #eq :: b x b -> a
+   appendreverse :: b x b -> b
+   appendreverse#1 :: b x b -> b
+   bfs :: b x b x b -> b
+   bfs#1 :: b x b x b -> b
+   bfs#3 :: b x b x b x b -> b
+   bfs#2 :: b x b -> b
+   reverse :: b -> b
+   bfs#4 :: a x b x b x b x b x b x b -> b
+   bfs2 :: b x b -> b
+   dobfs :: b x b -> b
+   bfs2#1 :: b x b -> b
+   dfs :: b x b -> b
+   dfs#1 :: b x b -> b
+   dfs#2 :: b x b x b x b -> b
+   dfs#3 :: a x b x b x b x b x b -> b
+   dodfs :: b x b -> b
+   #and :: a x a -> a
+ )
+
+(RULES
+    #equal(@x,@y) -> #eq(@x,@y)
+    appendreverse(@toreverse,@sofar) -> appendreverse#1(@toreverse,@sofar)
+    appendreverse#1(dd(@a,@as),@sofar) -> appendreverse(@as,dd(@a,@sofar))
+    appendreverse#1(nil,@sofar) -> @sofar
+    bfs#1(dd(@t,@ts),@futurequeue,@x) -> bfs#3(@t,@futurequeue,@ts,@x)
+    bfs#1(nil,@futurequeue,@x) -> bfs#2(@futurequeue,@x)
+    bfs#2(dd(@t,@ts),@x) -> bfs(reverse(dd(@t,@ts)),nil,@x)
+    bfs#2(nil,@x) -> leaf
+    bfs#3(leaf,@futurequeue,@ts,@x) -> bfs(@ts,@futurequeue,@x)
+    bfs#3(node(@y,@t1,@t2),@futurequeue,@ts,@x) -> bfs#4(#equal(@x,@y),@futurequeue,@t1,@t2,@ts,@x,@y)
+    bfs#4(#false,@futurequeue,@t1,@t2,@ts,@x,@y) -> bfs(@ts,dd(@t2,dd(@t1,@futurequeue)),@x)
+    bfs#4(#true,@futurequeue,@t1,@t2,@ts,@x,@y) -> node(@y,@t1,@t2)
+    bfs2(@t,@x) -> bfs2#1(dobfs(@t,@x),@x)
+    bfs2#1(@t',@x) -> dobfs(@t',@x)
+    dfs(@queue,@x) -> dfs#1(@queue,@x)
+    dfs#1(dd(@t,@ts),@x) -> dfs#2(@t,@t,@ts,@x)
+    dfs#1(nil,@x) -> leaf
+    dfs#2(leaf,@t,@ts,@x) -> dfs(@ts,@x)
+    dfs#2(node(@a,@t1,@t2),@t,@ts,@x) -> dfs#3(#equal(@a,@x),@t,@t1,@t2,@ts,@x)
+    dfs#3(#false,@t,@t1,@t2,@ts,@x) -> dfs(dd(@t1,dd(@t2,@ts)),@x)
+    dfs#3(#true,@t,@t1,@t2,@ts,@x) -> @t
+    dobfs(@t,@x) -> bfs(dd(@t,nil),nil,@x)
+    dodfs(@t,@x) -> dfs(dd(@t,nil),@x)
+    reverse(@xs) -> appendreverse(@xs,nil)
+    #and(#false,#false) -> #false
+    #and(#false,#true) -> #false
+    #and(#true,#false) -> #false
+    #and(#true,#true) -> #true
+    #eq(#0,#0) -> #true
+    #eq(#0,#neg(@y)) -> #false
+    #eq(#0,#pos(@y)) -> #false
+    #eq(#0,#s(@y)) -> #false
+    #eq(#neg(@x),#0) -> #false
+    #eq(#neg(@x),#neg(@y)) -> #eq(@x,@y)
+    #eq(#neg(@x),#pos(@y)) -> #false
+    #eq(#pos(@x),#0) -> #false
+    #eq(#pos(@x),#neg(@y)) -> #false
+    #eq(#pos(@x),#pos(@y)) -> #eq(@x,@y)
+    #eq(#s(@x),#0) -> #false
+    #eq(#s(@x),#s(@y)) -> #eq(@x,@y)
+    #eq(dd(@x'1,@x'2),dd(@y'1,@y'2)) -> #and(#eq(@x'1,@y'1),#eq(@x'2,@y'2))
+    #eq(dd(@x'1,@x'2),leaf) -> #false
+    #eq(dd(@x'1,@x'2),nil) -> #false
+    #eq(dd(@x'1,@x'2),node(@y'1,@y'2,@y'3)) -> #false
+    #eq(leaf,dd(@y'1,@y'2)) -> #false
+    #eq(leaf,leaf) -> #true
+    #eq(leaf,nil) -> #false
+    #eq(leaf,node(@y'1,@y'2,@y'3)) -> #false
+    #eq(nil,dd(@y'1,@y'2)) -> #false
+    #eq(nil,leaf) -> #false
+    #eq(nil,nil) -> #true
+    #eq(nil,node(@y'1,@y'2,@y'3)) -> #false
+    #eq(node(@x'1,@x'2,@x'3),dd(@y'1,@y'2)) -> #false
+    #eq(node(@x'1,@x'2,@x'3),leaf) -> #false
+    #eq(node(@x'1,@x'2,@x'3),nil) -> #false
+    #eq(node(@x'1,@x'2,@x'3),node(@y'1,@y'2,@y'3)) -> #and(#eq(@x'1,@y'1),#and(#eq(@x'2,@y'2),#eq(@x'3,@y'3)))
+    bfs(@queue,@futurequeue,@x) -> bfs#1(@queue,@futurequeue,@x)
+
+)

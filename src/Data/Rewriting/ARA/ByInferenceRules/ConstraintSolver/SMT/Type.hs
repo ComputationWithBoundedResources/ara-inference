@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Jun 15 17:14:14 2017 (+0200)
+-- Last-Updated: Mon Dec  4 16:34:05 2017 (+0100)
 --           By: Manuel Schneckenreither
---     Update #: 129
+--     Update #: 130
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -59,23 +59,22 @@ import qualified Data.Set                                                   as S
 import qualified Data.Text                                                  as T
 import           Text.Parsec
 import           Text.Parsec.Prim
-import           Text.ParserCombinators.Parsec                              hiding
-                                                                             (try)
+import           Text.ParserCombinators.Parsec                              hiding (try)
 
 
 data SMTProblem = SMTProblem
-                  { _logic          :: T.Text
-                  , _constDeclFun   :: T.Text -> T.Text
+                  { _logic             :: T.Text
+                  , _constDeclFun      :: T.Text -> T.Text
                   , _getValueDirective :: Bool
-                  , _vars           :: S.Set T.Text
-                  , _varsDeclOnly :: S.Set T.Text
-                  , _assertions     :: [(T.Text, Comparison, T.Text)]
-                  , _assertionsStr  :: [T.Text]
-                  , _ifs            :: [([(T.Text, T.Text)], [(T.Text,T.Text)])]
-                  , _values         :: M.Map T.Text Int
-                  , _programName    :: T.Text
-                  , _programOptions :: [T.Text]
-                  , _parseFunction  :: Parser [(String, Int)]
+                  , _vars              :: S.Set T.Text
+                  , _varsDeclOnly      :: S.Set T.Text
+                  , _assertions        :: [(T.Text, Comparison, T.Text)]
+                  , _assertionsStr     :: [T.Text]
+                  , _ifs               :: [([(T.Text, T.Text)], [(T.Text,T.Text)])]
+                  , _values            :: M.Map T.Text Int
+                  , _programName       :: T.Text
+                  , _programOptions    :: [T.Text]
+                  , _parseFunction     :: Parser [(String, Int)]
                   }
 makeLenses ''SMTProblem
 
@@ -111,6 +110,7 @@ replList' = replList
                    , ("(", "_LPAREN_")
                    , (")", "_RPAREN_")
                    , ("=", "_EQ_")
+                   , ("@", "_AT_")
                    ]
 
 dropChars :: [Char]

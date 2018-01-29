@@ -1,0 +1,68 @@
+% style file for note
+
+% misc
+\newcommand*{\tpkt}{\rlap{$\;$.}}
+\newcommand*{\tkom}{\rlap{$\;$,}}
+\newcommand{\defsym}{\mathrel{:=}}
+\newcommand{\defeqv}{\mathrel{:\Longleftrightarrow}}
+\newcommand*{\m}[1]{\mathsf{#1}}
+
+% generic definitions
+\DeclareMathOperator{\dom}{\m{dom}}
+\DeclareMathOperator{\range}{\m{rg}}
+\newcommand*{\N}{{\mathbb{N}}}
+\newcommand*{\Qplus}{{\mathbb{Q}^+}}
+\newcommand*{\Z}{{\mathbb{Z}}}
+\newcommand*{\true}{\mathtt{true}}
+\newcommand*{\false}{\mathtt{false}}
+\newcommand*{\bO}{O}
+\newcommand*{\rst}[2]{{#1}\!\restriction\!{#2}}
+
+% programs
+\DeclareMathOperator{\TA}{\mathcal{T}}
+\newcommand*{\RS}{\mathcal{R}}
+\newcommand*{\CS}{\mathcal{C}}
+\newcommand*{\DS}{\mathcal{D}}
+\newcommand*{\VS}{\mathcal{V}}
+\newcommand*{\FS}{\mathcal{F}}
+\DeclareMathOperator{\Var}{\mathcal{V}\m{ar}}
+\DeclareMathOperator{\Vrg}{\mathcal{V}\m{rg}}
+\DeclareMathOperator{\rc}{\m{rc}}
+\DeclareMathOperator{\dheight}{\m{dh}}
+\newcommand*{\rew}{\mathrel{\to}}
+\newcommand*{\rsrew}[1][\RS]{\mathrel{\rew_{#1}}}
+\newcommand*{\rssrew}[1][\RS]{\mathrel{\rew^\ast_{#1}}}
+\newcommand*{\rssarew}[2][\RS]{\mathrel{\stackrel{#2\ \ }{\rew^\ast_{#1}}}}
+\newcommand*{\rstrew}[1][\RS]{\mathrel{\rew^+_{#1}}}
+\newcommand*{\rsbrew}[1][\RS]{\mathrel{\rew^{!}_{#1}}}
+\newcommand*{\rsnrew}[2][\RS]{\rew^{#2}_{#1}}
+\newcommand*{\rsarew}[2][\RS]{\xrightarrow{#2}_{#1}}
+\newcommand*{\hole}{\Box}
+\newcommand*{\size}[1]{\lvert{#1}\rvert}
+\newcommand*{\expr}[2]{\langle {#1}, {#2} \rangle}
+\newcommand*{\eval}[5]{{#1} \sststile{#3}{#2} {{#4} \Rightarrow {#5}}}
+\newcommand*{\smallstep}[7][{}]{{#1} \sststile{#3}{#2} {\expr{#4}{#5} \to \expr{#6}{#7}}}
+\newcommand*{\tsmallstep}[7][{}]{{#1} \sststile{#3}{#2} {\expr{#4}{#5} \twoheadrightarrow \expr{#6}{#7}}}
+
+% types
+\newcommand*{\constype}[3]{{{#1}(#2)} \colon {#3}}
+\newcommand*{\constypewo}[2]{{{#1}(#2)}}
+\newcommand*{\funtype}[4]{{#1} \xrightarrow[#4]{#3} {#2}}
+\newcommand*{\tjudge}[4]{{#1} \sststile{#3}{#2} {#4}}
+\newcommand*{\typed}[2]{{#1}{:}\,{#2}}
+\newcommand*{\share}[2]{\curlyvee\!({#1}\! \mid \! {#2})}
+
+% polynomial interpretations
+\renewcommand*{\AA}{\mathcal{A}}
+\newcommand*{\CC}{\mathcal{C}}
+\newcommand*{\I}{\mathcal{I}}
+\newcommand*{\inter}[3][\I]{{#2}^{#1,#3}}
+\newcommand*{\groundinter}[1]{\llbracket {#1} \rrbracket}
+\newcommand*{\typedomain}[1]{\llbracket {#1} \rrbracket}
+\newcommand{\vertiii}{\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left\vert}
+\newcommand{\shift}{\triangleleft}
+\newcommand{\fst}{\lozenge}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}​
+\newcommand{\rt}[1]{\textsf{rt}(#1)}​
+

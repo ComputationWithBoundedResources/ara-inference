@@ -28,6 +28,6 @@
     anyEq(nr,ConsNat(x,xs)) -> ite(eq(nr,x),True,anyEq(nr,xs))
 
     lookup(nr,Leaf(xs)) -> anyEq(nr,xs)
-    lookup(nr,Node(NilNat,ConsBTree(tGt,NilBTree))) -> lookup(nr,Node(nr,tGt))
+    lookup(nr,Node(NilNat,ConsBTree(tGt,NilBTree))) -> lookup(nr,tGt)
     lookup(nr,Node(ConsNat(up,nrs),ConsBTree(t,ts))) -> ite(leq(nr,up),lookup(nr,t),lookup(nr,Node(nrs,ts)))
 )

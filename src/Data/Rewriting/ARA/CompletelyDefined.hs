@@ -10,7 +10,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 482
+--     Update #: 485
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -92,6 +92,7 @@ mkCompletelyDefinedConds prove =
   -- undefined
 
   -- E.throw $ if null (concat nRules) then FatalException "YES" else FatalException "NO"
+  -- E.throw $ if any (>2) ctrArities then FatalException "YES" else FatalException "NO"
 
   prove { conditions = nCond, signatureMap = nSigM }
 

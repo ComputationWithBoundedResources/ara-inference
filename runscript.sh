@@ -6,10 +6,10 @@ PROG=`which ara-inference-exe`
 COMMAND="$PROG $@ "
 TIMES=1
 # FOLDERS=" ./doc/examples/"
-FOLDERS=" ./doc/testbed/"
+# FOLDERS=" ./doc/testbed/"
 # FOLDERS="/tmp/TPDB-bba590b63ef2/"
 # FOLDERS=" ./doc/examples/linear "
-# FOLDERS=" ./doc/tpdb_full/"
+FOLDERS=" ./doc/tpdb_full/"
 # FOLDERS=" ./doc/tpdb_full/raML/"
 # FOLDERS=" ./doc/tpdb_constrtrs/"
 # FOLDERS="./doc/examples/linear/ ./doc/examples/quadratic/ "
@@ -92,6 +92,8 @@ function runOnFile {
     fi;
 
     print `head -n 1 /tmp/runfile | cut -d' ' -f1`;
+    # VAL=`head -n 1 /tmp/runfile | cut -d' ' -f1`;
+    # if [ $VAL -eq "YES" ]
 
 }
 

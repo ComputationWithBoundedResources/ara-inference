@@ -1,0 +1,37 @@
+
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    e n m nr up nrs t ts data)
+(DATATYPES
+    Bool = µX.< True, False >
+    Nat = µX.< 0, S(X)>
+    ListNat = µX.< ConsNat(Nat, X), NilNat >
+    ListBTree = µX.< ConsBTree(BTree, X), NilBTree >
+    BTree = µX.< Node(ListNat,ListBTree) >)
+(RULES
+
+    ite(True, t, e)  ->= t
+    ite(False, t, e) ->= e
+    leq(0,0)         ->= True
+    leq(S(n), 0)     ->= False
+    leq(0,S(m))      ->= True
+    leq(S(n),S(m))   ->= leq(n,m)
+    eq(0,0)         ->= True
+    eq(S(n), 0)     ->= False
+    eq(0,S(m))      ->= False
+    eq(S(n),S(m))   ->= leq(n,m)
+
+
+    anyEq(nr,NilNat) -> False
+    anyEq(nr,ConsNat(x,xs)) -> ite(eq(nr,x),True,anyEq(nr,xs))
+
+    lookup(nr,Leaf(xs)) -> anyEq(nr,xs)
+    lookup(nr,Node(ConsNat(up,NilNat),ConsBTree(tLeq,ConsBTree(tGt,NilBTree)))) ->
+        ite(anyEq(nr,tLeq),True,anyEq(nr,tGt))
+    lookup(nr,Node(ConsNat(up,nrs),ConsBTree(t,ts))) ->
+        ite(leq(nr,up),lookup(nr,t),lookup(nr,Node(nrs,ts)))
+)
+

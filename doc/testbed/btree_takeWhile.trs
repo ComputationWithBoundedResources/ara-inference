@@ -4,7 +4,7 @@
     INNERMOST)
 
 (VAR
-    e n m nr up nrs t ts data)
+    x xs ys tLeq tGt e n m nr up nrs t ts data)
 (DATATYPES
     Bool = µX.< True, False >
     Nat = µX.< 0, S(X)>

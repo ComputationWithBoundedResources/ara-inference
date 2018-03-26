@@ -4,7 +4,7 @@
     INNERMOST)
 
 (VAR
-    e n m nr up nrs t ts data)
+    e n m nr x xs tGt tLeq up nrs t ts data)
 (DATATYPES
     Bool = µX.< True, False >
     Nat = µX.< 0, S(X)>
@@ -22,16 +22,12 @@
     eq(0,0)         ->= True
     eq(S(n), 0)     ->= False
     eq(0,S(m))      ->= False
-    eq(S(n),S(m))   ->= leq(n,m)
-
+    eq(S(n),S(m))   ->= eq(n,m)
 
     anyEq(nr,NilNat) -> False
     anyEq(nr,ConsNat(x,xs)) -> ite(eq(nr,x),True,anyEq(nr,xs))
 
     lookup(nr,Leaf(xs)) -> anyEq(nr,xs)
-    lookup(nr,Node(ConsNat(up,NilNat),ConsBTree(tLeq,ConsBTree(tGt,NilBTree)))) ->
-        ite(anyEq(nr,tLeq),True,anyEq(nr,tGt))
-    lookup(nr,Node(ConsNat(up,nrs),ConsBTree(t,ts))) ->
-        ite(leq(nr,up),lookup(nr,t),lookup(nr,Node(nrs,ts)))
+    lookup(nr,Node(NilNat,ConsBTree(tGt,NilBTree))) -> lookup(nr,Node(nr,tGt))
+    lookup(nr,Node(ConsNat(up,nrs),ConsBTree(t,ts))) -> ite(leq(nr,up),lookup(nr,t),lookup(nr,Node(nrs,ts)))
 )
-

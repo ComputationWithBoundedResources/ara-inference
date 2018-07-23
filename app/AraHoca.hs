@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jul 23 11:18:44 2018 (+0200)
+-- Last-Updated: Mon Jul 23 16:39:30 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1040
+--     Update #: 1091
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -73,42 +73,89 @@ import           Data.Rewriting.ARA.ByInferenceRules.HelperFunctions
 import           Data.Rewriting.ARA.ByInferenceRules.InfTreeNode
 import           Data.Rewriting.ARA.ByInferenceRules.Prove
 
+import qualified Data.Rewriting.Applicative.Rule                           as H
+import           Data.Rewriting.Applicative.Term                           (ASym (..))
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.Constants                              (seperatorDoc)
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.ARA.Exception.Pretty                       ()
 import           Data.Rewriting.ARA.InferTypes
 import           Data.Rewriting.ARA.Pretty
-import           Data.Rewriting.Typed.Problem
+import qualified Data.Rewriting.Term.Type                                  as R
+import           Data.Rewriting.Typed.Problem                              as TP
+import           Data.Rewriting.Typed.Rule                                 as TP
 import           Data.Rewriting.Typed.Rule
+import qualified Data.Rewriting.Typed.Rules                                as RS
 import           Data.Rewriting.Typed.Signature
+import           Data.Rewriting.Typed.Term                                 as TP hiding
+                                                                                  (map)
 import           Data.Rewriting.Typed.Term.Type                            hiding (map)
-import           Prelude                                                   hiding ((<>))
 
+import           Control.Applicative
 import           Control.Arrow                                             hiding ((<+>))
 import qualified Control.Exception                                         as E
-import           Control.Monad.State
+import           Control.Monad.State                                       hiding ((>=>))
 import           Data.Function
+import qualified Data.IntMap                                               as IMap
 import           Data.List
 import           Data.Maybe
+import           Data.Maybe                                                (fromJust)
+import           Hoca.Data.Symbol
+import qualified Hoca.PCF.Core                                             as PCF
+import qualified Hoca.PCF.Core.DMInfer                                     as DM
+import           Hoca.PCF.Desugar                                          (desugar, desugarExpression)
+import           Hoca.PCF.Sugar                                            (Context, expressionFromString,
+                                                                            programFromString)
+import           Hoca.Problem                                              hiding
+                                                                            (Problem (..),
+                                                                            TRule)
+import qualified Hoca.Problem                                              as H
+import           Hoca.Transform                                            as T
+import           Hoca.Utils                                                (putDocLn)
+import           System.Environment                                        (getArgs)
 import           System.Exit                                               (exitFailure)
-import           Text.PrettyPrint
+import           System.Exit                                               (exitFailure,
+                                                                            exitSuccess)
+import           System.IO                                                 (hPutStrLn,
+                                                                            stderr)
+import qualified Text.PrettyPrint                                          as P
+import qualified Text.PrettyPrint.ANSI.Leijen                              as PP
 
 import           Debug.Trace
 
 main :: IO ()
 main = flip E.catch errorFun $ do
   maybeArgs <- parseArgOpts :: IO (Maybe ArgumentOptions)
-  let args = fromMaybe
-        (E.throw $ FatalException "Command line Arguments where empty")
-        maybeArgs
+  let args = fromMaybe (E.throw $ FatalException "Command line Arguments where empty") maybeArgs
 
-  when (minVectorLength args > maxVectorLength args)
-    (E.throw $ FatalException
-     "Minimum vector length was greater than maximum vector length." )
+  -- Check input
+  when (minVectorLength args > maxVectorLength args) $
+    E.throw $ FatalException "Minimum vector length was greater than maximum vector length."
 
+  -- from hoca
+  let programFromArgs f = do
+        s <- readFile f
+        case programFromString f s >>= desugar Nothing of
+          Left e  -> fail (show e)
+          Right p -> return p
 
-  probFile <- parseFileIO (filePath args)
+  let ppShow x = PP.displayS (PP.renderPretty 0.4 80 x) ""
+  let transform = try simplifyATRS >=> toTRS >=> try simplify >=> try compress
+      typeProgram p = case DM.infer p of
+        Left e   -> fail $ unlines [ppShow $ PP.pretty p, ppShow $ PP.pretty e]
+        Right p' -> return p'
+      defunctionalizeProgram p = case run defunctionalize p of
+        Nothing -> fail "defunctionalization failed"
+        Just p' -> return p'
+      simplifyAtrs p = case run transform p of
+        Nothing -> fail "simplification failed"
+        Just p' -> return p'
+
+  -- read and parse file (either as functional program or as (typed) TRS)
+  probFile <- (toTypedWST <$> (programFromArgs (filePath args) >>= typeProgram >>=
+                               defunctionalizeProgram >>= simplifyAtrs)) <|>
+              parseFileIO (filePath args)
+
 
   -- if no types given, infer them
   let probParse = if isNothing (datatypes probFile) || isNothing (signatures probFile)
@@ -118,8 +165,8 @@ main = flip E.catch errorFun $ do
   -- possibly add main function
   let isMainFun (Fun f _) = take 4 f == "main"
       isMainFun _         = False
-  let mainFun = filter (isMainFun.lhs) (allRules $ rules probParse)
-  let stricts = strictRules (rules probParse)
+  let mainFun = filter (isMainFun.lhs) (allRules $ TP.rules probParse)
+  let stricts = strictRules (TP.rules probParse)
   prob <- if (lowerbound args || isJust (lowerboundArg args)) &&
              null mainFun && not (null stricts)
           then do
@@ -130,9 +177,8 @@ main = flip E.catch errorFun $ do
             let args = map (\nr -> "x" ++ show nr) [1..length ch]
             let argsStr = intercalate "," args
             let rule = Rule (Fun "main" (map Var args)) (Fun f (map Var args))
-            return $ probParse { rules = (rules probParse)
-                        { strictRules = strictRules (rules probParse) ++
-                                                      [rule]}
+            return $ probParse { TP.rules = (TP.rules probParse)
+                        { strictRules = strictRules (TP.rules probParse) ++ [rule]}
                                , signatures =
                                  fmap (++ [sigF { lhsRootSym = "main" }])
                                  (signatures probParse)
@@ -162,14 +208,14 @@ main = flip E.catch errorFun $ do
     solveProblem args (fromJust probSig) cond (signatureMap prove) (costFreeSigs prove)
 
 
-  let line = text "\n"
-  let documentsIT :: [(String, Doc)]
-      documentsIT = (map (second (\d -> line $+$ d $+$ line)))
+  let line = P.text "\n"
+  let documentsIT :: [(String, P.Doc)]
+      documentsIT = (map (second (\d -> line P.$+$ d P.$+$ line)))
                     (map (second $
-                          ((vcat . intersperse seperatorDoc) .
+                          ((P.vcat . intersperse seperatorDoc) .
                            map prettyInfTreeNodeView) . reverse) infTrees)
-      documentsITNum = (map (second (\d -> line $+$ d)))
-                       (map (second (((vcat . intersperse seperatorDoc) .
+      documentsITNum = (map (second (\d -> line P.$+$ d)))
+                       (map (second (((P.vcat . intersperse seperatorDoc) .
                               map prettyInfTreeNodeView) . reverse)) $
                          zip (map fst infTrees)
                          (putValuesInInfTreeView (signatureMap prove)
@@ -177,7 +223,7 @@ main = flip E.catch errorFun $ do
 
       ruleNames :: [(String, Rule String String)]
       ruleNames = map (\rule -> (((\(Fun f _) -> f) . lhs) rule, rule)
-                      ) (allRules $ rules prob)
+                      ) (allRules $ TP.rules prob)
 
       fun (acc,[]) _ = (acc,[])
       fun (acc,(rn, rule):rns) sig = if rn == fst4 (lhsRootSym sig)
@@ -187,20 +233,20 @@ main = flip E.catch errorFun $ do
 
   when (printInfTree args) $ do
     let grpBy f = groupBy ((==) `on` f) -- . sortBy (compare `on` f)
-    let printInfTrees xs = line $+$ text n $+$ text (replicate (length n) '-')
-                           $+$ nest 2 (foldl ($+$) empty docs)
+    let printInfTrees xs = line P.$+$ P.text n P.$+$ P.text (replicate (length n) '-')
+                           P.$+$ P.nest 2 (foldl (P.$+$) P.empty docs)
 
           where n = fst $ head xs
                 docs = map snd xs
-    print (empty $+$ empty $+$
-            text "Inference Trees:\n----------------")
-    print (nest 2 (foldl ($+$) empty (map printInfTrees (grpBy fst documentsIT)))
-            $+$ line)
+    print (P.empty P.$+$ P.empty P.$+$
+            P.text "Inference Trees:\n----------------")
+    print (P.nest 2 (foldl (P.$+$) P.empty (map printInfTrees (grpBy fst documentsIT)))
+            P.$+$ line)
 
-    print (text "Inference Trees (with filled in numbers):" $+$
-            text "-----------------------------------------")
-    print (nest 2 (foldl ($+$) empty (map printInfTrees (grpBy fst documentsITNum)))
-           $+$ line)
+    print (P.text "Inference Trees (with filled in numbers):" P.$+$
+            P.text "-----------------------------------------")
+    print (P.nest 2 (foldl (P.$+$) P.empty (map printInfTrees (grpBy fst documentsITNum)))
+           P.$+$ line)
 
 
   -- print solution
@@ -212,24 +258,24 @@ main = flip E.catch errorFun $ do
         | take 4 n == "main" = True
         | otherwise = False
 
-  print (text "Solution:\n" <> text "---------\n")
-  print $ vcat $
+  print (P.text "Solution:\n" <> P.text "---------\n")
+  print $ P.vcat $
     zipWith (\nr x -> (if printInfTree args
-                      then nest 2 $ int nr <> colon
-                      else empty)
-                      <+> prettyAraSignature' x) [0..]
+                      then P.nest 2 $ P.int nr <> P.colon
+                      else P.empty)
+                      P.<+> prettyAraSignature' x) [0..]
     (if printInfTree args
       then sigs
       else filter (\x -> not (null mainFun) || not (isMainSig x)) $
            sortBy (compare `on` fst4 . lhsRootSym) (nub sigs))
 
   -- Cost free signatures
-  print (text "\n\nCost Free Signatures:\n" <> text "---------------------\n")
-  print $ vcat $
+  print (P.text "\n\nCost Free Signatures:\n" <> P.text "---------------------\n")
+  print $ P.vcat $
     zipWith (\nr x -> (if printInfTree args
-                       then nest 2 $ int nr <> colon
-                       else empty)
-                      <+> prettyAraSignature' x) [0..]
+                       then P.nest 2 $ P.int nr <> P.colon
+                       else P.empty)
+                      P.<+> prettyAraSignature' x) [0..]
 
     ( if printInfTree args
       then cfSigs
@@ -241,25 +287,23 @@ main = flip E.catch errorFun $ do
 
   unless (shift args) $
     print (line <>
-           text "\nBase Constructors:\n------------------"  $+$ empty $+$
-           (vcat (map prettyAraSignature'
+           P.text "\nBase Constructors:\n------------------"  P.$+$ P.empty P.$+$
+           (P.vcat (map prettyAraSignature'
                   (if printInfTree args
                    then baseCtrs
                    else sortBy (compare `on` fst4 . lhsRootSym) (nub baseCtrs))))
            <> line)
 
   unless (null cfBaseCtrs) $
-      print (text "\nBase Constructors for Cost-free Signatures:" <>
-             text "\n-------------------------------------------"
-             $+$ empty $+$
-             (vcat (map prettyAraSignature'
+      print (P.text "\nBase Constructors for Cost-free Signatures:" <>
+             P.text "\n-------------------------------------------"
+             P.$+$ P.empty P.$+$
+             (P.vcat (map prettyAraSignature'
                     (if printInfTree args
                      then cfBaseCtrs
                      else sortBy (compare `on` fst4 . lhsRootSym) (nub cfBaseCtrs))))
              <> line)
 
-
-  -- trace ("vals: " ++ show vals) $
   when (isJust $ findStrictRules args) $ do
     putStrLn $ "Strict Rules: " ++ show strictRls
     putStrLn $ "Weak Rules: " ++ show weakRls
@@ -329,6 +373,33 @@ checkCfBaseCtrsUniqueness sigs = do
                       "Cost free defined functions not unique: " ++ show xTuple ++
                       " /= " ++ show yTuple)
 
+
+toTypedWST :: (Show v, PP.Pretty f, Eq f, Eq v) => H.Problem f v -> TP.Problem String String s sDt dt cn
+toTypedWST p = TP.Problem {
+  TP.startTerms = TP.AllTerms
+  , TP.strategy = TP.Innermost
+  , TP.theory = Nothing
+  , TP.rules = TP.RulesPair { TP.strictRules = trs, TP.weakRules = [] }
+  , TP.variables = nub (RS.vars trs)
+  , TP.symbols = nub (RS.funs trs)
+  , TP.comment = Nothing
+  , TP.datatypes = Nothing
+  , TP.signatures = Nothing
+  }
+  where
+    trs = map (fromARule . theRule . fst) (IMap.elems (H.ruleGraph p))
+
+fromARule :: (Show v, PP.Pretty f) => H.ARule f v -> TP.Rule String String
+fromARule (H.Rule aSym v) = TP.Rule (fromATerm aSym) (fromATerm v)
+
+
+fromATerm :: (Show v, PP.Pretty f) => R.Term (ASym f) v -> TP.Term String String
+fromATerm (R.Fun aSym ch) = TP.Fun (fromASym aSym) (map fromATerm ch)
+fromATerm (R.Var v)       = TP.Var ("v" <> show v)
+
+fromASym :: (PP.Pretty f) => ASym f -> String
+fromASym (Sym f) = show (PP.pretty f)
+fromASym App     = error "APP encountered"
 
 --
 -- AraHoca.hs ends here

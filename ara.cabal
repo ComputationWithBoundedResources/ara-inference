@@ -121,6 +121,10 @@ executable ara-hoca
   build-depends:       base >=4.8
                      , ara
                      , term-rewriting-ext
+                     , term-rewriting
+                     , ansi-wl-pprint
+                     , containers
+                     , term-rewriting-applicative
                      , mtl
                      , pretty
                      , hoca

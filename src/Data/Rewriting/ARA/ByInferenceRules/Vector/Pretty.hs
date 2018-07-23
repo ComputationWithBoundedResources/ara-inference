@@ -7,9 +7,9 @@
 -- Created: Wed May  4 17:34:21 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:34:08 2017 (+0200)
+-- Last-Updated: Mon Jul 23 10:23:31 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 14
+--     Update #: 16
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -37,7 +37,7 @@
 module Data.Rewriting.ARA.ByInferenceRules.Vector.Pretty where
 
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Type
-
+import           Prelude                                         hiding ((<>))
 import           Text.PrettyPrint
 
 prettyVector                                :: Vector -> Doc

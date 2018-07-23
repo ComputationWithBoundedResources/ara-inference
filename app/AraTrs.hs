@@ -1,17 +1,17 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE ScopedTypeVariables #-}
--- Main.hs ---
+-- AraTrs.hs ---
 --
--- Filename: Main.hs
+-- Filename: AraTrs.hs
 -- Description:
 -- Author: Manuel Schneckenreither
 -- Maintainer:
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Dec  1 18:33:03 2017 (+0100)
+-- Last-Updated: Mon Jul 23 10:27:51 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1029
+--     Update #: 1032
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -54,7 +54,7 @@
 
 
 {-# LANGUAGE CPP                 #-}
-module Main
+module AraTrs
     ( main
     ) where
 
@@ -90,6 +90,7 @@ import           Control.Monad.State
 import           Data.Function
 import           Data.List
 import           Data.Maybe
+import           Prelude                                                   hiding ((<>))
 import           System.Exit                                               (exitFailure)
 import           Text.PrettyPrint
 
@@ -332,4 +333,4 @@ checkCfBaseCtrsUniqueness sigs = do
 
 
 --
--- Main.hs ends here
+-- AraTrs.hs ends here

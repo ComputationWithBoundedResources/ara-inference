@@ -7,9 +7,9 @@
 -- Created: Wed Sep 17 09:05:42 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Jun 18 15:53:25 2017 (+0200)
+-- Last-Updated: Mon Jul 23 10:25:05 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 420
+--     Update #: 421
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -45,20 +45,24 @@ module Data.Rewriting.ARA.Pretty.Pretty
     , prettyTerm
     )
     where
+
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.TypeSignatures
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception
 import           Data.Rewriting.Typed.Datatype
 import           Data.Rewriting.Typed.Problem
-import           Data.Rewriting.Typed.Rule                               hiding (prettyRule)
+import           Data.Rewriting.Typed.Rule                               hiding
+                                                                          (prettyRule)
 import           Data.Rewriting.Typed.Signature
 
 import           Debug.Trace                                             (trace)
 
 import           Control.Exception                                       (throw)
-import           Data.List                                               (find, intersperse)
+import           Data.List                                               (find,
+                                                                          intersperse)
 import           Data.Maybe                                              (fromMaybe)
+import           Prelude                                                 hiding ((<>))
 import           Text.PrettyPrint
 import qualified Text.PrettyPrint.ANSI.Leijen                            as L
 

@@ -8,9 +8,9 @@
 -- Created: Tue Sep  9 15:15:02 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 10:22:43 2017 (+0200)
+-- Last-Updated: Mon Jul 23 10:26:17 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 376
+--     Update #: 381
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -48,15 +48,16 @@ import           Data.Rewriting.ARA.ByInferenceRules.Prove.Type
 import           Data.Rewriting.ARA.ByInferenceRules.Vector.Pretty
 import           Data.Rewriting.ARA.Pretty
 import           Data.Rewriting.Typed.Problem
+import           Prelude                                                      hiding ((<>))
 import qualified Text.PrettyPrint.ANSI.Leijen                                 as L
 
 
 import           Data.List                                                    (intersperse)
 import           Data.Maybe                                                   (fromMaybe)
 import           Prelude                                                      hiding
-                                                                               ((<$>))
+                                                                               ((<$>),
+                                                                               (<>))
 import           Text.PrettyPrint
-
 #define DEBUG
 
 

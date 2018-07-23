@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 23:23:50 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Jun 16 17:38:19 2017 (+0200)
+-- Last-Updated: Mon Jul 23 10:24:26 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 154
+--     Update #: 155
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -49,6 +49,7 @@ import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Type
 import           Data.Rewriting.ARA.ByInferenceRules.Operator.Pretty
 
 import           Data.List
+import           Prelude                                                     hiding ((<>))
 import           Text.PrettyPrint
 
 

@@ -7,9 +7,9 @@
 -- Created: Wed Oct  1 15:44:01 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun May  7 18:04:03 2017 (+0200)
+-- Last-Updated: Mon Jul 23 10:24:11 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 80
+--     Update #: 81
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -44,8 +44,8 @@ module Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost.Pretty
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerCost.Type
 import           Data.Rewriting.ARA.ByInferenceRules.AnalyzerDatatype.Type
+import           Prelude                                                   hiding ((<>))
 import           Text.PrettyPrint
-
 
 prettyADatatype :: (Show dt, Show a) => (ACost a -> Doc) -> ADatatype dt a -> Doc
 prettyADatatype pCst (ActualCost fromCf dt cst) =

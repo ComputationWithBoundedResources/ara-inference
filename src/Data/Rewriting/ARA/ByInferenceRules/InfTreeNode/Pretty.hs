@@ -7,9 +7,9 @@
 -- Created: Mon Oct  6 13:22:09 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Jun 18 18:10:59 2017 (+0200)
+-- Last-Updated: Mon Jul 23 10:24:45 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 154
+--     Update #: 155
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -54,8 +54,11 @@ import           Data.Rewriting.ARA.ByInferenceRules.Vector.Pretty
 import           Control.Arrow                                                ((***))
 import           Data.List                                                    (intersperse)
 import           Data.Maybe
+import           Prelude                                                      hiding ((<>))
 import           Text.PrettyPrint
 import qualified Text.PrettyPrint.ANSI.Leijen                                 as L
+
+
 line = text "" $+$ empty
 
 prettyInfTreeNode :: (Show f, Show v, Show dt) => InfTreeNode f v dt -> Doc

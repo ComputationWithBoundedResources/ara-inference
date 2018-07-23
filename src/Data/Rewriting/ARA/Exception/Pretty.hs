@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 10:42:24 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Apr 11 14:32:50 2017 (+0200)
+-- Last-Updated: Mon Jul 23 10:23:54 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 61
+--     Update #: 62
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -39,6 +39,7 @@ module Data.Rewriting.ARA.Exception.Pretty
 
 import           Data.Rewriting.ARA.Constants
 import           Data.Rewriting.ARA.Exception.Type
+import           Prelude                           hiding ((<>))
 import           Text.PrettyPrint
 
 prettyProgException           :: ProgException -> Doc

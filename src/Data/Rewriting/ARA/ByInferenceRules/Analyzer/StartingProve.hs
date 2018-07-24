@@ -7,9 +7,9 @@
 -- Created: Sun Sep 14 10:10:23 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Oct 16 15:17:06 2017 (+0200)
+-- Last-Updated: Tue Jul 24 23:00:22 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1666
+--     Update #: 1667
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -165,7 +165,7 @@ insertConstraints args pr =
         fun = createInfTreeNodes (Left rls) False Nothing args dts sigs
 
 
-updateDatatypesChildCost :: (Show s, Eq s, Eq dt) =>
+updateDatatypesChildCost :: (Show dt, Show s, Eq s, Eq dt) =>
                             Prove f v s dt dt s -> Prove f v s dt dt s
 updateDatatypesChildCost p =
   p { problem = prob {datatypes = res }}
@@ -177,7 +177,7 @@ updateDatatypesChildCost p =
                 else Just (map fun (fromJust $ datatypes prob))
 
 
-updateDatatypeChildCost :: (Show s, Eq s, Eq dt) =>
+updateDatatypeChildCost :: (Show dt, Show s, Eq s, Eq dt) =>
                            [SignatureSig s dt] -> DatatypeSig dt s -> DatatypeSig dt s
 updateDatatypeChildCost sigs (Datatype dt ctrs) = Datatype dt (map updateCtr ctrs)
   where updateCtr (Constructor cn chld) =
@@ -199,7 +199,7 @@ postInfTreeNode isCf nr (Rule _ term) dt = Just (term, sigRefRet isCf dt nr)
 -- | @createConstraints (rule, ctxs)@ creates a starting constraint from the given
 -- problem and saves it to the tuple. The returning rule is undefined due to not
 -- using it in mapDatatypes.
-createInfTreeNodes :: (Eq f, Eq v, Eq dt, Show f, Ord v, Read v, Show v) =>
+createInfTreeNodes :: (Show dt, Eq f, Eq v, Eq dt, Show f, Ord v, Read v, Show v) =>
                       Either [Rule f v] Int
                    -> Bool
                    -> Maybe Int
@@ -326,7 +326,7 @@ createInfTreeNodes rlsGrpNr isCf mSigIdx args dts sigs weak
                         shareCond = (removeDt var, Eq, map removeDt list)
                     in ((fst x, var):preLin, shareCond:shares,nrO)
 
-getVarsWithDt :: (Read v, Show v, Eq f, Show f, Eq dt, Eq v) =>
+getVarsWithDt :: (Show dt, Read v, Show v, Eq f, Show f, Eq dt, Eq v) =>
                  String
               -> Int
               -> Bool

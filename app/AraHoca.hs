@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Jul 23 16:39:30 2018 (+0200)
+-- Last-Updated: Tue Jul 24 23:53:33 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1091
+--     Update #: 1193
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -82,25 +82,27 @@ import           Data.Rewriting.ARA.Exception.Pretty                       ()
 import           Data.Rewriting.ARA.InferTypes
 import           Data.Rewriting.ARA.Pretty
 import qualified Data.Rewriting.Term.Type                                  as R
+import           Data.Rewriting.Typed.Datatype                             as TP
 import           Data.Rewriting.Typed.Problem                              as TP
 import           Data.Rewriting.Typed.Rule                                 as TP
 import           Data.Rewriting.Typed.Rule
 import qualified Data.Rewriting.Typed.Rules                                as RS
-import           Data.Rewriting.Typed.Signature
+import           Data.Rewriting.Typed.Signature                            as TP
 import           Data.Rewriting.Typed.Term                                 as TP hiding
                                                                                   (map)
 import           Data.Rewriting.Typed.Term.Type                            hiding (map)
 
 import           Control.Applicative
-import           Control.Arrow                                             hiding ((<+>))
+import           Control.Arrow
 import qualified Control.Exception                                         as E
 import           Control.Monad.State                                       hiding ((>=>))
 import           Data.Function
 import qualified Data.IntMap                                               as IMap
 import           Data.List
+import qualified Data.Map                                                  as Map
 import           Data.Maybe
-import           Data.Maybe                                                (fromJust)
-import           Hoca.Data.Symbol
+import qualified Hoca.Data.MLTypes                                         as H
+import           Hoca.Data.Symbol                                          as H
 import qualified Hoca.PCF.Core                                             as PCF
 import qualified Hoca.PCF.Core.DMInfer                                     as DM
 import           Hoca.PCF.Desugar                                          (desugar, desugarExpression)
@@ -113,7 +115,6 @@ import qualified Hoca.Problem                                              as H
 import           Hoca.Transform                                            as T
 import           Hoca.Utils                                                (putDocLn)
 import           System.Environment                                        (getArgs)
-import           System.Exit                                               (exitFailure)
 import           System.Exit                                               (exitFailure,
                                                                             exitSuccess)
 import           System.IO                                                 (hPutStrLn,
@@ -153,7 +154,9 @@ main = flip E.catch errorFun $ do
 
   -- read and parse file (either as functional program or as (typed) TRS)
   probFile <- (toTypedWST <$> (programFromArgs (filePath args) >>= typeProgram >>=
-                               defunctionalizeProgram >>= simplifyAtrs)) <|>
+                               defunctionalizeProgram >>= simplifyAtrs
+                               >>= \x -> putDocLn (PP.pretty x) >> return x
+                              )) <|>
               parseFileIO (filePath args)
 
 
@@ -188,7 +191,7 @@ main = flip E.catch errorFun $ do
 
   -- Find out SCCs
   let reachability = analyzeReachability prob
-
+  print reachability
   (prove, infTrees) <- analyzeProblem args reachability prob
 
   when (verbose args) $ do
@@ -374,32 +377,79 @@ checkCfBaseCtrsUniqueness sigs = do
                       " /= " ++ show yTuple)
 
 
-toTypedWST :: (Show v, PP.Pretty f, Eq f, Eq v) => H.Problem f v -> TP.Problem String String s sDt dt cn
-toTypedWST p = TP.Problem {
-  TP.startTerms = TP.AllTerms
-  , TP.strategy = TP.Innermost
-  , TP.theory = Nothing
-  , TP.rules = TP.RulesPair { TP.strictRules = trs, TP.weakRules = [] }
-  , TP.variables = nub (RS.vars trs)
-  , TP.symbols = nub (RS.funs trs)
-  , TP.comment = Nothing
-  , TP.datatypes = Nothing
-  , TP.signatures = Nothing
-  }
+toTypedWST :: H.Problem TRSSymbol Int -> TP.Problem String String String String String String
+toTypedWST p =
+  -- trace ("signatures: " ++ show (PP.pretty (H.signature p)))
+  -- trace ("problem: " ++ show (H.prettyWST p))
+  -- -- trace ("res: " ++ show (res :: TP.Problem String String String String String String))
+  -- trace ("syms: " ++ show syms)
+  trace ("funs: " ++ show funs)
+  -- trace ("ctrs: " ++ show ctrs)
+
+  trace ("funs: " ++ show (map (toSignature sigs) funs))
+  -- trace ("ctrs sig: " ++ show (map (toSignature sigs) ctrs))
+  -- trace ("ctrs: " ++ show (dts))
+
+  TP.Problem {
+       TP.startTerms = TP.AllTerms
+       , TP.strategy = TP.Innermost
+       , TP.theory = Nothing
+       , TP.rules = TP.RulesPair { TP.strictRules = trs, TP.weakRules = [] }
+       , TP.variables = nub (RS.vars trs)
+       , TP.symbols = syms
+       , TP.comment = Nothing
+       , TP.datatypes = if null mergedDts then Nothing else Just mergedDts
+       , TP.signatures = if null tpSigs then Nothing else Just tpSigs
+       }
+
   where
     trs = map (fromARule . theRule . fst) (IMap.elems (H.ruleGraph p))
+    syms = nub (RS.funs trs)
+    funs = nub (concatMap getFunName trs)
+    getFunName (Rule (Var _) _)   = []
+    getFunName (Rule (Fun f _) _) = [f]
+    sigs = Map.mapKeys (show . PP.pretty) (H.signature p)
+    tpSigs = mapMaybe (toSignature sigs) funs
+    ctrs = filter (`notElem` funs) syms
+    dts = map (toDatatype sigs) ctrs
+    mergedDts = map mergeDts $ groupBy ((==) `on` TP.datatype) $ sortBy (compare `on` TP.datatype) (catMaybes dts)
+    mergeDts xs@(TP.Datatype f _:_) = TP.Datatype f (concatMap TP.constructors xs)
 
-fromARule :: (Show v, PP.Pretty f) => H.ARule f v -> TP.Rule String String
+fromARule :: (Show v) => H.ARule TRSSymbol v -> TP.Rule String String
 fromARule (H.Rule aSym v) = TP.Rule (fromATerm aSym) (fromATerm v)
 
 
-fromATerm :: (Show v, PP.Pretty f) => R.Term (ASym f) v -> TP.Term String String
+fromATerm :: (Show v) => R.Term (ASym TRSSymbol) v -> TP.Term String String
 fromATerm (R.Fun aSym ch) = TP.Fun (fromASym aSym) (map fromATerm ch)
 fromATerm (R.Var v)       = TP.Var ("v" <> show v)
 
-fromASym :: (PP.Pretty f) => ASym f -> String
-fromASym (Sym f) = show (PP.pretty f)
+fromASym :: ASym TRSSymbol -> String
+fromASym (Sym f) = fromTRSSymbol f
 fromASym App     = error "APP encountered"
+
+fromTRSSymbol :: H.TRSSymbol -> String
+fromTRSSymbol = show . PP.pretty
+
+toSignature :: Map.Map String H.TypeDecl -> String -> Maybe (TP.Signature String String)
+toSignature m f = convertToSig <$> Map.lookup f m
+  where convertToSig (params H.:~> ret) = TP.Signature f (concatMap fromMlType params) (head $ fromMlType ret)
+
+        fromMlType (H.TyVar n)    = [anyTypeSym] -- "tp" ++ show n]
+        fromMlType (H.TyCon n ts) = [n] --  ++ "(" ++ intercalate "," (concatMap fromMlType ts) ++ ")"]
+        fromMlType (x H.:-> y)    = fromMlType x ++ fromMlType y
+
+toDatatype :: Map.Map String H.TypeDecl -> String -> Maybe (TP.Datatype String String)
+toDatatype m f = convertToDt <$> Map.lookup f m
+  where convertToDt (params H.:~> ret) = TP.Datatype dt [TP.Constructor f (concatMap toCtrCh params)]
+          where dt = trace ("ret: " ++ show ret) $ (head $ fromMlType ret)
+                toCtrCh (H.TyCon n _) = if n == dt then [ConstructorRecursive] else [ConstructorDatatype n]
+                toCtrCh x@(H.TyVar m) = (\x -> if x == dt then ConstructorRecursive else ConstructorDatatype x) <$> fromMlType x
+                toCtrCh (x H.:-> y) = toCtrCh x ++ toCtrCh y
+
+        fromMlType (H.TyVar n)    = [anyTypeSym]
+        fromMlType (H.TyCon n ts) = [n] --  ++ "(" ++ intercalate "," (concatMap fromMlType ts) ++ ")"]
+        fromMlType (x H.:-> y)    = fromMlType x ++ fromMlType y
+
 
 --
 -- AraHoca.hs ends here

@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Oct 20 08:22:29 2017 (+0200)
+-- Last-Updated: Tue Jul 24 23:38:45 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1286
+--     Update #: 1290
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -123,7 +123,11 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
         fRules = filter (\r -> funName (lhs r) == f) allRls
 
 
-        sigSCCNr name = snd $ head $ filter ((== name) . fst) reachability
+        sigSCCNr name = snd $ (\x -> trace ("name: " ++ show name)
+                                trace ("his: " ++ show his)
+                                (head x))
+
+                        $ filter ((== name) . fst) reachability
         isInSCCOfStartSig
           | allowLowerSCC args = sigSCCNr f <= sigSCCNr fn
           | otherwise = sigSCCNr f == sigSCCNr fn

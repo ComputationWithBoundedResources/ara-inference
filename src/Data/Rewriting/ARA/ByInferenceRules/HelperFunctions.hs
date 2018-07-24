@@ -7,9 +7,9 @@
 -- Created: Fri Oct 10 15:46:17 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 18:48:27 2017 (+0200)
+-- Last-Updated: Tue Jul 24 23:58:59 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 125
+--     Update #: 137
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -59,36 +59,42 @@ import           Debug.Trace
 import           Text.PrettyPrint
 
 
+anyTypeSym :: String
+anyTypeSym = "__ANY_TYPE__"
+
 -- | @getSignatureByName sigs sigName@ checks all signatures defined in @sigs@
 -- and searches for the one with the name @sigName@.
-getSignatureByNameAndType :: (Eq s, Eq sDt) =>
+getSignatureByNameAndType :: (Show sDt, Eq s, Eq sDt) =>
                              [SignatureSig s sDt] -> s -> sDt
                           -> Maybe (SignatureSig s sDt)
-getSignatureByNameAndType sigs sig dt =
-  find (\(Signature (n,_,_,_) _ (dtRhs,_)) -> dt == dtRhs && n == sig) sigs
+getSignatureByNameAndType sigs sig dt
+  | show dt == anyTypeSym = getDefSymSignatureByName sigs sig
+  | otherwise = find (\(Signature (n,_,_,_) _ (dtRhs,_)) -> dt == dtRhs && n == sig) sigs
 
 -- | @getSignatureByName sigs sigName@ checks all signatures defined in @sigs@
 -- and searches for the one with the name @sigName@.
 getDefSymSignatureByName :: (Eq s) =>
                             [SignatureSig s sDt] -> s -> Maybe (SignatureSig s sDt)
 getDefSymSignatureByName sigs sig =
-  find (\(Signature (n,_,isCtr,_) _ _) -> not isCtr && n == sig) sigs
+  find (\(Signature (n,_,isCtr,_) _ _) -> -- not isCtr &&
+         n == sig) sigs
 
 
 -- | @getSignatureByName' sigs sigName@ finds the signature with the name
 -- @sigName@ from the list of signatures @sigs@ and returns it. If it cannot be
 -- found an exception will be throws!
-getSignatureByNameAndType' :: (Show s, Eq s, Eq sDt) =>
+getSignatureByNameAndType' :: (Show s, Eq s, Show sDt, Eq sDt) =>
                               [SignatureSig s sDt] -> s -> sDt -> SignatureSig s sDt
-getSignatureByNameAndType' sigs sigName dt =
-  fromMaybe (throw $ FatalException $ "Cannot find signature for " ++ show sigName)
-            (getSignatureByNameAndType sigs sigName dt)
+getSignatureByNameAndType' sigs sigName dt
+  | filter (/= '"') (show dt) == anyTypeSym = getDefSymSignatureByName' sigs sigName
+  | otherwise = fromMaybe (throw $ FatalException $ "Cannot find signature for " ++ show sigName ++ "with type " ++ show dt)
+                (getSignatureByNameAndType sigs sigName dt)
 
 -- | @getSignatureByName sigs sigName@ checks all signatures defined in @sigs@
 -- and searches for the one with the name @sigName@.
-getDefSymSignatureByName' :: (Show s, Eq s) => [SignatureSig s sDt] -> s -> SignatureSig s sDt
+getDefSymSignatureByName' :: (Show sDt, Show s, Eq s) => [SignatureSig s sDt] -> s -> SignatureSig s sDt
 getDefSymSignatureByName' sigs sig =
-  fromMaybe (throw $ FatalException $ "Cannot find signature for " ++ show sig)
+  fromMaybe (throw $ FatalException $ "Cannot find signature for " ++ show sig ++ " in \n" ++ show sigs)
   (getDefSymSignatureByName sigs sig)
 
 -- | @getDatatypeByName dts dtName@ takes as input a list of parsed data-types

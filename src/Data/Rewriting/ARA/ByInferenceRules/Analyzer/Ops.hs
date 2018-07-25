@@ -9,9 +9,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Nov  6 11:58:34 2017 (+0100)
+-- Last-Updated: Wed Jul 25 15:34:10 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2868
+--     Update #: 2873
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -128,7 +128,7 @@ analyzeProblem args reachability prob =
 
            let -- solution :: Prove f v f dt dt cn -- the final solution
                solution = (\x -> x { provenInfTreeNodes = provenInfTreeNodes x }) $
-                          analyzeProve [sp]
+                          analyzeProve Nothing [sp]
 
            let snd6 (_,x,_,_,_,_) = x
 
@@ -147,23 +147,26 @@ analyzeProblem args reachability prob =
                          | otherwise = solution
            return (solution', inferenceTrees)
 
-   where analyzeProve :: [Prove f v f dt dt f] -> Prove f v f dt dt f
-         analyzeProve [] = throw $ WarningException $
-            "The Term Rewrite System could not be solved using the inference rules :( \n" ++
+   where analyzeProve :: Maybe (Prove f v f dt dt f) -> [Prove f v f dt dt f] -> Prove f v f dt dt f
+         analyzeProve oldProve [] = throw $ WarningException $
+            maybe "No history (no previous proof)" show (prettyProve <$> oldProve) ++
+            "\n\nThe Term Rewrite System could not be solved using the inference rules :( \n" ++
             "First of all, check if your input has no errors, e.g. wrong signatures. " ++
-            "Then, if there is not error, please file a bug report."
-         analyzeProve (p:ps) =
+            "Then, if there is not error, please file a bug report. History is above!"
+
+
+         analyzeProve _ (p:ps) =
            -- trace ("length ps: " ++ show (length ps)) $
            -- trace ("current prove: " ++ show (pretty p)) $
            -- apply inference rule to the prove
            case applyInferenceRules args reachability p of
-             Left nr -> analyzeProve ps -- analyzeProve $ putCtxInFront ps nr
+             Left nr -> analyzeProve (Just p) ps -- analyzeProve $ putCtxInFront ps nr
              Right proves ->
                  if null proves
-                   then analyzeProve ps                -- try other possibilities
+                   then analyzeProve (Just p) ps                -- try other possibilities
                    else -- check for solution - if a we get Just solution, return solution
                         -- otherwise iterate
-                        fromMaybe (analyzeProve (proves++ps)) (getSolution proves)
+                        fromMaybe (analyzeProve Nothing (proves++ps)) (getSolution proves)
 
 
 checkLhsRules :: (Show v) => Prove f v f dt dt f -> Prove f v f dt dt f

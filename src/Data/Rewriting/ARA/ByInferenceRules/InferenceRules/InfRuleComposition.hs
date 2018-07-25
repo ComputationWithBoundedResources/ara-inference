@@ -8,9 +8,9 @@
 -- Created: Tue Sep 16 01:46:07 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Oct  9 15:51:43 2017 (+0200)
+-- Last-Updated: Wed Jul 25 15:12:55 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 692
+--     Update #: 693
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -96,8 +96,8 @@ composition args (prob, cfsigs, asigs, nr, conds, InfTreeNode pre cst (Just (Fun
 
  [ (prob, cfsigs, asigs, nr'+1, conds', funParNode : funChildNodes)
  | length pre == length fcVars &&            -- 1. number of variables fit
-   any (not . isVar) fc &&                   -- 2. function is not applicable
-   and (zipWith (==) preDtSorted fcDtSorted) -- 3. datatypes match
+   any (not . isVar) fc                      -- 2. function is not applicable
+   -- && and (zipWith (==) preDtSorted fcDtSorted) -- 3. datatypes match
  ]
 
   where fcVars = concatMap getTermVars fc

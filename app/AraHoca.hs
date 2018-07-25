@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Jul 24 23:53:33 2018 (+0200)
+-- Last-Updated: Wed Jul 25 16:04:39 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1193
+--     Update #: 1209
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -155,7 +155,7 @@ main = flip E.catch errorFun $ do
   -- read and parse file (either as functional program or as (typed) TRS)
   probFile <- (toTypedWST <$> (programFromArgs (filePath args) >>= typeProgram >>=
                                defunctionalizeProgram >>= simplifyAtrs
-                               >>= \x -> putDocLn (PP.pretty x) >> return x
+                               -- >>= \x -> putDocLn (PP.pretty x) >> return x
                               )) <|>
               parseFileIO (filePath args)
 
@@ -191,7 +191,6 @@ main = flip E.catch errorFun $ do
 
   -- Find out SCCs
   let reachability = analyzeReachability prob
-  print reachability
   (prove, infTrees) <- analyzeProblem args reachability prob
 
   when (verbose args) $ do
@@ -383,10 +382,9 @@ toTypedWST p =
   -- trace ("problem: " ++ show (H.prettyWST p))
   -- -- trace ("res: " ++ show (res :: TP.Problem String String String String String String))
   -- trace ("syms: " ++ show syms)
-  trace ("funs: " ++ show funs)
+  -- trace ("funs: " ++ show funs)
   -- trace ("ctrs: " ++ show ctrs)
-
-  trace ("funs: " ++ show (map (toSignature sigs) funs))
+  -- trace ("tpSigs: " ++ show tpSigs)
   -- trace ("ctrs sig: " ++ show (map (toSignature sigs) ctrs))
   -- trace ("ctrs: " ++ show (dts))
 
@@ -436,19 +434,19 @@ toSignature m f = convertToSig <$> Map.lookup f m
 
         fromMlType (H.TyVar n)    = [anyTypeSym] -- "tp" ++ show n]
         fromMlType (H.TyCon n ts) = [n] --  ++ "(" ++ intercalate "," (concatMap fromMlType ts) ++ ")"]
-        fromMlType (x H.:-> y)    = fromMlType x ++ fromMlType y
+        fromMlType (x H.:-> y)    = fromMlType y -- only take return value of parameter function
 
 toDatatype :: Map.Map String H.TypeDecl -> String -> Maybe (TP.Datatype String String)
 toDatatype m f = convertToDt <$> Map.lookup f m
   where convertToDt (params H.:~> ret) = TP.Datatype dt [TP.Constructor f (concatMap toCtrCh params)]
-          where dt = trace ("ret: " ++ show ret) $ (head $ fromMlType ret)
+          where dt = head $ fromMlType ret
                 toCtrCh (H.TyCon n _) = if n == dt then [ConstructorRecursive] else [ConstructorDatatype n]
                 toCtrCh x@(H.TyVar m) = (\x -> if x == dt then ConstructorRecursive else ConstructorDatatype x) <$> fromMlType x
-                toCtrCh (x H.:-> y) = toCtrCh x ++ toCtrCh y
+                toCtrCh (x H.:-> y) = toCtrCh y -- only take return value of parameter function
 
         fromMlType (H.TyVar n)    = [anyTypeSym]
         fromMlType (H.TyCon n ts) = [n] --  ++ "(" ++ intercalate "," (concatMap fromMlType ts) ++ ")"]
-        fromMlType (x H.:-> y)    = fromMlType x ++ fromMlType y
+        fromMlType (_ H.:-> y)    = fromMlType y -- only take return value of parameter function
 
 
 --

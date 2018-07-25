@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Jul 24 23:38:45 2018 (+0200)
+-- Last-Updated: Wed Jul 25 16:04:21 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1290
+--     Update #: 1298
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -98,9 +98,15 @@ function :: forall f v dt. (Eq f, Eq dt, Show f, Eq v, Show v, Show dt, Ord v, R
 function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
                InfTreeNode pre cst (Just (Fun f fc, dt))
                i@(fn,ruleStr,isCtrDeriv,startCsts,sigNr,mCfSigIdx) his) =
+  -- trace ("his:" ++ show his)
+  -- trace ("all isVar fc: " ++ show (all isVar fc))
+  -- trace ("length pre == length varsRhs: " ++ show (length pre == length varsRhs))
+  -- trace ("length pre == length (lhsSig sig): " ++ show (length pre == length (lhsSig sig)))
+  -- trace ("sig: " ++ show sig)
+
 
   [(prob, cfsigs', asigs', nr', conds', InfTreeNode [] cst Nothing i his' : infTreesCf)
-  | (fst . rhsSig) sig == dtName &&    -- 1. datatypes need to match
+  | -- (fst . rhsSig) sig == dtName &&    -- 1. datatypes need to match
     all isVar fc &&                    -- 2. children are variables
     length pre == length varsRhs &&    -- 3. number of variables correlate
     length pre == length (lhsSig sig)  -- 4. the signature corresponds
@@ -123,11 +129,7 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
         fRules = filter (\r -> funName (lhs r) == f) allRls
 
 
-        sigSCCNr name = snd $ (\x -> trace ("name: " ++ show name)
-                                trace ("his: " ++ show his)
-                                (head x))
-
-                        $ filter ((== name) . fst) reachability
+        sigSCCNr name = snd $ head $ filter ((== name) . fst) reachability
         isInSCCOfStartSig
           | allowLowerSCC args = sigSCCNr f <= sigSCCNr fn
           | otherwise = sigSCCNr f == sigSCCNr fn

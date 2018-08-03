@@ -1,2 +1,0 @@
-{-# htermination sort :: [()] -> [()] #-}
-import List

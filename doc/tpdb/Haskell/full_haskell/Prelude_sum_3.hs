@@ -1,1 +1,0 @@
-{-# htermination sum :: [Float] -> Float #-}

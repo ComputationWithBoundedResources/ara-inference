@@ -1,1 +1,0 @@
-{-# htermination sinh :: Float -> Float #-}

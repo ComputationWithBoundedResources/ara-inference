@@ -1,1 +1,0 @@
-{-# htermination realToFrac :: Int -> Float #-}

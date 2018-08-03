@@ -1,1 +1,0 @@
-{-# htermination id :: a -> a #-}

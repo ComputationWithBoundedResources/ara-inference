@@ -1,1 +1,0 @@
-{-# htermination isDigit :: Char -> Bool #-}

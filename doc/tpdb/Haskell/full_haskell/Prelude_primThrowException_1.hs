@@ -1,1 +1,0 @@
-{-# htermination primThrowException :: HugsException -> a #-}

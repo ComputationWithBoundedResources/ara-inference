@@ -1,1 +1,0 @@
-{-# htermination maximum :: [Char] -> Char #-}

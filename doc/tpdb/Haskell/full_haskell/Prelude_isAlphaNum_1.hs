@@ -1,1 +1,0 @@
-{-# htermination isAlphaNum :: Char -> Bool #-}

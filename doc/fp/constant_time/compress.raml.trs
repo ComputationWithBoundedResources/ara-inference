@@ -1,0 +1,3 @@
+"./constant_time/compress.raml" (line 34, column 19):
+unexpected " "
+expecting "*", lambda expression, lazy expression, forced expression, let expression, match expression or application

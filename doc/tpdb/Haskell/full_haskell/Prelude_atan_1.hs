@@ -1,1 +1,0 @@
-{-# htermination atan :: Float -> Float #-}

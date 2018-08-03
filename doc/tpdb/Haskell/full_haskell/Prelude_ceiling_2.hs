@@ -1,1 +1,0 @@
-{-# htermination ceiling :: Float -> Int #-}

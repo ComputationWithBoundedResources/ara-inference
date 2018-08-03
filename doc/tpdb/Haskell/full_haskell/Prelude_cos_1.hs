@@ -1,1 +1,0 @@
-{-# htermination cos :: Float -> Float #-}

@@ -1,1 +1,0 @@
-{-# htermination sqrt :: Float -> Float #-}

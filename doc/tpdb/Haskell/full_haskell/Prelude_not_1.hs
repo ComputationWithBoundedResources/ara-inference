@@ -1,1 +1,0 @@
-{-# htermination not :: Bool -> Bool #-}

@@ -1,1 +1,0 @@
-{-# htermination truncate :: Float -> Int #-}

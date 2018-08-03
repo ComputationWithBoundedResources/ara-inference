@@ -1,1 +1,0 @@
-{-# htermination toRational :: Int -> Rational #-}

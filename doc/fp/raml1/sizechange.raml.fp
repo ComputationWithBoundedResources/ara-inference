@@ -1,0 +1,211 @@
+
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
+;;
+let ifz n th el = match n with
+   | 0 -> th 0
+   | S(x) -> el x
+;;
+let minus n m =
+  let rec minus' m n = match m with
+        | 0 -> 0
+        | S(x) -> match n with
+          | 0 -> m
+          | S(y) -> minus' x y
+  in Pair(minus' n m,m)
+;;
+let rec plus n m = match m with
+  | 0 -> n
+  | S(x) -> S(plus n x)
+;;
+let rec div_mod n m = match (minus n m) with
+  | Pair(res,m) -> match res with
+                   | 0 -> Triple (0,n,m)
+                   | S(x) -> match (div_mod res m) with
+                             | Triple(a,rest,unusedM) -> Triple(plus S(0) a,rest,m)
+
+;;
+
+let rec linear n =
+  ifz n
+    (fun x -> x)
+    (fun n' ->
+
+       linear n'
+    )
+
+;;
+
+type 'a option = None | Some of 'a
+;;
+;;
+
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+;;
+
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+;;
+
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/sizechange.raml
+ *
+ * Author:
+ *   Ankush Das, Jan Hoffmann (2015)
+ *
+ * Description:
+ *   A RAML implementation of the examples that are given in the paper
+ *   "The Size-Change Principle for Program Termination" by Chin Soon Lee,
+ *   Neil D. Jones, and Amir M. Ben-Amram (POPL'01).  All examples are
+ *   tricky to prove terminating but you can prove termination by using
+ *   the size-change principle.
+ *
+ *   Five of the six given examples have actually a polynomial run time
+ *   (the last example is the Ackermann function) and thus can be analyzed
+ *   in RAML.  Four of the five examples can be analyzed in RAML without
+ *   any changes.  One example needed a small rewrite but I would argue
+ *   that our version is more natural.  The computed bounds are all
+ *   asymptotically tight
+ *)
+
+
+(* Example 1: Accumulation *)
+;;
+;;
+
+let rec r1 ls a =
+	match ls with
+	| Nil -> a
+	| Cons(x,xs) -> ( r1 xs (Cons(x,a)))
+;;
+;;
+
+let rev ls =
+	r1 ls Nil
+
+
+(* Example 2: Mutual Recursion *)
+
+(* Note that the paper contains a type error in this example.
+   It says g (a,b,c) = f(a, cons(b,c)) but this doesn't type
+   check neither in RAML nor in OCaml.  So I'm using app
+   instead. *)
+;;
+;;
+
+let rec app l1 l2 =
+	match l1 with
+	| Nil -> l2
+	| Cons(x,xs) -> ( Cons(x,app) xs l2)
+;;
+;;
+
+let rec f i x =
+	match i with
+	| Nil -> x
+	| Cons(y,ys) -> ( g ys x i)
+  and g a b c =
+	( f a (app b c))
+
+
+
+
+(* Example 3: Ackermann function *)
+
+(* RAML can only derive polynomial resource bounds.
+   So the Ackermann function will not work. *)
+
+
+(* Example 4: Permuted Parameters *)
+;;
+;;
+
+let rec p m n r = match r with
+          | _Cons(,r') -> p m r' n
+          | Nil    -> match n with
+                     | _Cons(,n') -> p Nil n' m
+                     | Nil    -> m
+
+
+(* Example 5: Permuted and Discarded Parameters *)
+
+(* The function f2 was originally given in the paper.  It can not be
+   analyzed in RAML. *)
+
+;;
+;;
+
+let rec f2 x y =
+	match y with
+	| Nil -> x
+	| Cons(p,ps) ->
+		match x with
+		| Nil -> ( f2 y ps)
+		| Cons(q,qs) -> ( f2 y qs)
+
+(* The problem is that the recursion unfolds in a way such that case x =
+nil happens at most once.  RAML cannot infer this information.
+
+However, I found this function a bit constructed.  (Although it is
+impressive that the size-change principle can establish termination.)
+Below is a slightly longer version that I find easier to understand.
+
+The function f2' is semantically equivalent to f2.*)
+
+;;
+;;
+
+let rec last l =
+	match l with
+	| Nil -> Nil
+	| Cons(x,xs) ->
+		(
+		let lst = last xs in
+		match lst with
+		| Nil -> [x]
+		| Cons(y,ys) -> lst)
+;;
+;;
+
+let rec f2' x y =
+	match y with
+	| Nil -> x
+	| Cons(p,ps) ->
+		match x with
+		| Nil -> ( last y)
+		| Cons(b,bs) -> ( f2' y bs)
+
+
+
+(* Example 6: Late-Starting Descing Parameters*)
+;;
+;;
+
+let rec g3 c d =
+	match c with
+	| Nil -> d
+	| Cons(x,xs) -> ( g3 xs (Cons(x,d)))
+;;
+;;
+
+let rec f3 a b =
+	match b with
+	| Nil -> ( g3 a Nil)
+	| Cons(x,xs) -> ( f3 (Cons(x,a)) xs)
+
+()
+;;

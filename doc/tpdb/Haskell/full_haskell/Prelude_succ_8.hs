@@ -1,1 +1,0 @@
-{-# htermination succ :: Ordering -> Ordering #-}

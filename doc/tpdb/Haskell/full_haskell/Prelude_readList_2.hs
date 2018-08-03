@@ -1,1 +1,0 @@
-{-# htermination readList :: String -> [([()],String)] #-}

@@ -1,1 +1,0 @@
-{-# htermination toEnum :: Int -> Ordering #-}

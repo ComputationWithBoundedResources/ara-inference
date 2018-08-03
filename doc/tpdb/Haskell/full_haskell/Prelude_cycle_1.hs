@@ -1,1 +1,0 @@
-{-# htermination cycle :: [a] -> [a] #-}

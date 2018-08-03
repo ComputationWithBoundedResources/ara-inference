@@ -1,0 +1,4 @@
+"./constant_time/ipquery.raml" (line 37, column 21):
+unexpected "*"
+expecting type
+type constant 'int'

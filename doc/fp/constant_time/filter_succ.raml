@@ -1,0 +1,44 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/constant_time/filter_succ.raml
+ *
+ * Author:
+ *   Jan Hoffmann (2016)
+ *
+ * Description:
+ *
+ *)
+;;
+let rec filter_succ l =
+  match l with
+  | Nil ->
+    let () =  in
+    Nil
+  | Cons(x,xs) ->
+    if x>0 then
+      let () =  in
+      filter_succ xs
+    else
+      let () =  in
+      (x+1)Cons(,filter)_succ xs
+;;
+let fs_twice l = filter_succ (filter_succ l)
+
+
+()
+;;

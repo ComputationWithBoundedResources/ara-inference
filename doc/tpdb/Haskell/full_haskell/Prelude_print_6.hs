@@ -1,1 +1,0 @@
-{-# htermination print :: Float -> IO () #-}

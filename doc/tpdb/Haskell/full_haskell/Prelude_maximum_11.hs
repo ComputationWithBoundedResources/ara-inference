@@ -1,1 +1,0 @@
-{-# htermination maximum :: [Ordering] -> Ordering #-}

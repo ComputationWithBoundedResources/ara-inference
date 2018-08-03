@@ -1,1 +1,0 @@
-{-# htermination fromInt :: Int -> Int #-}

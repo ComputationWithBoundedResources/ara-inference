@@ -1,1 +1,0 @@
-{-# htermination shows :: () -> String -> String #-}

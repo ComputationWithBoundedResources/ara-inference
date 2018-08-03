@@ -1,1 +1,0 @@
-{-# htermination sequence_ :: [[] a] -> [] () #-}

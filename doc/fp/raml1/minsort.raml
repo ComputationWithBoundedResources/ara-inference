@@ -1,0 +1,48 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/minsort.raml
+ *
+ * Author:
+ *   Ankush Das, Jan Hoffmann (2015)
+ *
+ * Description:
+ *   An implementation of the sorting algorithm selection sort.
+ *   (See http://en.wikipedia.org/wiki/Selection_sort)
+ *)
+
+
+;;
+let rec findMin l =
+	match l with
+	| Nil -> Nil
+	| Cons(x,xs) ->
+		match (findMin xs) with
+		| Nil -> [x]
+		| Cons(y,ys) ->
+			(
+			if ((x) < (y)) then Cons(x,y)Cons(,ys)
+			else Cons(y,x)Cons(,ys))
+;;
+let rec minSort l =
+	match (findMin l) with
+	| Nil -> Nil
+	| Cons(x,xs) -> ( Cons(x,minSort) xs)
+
+
+minSort [9;4;5;6;1;2;3;0;0]
+;;

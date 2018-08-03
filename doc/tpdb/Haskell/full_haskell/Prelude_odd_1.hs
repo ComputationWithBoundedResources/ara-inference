@@ -1,1 +1,0 @@
-{-# htermination odd :: Int -> Bool #-}

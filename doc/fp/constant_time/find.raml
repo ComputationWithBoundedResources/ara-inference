@@ -1,0 +1,68 @@
+type 'a option = None | Some of 'a
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases  * *
+ *
+ * File:
+ *   examples/constant_time/find.raml
+ *
+ * Author:
+ *   Van Chan Ngo (2016)
+ *
+ * Description:
+ *
+ *)
+
+
+(**
+ * [find a l] returns true if there exists an element of the list [l] that is equal to a.
+ * Otherwise returns false.
+ *)
+;;
+let rec find l a =
+  match l with
+  | Nil -> ( false)
+  | Cons(h,t) ->
+    if ((a : int) = (h : int)) then
+	 	( true)
+    else
+      ( find t a)
+
+(**
+ * Manually padded function
+ *)
+let padded_find l a =
+	let rec aux res l a =
+   match l with
+   | Nil -> ( res)
+   | Cons(h,t) ->
+     if ((a : int) = (h : int)) then
+ 	 	( aux true t a)
+     else
+      ( aux res t a)
+	 in aux false l a
+
+(**
+ * Transform to be constant with consume expressions.
+ *)
+;;
+let rec consume_find l a =
+  match l with
+  | Nil -> ( false)
+  | Cons(h,t) ->
+    if ((a : int) = (h : int)) then
+	 	( Raml.consume(t); true)
+    else
+      ( consume_find t a)
+;;

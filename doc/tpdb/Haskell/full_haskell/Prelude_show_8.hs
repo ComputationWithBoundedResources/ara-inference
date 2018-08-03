@@ -1,1 +1,0 @@
-{-# htermination show :: Bool -> String #-}

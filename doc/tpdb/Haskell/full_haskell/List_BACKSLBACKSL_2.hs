@@ -1,2 +1,0 @@
-{-# htermination (\\) :: [()] -> [()] -> [()] #-}
-import List

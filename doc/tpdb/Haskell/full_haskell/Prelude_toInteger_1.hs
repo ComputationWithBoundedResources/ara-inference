@@ -1,1 +1,0 @@
-{-# htermination toInteger :: Int -> Integer #-}

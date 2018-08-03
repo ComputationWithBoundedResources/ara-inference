@@ -1,1 +1,0 @@
-{-# htermination lines :: String -> [String] #-}

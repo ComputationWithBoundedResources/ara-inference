@@ -1,0 +1,3 @@
+"./raml1/minsort.raml" (line 35, column 26):
+unexpected "["
+expecting comment, whitespace, lambda expression, lazy expression, forced expression, let expression, match expression or application

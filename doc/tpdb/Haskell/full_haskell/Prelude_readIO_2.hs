@@ -1,1 +1,0 @@
-{-# htermination readIO :: String -> IO () #-}

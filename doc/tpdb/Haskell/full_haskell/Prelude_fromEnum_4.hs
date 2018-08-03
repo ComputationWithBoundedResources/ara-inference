@@ -1,1 +1,0 @@
-{-# htermination fromEnum :: Int -> Int #-}

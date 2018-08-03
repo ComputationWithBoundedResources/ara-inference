@@ -1,1 +1,0 @@
-{-# htermination signum :: Int -> Int #-}

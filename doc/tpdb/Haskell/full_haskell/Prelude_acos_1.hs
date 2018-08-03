@@ -1,1 +1,0 @@
-{-# htermination acos :: Float -> Float #-}

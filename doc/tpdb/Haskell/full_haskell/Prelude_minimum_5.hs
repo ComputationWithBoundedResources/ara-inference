@@ -1,1 +1,0 @@
-{-# htermination minimum :: [Int] -> Int #-}

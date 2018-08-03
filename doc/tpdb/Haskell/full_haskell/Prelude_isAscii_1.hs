@@ -1,1 +1,0 @@
-{-# htermination isAscii :: Char -> Bool #-}

@@ -1,0 +1,3 @@
+"./compcert/Ring.raml" (line 22, column 26):
+unexpected "x"
+expecting "(*", whitespace or keyword '|'

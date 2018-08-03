@@ -1,1 +1,0 @@
-{-# htermination length :: [a] -> Int #-}

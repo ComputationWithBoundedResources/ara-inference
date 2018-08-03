@@ -1,1 +1,0 @@
-{-# htermination toLower :: Char -> Char #-}

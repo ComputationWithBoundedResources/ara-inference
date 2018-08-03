@@ -1,1 +1,0 @@
-{-# htermination putStrLn :: String -> IO () #-}

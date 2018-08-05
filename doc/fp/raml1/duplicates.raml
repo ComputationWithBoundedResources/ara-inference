@@ -1,13 +1,3 @@
-type 'a option = None | Some of 'a
-;;
-type ('a,'b) pair = Pair of 'a * 'b
-;;
-type 'a list = Nil | Cons of 'a * 'a list
-;;
-type nat = 0 | S of nat
-;;
-type Unit = Unit
-
 (* * * * * * * * * * *
  * Resource Aware ML *
  * * * * * * * * * * *
@@ -19,39 +9,38 @@ type Unit = Unit
  *
  * Author:
  *   Ankush Das, Jan Hoffmann (2015)
- *
+ * 
  * Description:
  *   Remove duplicates from a list.
  *)
 
-;;
+
 let rec eq l1 l2 =
 	match l1 with
-	| Nil ->
-		
+	| [] ->
+		begin
 		match l2 with
-		| Nil -> true
-		| Cons(y,ys) -> false
-		
-	| Cons(x,xs) ->
-		
+		| [] -> true
+		| y::ys -> false
+		end
+	| x::xs ->
+		begin
 		match l2 with
-		| Nil -> false
-		| Cons(y,ys) -> ( ((x) = (y)) && (eq xs ys))
-		
-;;
+		| [] -> false
+		| y::ys -> (Raml.tick(1.0); ((x:int) = (y:int)) && (eq xs ys))
+		end;;
+
 let rec remove x l =
 	match l with
-	| Nil -> Nil
-	| Cons(y,ys) ->
-		(
+	| [] -> []
+	| y::ys ->
+		(Raml.tick(1.0); 
 		if (eq x y) then remove x ys
-		else Cons(y,(remove x ys)))
-;;
+		else y::(remove x ys));;
+
 let rec nub l =
 	match l with
-	| Nil -> Nil
-	| Cons(x,xs) -> ( Cons(x,nub) (remove x xs))
+	| [] -> []
+	| x::xs -> (Raml.tick(1.0); x::nub (remove x xs));;
 
 nub [[1];[2];[3];[4];[5];[3];[1];[6];[7];[4];[1];[5];[8];[9];[8];[8];[8]]
-;;

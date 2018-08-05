@@ -1,3 +1,0 @@
-"./raml1/queue.raml" (line 66, column 12):
-unexpected "i"
-expecting "(*", whitespace, keyword 'rec' or variable

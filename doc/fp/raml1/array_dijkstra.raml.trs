@@ -1,3 +1,0 @@
-"./raml1/array_dijkstra.raml" (line 31, column 9):
-unexpected "."
-expecting letter or digit, comment, whitespace, "(", variable, constructor expression, error expression, parenthesised expression, keyword 'and' or keyword ';;'

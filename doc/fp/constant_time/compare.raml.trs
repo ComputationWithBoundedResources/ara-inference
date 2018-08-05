@@ -1,3 +1,0 @@
-"./constant_time/compare.raml" (line 37, column 27):
-unexpected " "
-expecting "*", lambda expression, lazy expression, forced expression, let expression, match expression or application

@@ -1,3 +1,0 @@
-"./compcert/Tuples.raml" (line 12, column 1):
-unexpected ";"
-expecting comment, whitespace or keyword '='

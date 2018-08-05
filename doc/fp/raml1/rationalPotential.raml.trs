@@ -1,3 +1,0 @@
-"./raml1/rationalPotential.raml" (line 42, column 42):
-unexpected " "
-expecting "*", lambda expression, lazy expression, forced expression, let expression, match expression or application

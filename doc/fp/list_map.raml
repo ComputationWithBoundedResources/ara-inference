@@ -9,10 +9,10 @@
  *
  * Author:
  *   Jan Hoffmann, Shu-Chun Weng (2014)
- * 
+ *
  * Description:
  *   Some variations of list map.
- *   
+ *
  *)
 
 
@@ -43,18 +43,18 @@ let map_rev2 f1 f2 l =
   let rec rmap1 l acc =
     match l with
       | [] -> acc
-      | x::xs -> 
+      | x::xs ->
 	rmap2 xs ((f1 x) :: acc)
 
   and rmap2 l acc =
     match l with
       | [] -> acc
-      | x::xs -> 
+      | x::xs ->
 	rmap1 xs ((f2 x) :: acc)
   in
 
   rmap1 l []
-  
+
 
 let _ =
   let f = fun _ -> Raml.tick 1.0 in
@@ -66,8 +66,9 @@ let _ =
 let _ =
   let f x = let _ = Raml.tick 1.0 in x*x*x in
   let g x = x+2 in
+  let h x = x in
   let map_f_g = map_rev2 f g in
-  map_f_g [2;3;4;4;5;5;5]
+  map h (map_rev h (map_f_g [2;3;4;4;5;5;5]))
 
 let _ =
   let seq f g x = f (g x) in

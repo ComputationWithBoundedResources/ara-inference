@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Jul 25 16:04:39 2018 (+0200)
+-- Last-Updated: Sun Aug  5 19:01:43 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1209
+--     Update #: 1214
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -153,11 +153,11 @@ main = flip E.catch errorFun $ do
         Just p' -> return p'
 
   -- read and parse file (either as functional program or as (typed) TRS)
-  probFile <- (toTypedWST <$> (programFromArgs (filePath args) >>= typeProgram >>=
+  probFile <- parseFileIO (filePath args) <|>
+              (toTypedWST <$> (programFromArgs (filePath args) >>= typeProgram >>=
                                defunctionalizeProgram >>= simplifyAtrs
                                -- >>= \x -> putDocLn (PP.pretty x) >> return x
-                              )) <|>
-              parseFileIO (filePath args)
+                              )) --
 
 
   -- if no types given, infer them
@@ -193,9 +193,9 @@ main = flip E.catch errorFun $ do
   let reachability = analyzeReachability prob
   (prove, infTrees) <- analyzeProblem args reachability prob
 
-  when (verbose args) $ do
-    putStrLn "Parsed Typed Term Rewrite System:\n"
-    print (prettyProve prove)
+  putStrLn "Parsed Typed Term Rewrite System:\n"
+  print $ prettyAraProblem (problem prove)
+  when (verbose args) $ print (prettyProve prove)
 
   -- Solve cost constraints
   let cond = conditions prove
@@ -311,6 +311,7 @@ main = flip E.catch errorFun $ do
     putStrLn $ "Weak Rules: " ++ show weakRls
 
 
+errorFun :: ProgException -> IO ()
 errorFun (e :: ProgException) =
               case e of
                 ShowTextOnly txt -> do

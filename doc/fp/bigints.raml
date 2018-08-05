@@ -8,10 +8,10 @@
  *
  * Author:
  *   Jan Hoffmann (2017)
- * 
+ *
  * Description:
  *   Implementation of arbitrary precision integers.
- *   
+ *
 *)
 
 
@@ -19,7 +19,7 @@ type bigint = int list
 
 let word_size = 10 (* use 2147483648 = 2^31 for OCaml's '32 bit' ints *)
 
-(* The bigint [n_0,...,n_k] represents the sum \sum_i n_i * w^i 
+(* The bigint [n_0,...,n_k] represents the sum \sum_i n_i * w^i
  * where w = word_size.
 *)
 
@@ -32,7 +32,6 @@ let iplus n m = let () = Raml.tick 1.0 in n+m
 let imult n m = let () = Raml.tick 1.0 in n*m
 
 let split n = (n mod word_size, n/word_size)
-
 
 
 let of_int n = [n]
@@ -54,7 +53,6 @@ let to_int_opt b =
     match ns with
     | []   -> Some n
     | _::_ -> None
-
 
 
 (*adding an int to a bigint*)
@@ -133,7 +131,7 @@ let mult b c =
           r::(add ns ms d)
     in
     add b c 0
-  in  
+  in
 
   let rec append b c =
     match b with
@@ -145,7 +143,7 @@ let mult b c =
     match b with
     | [] -> []
     | x::xs -> 0::(zeros xs)
-  in                  
+  in
 
   let mk_acc b c =
     zeros (append b c)

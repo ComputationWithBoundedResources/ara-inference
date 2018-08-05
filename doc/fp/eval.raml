@@ -32,9 +32,6 @@ let eval1 e =
   eval e
 
 
-
-
-
 exception DivByZero
 
 let eval2 e =
@@ -72,7 +69,6 @@ let rec lookup eq env v =
 let lookup_var = lookup eq_var
 
 let lookup_fun env v = lookup eq_fun env v
-
 
 
 let eval3 env e =
@@ -145,7 +141,7 @@ let eval6 env_var e =
     [(Fun 1, fun x -> Raml.tick 1.0;1)
     ;(Fun 2, fun x -> Raml.tick 2.0;x)
     ]
-  in    
+  in
   eval5 env_fun env_var e
 
 (*
@@ -182,6 +178,6 @@ let eval7 e =
 ;;
 
 let e = Elet(Var 1,Econst 0, Eadd(Econst 1,Econst 1)) in
-eval4 e
+eval2 e
 
     ;; ()

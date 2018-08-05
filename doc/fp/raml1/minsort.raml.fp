@@ -7,9 +7,17 @@ type ('a,'b) pair = Pair of 'a * 'b
 ;;
 type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
 ;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type bool = False | True
+;;
 let ifz n th el = match n with
    | 0 -> th 0
    | S(x) -> el x
+;;
+let ite b th el = match b with
+   | True -> th
+   | False -> el
 ;;
 let minus n m =
   let rec minus' m n = match m with
@@ -38,27 +46,6 @@ let rec linear n =
 
        linear n'
     )
-
-;;
-
-type 'a option = None | Some of 'a
-;;
-;;
-
-type ('a,'b) pair = Pair of 'a * 'b
-;;
-;;
-
-type 'a list = Nil | Cons of 'a * 'a list
-;;
-;;
-
-type nat = 0 | S of nat
-;;
-;;
-
-type Unit = Unit
-
 (* * * * * * * * * * *
  * Resource Aware ML *
  * * * * * * * * * * *
@@ -78,26 +65,24 @@ type Unit = Unit
 
 
 ;;
-;;
 
 let rec findMin l =
 	match l with
 	| Nil -> Nil
 	| Cons(x,xs) ->
 		match (findMin xs) with
-		| Nil -> [x]
+		| Nil -> Cons(x,Nil)
 		| Cons(y,ys) ->
 			(
-			if ((x) < (y)) then Cons(x,y)Cons(,ys)
-			else Cons(y,x)Cons(,ys))
-;;
+       ite (((x) < (y)) (Cons(x,Cons(y,ys))))
+			(Cons(y,Cons(x,ys))))
+
 ;;
 
 let rec minSort l =
 	match (findMin l) with
 	| Nil -> Nil
-	| Cons(x,xs) -> ( Cons(x,minSort) xs)
+	| Cons(x,xs) -> ( Cons(x,minSort) xs);;
 
 
 minSort [9;4;5;6;1;2;3;0;0]
-;;

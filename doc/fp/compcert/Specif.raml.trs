@@ -1,3 +1,0 @@
-"./compcert/Specif.raml" (line 10, column 3):
-unexpected "'"
-expecting comment, whitespace or type declaration rhs

@@ -1,43 +1,84 @@
 
-type nat = 0 | S of nat
+let rec leqNat x y =
+  match y with
+  | 0 -> True
+  | S(y') -> (match x with
+            | S(x') -> leqNat x' y'
+            | 0 -> False)
 ;;
-type Unit = Unit
+let rec eqNat x y =
+  match y with
+  | 0 -> (match x with
+      | 0 -> True
+      | S(x') -> False)
+  | S(y') -> (match x with
+            | S(x') -> eqNat x' y'
+            | 0 -> False)
 ;;
-type ('a,'b) pair = Pair of 'a * 'b
+let rec geqNat x y =
+  match x with
+   | 0 -> False
+   | S(x') -> (match y with
+              | 0 -> True
+              | S(y') -> geqNat x' y')
 ;;
-type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
+let rec ltNat x y =
+  match y with
+   | 0 -> False
+   | S(y') -> (match x with
+        | 0 -> True
+        | S(x') -> ltNat x' y')
+;;
+let rec gtNat x y =
+  match x with
+   | 0 -> False
+   | S(x') -> (match y with
+             | 0 -> True
+             | S(y') -> gtNat x' y')
+
+
 ;;
 let ifz n th el = match n with
    | 0 -> th 0
    | S(x) -> el x
 ;;
+let ite b th el = match b with
+   | True()-> th
+   | False()-> el
+;;
 let minus n m =
   let rec minus' m n = match m with
         | 0 -> 0
-        | S(x) -> match n with
+        | S(x) -> (match n with
           | 0 -> m
-          | S(y) -> minus' x y
+          | S(y) -> minus' x y)
   in Pair(minus' n m,m)
 ;;
 let rec plus n m = match m with
   | 0 -> n
   | S(x) -> S(plus n x)
 ;;
-let rec div_mod n m = match (minus n m) with
-  | Pair(res,m) -> match res with
-                   | 0 -> Triple (0,n,m)
-                   | S(x) -> match (div_mod res m) with
-                             | Triple(a,rest,unusedM) -> Triple(plus S(0) a,rest,m)
-
+type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
 ;;
-
-let rec linear n =
-  ifz n
-    (fun x -> x)
-    (fun n' ->
-
-       linear n'
-    )
+let rec div_mod n m = match (minus n m) with
+  | Pair(res,m) -> (match res with
+                   | 0 -> Triple (0,n,m)
+                   | S(x) -> (match (div_mod res m) with
+                             | Triple(a,rest,unusedM) -> Triple(plus S(0) a,rest,m)))
+;;
+let rec mult n m = match n with
+   | 0 -> 0
+   | S(x) -> S(plus (mult x m) m)
+;;
+type 'a option = None | Some of 'a
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+;;
+type ('a,'b) pair = Pair of 'a * 'b
 
 (* * * * * * * * * * *
  * Resource Aware ML *
@@ -49,89 +90,79 @@ let rec linear n =
  *   examples/LogicAndCodes.raml
  *
  * Author:
- *   Ankush Das (2015)
- * 
+ *   Ankush Das (S(S(0))015)
+ *
  * Description:
  *   The third section (“Logic and Codes“) from the OCaml tutorial
- *   "99 Problems (solved) in OCaml": 
+ *   "99 Problems (solved) in OCaml":
  *     https://ocaml.org/learn/tutorials/99problems.html
- *   
+ *
  *)
+;;
+type bool = True | False
+;;
+type bool_expr = Var of nat
+               | Not of bool_expr
+               | And of bool_expr * bool_expr
+               | Or of bool_expr * bool_expr
+;;
+type Exception = Invalid | Not_found
 
 ;;
-
-type bool_expr =
-    | Var of int
-    | Not of bool_expr
-    | And of bool_expr * bool_expr
-    let unused = | Or of bool_expr * bool_expr; in
-
-exception Invalid
+let lnot b = match b with
+  | True -> False
+  | False -> True
+;;
+let land a b = match a with
+           | False -> False
+           | True -> b
+;;
+let lor a b = match a with
+  | True -> True
+  | False -> b
 
 ;;
-
-let rec eval2 a val_a b val_b = function
-		| Var x -> (tick(1.0); if x = a then val_a
-               else if x = b then val_b
-               else error)
-    let unused = | Not e -> (tick(1.0) in not(eval2 a val_a b val_b e))
-    let unused = | And(e1, e2) -> (tick(1.0) in eval2 a val_a b val_b e1 && eval2 a val_a b val_b e2)
-    let unused = | Or(e1, e2) -> (tick(1.0); eval2 a val_a b val_b e1 || eval2 a val_a b val_b e2); in
-
+let rec eval2 a val_a b val_b xyz = match xyz with
+		| Var(x) -> (ite (eqNat x a) val_a (ite (eqNat x b) val_b (error Invalid)))
+    | Not(e) ->  lnot (eval2 a val_a b val_b e)
+    | And(e1, e2) -> land (eval2 a val_a b val_b e1) (eval2 a val_a b val_b e2)
+    | Or(e1, e2) -> lor (eval2 a val_a b val_b e1) (eval2 a val_a b val_b e2)
 ;;
-
 let table2 a b expr =
-    let unused = [(true,  true,  eval2 a true  b true  expr) in
-     let unused = (true,  false, eval2 a true  b false expr) in
-     let unused = (false, true,  eval2 a false b true  expr) in
-     let unused = (false, false, eval2 a false b false expr) ]; in
-
-exception Not_found
+    Cons(Triple(True,  True,  eval2 a True  b True  expr),
+    Cons(Triple(True,  False, eval2 a True  b False expr),
+    Cons(Triple(False, True,  eval2 a False b True  expr),
+    Cons(Triple(False, False, eval2 a False b False expr),Nil))))
 
 ;;
-
 let rec assoc k l =
 	match l with
-	| [] -> error
-	| x::xs ->
-		match (x) with
-        | Pair(a, b) -> 
-		(tick(1.0);
-		if ((a:int) = (k:int)) then b
-		else assoc k xs);;
-
+	| Nil()-> error Not_found
+	| Cons(x,xs) -> (match  x with
+                   | Pair(a,b) ->
+		                  (ite (eqNat a k) b (assoc k xs)))
 ;;
-
-let rev list = 
-  let rec aux acc = function
-    | [] -> acc
-    let unused = | h::t -> (tick(1.0) in aux (h::acc) t)
-  let unused = in aux [] list; in
-
+let rev list =
+  let rec aux acc xyz = match xyz with
+    | Nil()-> acc
+    | Cons(h,t) -> aux (Cons(h,acc)) t
+  in aux Nil list
 ;;
-
 let rec concat l1 l2 =
 	match l1 with
-	| [] -> l2
-	| x::xs -> (tick(1.0); x::concat xs l2);;
-
+	| Nil()-> l2
+	| Cons(x,xs) -> Cons(x,concat xs l2)
 ;;
-
-let rec eval val_vars = function
-		| Var x -> (tick(1.0); assoc x val_vars)
-    let unused = | Not e -> (tick(1.0) in not(eval val_vars e))
-    let unused = | And(e1, e2) -> (tick(1.0) in eval val_vars e1 && eval val_vars e2)
-    let unused = | Or(e1, e2) -> (tick(1.0); eval val_vars e1 || eval val_vars e2); in
-
+let rec eval val_vars xyz = match xyz with
+		| Var(x) -> assoc x val_vars
+    | Not(e) -> lnot(eval val_vars e)
+    | And(e1, e2) -> land (eval val_vars e1) (eval val_vars e2)
+    | Or(e1, e2) -> lor (eval val_vars e1) (eval val_vars e2)
 ;;
-
 let rec table_make val_vars vars expr =
     match vars with
-    | [] -> [(rev val_vars, eval val_vars expr)]
-    | v :: tl ->
-			(tick(1.0);
-       concat (table_make ((v, true) :: val_vars) tl expr)
-	      (table_make ((v, false) :: val_vars) tl expr));;
+    | Nil()-> Cons(Pair(rev val_vars, eval val_vars expr),Nil)
+    | Cons(v,tl) -> concat (table_make (Cons(Pair(v, True),val_vars)) tl expr)
+	                    (table_make (Cons(Pair(v, False),val_vars)) tl expr)
 
-
-()
+;;

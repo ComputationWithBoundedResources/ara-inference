@@ -1,43 +1,99 @@
 
-type nat = 0 | S of nat
+let fst x =
+  match x with
+  | Pair(a,b) -> a
 ;;
-type Unit = Unit
+let snd x =
+  match x with
+  | Pair(a,b) -> b
 ;;
-type ('a,'b) pair = Pair of 'a * 'b
+
+let rec leqNat x y =
+  match y with
+  | 0 -> True
+  | S(y') -> (match x with
+            | S(x') -> leqNat x' y'
+            | 0 -> False)
 ;;
-type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
+let rec eqNat x y =
+  match y with
+  | 0 -> (match x with
+      | 0 -> True
+      | S(x') -> False)
+  | S(y') -> (match x with
+            | S(x') -> eqNat x' y'
+            | 0 -> False)
 ;;
-let ifz n th el = match n with
-   | 0 -> th 0
-   | S(x) -> el x
+let rec geqNat x y =
+  match x with
+   | 0 -> False
+   | S(x') -> (match y with
+               | 0 -> True
+               | S(y') -> geqNat x' y')
 ;;
-let minus n m =
-  let rec minus' m n = match m with
-        | 0 -> 0
-        | S(x) -> match n with
-          | 0 -> m
-          | S(y) -> minus' x y
-  in Pair(minus' n m,m)
+let rec ltNat x y =
+  match y with
+   | 0 -> False
+   | S(y') -> (match x with
+        | 0 -> True
+        | S(x') -> ltNat x' y')
+;;
+let rec gtNat x y =
+  match x with
+   | 0 -> False
+   | S(x') -> (match y with
+             | 0 -> True
+             | S(y') -> gt x' y')
 ;;
 let rec plus n m = match m with
   | 0 -> n
   | S(x) -> S(plus n x)
 ;;
+let minus n m =
+  let rec minus' m n = match m with
+        | 0 -> 0
+        | S(x) -> (match n with
+          | 0 -> m
+          | S(y) -> minus' x y)
+  in Pair(minus' n m,m)
+;;
 let rec div_mod n m = match (minus n m) with
-  | Pair(res,m) -> match res with
+  | Pair(res,m) -> (match res with
                    | 0 -> Triple (0,n,m)
-                   | S(x) -> match (div_mod res m) with
-                             | Triple(a,rest,unusedM) -> Triple(plus S(0) a,rest,m)
+                   | S(x) -> (match (div_mod res m) with
+                             | Triple(a,rest,unusedM) -> Triple(plus S(0) a,rest,m)))
 
 ;;
+type bool = True | False
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
 
-let rec linear n =
-  ifz n
-    (fun x -> x)
-    (fun n' ->
+;;
+let ifz n th el = match n with
+   | 0 -> th 0
+   | S(x) -> el x
+;;
+let ite b th el = match b with
+   | True()-> th
+   | False()-> el
+;;
+let ite2 b th el = match b with
+   | True()-> th
+   | False()-> el
+;;
+let ite3 b th el = match b with
+   | True()-> th
+   | False()-> el
+;;
 
-       linear n'
-    )
+type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
+
+;;
+type ('a,'b) pair = Pair of 'a * 'b
 
 
 (* * * * * * * * * * *
@@ -50,187 +106,153 @@ let rec linear n =
  *   examples/aws/sort_average.raml
  *
  * Author:
- *   Jan Hoffmann, Ronghui Gu (2015)
- * 
+ *   Jan Hoffmann, Ronghui Gu (S(S(0))015)
+ *
  * Description:
- *   Using Amazon's DynamoDB to sort students according to their avarage grades. 
+ *   Using Amazon's DynamoDB to sort students according to their avarage grades.
  *)
-
-exception Not_found of int * int
-
 ;;
-
+type ('a,'b) exception = Not_found of 'a * 'b
+;;
 type 'a option = None | Some of 'a
-
 ;;
-
 let db_query student_id course_id =
-  let unused = tick(1.0) in  Some 1.0
-
+    Some(S(0))
 ;;
-
 let rec append l1 l2 =
   match l1 with
-    | [] -> l2
-    | x::xs -> x::(append xs l2)
+    | Nil()-> l2
+    | Cons(x,xs) -> Cons(x,(append xs l2))
 
 ;;
-
 let rec partition gt acc l =
   match l with
-    | [] -> acc
-    | x::xs ->
-      match (acc) with
-        | Triple(cs,bs,acc) -> 
-      match (gt x acc) with
-        | Pair(is_greater,acc') -> 
-      if is_greater then
-  	partition gt (cs,x::bs,acc') xs
-      else
-  	partition gt (x::cs,bs,acc') xs
-
-;;
-
+    | Nil()-> acc
+    | Cons(x,xs) ->
+      (match acc with
+       | Triple(cs,bs,accN) ->
+          (match gt x accN with
+           | Pair(is_greater,courseIds) -> ite is_greater
+  	                                         (partition gt Triple(cs,Cons(x,bs),courseIds) xs)
+  	                                         (partition gt Triple(Cons(x,cs),bs,courseIds) xs)))
+ ;;
 let rec quicksort gt acc l = match l with
-  | [] -> ([],acc)
-  | x::xs ->
-    let ys, zs, acc' = partition (gt x) ([],[],acc) xs in
-    match (quicksort gt acc' ys) with
-        | Pair(l1,acc'') -> 
-    match (quicksort gt acc'' zs) with
-        | Pair(l2,acc''') -> 
-    (append  (x :: l1) l2, acc''')
-
+  | Nil()-> Pair(Nil,acc)
+  | Cons(x,xs) ->
+    match (partition (gt x) Triple(Nil,Nil,acc) xs) with
+    | Triple(ys, zs, acc') ->
+    (match (quicksort gt acc' ys) with
+     | Pair(l1,acc'') ->
+        (match (quicksort gt acc'' zs) with
+         | Pair(l2,acc''') -> Pair(append  (Cons(x,l1)) l2, acc''')))
 
 ;;
-
 let rec foldl f acc l =
   match l with
-    | [] -> acc
-    | x::xs -> foldl f (f acc x) xs
-
+    | Nil()-> acc
+    | Cons(x,xs) -> foldl f (f acc x) xs
 ;;
-
 let average_grade student_id course_ids =
   let f acc cid =
     match (acc) with
-        | Pair(length,sum) -> 
+        | Pair(length,sum) ->
     let grade = match db_query student_id cid with
-      | Some q -> q
-      | None -> error(Not_found (student_id,cid))
-    in
-    (length +. 1.0, sum +. grade)
-  in
-  match (foldl f (0.0,0.0) course_ids) with
-        | Pair(length,sum) -> 
-  sum /. length
-
+      | Some(q) -> q
+      | None()-> error (Not_found (student_id,cid))
+    in Pair(S(length), plus sum grade)
+  in match (foldl f Pair(0,0) course_ids) with
+        | Pair(length,sum) -> match (div_mod sum length) with
+           | Triple(dv,md,unused) -> dv
 ;;
 
 let greater_eq sid1 sid2 course_ids =
-  (average_grade sid1 course_ids >= average_grade sid2 course_ids, course_ids)
-
+  Pair(geq (average_grade sid1 course_ids) (average_grade sid2 course_ids), course_ids)
 ;;
-
 let sort_students student_ids course_ids =
   match (quicksort greater_eq course_ids student_ids) with
-        | Pair(sorted_sids, acc) -> 
-  sorted_sids
-
+        | Pair(sorted_sids, acc) -> sorted_sids
 
 ;;
-
 let rec map f l =
   match l with
-    | [] -> []
-    | x::xs -> (f x) :: (map f xs)
-
+    | Nil()-> Nil
+    | Cons(x,xs) -> Cons(f x,(map f xs))
+;;
+let rec find f l =
+  match l with
+    | Nil()-> error
+    | Cons(x,xs) ->
+      (match x with
+       | Pair(key,value) -> ite2 (f key) value (find f xs))
+;;
+let rec find2 f l =
+  match l with
+    | Nil()-> error
+    | Cons(x,xs) ->
+      (match x with
+       | Pair(key,value) -> ite3 (f key) value (find2 f xs))
 ;;
 
+let lookup sid cid table =
+  let cid_map = find (fun sid' -> eqNat sid sid') table
+  in find2 (fun sid' -> eqNat sid' cid) cid_map
+
+;;
+let rec foldl2 f acc l =
+  match l with
+    | Nil()-> acc
+    | Cons(x,xs) -> foldl2 f (f acc x) xs
+;;
+let average_grade' student_id course_ids table =
+  let f acc cid = match acc with
+         | Pair(length,sum) ->
+            let grade = lookup student_id cid table
+            in Pair(S(length), plus sum grade)
+  in match (foldl2 f Pair(0,0) course_ids) with
+     | Pair(length,sum) -> (match (div_mod sum length) with
+                            | Triple(dv,md,unused) -> dv)
+
+;;
 let make_table student_ids course_ids =
 
   let rec mk_table sids cids =
     match sids with
-      | [] -> []
-      | x::xs ->
+      | Nil()-> Nil
+      | Cons(x,xs) ->
 	let cid_map =
 	  let f cid =
 	    let grade =
 	      match db_query x cid with
-	  	| Some q -> q
-	  	| None -> error(Not_found (x,cid))
+	  	| Some(q) -> q
+	  	| None()-> error (Not_found (x,cid))
 	    in
-	    (cid,grade)
+	    Pair(cid,grade)
 	  in
 	  map f cids
 	in
-	(x,cid_map)::(mk_table xs cids)
+	Cons(Pair(x,cid_map),(mk_table xs cids))
   in
   mk_table student_ids course_ids
 
-
 ;;
-
-let rec find f l =
-  match l with
-    | [] -> error(Not_found (-1,-1))
-    | x::xs ->
-      match (x) with
-        | Pair(key,value) -> 
-      if f key then
-	value
-      else
-	find f xs
-
-;;
-
-let lookup sid cid table =
-  let cid_map = find (fun (id:int) -> id = sid) table in
-  find (fun (id:int) -> id = cid) cid_map
-
-
-;;
-
-let average_grade' student_id course_ids table =
-  let f acc cid =
-    match (acc) with
-        | Triple(length,sum,table) -> 
-    let grade = lookup student_id cid table in
-    (length +. 1.0, sum +. grade, table)
-  in
-  match (foldl f (0.0,0.0,table) course_ids) with
-        | Triple(length,sum,table') -> 
-  (sum /. length,table')
-
-
-;;
-
 let greater_eq' course_ids sid1 sid2 table =
-  match (average_grade' sid1 course_ids table) with
-        | Pair(grade1, table1) -> 
-  match (average_grade' sid2 course_ids table1) with
-        | Pair(grade2, table2) -> 
-  (grade1 >= grade2, table2)
-
+  let grade1 = average_grade' sid1 course_ids table in
+  let grade2 = average_grade' sid2 course_ids table in
+  Pair(geqNat grade1 grade2, table)
 
 ;;
-
 let sort_students_efficient student_ids course_ids =
   match (quicksort (greater_eq' course_ids)  (make_table student_ids course_ids) student_ids) with
-        | Pair(sorted_sids, acc) -> 
-  sorted_sids
-
+        | Pair(sorted_sids, acc) -> sorted_sids
 ;;
 
-let students = [1;2;3;4;5;6]
-;;
 
-let courses = [12;13;14;15;16;17;18]
+(* let students = (Cons(S(0),Cons(S(S(0)),Cons(S(S(S(0))),Cons(S(S(S(S(0)))),Cons(S(S(S(S(S(0))))),Cons(S(S(S(S(S(S(0)))))),Nil)))))))
+ * let courses = [12;13;14;15;16;17;18]
+ * ;; *)
+(* let main students courses = sort_students students courses *)
 
-;;
-
-let _ = sort_students students courses
-
-(* let _ = sort_students_efficient students courses *)
+(* let unused = sort_students_efficient students courses *)
 
 
+(* ;; *)

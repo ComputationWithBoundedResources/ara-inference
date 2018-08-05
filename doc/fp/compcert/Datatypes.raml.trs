@@ -1,3 +1,0 @@
-"./compcert/Datatypes.raml" (line 21, column 26):
-unexpected "x"
-expecting "(*", whitespace or keyword '|'

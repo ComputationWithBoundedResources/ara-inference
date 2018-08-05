@@ -1,3 +1,0 @@
-"./constant_time/kmeans.raml" (line 48, column 39):
-unexpected ","
-expecting "*", lambda expression, lazy expression, forced expression, let expression, match expression or application

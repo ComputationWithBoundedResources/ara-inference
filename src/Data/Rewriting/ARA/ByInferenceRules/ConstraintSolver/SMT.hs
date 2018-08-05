@@ -1,4 +1,5 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 -- SMT.hs ---
 --
 -- Filename: SMT.hs
@@ -8,9 +9,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Oct 18 21:02:41 2017 (+0200)
+-- Last-Updated: Sun Aug  5 19:00:15 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1848
+--     Update #: 1878
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -67,7 +68,7 @@ import           Data.Rewriting.Typed.Signature
 
 import           Control.Arrow                                                                  hiding
                                                                                                  ((+++))
-import           Control.Exception
+import           Control.Exception                                                              as E
 import           Control.Lens                                                                   hiding
                                                                                                  (use)
 import           Control.Monad
@@ -80,7 +81,8 @@ import           Data.Function
 import           Data.List
 import qualified Data.Map.Strict                                                                as M
 import           Data.Maybe
-                                                                                                 (fromJust,
+                                                                                                 (catMaybes,
+                                                                                                 fromJust,
                                                                                                  fromMaybe,
                                                                                                  isJust,
                                                                                                  isNothing)
@@ -142,49 +144,41 @@ solveProblem :: (Eq s, Eq sDt, Ord s, Show s, Show dt, Ord dt, Show f, Show v) =
                   , [ASignatureSig String dt], [ASignatureSig String dt], Int
                   , ([Rule f v],[Rule f v]))
 solveProblem ops probSigs conds aSigs cfSigs = do
-
   let maxNrVec = maxVectorLength ops
   let minNrVec = minVectorLength ops
-
-
   let eqZero
         | isJust (lowerboundArg ops) = []
-        | otherwise = concatMap constantToZero (zip [0..] (map fst3 aSigs) ++ zip [0..]
-                                                (map fst3 cfSigs))
-
-
+        | otherwise = concatMap constantToZero (zip [0 ..] (map fst3 aSigs) ++ zip [0 ..] (map fst3 cfSigs))
   let prob0 = execState (addEqZeroConstraints eqZero) (use ops)
-  let vecLens = [minNrVec..maxNrVec]
-  when (lowerbound ops && maxNrVec > 1)
-    (throw $ FatalException "vector length for this lowerbound method must be 1")
-  when (maxNrVec < 1 || maxNrVec > maximumVectorLength)
-    (throw $ FatalException $
-     "vector length must be in [1.." ++ show maximumVectorLength ++ "]")
-
-
+  let vecLens = [minNrVec .. maxNrVec]
+  when (lowerbound ops && maxNrVec > 1) (throw $ FatalException "vector length for this lowerbound method must be 1")
+  when (maxNrVec < 1 || maxNrVec > maximumVectorLength) (throw $ FatalException $ "vector length must be in [1.." ++ show maximumVectorLength ++ "]")
   let catcher :: IOError -> IO (Either String b)
       catcher e = return (Left (show e))
+  let sols =
+        -- With heuristics
+        (if shift ops
+           then []
+           else parMap
+                  rpar
+                  (\nr -> evalStateT (solveProblem' (ops { shift = True}) probSigs conds aSigs cfSigs nr) prob0)
+                  (if lowerbound ops
+                     then [1]
+                     else if isJust (lowerboundArg ops)
+                            then reverse vecLens
+                            else vecLens))
+        ++
+        -- withouth heuristics
+        parMap
+          rpar
+          (\nr -> evalStateT (solveProblem' ops probSigs conds aSigs cfSigs nr) prob0)
+          (if lowerbound ops
+             then [1]
+             else if isJust (lowerboundArg ops)
+                    then reverse vecLens
+                    else vecLens)
 
-  let sols = parMap rpar
-        (\nr -> handle catcher (Right <$>
-                                evalStateT (solveProblem' ops probSigs conds aSigs cfSigs nr)
-                                prob0))
-        (if lowerbound ops
-         then [1]
-          else if isJust (lowerboundArg ops)
-               then reverse vecLens -- ++ [0]
-          else vecLens)
-
-
-  let getSol :: [IO (Either String a)] -> IO a
-      getSol (xIO:xs) = do
-        x <- xIO
-        case x of
-          Left x -> if null xs
-                    then throw $ UnsolveableException x
-                    else getSol xs
-          Right sol -> return sol
-
+  let getSol (xIO:xs) = E.handle (\(e :: ProgException) -> if null xs then throw e else getSol xs) xIO
   getSol sols
 
 baseCtrSigDef x y = fst4 (lhsRootSym x) == fst4 (lhsRootSym y) &&

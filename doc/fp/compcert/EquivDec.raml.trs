@@ -1,3 +1,0 @@
-"./compcert/EquivDec.raml" (line 11, column 21):
-unexpected "'"
-expecting comment, whitespace or type declaration rhs

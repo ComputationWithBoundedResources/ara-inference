@@ -1,3 +1,0 @@
-"./compcert/Bool.raml" (line 26, column 27):
-unexpected "("
-expecting letter or digit, "(*", whitespace, variable or keyword '->'

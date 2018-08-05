@@ -1,43 +1,86 @@
 
-type nat = 0 | S of nat
+let rec leqNat x y =
+  match y with
+  | 0 -> True
+  | S(y') -> (match x with
+            | S(x') -> leqNat x' y'
+            | 0 -> False)
 ;;
-type Unit = Unit
+let rec eqNat x y =
+  match y with
+  | 0 -> (match x with
+      | 0 -> True
+      | S(x') -> False)
+  | S(y') -> (match x with
+            | S(x') -> eqNat x' y'
+            | 0 -> False)
 ;;
-type ('a,'b) pair = Pair of 'a * 'b
+let rec geqNat x y =
+  match x with
+   | 0 -> False
+   | S(x') -> (match y with
+              | 0 -> True
+              | S(y') -> geqNat x' y')
 ;;
-type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
+let rec ltNat x y =
+  match y with
+   | 0 -> False
+   | S(y') -> (match x with
+        | 0 -> True
+        | S(x') -> ltNat x' y')
+;;
+let rec gtNat x y =
+  match x with
+   | 0 -> False
+   | S(x') -> (match y with
+             | 0 -> True
+             | S(y') -> gtNat x' y')
+
+
 ;;
 let ifz n th el = match n with
    | 0 -> th 0
    | S(x) -> el x
 ;;
+let ite b th el = match b with
+   | True()-> th
+   | False()-> el
+;;
 let minus n m =
   let rec minus' m n = match m with
         | 0 -> 0
-        | S(x) -> match n with
+        | S(x) -> (match n with
           | 0 -> m
-          | S(y) -> minus' x y
+          | S(y) -> minus' x y)
   in Pair(minus' n m,m)
 ;;
 let rec plus n m = match m with
   | 0 -> n
   | S(x) -> S(plus n x)
 ;;
-let rec div_mod n m = match (minus n m) with
-  | Pair(res,m) -> match res with
-                   | 0 -> Triple (0,n,m)
-                   | S(x) -> match (div_mod res m) with
-                             | Triple(a,rest,unusedM) -> Triple(plus S(0) a,rest,m)
-
+type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
 ;;
-
-let rec linear n =
-  ifz n
-    (fun x -> x)
-    (fun n' ->
-
-       linear n'
-    )
+let rec div_mod n m = match (minus n m) with
+  | Pair(res,m) -> (match res with
+                   | 0 -> Triple (0,n,m)
+                   | S(x) -> (match (div_mod res m) with
+                             | Triple(a,rest,unusedM) -> Triple(plus S(0) a,rest,m)))
+;;
+let rec mult n m = match n with
+   | 0 -> 0
+   | S(x) -> S(plus (mult x m) m)
+;;
+type bool = True | False
+;;
+type 'a option = None | Some of 'a
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+;;
+type ('a,'b) pair = Pair of 'a * 'b
 
 (* * * * * * * * * * *
  * Resource Aware ML *
@@ -49,8 +92,8 @@ let rec linear n =
  *   examples/subsequence.raml
  *
  * Author:
- *   Jan Hoffmann (2015)
- * 
+ *   Jan Hoffmann (S(S(0))015)
+ *
  * Description:
  *   A standard example of dynamic programming that can be found in
  *   many textbooks (see e.g. Cormen/Leiserson/Rivest/Stein:
@@ -61,91 +104,67 @@ let rec linear n =
  *   that A(i,j) contains the length of the LCS of a_1,...,a_i and
  *   b_1,...,b_j.  It is the case that
  *
- *            { 0                      if i=0 or j=0
- *   A(i,j) = { A(i-1,j-1) + 1         if i,j > 0 and a_i = b_j 
- *            { max(A(i,j-1),A(i-1,j)) if i,j > 0 and a_i \= b_j
+ *            { 0                      ite (i=0 or j=0)
+ *   A(i,j) = { A(iS(0),jS(0)) + S(0)         ite (i,j > 0 and a_i = b_j)
+ *            { max(A(i,jS(0)),A(iS(0),j)) ite (i,j > 0 and a_i \= b_j)
  *
  *   This algorithm can be analyzed in our system and is exemplary for
  *   similar algorithms that use dynamic programming.
  *)
 
 
-
-
-(* Returns the first line of 0s *)
 ;;
-
+(* Returns the first line of zeros *)
 let rec firstline l =
-  match l with 
-    | [] -> []
-    | x::xs -> 0::(firstline xs)
+  match l with
+    | Nil()-> Nil
+    | Cons(x,xs) -> Cons(0,(firstline xs))
 
-
+;;
 (* computes a new line according to the recursive definition above
  * y is the element of the second list
  * lastline the the previously computed line in the matrix
  * l contains elements of the first list *)
-;;
-
 let rec newline y lastline l =
-  let max a b = if (a:int)>b then a else b in
-  let head_or_0 l =
+  let max a b = ite (gtNat a b) a b in
+  let head_or_zero l =
     match l with
-      | [] -> 0
-      | x::xs -> x
+      | Nil()-> 0
+      | Cons(x,xs) -> x
   in
   match l with
-    | []     -> []
-    | (x::xs) ->
-      match lastline with
-        | [] -> []
-        | belowVal::lastline' ->
-	  let nl = newline y lastline' xs in
-          let rightVal = head_or_0 nl in
-          let diagVal =  head_or_0 lastline' in
-          let elem =
-	    if (x:int) = y then
-	      diagVal+1
-	    else
-	      max belowVal rightVal
-          in
-	  elem::nl
+    | Nil()    -> Nil
+    | Cons(x,xs) ->
+      (match lastline with
+        | Nil()-> Nil
+        | Cons(belowVal,lastline') ->
+	         let nl = newline y lastline' xs in
+           let rightVal = head_or_zero nl in
+           let diagVal =  head_or_zero lastline' in
+           let elem = ite (eqNat x y) S(diagVal) (max belowVal rightVal)
+           in Cons(elem,nl))
 
-
-(* computes the table of lengths *)
 ;;
-
+(* computes the table of lengths *)
 let rec lcstable l1 l2 =
   match l1 with
-    | [] -> [firstline l2]
-    | x::xs ->
+    | Nil()-> (Cons(firstline l2,Nil))
+    | Cons(x,xs) ->
       let m = lcstable xs l2 in
-      match m with
-        | [] -> []
-        | l::ls -> (newline x l l2)::l::ls
-
-
-(* computes the length of the longest common subsequence *)
+      (match m with
+       | Nil() -> Nil
+       | Cons(l,ls) -> Cons(newline x l l2,Cons(l,ls)))
 ;;
 
+(* computes the length of the longest common subsequence *)
 let rec lcs l1 l2 =
   let m = lcstable l1 l2 in
   match m with
-    | [] -> 0
-    | l1::_ ->
-      match l1 with
-        | [] -> 0
-        | len::_ -> len
-
+    | Nil()-> 0
+    | Cons(l1,unused) ->
+      (match l1 with
+        | Nil()-> 0
+        | Cons(len,unused) -> len)
 ;;
-
-let l1 = [1;2;3;4;5;6;7;8;9;10]
+let main l1 l2 = lcs l1 l2
 ;;
-
-let l2 = [5;3;2;6;7;1;8;0;9;11;101;102;1;2;3;10]
-  
-;;
-
-let _ = lcs l1 l2
-
-

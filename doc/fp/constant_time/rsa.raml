@@ -1,13 +1,3 @@
-type 'a option = None | Some of 'a
-;;
-type ('a,'b) pair = Pair of 'a * 'b
-;;
-type 'a list = Nil | Cons of 'a * 'a list
-;;
-type nat = 0 | S of nat
-;;
-type Unit = Unit
-
 (* * * * * * * * * * *
  * Resource Aware ML *
  * * * * * * * * * * *
@@ -19,52 +9,51 @@ type Unit = Unit
  *
  * Author:
  *   Van Chan Ngo (2016)
- *
+ * 
  * Description:
- *
+ *   
  *)
 
 
-(**
+(** 
  * RSA encryption and decryption
- * e : encryption key
+ * e : encryption key 
  * d : decryption key
  * m : plain message
  * c : cipher text
  * c = m^e mod n
  * m = c^d mod n
  *)
-;;
-let rec pow res base exp n =
-  match exp with
-  | Nil -> res
-  | Cons(h,t) ->
-	 let unused =  in let next_base = base * base in
-    if h then
-      (
-      let next_res = (res * base) mod n in
+ 
+let rec pow res base exp n = 
+  match exp with 
+  | [] -> res
+  | h::t -> 
+	 let _ = Raml.tick(1.0) in let next_base = base * base in
+    if h then 
+      (Raml.tick 1.0; 
+      let next_res = (res * base) mod n in 
 		pow next_res next_base t n)
-    else
+    else 
 	   pow res next_base t n
-;;
+
 let enc_rsa m e n = pow 1 m e n
-;;
+
 let dec_rsa c d n = pow 1 c d n
-;;
-let rec consume_pow res base exp n =
-  match exp with
-  | Nil -> res
-  | Cons(h,t) ->
-    let unused =  in let next_base = base * base in
-    if h then
-      (
-      let next_res = (res * base) mod n in
+		
+let rec consume_pow res base exp n = 
+  match exp with 
+  | [] -> res
+  | h::t -> 
+    let _ = Raml.tick 1.0 in let next_base = base * base in
+    if h then 
+      (Raml.tick 1.0; 
+      let next_res = (res * base) mod n in 
 	   consume_pow next_res next_base t n)
-    else
-		(Raml.consume t;
+    else 
+		(Raml.consume t; 
 		consume_pow res next_base t n)
-;;
+
 let c_enc_rsa m e n = consume_pow 1 m e n
-;;
+
 let c_dec_rsa c d n = consume_pow 1 c d n
-;;

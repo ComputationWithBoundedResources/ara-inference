@@ -1,3 +1,0 @@
-"./compcert/BinPosDef.raml" (line 10, column 1):
-unexpected "t"
-expecting comment, whitespace, keyword 'of', keyword '|' or keyword ';;'

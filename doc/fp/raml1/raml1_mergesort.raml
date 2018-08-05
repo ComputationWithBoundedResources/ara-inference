@@ -1,11 +1,3 @@
-type 'a option = None | Some of 'a
-;;
-type ('a,'b) pair = Pair of 'a * 'b
-;;
-type 'a list = Nil | Cons of 'a * 'a list
-;;
-type Unit = Unit
-
 (* * * * * * * * * * *
  * Resource Aware ML *
  * * * * * * * * * * *
@@ -17,10 +9,10 @@ type Unit = Unit
  *
  * Author:
  *   Ankush Das, Jan Hoffmann (2015)
- *
+ * 
  * Description:
  *   An implementation of the well known sorting algorithm mergesort.
- *   This implementation deallocates the input list.  Copy the list before
+ *   This implementation deallocates the input list.  Copy the list before 
  *   if you want to use the unsorted list later.
  *
  *   It is suprising that the function mergesort can be analysed.  The
@@ -38,45 +30,44 @@ type Unit = Unit
  *   heap-space metric.)
  *)
 
-;;
+
 let rec msplit l =
 	match l with
-	| Nil -> Pair(Nil, Nil)
-	| Cons(x1,xs) ->
+	| [] -> ([], [])
+	| x1::xs ->
 		match xs with
-		| Nil -> Pair([x1], Nil)
-		| Cons(x2,xs') ->
-			(
-			let(l1, l2) = msplit xs' in
-			(Cons(x1,l1), Cons(x2,l2)))
-;;
+		| [] -> ([x1], [])
+		| x2::xs' ->
+			(Raml.tick(1.0); 
+			let (l1, l2) = msplit xs' in
+			(x1::l1, x2::l2));;
+
 let rec merge l1 l2 =
 	match l1 with
-	| Nil -> l2
-	| Cons(x,xs) ->
+	| [] -> l2
+	| x::xs ->
 		match l2 with
-		| Nil -> Cons(x,xs)
-		| Cons(y,ys) ->
-			(
-			if ((x) < (y)) then Cons(x,merge) xs (Cons(y,ys))
-			else Cons(y,merge) (Cons(x,xs)) ys)
-;;
+		| [] -> x::xs
+		| y::ys ->
+			(Raml.tick(1.0); 
+			if ((x:int) < (y:int)) then x::merge xs (y::ys)
+			else y::merge (x::xs) ys);;
+
 let rec mergesortBuggy l =
 	match l with
-	| Nil -> Nil
-	| Cons(x1,xs) ->
-		let(l1, l2) = msplit l in
-		( merge (mergesortBuggy l1) (mergesortBuggy l2))
-;;
+	| [] -> []
+	| x1::xs ->
+		let (l1, l2) = msplit l in
+		(Raml.tick(1.0); merge (mergesortBuggy l1) (mergesortBuggy l2));;
+
 let rec mergesort l =
 	match l with
-	| Nil -> Nil
-	| Cons(x1,xs) ->
+	| [] -> []
+	| x1::xs ->
 		match xs with
-		| Nil -> Cons(x1,xs)
-		| Cons(x2,xs') ->
-			let(l1, l2) = msplit (Cons(x1,x2)Cons(,xs')) in
-			( merge (mergesort l1) (mergesort l2))
+		| [] -> x1::xs
+		| x2::xs' ->
+			let (l1, l2) = msplit (x1::x2::xs') in
+			(Raml.tick(1.0); merge (mergesort l1) (mergesort l2));;
 
 mergesort [0;4;5;9;7;1;2;8;6;3]
-;;

@@ -1,13 +1,3 @@
-type 'a option = None | Some of 'a
-;;
-type ('a,'b) pair = Pair of 'a * 'b
-;;
-type 'a list = Nil | Cons of 'a * 'a list
-;;
-type nat = 0 | S of nat
-;;
-type Unit = Unit
-
 (* * * * * * * * * * *
  * Resource Aware ML *
  * * * * * * * * * * *
@@ -19,68 +9,68 @@ type Unit = Unit
  *
  * Author:
  *   Ankush Das, Jan Hoffmann (2015)
- *
+ * 
  * Description:
- *   Split a list of key value pairs in sublists according to the
+ *   Split a list of key value pairs in sublists according to the 
  *   keys. Then sort the sublists.
  *)
 
-;;
+
 let rec insert x l =
-	let(valX, keyX) = x in
+	let (valX, keyX) = x in
 	match l with
-	| Nil -> [Pair([valX], keyX)]
-	| Cons(l1,ls) ->
-		(
-		let(vals1, key1) = l1 in
-		if ((key1) = (keyX))
+	| [] -> [([valX], keyX)]
+	| l1::ls ->
+		(Raml.tick(1.0);
+		let (vals1, key1) = l1 in
+		if ((key1:int) = (keyX:int))
 		then
-			Pair(Cons(valX,vals1), key1)Cons(,ls)
+			(valX::vals1, key1)::ls
 		else
-			Pair(vals1, key1)Cons(,insert) x ls)
-;;
+			(vals1, key1)::insert x ls);;
+
 let rec split l =
 	match l with
-	| Nil -> Nil
-	| Cons(x,xs) -> ( insert x (split xs))
-;;
+	| [] -> []
+	| x::xs -> (Raml.tick(1.0); insert x (split xs));;
+
 let rec splitqs q =
-	let(pivot, l) = q in
+	let (pivot, l) = q in
 	match l with
-	| Nil -> Pair(Nil, Nil)
-	| Cons(x,xs) ->
-		(
-		let(ls, rs) = splitqs(pivot, xs) in
-		if ((x) > (pivot))
+	| [] -> ([], [])
+	| x::xs ->
+		(Raml.tick(1.0);
+		let (ls, rs) = splitqs (pivot, xs) in
+		if ((x:int) > (pivot:int))
 		then
-			(ls, Cons(x,rs))
+			(ls, x::rs)
 		else
-			Pair(Cons(x,ls), rs))
-;;
-let rec app l ys =
+			(x::ls, rs));;
+
+let rec append l ys =
 	match l with
-	| Nil -> ys
-	| Cons(x,xs) -> ( Cons(x,app) xs ys)
-;;
+	| [] -> ys
+	| x::xs -> (Raml.tick(1.0); x::append xs ys);;
+
 let rec quicksort l =
 	match l with
-	| Nil -> Nil
-	| Cons(z,zs) ->
-		(
-		let(xs, ys) = splitqs(z, zs) in
-		app (quicksort xs) (Cons(z,(quicksort ys))))
-;;
+	| [] -> []
+	| z::zs ->
+		(Raml.tick(1.0);
+		let (xs, ys) = splitqs (z, zs) in
+		append (quicksort xs) (z::(quicksort ys)));;
+
 let rec sortAll l =
 	match l with
-	| Nil -> Nil
-	| Cons(x,xs) ->
-		(
-		let(vals, key) = x in
-		Pair(quicksort vals, key)Cons(,sortAll) xs)
-;;
+	| [] -> []
+	| x::xs ->
+		(Raml.tick(1.0);
+		let (vals, key) = x in
+		(quicksort vals, key)::sortAll xs);;
+
 let splitAndSort l =
-	sortAll (split l)
-;;
+	sortAll (split l);;
+
 let l =
   [ 1,2
   ; 3,50
@@ -96,5 +86,4 @@ let l =
   ; 1,8
   ]
 in
-splitAndSort l
-;;
+splitAndSort l 

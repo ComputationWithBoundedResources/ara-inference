@@ -1,3 +1,0 @@
-"./compcert/String0.raml" (line 22, column 31):
-unexpected "="
-expecting comment, whitespace, variable, constructor expression, error expression, parenthesised expression or ")"

@@ -1,3 +1,0 @@
-"./raml1/raml1_mergesort.raml" (line 47, column 31):
-unexpected "["
-expecting "*", lambda expression, lazy expression, forced expression, let expression, match expression or application

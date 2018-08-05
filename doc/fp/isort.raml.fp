@@ -1,107 +1,115 @@
 
-type nat = 0 | S of nat
+let rec leqNat x y =
+  match y with
+  | 0 -> True
+  | S(y') -> (match x with
+            | S(x') -> leqNat x' y'
+            | 0 -> False)
 ;;
-type Unit = Unit
+let rec eqNat x y =
+  match y with
+  | 0 -> (match x with
+      | 0 -> True
+      | S(x') -> False)
+  | S(y') -> (match x with
+            | S(x') -> eqNat x' y'
+            | 0 -> False)
 ;;
-type ('a,'b) pair = Pair of 'a * 'b
+let rec geqNat x y =
+  match x with
+   | 0 -> False
+   | S(x') -> (match y with
+              | 0 -> True
+              | S(y') -> geqNat x' y')
 ;;
-type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
+let rec ltNat x y =
+  match y with
+   | 0 -> False
+   | S(y') -> (match x with
+        | 0 -> True
+        | S(x') -> ltNat x' y')
+;;
+let rec gtNat x y =
+  match x with
+   | 0 -> False
+   | S(x') -> (match y with
+             | 0 -> True
+             | S(y') -> gtNat x' y')
+
+
 ;;
 let ifz n th el = match n with
    | 0 -> th 0
    | S(x) -> el x
 ;;
+let ite cond thenPart elsePart = match cond with
+   | True -> thenPart
+   | False -> elsePart
+;;
+let ite2 cond thenPart elsePart = match cond with
+   | True -> thenPart
+   | False -> elsePart
+;;
 let minus n m =
   let rec minus' m n = match m with
         | 0 -> 0
-        | S(x) -> match n with
+        | S(x) -> (match n with
           | 0 -> m
-          | S(y) -> minus' x y
+          | S(y) -> minus' x y)
   in Pair(minus' n m,m)
 ;;
 let rec plus n m = match m with
   | 0 -> n
   | S(x) -> S(plus n x)
 ;;
+type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
+;;
 let rec div_mod n m = match (minus n m) with
-  | Pair(res,m) -> match res with
+  | Pair(res,m) -> (match res with
                    | 0 -> Triple (0,n,m)
-                   | S(x) -> match (div_mod res m) with
-                             | Triple(a,rest,unusedM) -> Triple(plus S(0) a,rest,m)
+                   | S(x) -> (match (div_mod res m) with
+                             | Triple(a,rest,unusedM) -> Triple(plus S(0) a,rest,m)))
+;;
+let rec mult n m = match n with
+   | 0 -> 0
+   | S(x) -> S(plus (mult x m) m)
+;;
+type bool = True | False
+;;
+type 'a option = None | Some of 'a
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type nat = 0 | S of nat
+;;
+type Unit = Unit
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+
 
 ;;
-
-let rec linear n =
-  ifz n
-    (fun x -> x)
-    (fun n' ->
-
-       linear n'
-    )
-
-
-
-;;
-
-let rec compare_list (l1:int list) l2 =
+let rec compare_list l1 l2 =
   match l1 with
-  | [] -> true
-  | x::xs ->
-     match l2 with
-     | [] -> false
-     | y::ys ->
-	if x = y then
-	  compare_list xs ys
-	else
-	  x < y
-
+  | Nil()-> True
+  | Cons(x,xs) ->
+     (match l2 with
+      | Nil()-> False
+      | Cons(y,ys) -> ite2 (eqNat x y) (compare_list xs ys) (ltNat x y))
 
 ;;
-
 let rec insert le x l =
   match l with
-  | [] -> [x]
-  | y::ys ->
-     if le y x then y::insert le x ys
-     else x::y::ys
+  | Nil()-> Cons(x,Nil)
+  | Cons(y,ys) -> ite (le y x) Cons(y,insert le x ys) Cons(x,Cons(y,ys))
 
-		  
 ;;
-
 let rec isort le l =
   match l with
-  | [] -> []
-  | x::xs -> insert le x (isort le xs)
-
+  | Nil()-> Nil
+  | Cons(x,xs) -> insert le x (isort le xs)
 ;;
-
 let isort_list = isort compare_list
-
 ;;
 
-let l1 = [1;2;3;4;5]
+let main xs = isort_list xs
 ;;
-
-let l2 = [1;2;3;4;4]
-;;
-
-let l3 = [1;2;3;4]
-;;
-
-let l4 = [1;2;3;4;4;4]
-;;
-
-let l5 = [1;1;3;4;4;4]
-;;
-
-let l6 = [-1;0;1;2;3;4]
-;;
-
-let l7 = [1;2;3;5;5]
-;;
-
-let l8 = []
-	   
-;;
-
-let _ = isort_list [l1;l2;l3;l4;l5;l6;l7;l8]

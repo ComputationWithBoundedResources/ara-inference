@@ -1,3 +1,0 @@
-"./constant_time/xxtea.raml" (line 30, column 20):
-unexpected "."
-expecting letter or digit, comment, whitespace, "(", variable, constructor expression, error expression, parenthesised expression, keyword '|', keyword 'and' or keyword 'in'

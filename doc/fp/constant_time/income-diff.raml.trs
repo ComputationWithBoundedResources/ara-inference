@@ -1,3 +1,0 @@
-"./constant_time/income-diff.raml" (line 28, column 1):
-unexpected "t"
-expecting keyword '|' or keyword ';;'

@@ -1,0 +1,107 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x24 x25 x2 x6 x4 x26 x27 x1 x3 x5 x9 x11 x8 x14 x69 x21 x13 x12 x29 x48 x72
+    x80 x32 x36 x16 x20)
+(RULES
+    cond_sort_students_efficient_student_ids_course_ids(Pair(x24,x25)) -> x24
+    mk_table#2(Nil(),x2) -> Nil()
+    mk_table#2(Cons(x6,x4),x2) -> Cons(Pair(x6,map#2(f(x6),x2))
+                                      ,mk_table#2(x4,x2))
+    cond_average_grade'_student_id_course_ids_table_1(Triple(x25,x26,x27)) ->
+      x25
+    cond_average_grade'_student_id_course_ids_table(Pair(x2,x1)) ->
+      cond_average_grade'_student_id_course_ids_table_1(div_mod#2(x1,x2))
+    foldl2#3(f_1(x3,x2),x1,Nil()) -> x1
+    foldl2#3(f_1(x6,x5),Pair(x4,x3),Cons(x2,x1)) ->
+      foldl2#3(f_1(x6,x5)
+              ,Pair(S(x4)
+                   ,plus#2(x3
+                          ,find2#2(lookup_sid_cid_table_1(x2)
+                                  ,find#2(cid_map_1(x6),x5))))
+              ,x1)
+    find2#2(lookup_sid_cid_table_1(x1),Nil()) -> bot[1]()
+    find2#2(lookup_sid_cid_table_1(x3),Cons(Pair(x2,S(0())),x1)) ->
+      ite3#3(eqNat#2(x2,x3),find2#2(lookup_sid_cid_table_1(x3),x1))
+    find#2(cid_map_1(x1),Nil()) -> bot[2]()
+    find#2(cid_map_1(x4),Cons(Pair(x2,x9),x5)) -> ite2#3(eqNat#2(x4,x2)
+                                                        ,x9
+                                                        ,find#2(cid_map_1(x4)
+                                                               ,x5))
+    map#2(f(x1),Nil()) -> Nil()
+    map#2(f(x4),Cons(x2,x11)) -> Cons(Pair(x2,S(0())),map#2(f(x4),x11))
+    cond_quicksort_gt_acc_l_3(Pair(x4,x3),x2,x1) -> Pair(append#2(Cons(x2,x1)
+                                                                 ,x4)
+                                                        ,x3)
+    cond_quicksort_gt_acc_l_2(Pair(x5,x4),greater_eq'_course_ids(x3),x2,x1) ->
+      cond_quicksort_gt_acc_l_3(quicksort#3(greater_eq'_course_ids(x3),x4,x1)
+                               ,x2
+                               ,x5)
+    cond_quicksort_gt_acc_l_1(Triple(x5,x4,x3),greater_eq'_course_ids(x2),x1) ->
+      cond_quicksort_gt_acc_l_2(quicksort#3(greater_eq'_course_ids(x2),x3,x5)
+                               ,greater_eq'_course_ids(x2)
+                               ,x1
+                               ,x4)
+    quicksort#3(greater_eq'_course_ids(x4),x2,Nil()) -> Pair(Nil(),x2)
+    quicksort#3(greater_eq'_course_ids(x8),x14,Cons(x4,x6)) ->
+      cond_quicksort_gt_acc_l_1(partition#3(greater_eq'_course_ids_sid1(x8,x4)
+                                           ,Triple(Nil(),Nil(),x14)
+                                           ,x6)
+                               ,greater_eq'_course_ids(x8)
+                               ,x4)
+    partition#3(greater_eq'_course_ids_sid1(x3,x2),x1,Nil()) -> x1
+    partition#3(greater_eq'_course_ids_sid1(x8
+                                           ,x69)
+               ,Triple(x21,x13,x4)
+               ,Cons(x12,x29)) ->
+      ite_b#2(geqNat#2(cond_average_grade'_student_id_course_ids_table(foldl2#3(f_1(x69
+                                                                                   ,x4)
+                                                                               ,Pair(0()
+                                                                                    ,0())
+                                                                               ,x8))
+                      ,cond_average_grade'_student_id_course_ids_table(foldl2#3(f_1(x12
+                                                                                   ,x4)
+                                                                               ,Pair(0()
+                                                                                    ,0())
+                                                                               ,x8)))
+             ,partition#3(greater_eq'_course_ids_sid1(x8,x69)
+                         ,Triple(x21,Cons(x12,x13),x4)
+                         ,x29)
+             ,partition#3(greater_eq'_course_ids_sid1(x8,x69)
+                         ,Triple(Cons(x12,x21),x13,x4)
+                         ,x29))
+    append#2(Nil(),x48) -> x48
+    append#2(Cons(x6,x4),x2) -> Cons(x6,append#2(x4,x2))
+    ite3#3(True(),x1) -> S(0())
+    ite3#3(False(),x1) -> x1
+    ite2#3(True(),x72,x80) -> x72
+    ite2#3(False(),x72,x80) -> x80
+    ite_b#2(True(),x32,x36) -> x32
+    ite_b#2(False(),x32,x36) -> x36
+    cond_div_mod_n_m_2(Triple(x4,x3,x2),x1) -> Triple(plus#2(S(0()),x4),x3,x1)
+    cond_div_mod_n_m(Pair(0(),x2),x1) -> Triple(0(),x1,x2)
+    cond_div_mod_n_m(Pair(S(x3),x2),x1) -> cond_div_mod_n_m_2(div_mod#2(S(x3)
+                                                                       ,x2)
+                                                             ,x2)
+    div_mod#2(x8,x4) -> cond_div_mod_n_m(Pair(minus'#2(x8,x4),x4),x8)
+    minus'#2(0(),x32) -> 0()
+    minus'#2(S(x36),0()) -> S(x36)
+    minus'#2(S(x4),S(x2)) -> minus'#2(x4,x2)
+    plus#2(x16,0()) -> x16
+    plus#2(x4,S(x2)) -> S(plus#2(x4,x2))
+    geqNat#2(0(),x16) -> False()
+    geqNat#2(S(x20),0()) -> True()
+    geqNat#2(S(x4),S(x2)) -> geqNat#2(x4,x2)
+    eqNat#2(0(),0()) -> True()
+    eqNat#2(S(x16),0()) -> False()
+    eqNat#2(S(x4),S(x2)) -> eqNat#2(x4,x2)
+    eqNat#2(0(),S(x16)) -> False()
+    main(x2
+        ,x1) ->
+      cond_sort_students_efficient_student_ids_course_ids(quicksort#3(greater_eq'_course_ids(x2)
+                                                                     ,mk_table#2(x1
+                                                                                ,x2)
+                                                                     ,x1)))
+

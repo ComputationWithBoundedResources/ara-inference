@@ -1,0 +1,18 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x2 x1 x3 x8 x4)
+(RULES
+    abfoldr#4(f(),g(),Acons(x2,x1)) -> abfoldr#4(fa()
+                                                ,fb(x2)
+                                                ,abfoldr#4(f(),g(),x1))
+    abfoldr#4(fa(),fb(x3),Bcons(x2,x1)) -> Bcons(plus#2(x2,x3)
+                                                ,abfoldr#4(fa(),fb(x3),x1))
+    abfoldr#4(f(),g(),Bcons(x2,x1)) -> Bcons(x2,abfoldr#4(f(),g(),x1))
+    abfoldr#4(x8,x4,Nil()) -> Nil()
+    plus#2(x4,0()) -> x4
+    plus#2(x4,S(x2)) -> S(plus#2(x4,x2))
+    main(x1) -> abfoldr#4(f(),g(),x1))
+

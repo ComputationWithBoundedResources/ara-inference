@@ -1,0 +1,65 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x4 x2 x59 x8 x9 x36 x38 x68 x6 x3 x1 x5 x65 x19 x39 x20 x28 x32)
+(RULES
+    mult_1#3(Nil(),x4,x2) -> x2
+    mult_1#3(Cons(x4,x59),x8,x9) -> mult_1#3(x59
+                                            ,Cons(0(),x8)
+                                            ,add_1#3(x9
+                                                    ,mult_int_1#3(x8,x4,0())
+                                                    ,0()))
+    zeros#1(Nil()) -> Nil()
+    zeros#1(Cons(x36,x38)) -> Cons(0(),zeros#1(x38))
+    append#2(Nil(),x68) -> x68
+    append#2(Cons(x6,x4),x2) -> Cons(x6,append#2(x4,x2))
+    cond_add_b_c_carry_2(Pair(x4,x3),x2,x1) -> Cons(x4,add_1#3(x2,x1,x3))
+    add_1#3(Nil(),x1,0()) -> Nil()
+    add_1#3(Nil(),x2,S(x1)) -> bot[0]()
+    add_1#3(Nil(),x1,S(0())) -> Nil()
+    add_1#3(Cons(x3,x2),Nil(),x1) -> add_int#2(Cons(x3,x2),x1)
+    add_1#3(Cons(x5,x4),Cons(x3,x2),x1) ->
+      cond_add_b_c_carry_2(split#1(plus#2(plus#2(x5,x3),x1)),x4,x2)
+    cond_add_int_b_n_1(Pair(x3,x2),x1) -> Cons(x3,add_int#2(x1,x2))
+    add_int#2(Nil(),0()) -> Nil()
+    add_int#2(Nil(),S(x65)) -> bot[1]()
+    add_int#2(Nil(),S(0())) -> Nil()
+    add_int#2(Cons(x9,x19),0()) -> ite#3(Cons(x9,x19)
+                                        ,cond_add_int_b_n_1(split#1(plus#2(0()
+                                                                          ,x9))
+                                                           ,x19))
+    add_int#2(Cons(x19,x39),S(x65)) -> cond_add_int_b_n_1(split#1(plus#2(S(x65)
+                                                                        ,x19))
+                                                         ,x39)
+    add_int#2(Cons(x9,x19),S(0())) ->
+      ite#3(Cons(x9,x19),cond_add_int_b_n_1(split#1(plus#2(S(0()),x9)),x19))
+    cond_mult_int_b_n_carry_1(Pair(x4,x3),x2,x1) -> Cons(x4
+                                                        ,mult_int_1#3(x1,x2,x3))
+    mult_int_1#3(Nil(),x19,0()) -> Nil()
+    mult_int_1#3(Nil(),x19,S(x65)) -> Cons(S(x65),Nil())
+    mult_int_1#3(Nil(),x19,S(0())) -> Nil()
+    mult_int_1#3(Cons(x2,x59),x4,x9) ->
+      cond_mult_int_b_n_carry_1(split#1(plus#2(mult_3#2(x4,x2),x9)),x4,x59)
+    cond_split_n(Triple(x2,x1)) -> Pair(x1,x2)
+    split#1(x1) -> cond_split_n(div_mod#2(x1))
+    mult_3#2(0(),x2) -> 0()
+    mult_3#2(S(x4),x2) -> S(plus#2(mult_3#2(x4,x2),x2))
+    cond_div_mod_n_m_2(Triple(x2,x1)) -> Triple(plus#2(S(0()),x2),x1)
+    cond_div_mod_n_m(Pair(0(),S(S(S(S(S(S(S(S(S(S(0()))))))))))),x1) ->
+      Triple(0(),x1)
+    cond_div_mod_n_m(Pair(S(x2),S(S(S(S(S(S(S(S(S(S(0()))))))))))),x1) ->
+      cond_div_mod_n_m_2(div_mod#2(S(x2)))
+    div_mod#2(x4) ->
+      cond_div_mod_n_m(Pair(minus'#2(x4,S(S(S(S(S(S(S(S(S(S(0())))))))))))
+                           ,S(S(S(S(S(S(S(S(S(S(0())))))))))))
+                      ,x4)
+    plus#2(x20,0()) -> x20
+    plus#2(x4,S(x2)) -> S(plus#2(x4,x2))
+    minus'#2(0(),x28) -> 0()
+    minus'#2(S(x32),0()) -> S(x32)
+    minus'#2(S(x4),S(x2)) -> minus'#2(x4,x2)
+    ite#3(Cons(x2,x3),x1) -> Cons(x2,x3)
+    main(x2,x1) -> mult_1#3(x2,x1,zeros#1(append#2(x2,x1))))
+

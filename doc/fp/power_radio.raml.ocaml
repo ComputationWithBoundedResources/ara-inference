@@ -1,0 +1,332 @@
+
+let rec leqNat x y =
+  match y with
+  | 0 -> True
+  | S(y') -> (match x with
+            | S(x') -> leqNat x' y'
+            | 0 -> False)
+;;
+let rec eqNat x y =
+  match y with
+  | 0 -> (match x with
+      | 0 -> True
+      | S(x') -> False)
+  | S(y') -> (match x with
+            | S(x') -> eqNat x' y'
+            | 0 -> False)
+;;
+let rec geqNat x y =
+  match x with
+   | 0 -> False
+   | S(x') -> (match y with
+              | 0 -> True
+              | S(y') -> geqNat x' y')
+;;
+let rec ltNat x y =
+  match y with
+   | 0 -> False
+   | S(y') -> (match x with
+        | 0 -> True
+        | S(x') -> ltNat x' y')
+;;
+let rec gtNat x y =
+  match x with
+   | 0 -> False
+   | S(x') -> (match y with
+             | 0 -> True
+             | S(y') -> gtNat x' y')
+
+
+;;
+let ifz n th el = match n with
+   | 0 -> th 0
+   | S(x) -> el x
+;;
+let ite b th el = match b with
+   | True()-> th
+   | False()-> el
+;;
+let minus n m =
+  let rec minus' m n = match m with
+        | 0 -> 0
+        | S(x) -> (match n with
+          | 0 -> m
+          | S(y) -> minus' x y)
+  in Pair(minus' n m,m)
+;;
+let rec plus n m = match m with
+  | 0 -> n
+  | S(x) -> S(plus n x)
+;;
+type ('a,'b,'c) triple = Triple of 'a * 'b * 'c
+;;
+let rec div_mod n m = match (minus n m) with
+  | Pair(res,m) -> (match res with
+                   | 0 -> Triple (0,n,m)
+                   | S(x) -> (match (div_mod res m) with
+                             | Triple(a,rest,unusedM) -> Triple(plus S(0) a,rest,m)))
+;;
+let rec mult n m = match n with
+   | 0 -> 0
+   | S(x) -> S(plus (mult x m) m)
+;;
+type bool = True | False
+;;
+type 'a option = None | Some of 'a
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+type Unit = Unit
+;;
+type ('a,'b) pair = Pair of 'a * 'b
+
+(* * * * * * * * * * *
+ * Resource Aware ML *
+ * * * * * * * * * * *
+ *
+ * * *  Use Cases * *
+ *
+ * File:
+ *   examples/power_radio.raml
+ *
+ * Author:
+ *   Jan Hoffmann, Shu-Chun Weng (S(S(0))014)
+ *
+ * Description:
+ *   Modelling a reactive system whose power consumption depends crucially on
+ *   the power consumption of the (GSM) radio. We use the tick metric to model
+ *   the power consumption in the function send_msg.
+ *)
+
+
+(* Using the (gsm) radio: Sending a list of integers costs S(S(0))00 Millijoule to *)
+(* power the radio on and S(S(S(0)))2 Millijoule to per integer that is sent. *)
+let send_msg msg =
+
+  let transmit x =
+    
+  in
+
+  let rec send msg =
+    match msg with
+      | Nil()-> ()
+      | Cons(x,xs) ->
+	transmit x;
+	send xs
+  in
+
+  
+  send msg
+
+
+(* Events that can be handled by the system. *)
+type event = Eidle
+  | Edata(of) int list   (*The sensor reads a list of data.*)
+  | Esend_buf
+  | Esend_all(of) (int list -> unit)
+
+
+(* A simple implementation that just sends the sensor data as soon as *)
+(* it is produced. *)
+let main1 events =
+
+  let rec process events =
+    match events with
+      | Cons(e,es) ->
+	begin
+	  match e with
+	    | Eidle()-> ()
+	    | Esend_buf()-> ()
+	    | Esend_all(unused) -> ()
+	    | Edata(data) -> send_msg data
+	end
+	; process es
+      | Nil()-> ()
+  in
+
+  process events
+
+;;
+let rec append l1 l2 =
+  match l1 with
+    | Nil()-> l2
+    | Cons(x,xs) -> Cons(x,(append xs l2))
+
+
+(* Store sensor data in a buffer and send the buffer only at *)
+(* Esend_buf events. *)
+let main2 events =
+
+  let rec process events buffer =
+    match events with
+      | Cons(e,es) ->
+	let buffer =
+	  match e with
+	    | Eidle()-> buffer
+	    | Esend_buf()-> send_msg buffer; Nil
+	    | Esend_all(unused) -> buffer
+	    | Edata(data) -> append data buffer
+	in
+	process es buffer
+      | Nil()-> ()
+  in
+
+  process events Nil
+
+
+(* Same functionality of main2. Also add a debugging mode in *)
+(* which *all* accumulated data since start is (re)sent. *)
+let main3 events =
+
+  let rec process events buffer all_data =
+    match events with
+      | Cons(e,es) ->
+	let buffer,all_data =
+	  match e with
+	    | Eidle()-> buffer, all_data
+	    | Esend_buf()-> send_msg buffer; (Nil, all_data)
+	    | Esend_all(unused) -> send_msg all_data; (buffer, all_data)
+	    | Edata(data) -> (append data buffer, append data all_data)
+	in
+	process es buffer all_data
+      | Nil()-> ()
+  in
+
+  process events Nil Nil
+
+
+(* Same functionality as main3. In the debugging mode, now apply *)
+(* the function that is provided by the event. *)
+let main4 events =
+
+  let rec process events buffer all_data =
+    match events with
+      | Cons(e,es) ->
+	let buffer,all_data =
+	  match e with
+	    | Eidle()-> buffer, all_data
+	    | Esend_buf()-> send_msg buffer; (Nil, all_data)
+	    | Esend_all(f) -> f all_data; (buffer, all_data)
+	    | Edata(data) -> (append data buffer, append data all_data)
+	in
+	process es buffer all_data
+      | Nil()-> ()
+  in
+
+  process events Nil Nil
+
+
+(* Similar to main4. However, we ignore Esend_buf events and send the *)
+(* buffer after S(S(S(S(S(0))))) Edata events. *)
+let main5 events =
+
+  (* This is an assertion that fails ite (n<5. *))
+  (* It is necessary to inform the analysis that n>=5. *)
+  (* There will be a built-in function for this. *)
+  let assert_geq_5 n =
+    let minus1 n =
+      Rnat.ifz n
+	(fun () -> error (Assert_failure ("", 0, n)))
+	(fun n' -> n')
+    in
+    let n1 = minus1 n in
+    let n2 = minus1 n1 in
+    let n3 = minus1 n2 in
+    let n4 = minus1 n3 in
+    let n5 = minus1 n4 in
+    ()
+  in
+
+  let one = Rnat.succ Rnat.zero in
+
+  let rec process events c buffer =
+    match events with
+      | Cons(e,es) ->
+	let buffer,c =
+	  match e with
+	    | Eidle()-> buffer,c
+	    | Esend_buf()-> buffer,c
+	    | Esend_all(unused) -> buffer,c
+	    | Edata(data) ->
+	      let buffer = append data buffer in
+	      ite ((Rnat.to_int c) = S(S(S(S(S(0))))) (begin))
+		assert_geq_5 c;
+		send_msg buffer;
+		(Nil, Rnat.succ Rnat.zero)
+	      end
+	      else
+		(buffer, Rnat.succ c)
+	in
+	process es c buffer
+      | Nil()-> ()
+  in
+  process events Rnat.zero Nil
+
+
+;;
+let events =
+  [Eidle; Edata (Cons(S(0),Cons(S(S(0)),Cons(S(S(S(0))),Nil)))); Eidle; Edata (Cons(S(S(S(S(0)))),Cons(S(S(S(S(S(0))))),Cons(S(S(S(S(S(S(0)))))),Cons(7,Cons(8,Nil)))))); Edata Nil; Edata(Cons(S(S(0)),Cons(S(S(S(0))),Cons(S(S(S(S(0)))),Nil))))
+  ; Esend_all send_msg
+  ; Eidle; Eidle; Esend_buf
+  ; Esend_all (fun data -> send_msg (Cons(S(0),Cons(S(S(0)),Cons(S(S(S(0))),Cons(S(S(S(S(0)))),Nil))))); send_msg data; send_msg data)
+  ; Edata (Cons(S(0),Cons(S(S(0)),Cons(S(S(S(0))),Nil)))); Esend_buf
+  ; Edata (Cons(S(0),Cons(S(S(0)),Cons(S(S(S(0))),Nil)))); Esend_buf
+  ; Edata (Cons(S(0),Cons(S(S(0)),Cons(S(S(S(0))),Nil))));Edata (Cons(S(0)30,Cons(S(S(S(0))),Nil)));Edata (Cons(S(0)30,Cons(S(S(S(0))),Nil))); Esend_all send_msg
+  ]
+in
+main1 events,
+main2 events,
+main3 events,
+main4 events,
+main5 events
+
+
+
+
+
+
+(*
+type count = C1
+  | C2
+  | C3
+  | C4
+  | C5
+;;
+let next xyz = match xyz with
+  | C1()-> C2
+  | C2()-> C3
+  | C3()-> C4
+  | C4()-> C5
+  | C5()-> C1
+
+
+;;
+let main5 events =
+
+  let rec process events c buffer =
+    match events with
+      | Cons(e,es) ->
+	let buffer,c =
+	  match e with
+	    | Eidle()-> buffer,c
+	    | Esend_buf()-> buffer,c
+	    | Esend_all(unused) -> buffer,c
+	    | Edata(data) ->
+	      let buffer = append data buffer in
+	      let buffer =
+		match c with
+		  | C1()-> buffer
+		  | C2()-> buffer
+		  | C3()-> buffer
+		  | C4()-> buffer
+		  | C5()-> send_msg buffer; Nil
+	      in
+	      (buffer, next c)
+	in
+	process es c buffer
+      | Nil()-> ()
+  in
+  process events C1 Nil
+
+*)
+;;

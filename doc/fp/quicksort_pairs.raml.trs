@@ -1,0 +1,46 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x3 x2 x1 x4 x6 x39 x35 x18 x14 x10 x8 x24 x28 x7 x5 x12 x20 x16)
+(RULES
+    not#1(True()) -> False()
+    not#1(False()) -> True()
+    cond_quicksort_gt_xyz_1(Pair(x3,x2),x1) -> append#2(quicksort#2(x3)
+                                                       ,Cons(x1
+                                                            ,quicksort#2(x2)))
+    quicksort#2(Nil()) -> Nil()
+    quicksort#2(Cons(x4,x6)) ->
+      cond_quicksort_gt_xyz_1(partition#2(compare_a(x4),x6),x4)
+    cond_partition_f_l_1(Pair(x39,x35),compare_a(Pair(x18,x14)),Pair(x10,x6)) ->
+      ite_b#2(ite2_b#2(not#1(eqNat#2(x18,x10))
+                      ,ltNat#2(x18,x10)
+                      ,leqNat#2(x14,x6))
+             ,Pair(x39,Cons(Pair(x10,x6),x35))
+             ,Pair(Cons(Pair(x10,x6),x39),x35))
+    partition#2(compare_a(x1),Nil()) -> Pair(Nil(),Nil())
+    partition#2(compare_a(x3),Cons(x2,x1)) ->
+      cond_partition_f_l_1(partition#2(compare_a(x3),x1),compare_a(x3),x2)
+    append#2(Nil(),Cons(x2,x4)) -> Cons(x2,x4)
+    append#2(Cons(x8,x6),Cons(x2,x4)) -> Cons(x8,append#2(x6,Cons(x2,x4)))
+    ite2_b#2(True(),x24,x28) -> x24
+    ite2_b#2(False(),x24,x28) -> x28
+    ite_b#2(True()
+           ,Pair(x8,Cons(Pair(x6,x7),x5))
+           ,Pair(Cons(Pair(x3,x4),x2),x1)) -> Pair(x8,Cons(Pair(x6,x7),x5))
+    ite_b#2(False()
+           ,Pair(x8,Cons(Pair(x6,x7),x5))
+           ,Pair(Cons(Pair(x3,x4),x2),x1)) -> Pair(Cons(Pair(x3,x4),x2),x1)
+    ltNat#2(x12,0()) -> False()
+    ltNat#2(0(),S(x20)) -> True()
+    ltNat#2(S(x4),S(x2)) -> ltNat#2(x4,x2)
+    eqNat#2(0(),0()) -> True()
+    eqNat#2(S(x16),0()) -> False()
+    eqNat#2(S(x4),S(x2)) -> eqNat#2(x4,x2)
+    eqNat#2(0(),S(x16)) -> False()
+    leqNat#2(x4,0()) -> True()
+    leqNat#2(S(x4),S(x2)) -> leqNat#2(x4,x2)
+    leqNat#2(0(),S(x12)) -> False()
+    main(x1) -> quicksort#2(x1))
+

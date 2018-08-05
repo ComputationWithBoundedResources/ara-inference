@@ -1,0 +1,41 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x25 x26 x28 x4 x3 x2 x1 x6 x5 x7 x10 x8 x12 x14 x40 x48 x16 x20)
+(RULES
+    cond_lcs_l1_l2(Cons(Nil(),x25)) -> 0()
+    cond_lcs_l1_l2(Cons(Cons(x26,x28),x25)) -> x26
+    cond_lcstable_l1_l2_1(Cons(x4,x3),x2,x1) -> Cons(newline#3(x1,x4,x2)
+                                                    ,Cons(x4,x3))
+    lcstable#2(Nil(),x2) -> Cons(firstline#1(x2),Nil())
+    lcstable#2(Cons(x6,x4),x2) -> cond_lcstable_l1_l2_1(lcstable#2(x4,x2),x2,x6)
+    newline_y_lastline_l_6#1(x3,x2,x1,Nil(),Nil()) -> Cons(ite#3(eqNat#2(x2,x3)
+                                                                ,S(0())
+                                                                ,max#2(x1,0()))
+                                                          ,Nil())
+    newline_y_lastline_l_6#1(x5,x4,x3,Nil(),Cons(x2,x1)) ->
+      Cons(ite#3(eqNat#2(x4,x5),S(0()),max#2(x3,x2)),Cons(x2,x1))
+    newline_y_lastline_l_6#1(x5,x4,x3,Cons(x2,x1),Nil()) ->
+      Cons(ite#3(eqNat#2(x4,x5),S(x2),max#2(x3,0())),Nil())
+    newline_y_lastline_l_6#1(x7,x6,x5,Cons(x4,x3),Cons(x2,x1)) ->
+      Cons(ite#3(eqNat#2(x6,x7),S(x4),max#2(x5,x2)),Cons(x2,x1))
+    max#2(x4,x2) -> ite#3(gtNat#2(x4,x2),x4,x2)
+    newline#3(x4,x2,Nil()) -> Nil()
+    newline#3(x6,Nil(),Cons(x4,x2)) -> Nil()
+    newline#3(x10,Cons(x8,x6),Cons(x4,x2)) ->
+      newline_y_lastline_l_6#1(x10,x4,x8,x6,newline#3(x10,x6,x2))
+    firstline#1(Nil()) -> Nil()
+    firstline#1(Cons(x12,x14)) -> Cons(0(),firstline#1(x14))
+    ite#3(True(),x40,x48) -> x40
+    ite#3(False(),x40,x48) -> x48
+    gtNat#2(0(),x16) -> False()
+    gtNat#2(S(x20),0()) -> True()
+    gtNat#2(S(x4),S(x2)) -> gtNat#2(x4,x2)
+    eqNat#2(0(),0()) -> True()
+    eqNat#2(S(x16),0()) -> False()
+    eqNat#2(S(x4),S(x2)) -> eqNat#2(x4,x2)
+    eqNat#2(0(),S(x16)) -> False()
+    main(x4,x2) -> cond_lcs_l1_l2(lcstable#2(x4,x2)))
+

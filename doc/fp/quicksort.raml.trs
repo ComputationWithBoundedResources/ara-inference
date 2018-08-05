@@ -1,0 +1,29 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x3 x2 x1 x4 x6 x23 x19 x8 x10 x12)
+(RULES
+    cond_quicksort_gt_xyz_1(Pair(x3,x2),x1) -> append#2(quicksort#2(x3)
+                                                       ,Cons(x1
+                                                            ,quicksort#2(x2)))
+    quicksort#2(Nil()) -> Nil()
+    quicksort#2(Cons(x4,x6)) ->
+      cond_quicksort_gt_xyz_1(partition#2(main_xs_1(x4),x6),x4)
+    cond_partition_f_l_1(Pair(x23,x19),main_xs_1(x4),x2) ->
+      ite_b#2(leqNat#2(x4,x2),Pair(x23,Cons(x2,x19)),Pair(Cons(x2,x23),x19))
+    partition#2(main_xs_1(x1),Nil()) -> Pair(Nil(),Nil())
+    partition#2(main_xs_1(x3),Cons(x2,x1)) ->
+      cond_partition_f_l_1(partition#2(main_xs_1(x3),x1),main_xs_1(x3),x2)
+    append#2(Nil(),Cons(x2,x4)) -> Cons(x2,x4)
+    append#2(Cons(x8,x6),Cons(x2,x4)) -> Cons(x8,append#2(x6,Cons(x2,x4)))
+    ite_b#2(True(),Pair(x8,Cons(x10,x12)),Pair(Cons(x2,x4),x6)) ->
+      Pair(x8,Cons(x10,x12))
+    ite_b#2(False(),Pair(x8,Cons(x10,x12)),Pair(Cons(x2,x4),x6)) ->
+      Pair(Cons(x2,x4),x6)
+    leqNat#2(x4,0()) -> True()
+    leqNat#2(S(x4),S(x2)) -> leqNat#2(x4,x2)
+    leqNat#2(0(),S(x12)) -> False()
+    main(x1) -> quicksort#2(x1))
+

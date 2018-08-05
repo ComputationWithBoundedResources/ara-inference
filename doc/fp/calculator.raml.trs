@@ -1,0 +1,18 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x3 x5 x7 x2 x10 x4 x12 x8 x14 x0)
+(RULES
+    cond_eval_expr_1(Zero(),x3) -> eval#1(x3)
+    cond_eval_expr_1(Succ(x5),x3) -> Succ(eval#1(Add(Nat(x5),x3)))
+    cond_eval_expr_3(Zero(),x5) -> Zero()
+    cond_eval_expr_3(Succ(x7),x5) -> eval#1(Sub(Nat(x7),Nat(x5)))
+    cond_eval_expr_2(Zero(),x2) -> eval#1(x2)
+    cond_eval_expr_2(Succ(x10),x5) -> cond_eval_expr_3(eval#1(x5),x10)
+    eval#1(Nat(x4)) -> x4
+    eval#1(Add(x10,x12)) -> cond_eval_expr_1(eval#1(x10),x12)
+    eval#1(Sub(x8,x14)) -> cond_eval_expr_2(eval#1(x14),x8)
+    main(x0) -> eval#1(x0))
+

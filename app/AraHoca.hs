@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Aug  5 19:01:43 2018 (+0200)
+-- Last-Updated: Mon Aug  6 13:22:11 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1214
+--     Update #: 1253
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -125,7 +125,7 @@ import qualified Text.PrettyPrint.ANSI.Leijen                              as PP
 import           Debug.Trace
 
 main :: IO ()
-main = flip E.catch errorFun $ do
+main = E.handle (void <$> errorFun Nothing) $ do
   maybeArgs <- parseArgOpts :: IO (Maybe ArgumentOptions)
   let args = fromMaybe (E.throw $ FatalException "Command line Arguments where empty") maybeArgs
 
@@ -188,165 +188,172 @@ main = flip E.catch errorFun $ do
                                }
           else return probParse
 
-
-  -- Find out SCCs
+    -- Find out SCCs
   let reachability = analyzeReachability prob
   (prove, infTrees) <- analyzeProblem args reachability prob
 
-  putStrLn "Parsed Typed Term Rewrite System:\n"
-  print $ prettyAraProblem (problem prove)
-  when (verbose args) $ print (prettyProve prove)
+  mBigO <- E.handle (errorFun $ Just $ "\n\n" <> show (prettyAraProblem (problem prove))) $ do
+    when (verbose args) $ print (prettyProve prove)
 
-  -- Solve cost constraints
-  let cond = conditions prove
-  let probSig = signatures (problem prove)
+    -- Solve cost constraints
+    let cond = conditions prove
+    let probSig = signatures (problem prove)
 
-  when (isNothing probSig && shift args) $
-    E.throw $ FatalException "Shift requires signature information in input TRS."
-
-
-  -- Solve datatype constraints
-  (sigs, cfSigs, valsNs, vals, baseCtrs, cfBaseCtrs, bigO, (strictRls, weakRls)) <-
-    solveProblem args (fromJust probSig) cond (signatureMap prove) (costFreeSigs prove)
+    when (isNothing probSig && shift args) $
+      E.throw $ FatalException "Shift requires signature information in input TRS."
 
 
-  let line = P.text "\n"
-  let documentsIT :: [(String, P.Doc)]
-      documentsIT = (map (second (\d -> line P.$+$ d P.$+$ line)))
-                    (map (second $
-                          ((P.vcat . intersperse seperatorDoc) .
-                           map prettyInfTreeNodeView) . reverse) infTrees)
-      documentsITNum = (map (second (\d -> line P.$+$ d)))
-                       (map (second (((P.vcat . intersperse seperatorDoc) .
-                              map prettyInfTreeNodeView) . reverse)) $
-                         zip (map fst infTrees)
-                         (putValuesInInfTreeView (signatureMap prove)
-                          (costFreeSigs prove) vals (map snd infTrees)))
-
-      ruleNames :: [(String, Rule String String)]
-      ruleNames = map (\rule -> (((\(Fun f _) -> f) . lhs) rule, rule)
-                      ) (allRules $ TP.rules prob)
-
-      fun (acc,[]) _ = (acc,[])
-      fun (acc,(rn, rule):rns) sig = if rn == fst4 (lhsRootSym sig)
-                                     then  (acc ++ [(rule,sig)], rns)
-                                     else (acc, (rn,rule):rns)
+    -- Solve datatype constraints
+    (sigs, cfSigs, valsNs, vals, baseCtrs, cfBaseCtrs, bigO, (strictRls, weakRls)) <-
+      solveProblem args (fromJust probSig) cond (signatureMap prove) (costFreeSigs prove)
 
 
-  when (printInfTree args) $ do
-    let grpBy f = groupBy ((==) `on` f) -- . sortBy (compare `on` f)
-    let printInfTrees xs = line P.$+$ P.text n P.$+$ P.text (replicate (length n) '-')
-                           P.$+$ P.nest 2 (foldl (P.$+$) P.empty docs)
+    let line = P.text "\n"
+    let documentsIT :: [(String, P.Doc)]
+        documentsIT = (map (second (\d -> line P.$+$ d P.$+$ line)))
+                      (map (second $
+                            ((P.vcat . intersperse seperatorDoc) .
+                             map prettyInfTreeNodeView) . reverse) infTrees)
+        documentsITNum = (map (second (\d -> line P.$+$ d)))
+                         (map (second (((P.vcat . intersperse seperatorDoc) .
+                                map prettyInfTreeNodeView) . reverse)) $
+                           zip (map fst infTrees)
+                           (putValuesInInfTreeView (signatureMap prove)
+                            (costFreeSigs prove) vals (map snd infTrees)))
 
-          where n = fst $ head xs
-                docs = map snd xs
-    print (P.empty P.$+$ P.empty P.$+$
-            P.text "Inference Trees:\n----------------")
-    print (P.nest 2 (foldl (P.$+$) P.empty (map printInfTrees (grpBy fst documentsIT)))
-            P.$+$ line)
+        ruleNames :: [(String, Rule String String)]
+        ruleNames = map (\rule -> (((\(Fun f _) -> f) . lhs) rule, rule)
+                        ) (allRules $ TP.rules prob)
 
-    print (P.text "Inference Trees (with filled in numbers):" P.$+$
-            P.text "-----------------------------------------")
-    print (P.nest 2 (foldl (P.$+$) P.empty (map printInfTrees (grpBy fst documentsITNum)))
-           P.$+$ line)
-
-
-  -- print solution
-  if lowerbound args || isJust (lowerboundArg args)
-    then putStrLn $ "BEST_CASE(Omega(n^" ++ show bigO ++ "),?)\n"
-    else putStrLn $ "WORST_CASE(?,O(n^" ++ show bigO ++ "))\n"
-
-  let isMainSig (Signature (n,_,_,_) _ _)
-        | take 4 n == "main" = True
-        | otherwise = False
-
-  print (P.text "Solution:\n" <> P.text "---------\n")
-  print $ P.vcat $
-    zipWith (\nr x -> (if printInfTree args
-                      then P.nest 2 $ P.int nr <> P.colon
-                      else P.empty)
-                      P.<+> prettyAraSignature' x) [0..]
-    (if printInfTree args
-      then sigs
-      else filter (\x -> not (null mainFun) || not (isMainSig x)) $
-           sortBy (compare `on` fst4 . lhsRootSym) (nub sigs))
-
-  -- Cost free signatures
-  print (P.text "\n\nCost Free Signatures:\n" <> P.text "---------------------\n")
-  print $ P.vcat $
-    zipWith (\nr x -> (if printInfTree args
-                       then P.nest 2 $ P.int nr <> P.colon
-                       else P.empty)
-                      P.<+> prettyAraSignature' x) [0..]
-
-    ( if printInfTree args
-      then cfSigs
-      else sortBy (compare `on` fst4 . lhsRootSym) (nub cfSigs))
-
-  -- e <- trace "HERE" $ checkCfBaseCtrsUniqueness cfSigs -- check uniqueness
-  -- print e
+        fun (acc,[]) _ = (acc,[])
+        fun (acc,(rn, rule):rns) sig = if rn == fst4 (lhsRootSym sig)
+                                       then  (acc ++ [(rule,sig)], rns)
+                                       else (acc, (rn,rule):rns)
 
 
-  unless (shift args) $
-    print (line <>
-           P.text "\nBase Constructors:\n------------------"  P.$+$ P.empty P.$+$
-           (P.vcat (map prettyAraSignature'
-                  (if printInfTree args
-                   then baseCtrs
-                   else sortBy (compare `on` fst4 . lhsRootSym) (nub baseCtrs))))
-           <> line)
+    when (printInfTree args) $ do
+      let grpBy f = groupBy ((==) `on` f) -- . sortBy (compare `on` f)
+      let printInfTrees xs = line P.$+$ P.text n P.$+$ P.text (replicate (length n) '-')
+                             P.$+$ P.nest 2 (foldl (P.$+$) P.empty docs)
 
-  unless (null cfBaseCtrs) $
-      print (P.text "\nBase Constructors for Cost-free Signatures:" <>
-             P.text "\n-------------------------------------------"
-             P.$+$ P.empty P.$+$
+            where n = fst $ head xs
+                  docs = map snd xs
+      print (P.empty P.$+$ P.empty P.$+$
+              P.text "Inference Trees:\n----------------")
+      print (P.nest 2 (foldl (P.$+$) P.empty (map printInfTrees (grpBy fst documentsIT)))
+              P.$+$ line)
+
+      print (P.text "Inference Trees (with filled in numbers):" P.$+$
+              P.text "-----------------------------------------")
+      print (P.nest 2 (foldl (P.$+$) P.empty (map printInfTrees (grpBy fst documentsITNum)))
+             P.$+$ line)
+
+
+    -- print solution
+    if lowerbound args || isJust (lowerboundArg args)
+      then putStrLn $ "BEST_CASE(Omega(n^" ++ show bigO ++ "),?)\n"
+      else putStrLn $ "WORST_CASE(?,O(n^" ++ show bigO ++ "))\n"
+
+    let isMainSig (Signature (n,_,_,_) _ _)
+          | take 4 n == "main" = True
+          | otherwise = False
+
+    print (P.text "Solution:\n" <> P.text "---------\n")
+    print $ P.vcat $
+      zipWith (\nr x -> (if printInfTree args
+                        then P.nest 2 $ P.int nr <> P.colon
+                        else P.empty)
+                        P.<+> prettyAraSignature' x) [0..]
+      (if printInfTree args
+        then sigs
+        else filter (\x -> not (null mainFun) || not (isMainSig x)) $
+             sortBy (compare `on` fst4 . lhsRootSym) (nub sigs))
+
+    -- Cost free signatures
+    print (P.text "\n\nCost Free Signatures:\n" <> P.text "---------------------\n")
+    print $ P.vcat $
+      zipWith (\nr x -> (if printInfTree args
+                         then P.nest 2 $ P.int nr <> P.colon
+                         else P.empty)
+                        P.<+> prettyAraSignature' x) [0..]
+
+      ( if printInfTree args
+        then cfSigs
+        else sortBy (compare `on` fst4 . lhsRootSym) (nub cfSigs))
+
+    -- e <- trace "HERE" $ checkCfBaseCtrsUniqueness cfSigs -- check uniqueness
+    -- print e
+
+
+    unless (shift args) $
+      print (line <>
+             P.text "\nBase Constructors:\n------------------"  P.$+$ P.empty P.$+$
              (P.vcat (map prettyAraSignature'
                     (if printInfTree args
-                     then cfBaseCtrs
-                     else sortBy (compare `on` fst4 . lhsRootSym) (nub cfBaseCtrs))))
+                     then baseCtrs
+                     else sortBy (compare `on` fst4 . lhsRootSym) (nub baseCtrs))))
              <> line)
 
-  when (isJust $ findStrictRules args) $ do
-    putStrLn $ "Strict Rules: " ++ show strictRls
-    putStrLn $ "Weak Rules: " ++ show weakRls
+    unless (null cfBaseCtrs) $
+        print (P.text "\nBase Constructors for Cost-free Signatures:" <>
+               P.text "\n-------------------------------------------"
+               P.$+$ P.empty P.$+$
+               (P.vcat (map prettyAraSignature'
+                      (if printInfTree args
+                       then cfBaseCtrs
+                       else sortBy (compare `on` fst4 . lhsRootSym) (nub cfBaseCtrs))))
+               <> line)
+
+    when (isJust $ findStrictRules args) $ do
+      putStrLn $ "Strict Rules: " ++ show strictRls
+      putStrLn $ "Weak Rules: " ++ show weakRls
+
+    return $ Just bigO
 
 
-errorFun :: ProgException -> IO ()
-errorFun (e :: ProgException) =
-              case e of
-                ShowTextOnly txt -> do
-                  putStrLn "MAYBE"
-                  putStrLn txt
-                WarningException txt -> do
-                  putStrLn "MAYBE"
-                  putStrLn txt
-                TimeoutException txt -> do
-                  putStrLn "TIMEOUT"
-                  putStrLn txt
-                FatalException txt -> do
-                  -- putStr "ERROR:"
-                  putStrLn txt
-                  -- exitFailure
+  putStrLn "\n\nParsed Typed Term Rewrite System:\n"
+  print $ prettyAraProblem (problem prove)
 
-                ParseException txt -> do
-                  putStr "ERROR:"
-                  putStrLn txt
-                  exitFailure
-                UnsolveableException txt -> do
-                  maybeArgs <- parseArgOpts :: IO (Maybe ArgumentOptions)
-                  let args = fromMaybe
-                        (E.throw $ FatalException "Command line Arguments where empty")
-                        maybeArgs
-                  putStrLn $ if isJust (lowerboundArg args) || lowerbound args
-                    then  "BEST_CASE(Omega(1),?)"
-                    else  "MAYBE"
-                  putStrLn "UNSAT"
-                  putStrLn txt
-                SemanticException txt -> do
-                  putStr "ERROR:"
-                  putStrLn txt
-                  exitFailure
+  when (isJust mBigO) $
+    let bigO = fromJust mBigO in
+    if lowerbound args || isJust (lowerboundArg args)
+      then putStrLn $ "\n\nBEST_CASE(Omega(n^" ++ show bigO ++ "),?)\n"
+      else putStrLn $ "\n\nWORST_CASE(?,O(n^" ++ show bigO ++ "))\n"
 
+
+errorFun :: Maybe String -> ProgException -> IO (Maybe a)
+errorFun mDoc (e :: ProgException) = do
+  case e of
+    ShowTextOnly txt -> do
+      putStrLn "MAYBE"
+      putStrLn txt
+    WarningException txt -> do
+      putStrLn "MAYBE"
+      putStrLn txt
+    TimeoutException txt -> do
+      putStrLn "TIMEOUT"
+      putStrLn txt
+    FatalException txt -> do
+      putStrLn "FATAL"
+      putStrLn txt
+      exitFailure
+    ParseException txt -> do
+      putStr "ERROR:"
+      putStrLn txt
+    UnsolveableException txt -> do
+      maybeArgs <- parseArgOpts :: IO (Maybe ArgumentOptions)
+      let args = fromMaybe (E.throw $ FatalException "Command line Arguments where empty") maybeArgs
+      putStrLn $
+        if isJust (lowerboundArg args) || lowerbound args
+          then "BEST_CASE(Omega(1),?)"
+          else "MAYBE"
+      putStrLn "UNSAT"
+      putStrLn txt
+    SemanticException txt -> do
+      putStr "ERROR:"
+      putStrLn txt
+  -- maybe (return ()) putStrLn mDoc
+  return Nothing
 
 checkCfBaseCtrsUniqueness :: (Show a, Eq a, Ord a, Eq t, Num t, Show t, Show t3) =>
                              [Signature (a, ACost t, Bool, t3) (ADatatype dt t)] -> IO Bool

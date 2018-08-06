@@ -9,9 +9,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Aug  5 19:00:15 2018 (+0200)
+-- Last-Updated: Mon Aug  6 13:29:08 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1878
+--     Update #: 1919
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -153,33 +153,43 @@ solveProblem ops probSigs conds aSigs cfSigs = do
   let vecLens = [minNrVec .. maxNrVec]
   when (lowerbound ops && maxNrVec > 1) (throw $ FatalException "vector length for this lowerbound method must be 1")
   when (maxNrVec < 1 || maxNrVec > maximumVectorLength) (throw $ FatalException $ "vector length must be in [1.." ++ show maximumVectorLength ++ "]")
-  let catcher :: IOError -> IO (Either String b)
-      catcher e = return (Left (show e))
-  let sols =
-        -- With heuristics
-        (if shift ops
-           then []
-           else parMap
-                  rpar
-                  (\nr -> evalStateT (solveProblem' (ops { shift = True}) probSigs conds aSigs cfSigs nr) prob0)
-                  (if lowerbound ops
-                     then [1]
-                     else if isJust (lowerboundArg ops)
-                            then reverse vecLens
-                            else vecLens))
-        ++
-        -- withouth heuristics
-        parMap
-          rpar
-          (\nr -> evalStateT (solveProblem' ops probSigs conds aSigs cfSigs nr) prob0)
-          (if lowerbound ops
-             then [1]
-             else if isJust (lowerboundArg ops)
-                    then reverse vecLens
-                    else vecLens)
-
-  let getSol (xIO:xs) = E.handle (\(e :: ProgException) -> if null xs then throw e else getSol xs) xIO
-  getSol sols
+  let isLower = lowerbound ops || isJust (lowerboundArg ops)
+  let (solsHeur, sols) =
+        ( parMap
+            rpar
+            (\nr -> evalStateT (solveProblem' (ops {shift = True}) probSigs conds aSigs cfSigs nr) prob0)
+            (if lowerbound ops
+               then [1]
+               else vecLens)
+        , parMap -- without heuristics
+            rpar
+            (\nr -> evalStateT (solveProblem' (ops {shift = False}) probSigs conds aSigs cfSigs nr) prob0)
+            (if lowerbound ops
+               then [1]
+               else vecLens))
+  let getSol False ((xIO, h):xs) =
+        E.handle
+          (\(e :: ProgException) ->
+             if null xs
+               then throw e
+               else getSol False xs)
+          xIO
+      getSol True ((xIO, h):xs) =
+        E.handle
+          (\(e :: ProgException) ->
+             if h && not (null xs)
+               then getSol True xs
+               else case e of
+                      UnsolveableException {} -> throw e
+                      _ ->
+                        if null xs
+                          then throw e
+                          else getSol True xs)
+          xIO
+  let ls h nh | shift ops = [(h,True)]
+              | otherwise = [(nh,False)]
+  let allSols = concat $ zipWith ls solsHeur sols
+  getSol isLower (if not isLower then reverse allSols else allSols)
 
 baseCtrSigDef x y = fst4 (lhsRootSym x) == fst4 (lhsRootSym y) &&
                     getDt (rhsSig x) == getDt (rhsSig y)
@@ -208,7 +218,7 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
   let nonZeroDts = concatMap nonZeroDatatypes (zip [0..] aSigs)
 
   let vecLen | vecLen' == 0 = 1
-             | otherwise = vecLen'
+             | otherwise = trace ("vecLen': " ++ show vecLen') vecLen'
 
   let constr = nubBy baseCtrSigDef $
                filter (thd4 . lhsRootSym) (aSigs++cfSigs)

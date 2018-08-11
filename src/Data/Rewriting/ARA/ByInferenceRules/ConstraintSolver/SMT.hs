@@ -9,9 +9,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Aug  6 13:29:08 2018 (+0200)
+-- Last-Updated: Sat Aug 11 12:19:06 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1919
+--     Update #: 1952
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -154,42 +154,52 @@ solveProblem ops probSigs conds aSigs cfSigs = do
   when (lowerbound ops && maxNrVec > 1) (throw $ FatalException "vector length for this lowerbound method must be 1")
   when (maxNrVec < 1 || maxNrVec > maximumVectorLength) (throw $ FatalException $ "vector length must be in [1.." ++ show maximumVectorLength ++ "]")
   let isLower = lowerbound ops || isJust (lowerboundArg ops)
-  let (solsHeur, sols) =
-        ( parMap
-            rpar
-            (\nr -> evalStateT (solveProblem' (ops {shift = True}) probSigs conds aSigs cfSigs nr) prob0)
-            (if lowerbound ops
-               then [1]
-               else vecLens)
-        , parMap -- without heuristics
-            rpar
-            (\nr -> evalStateT (solveProblem' (ops {shift = False}) probSigs conds aSigs cfSigs nr) prob0)
-            (if lowerbound ops
-               then [1]
-               else vecLens))
-  let getSol False ((xIO, h):xs) =
-        E.handle
-          (\(e :: ProgException) ->
-             if null xs
-               then throw e
-               else getSol False xs)
-          xIO
-      getSol True ((xIO, h):xs) =
-        E.handle
-          (\(e :: ProgException) ->
-             if h && not (null xs)
-               then getSol True xs
-               else case e of
-                      UnsolveableException {} -> throw e
-                      _ ->
-                        if null xs
-                          then throw e
-                          else getSol True xs)
-          xIO
-  let ls h nh | shift ops = [(h,True)]
-              | otherwise = [(nh,False)]
+  let handler (e :: ProgException) = return $ Left e
+  sols <-
+    sequenceA $
+    parMap
+      rpar
+      (\nr -> E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = True}) probSigs conds aSigs cfSigs nr) prob0))
+      (if lowerbound ops
+         then [1]
+         else vecLens)
+  solsHeur <-
+    sequenceA $
+    parMap -- without heuristics
+      rpar
+      (\nr -> E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = False}) probSigs conds aSigs cfSigs nr) prob0))
+      (if lowerbound ops
+         then [1]
+         else vecLens)
+  let getSol False ((x, h):xs) =
+        case x of
+          Left e ->
+            if null xs
+              then throw e
+              else getSol False xs
+          Right x -> x
+      getSol True ((x, h):xs) =
+        case x of
+          Left e ->
+            if h && not (null xs)
+              then getSol True xs
+              else case e of
+                     UnsolveableException {} -> throw e
+                     _ ->
+                       if null xs
+                         then throw e
+                         else getSol True xs
+          Right x -> x
+  let ls h nh
+        | shift ops = [(h, True)]
+        | isLower = [(nh, False), (h, False)]
+        | otherwise = [(nh, False), (h, False)] -- will be reversed!
   let allSols = concat $ zipWith ls solsHeur sols
-  getSol isLower (if not isLower then reverse allSols else allSols)
+  return $
+    getSol False $
+    (if isLower
+       then reverse allSols
+       else allSols)
 
 baseCtrSigDef x y = fst4 (lhsRootSym x) == fst4 (lhsRootSym y) &&
                     getDt (rhsSig x) == getDt (rhsSig y)
@@ -218,10 +228,10 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
   let nonZeroDts = concatMap nonZeroDatatypes (zip [0..] aSigs)
 
   let vecLen | vecLen' == 0 = 1
-             | otherwise = trace ("vecLen': " ++ show vecLen') vecLen'
+             | otherwise = vecLen'
 
-  let constr = nubBy baseCtrSigDef $
-               filter (thd4 . lhsRootSym) (aSigs++cfSigs)
+
+  let constr = nubBy baseCtrSigDef $ filter (thd4 . lhsRootSym) (aSigs++cfSigs)
 
   when lowerb $ do
     let retEqZero = concatMap retDefFunToZero (zip [0..] aSigs ++ zip [0..] cfSigs)
@@ -253,58 +263,54 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
     addFindStrictRulesConstraint nr (snd <$> minus1Vars conds)
 
 
-  unless (shift ops) $ do
-    -- multiplication-constraints (ctr must be linear combination of base ctr)
-    let mConstr = concatMap (toMConstraints ops probSigs) (zip [0..] aSigs ++ zip [0..] cfSigs)
-    addMultConstraints vecLen mConstr
+  if not (shift ops)
+    then do -- multiplication-constraints (ctr must be linear combination of base ctr)
+            let mConstr = concatMap (toMConstraints ops probSigs) (zip [0..] aSigs ++ zip [0..] cfSigs)
+            addMultConstraints vecLen mConstr
 
-    -- bound growth of constructors
-    let growthConstraintsBaseCtr =
-          concatMap (toGrowBoundConstraintsBaseCtr ops probSigs vecLen) constr
-    let growthConstraints =
-          map (toGrowBoundConstraints ops) (zip [0..] aSigs ++ zip [0..] cfSigs)
+            -- bound growth of constructors
+            let growthConstraintsBaseCtr = concatMap (toGrowBoundConstraintsBaseCtr ops probSigs vecLen) constr
+            let growthConstraints = map (toGrowBoundConstraints ops) (zip [0..] aSigs ++ zip [0..] cfSigs)
 
-    -- needed because addition of base ctr can cause problems
-    addConstructorGrowthConstraints ops vecLen growthConstraints
-    addConstructorGrowthConstraints ops vecLen growthConstraintsBaseCtr
+            -- needed because addition of base ctr can cause problems
+            addConstructorGrowthConstraints ops vecLen growthConstraints
+            addConstructorGrowthConstraints ops vecLen growthConstraintsBaseCtr
 
-    when (isJust $ lowerboundArg ops) $ do
-      let costGt0Base = concatMap (toConstantsCostsBaseCtr ops vecLen) constr
-      let costGt0 = concatMap (toConstantsCosts ops vecLen) (zip [0..] aSigs ++ zip [0..] cfSigs)
+            when (isJust $ lowerboundArg ops) $ do
+              let costGt0Base = concatMap (toConstantsCostsBaseCtr ops vecLen) constr
+              let costGt0 = concatMap (toConstantsCosts ops vecLen) (zip [0..] aSigs ++ zip [0..] cfSigs)
 
-      let nonConstCostsGt0Base = concatMap (toNonConstantsCostsBaseCtr ops vecLen) constr
+              let nonConstCostsGt0Base = concatMap (toNonConstantsCostsBaseCtr ops vecLen) constr
 
 
-      -- costsGt0 costGt0Base
-      -- costsGt0 costGt0
-      costsGt0 nonConstCostsGt0Base
+              -- costsGt0 costGt0Base
+              -- costsGt0 costGt0
+              costsGt0 nonConstCostsGt0Base
 
-      let baseConstrParams = map (constrParamsBaseCtr ops vecLen) constr
-      selectOneArgumentPerConstructor ops vecLen baseConstrParams
+              let baseConstrParams = map (constrParamsBaseCtr ops vecLen) constr
+              selectOneArgumentPerConstructor ops vecLen baseConstrParams
 
 
-    -- set max values for base constructors
-    let baseCtrs = map (\x -> (convertToSMTStringText (fst4 (lhsRootSym x))
-                              ,thd4 (lhsRootSym x)
-                              ,length (lhsSig x)
-                              ,removeApostrophes $ show $ getDt (rhsSig x))
-                       ) constr
+            -- set max values for base constructors
+            let baseCtrs = map (\x -> (convertToSMTStringText (fst4 (lhsRootSym x))
+                                      ,thd4 (lhsRootSym x)
+                                      ,length (lhsSig x)
+                                      ,removeApostrophes $ show $ getDt (rhsSig x))
+                               ) constr
 
-    setBaseCtrMaxValues ops probSigs vecLen baseCtrs
+            setBaseCtrMaxValues ops probSigs vecLen baseCtrs
 
-  when (shift ops) $ do
+    else do let ctrSigs = filter (thd4 . lhsRootSym) probSigs
+            let isRecursive x = let rhsDt = fst (rhsSig x)
+                                    lhsDts = map fst (lhsSig x)
+                                in rhsDt `elem` lhsDts
+            let isConstant = null . lhsSig
+            let recCtrSigs = filter isRecursive ctrSigs
+            let nonRecCtrSigs = filter (not . isRecursive) ctrSigs
 
-    let ctrSigs = filter (thd4 . lhsRootSym) probSigs
-    let isRecursive x = let rhsDt = fst (rhsSig x)
-                            lhsDts = map fst (lhsSig x)
-                        in rhsDt `elem` lhsDts
-    let isConstant = null . lhsSig
-    let recCtrSigs = filter isRecursive ctrSigs
-    let nonRecCtrSigs = filter (not . isRecursive) ctrSigs
-
-    let shiftConstr = concatMap (shiftConstraints recCtrSigs nonRecCtrSigs)
-                      (zip [0..] aSigs ++ zip [0..] cfSigs)
-    addHeuristics vecLen shiftConstr
+            let shiftConstr = concatMap (shiftConstraints recCtrSigs nonRecCtrSigs)
+                              (zip [0..] aSigs ++ zip [0..] cfSigs)
+            addHeuristics vecLen shiftConstr
 
 
   -- set cf groups to ==0 or >0
@@ -326,8 +332,7 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
 
 
   let (solVarsNs, solVars) = convertToData vecLen sol
-      ctrSigs = map head $ sortAndGroup $
-                filter (thd4 . lhsRootSym) aSigs
+      ctrSigs = map head $ sortAndGroup $ filter (thd4 . lhsRootSym) aSigs
       cfCtrSigs =
         if any (\x -> "rctr" `isInfixOf` show x && "_cf_" `isInfixOf` show x) (M.keys sol)
         then map head $ sortAndGroup $
@@ -356,7 +361,7 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
          , insertIntoSigs cfSigs solVars
          , solVarsNs
          , m
-         , insertIntoSigsCtr ops probSigs vecLen ctrSigs m
+         , if shift ops then [] else insertIntoSigsCtr ops probSigs vecLen ctrSigs m
          , insertIntoSigsCtr ops probSigs vecLen cfCtrSigs m
          , if isNotConstant then vecLen else 0
          , retFindStrict)

@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Aug  6 13:22:11 2018 (+0200)
+-- Last-Updated: Sat Aug 11 12:18:17 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1253
+--     Update #: 1259
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -285,8 +285,10 @@ main = E.handle (void <$> errorFun Nothing) $ do
     -- print e
 
 
-    unless (shift args) $
-      print (line <>
+    if null baseCtrs
+      then do putStrLn "\nUsed heuristics (no base constructurs)"
+              putStrLn "--------------------------------------"
+      else print (line <>
              P.text "\nBase Constructors:\n------------------"  P.$+$ P.empty P.$+$
              (P.vcat (map prettyAraSignature'
                     (if printInfTree args
@@ -311,14 +313,15 @@ main = E.handle (void <$> errorFun Nothing) $ do
     return $ Just bigO
 
 
-  putStrLn "\n\nParsed Typed Term Rewrite System:\n"
+  putStrLn "\n\nParsed Typed Term Rewrite System:"
+  putStrLn     "---------------------------------\n"
   print $ prettyAraProblem (problem prove)
 
-  when (isJust mBigO) $
-    let bigO = fromJust mBigO in
+
+  let bigO = maybe "1" (("n^"++) . show ) mBigO in
     if lowerbound args || isJust (lowerboundArg args)
-      then putStrLn $ "\n\nBEST_CASE(Omega(n^" ++ show bigO ++ "),?)\n"
-      else putStrLn $ "\n\nWORST_CASE(?,O(n^" ++ show bigO ++ "))\n"
+      then putStrLn $ "\n\nBEST_CASE(Omega(" ++ bigO ++ "),?)"
+      else putStrLn $ "\n\nWORST_CASE(?,O(" ++ bigO ++ "))"
 
 
 errorFun :: Maybe String -> ProgException -> IO (Maybe a)

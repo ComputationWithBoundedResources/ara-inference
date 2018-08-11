@@ -8,9 +8,9 @@
 -- Created: Sun May 22 19:14:44 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Aug  6 13:28:29 2018 (+0200)
+-- Last-Updated: Mon Aug  6 16:44:25 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 356
+--     Update #: 358
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -180,7 +180,7 @@ solveSMTProblem shift keepFiles tempDir = do
   solParser <- gets (^. parseFunction)
 
   case parse solParser sName solStr of
-    Left err -> fail (show err)
+    Left err -> throw $ UnsolveableException (show err)
     Right xs -> return (M.fromList xs)
 
 

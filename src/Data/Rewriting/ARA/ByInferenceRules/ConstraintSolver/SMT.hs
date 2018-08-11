@@ -9,9 +9,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Aug 11 12:19:06 2018 (+0200)
+-- Last-Updated: Sat Aug 11 13:34:38 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1952
+--     Update #: 1963
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -149,25 +149,28 @@ solveProblem ops probSigs conds aSigs cfSigs = do
   let eqZero
         | isJust (lowerboundArg ops) = []
         | otherwise = concatMap constantToZero (zip [0 ..] (map fst3 aSigs) ++ zip [0 ..] (map fst3 cfSigs))
-  let prob0 = execState (addEqZeroConstraints eqZero) (use ops)
+  let probNoShift = execState (addEqZeroConstraints eqZero) (use ops { shift = False })
+  let probShift = execState (addEqZeroConstraints eqZero) (use ops { shift = True })
   let vecLens = [minNrVec .. maxNrVec]
   when (lowerbound ops && maxNrVec > 1) (throw $ FatalException "vector length for this lowerbound method must be 1")
   when (maxNrVec < 1 || maxNrVec > maximumVectorLength) (throw $ FatalException $ "vector length must be in [1.." ++ show maximumVectorLength ++ "]")
   let isLower = lowerbound ops || isJust (lowerboundArg ops)
   let handler (e :: ProgException) = return $ Left e
-  sols <-
+  solsHeur <-
     sequenceA $
     parMap
-      rpar
-      (\nr -> E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = True}) probSigs conds aSigs cfSigs nr) prob0))
+      rpar                      -- with heuristics
+      (\nr -> E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = True}) probSigs conds aSigs cfSigs nr) probShift))
       (if lowerbound ops
          then [1]
          else vecLens)
-  solsHeur <-
+  sols <-
     sequenceA $
     parMap -- without heuristics
       rpar
-      (\nr -> E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = False}) probSigs conds aSigs cfSigs nr) prob0))
+      (\nr -> if shift ops
+              then return $ Left $ FatalException "Shift disabled. Should not be called." -- just here to ensure it is not evaluated
+              else E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = False}) probSigs conds aSigs cfSigs nr) probNoShift))
       (if lowerbound ops
          then [1]
          else vecLens)
@@ -192,9 +195,9 @@ solveProblem ops probSigs conds aSigs cfSigs = do
           Right x -> x
   let ls h nh
         | shift ops = [(h, True)]
-        | isLower = [(nh, False), (h, False)]
-        | otherwise = [(nh, False), (h, False)] -- will be reversed!
-  let allSols = concat $ zipWith ls solsHeur sols
+        | isLower = [(nh, False), (h, True)]
+        | otherwise = [(nh, False), (h, True)] -- will be reversed!
+  let allSols = (if shift ops then filter snd else id) $ concat $ zipWith ls solsHeur sols
   return $
     getSol False $
     (if isLower

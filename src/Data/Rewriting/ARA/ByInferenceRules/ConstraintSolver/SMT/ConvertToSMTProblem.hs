@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Oct 16 15:11:01 2017 (+0200)
+-- Last-Updated: Sat Aug 11 13:29:08 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1636
+--     Update #: 1637
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -84,9 +84,7 @@ infix 4 <>+=
 field <>+= strs = field %= (\x -> foldl (flip S.insert) x strs)
 
 
-addEqZeroConstraints :: (Num a, Ord a, Show a, MonadState SMTProblem m) =>
-                       [ACostCondition a]
-                     -> m ()
+addEqZeroConstraints :: (Num a, Ord a, Show a, MonadState SMTProblem m) => [ACostCondition a] -> m ()
 addEqZeroConstraints eqZero = do
   mapM_ (addVars . fromCostCond) eqZero
   mapM_ (\x -> addConstraint (head (fromCostCond x), Eq, "0")) eqZero

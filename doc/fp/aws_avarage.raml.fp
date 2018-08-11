@@ -252,7 +252,7 @@ let sort_students_efficient student_ids course_ids =
  * ;; *)
 (* let main students courses = sort_students students courses *)
 
-(* let unused = sort_students_efficient students courses *)
+let main students courses = sort_students_efficient students courses
+;;
 
 
-(* ;; *)

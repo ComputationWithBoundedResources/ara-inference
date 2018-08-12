@@ -1,0 +1,44 @@
+
+type var = Var of int
+
+let eq_var (Var v1) (Var v2) = v1 = v2
+
+type funct = Fun of int
+
+let eq_fun (Fun f1) (Fun f1) = f1 = f1
+
+
+type exp = Eadd of exp * exp
+         | Emult of exp * exp
+         | Ediv of exp * exp
+         | Econst of int
+         | Evar of var * exp
+         | Elet of var * exp * exp
+         | Eapp of funct * exp
+
+
+exception DivByZero
+
+let eval2 e =
+
+  let rec eval e =
+    match e with
+    | Eadd (e1, e2) ->
+      (eval e1) + (eval e2)
+    | Emult (e1, e2) ->
+      (eval e1) * (eval e2)
+    | Ediv (e1, e2) ->
+      let n2 = eval e2 in
+      if n2 = 0 then
+        raise DivByZero
+      else
+        (eval e1) / n2
+    | Econst n ->
+      n
+  in
+  eval e
+;;
+let e = Elet(Var 1,Econst 0, Eadd(Econst 1,Econst 1)) in
+eval2 e
+
+    ;; ()

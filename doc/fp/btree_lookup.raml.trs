@@ -1,0 +1,28 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x4 x2 x6 x10 x8 x48 x56 x20 x16 x1)
+(RULES
+    lookup#2(x4,Leaf(x2)) -> anyEq#2(x4,x2)
+    lookup#2(x6,Node(Nil(),ConsTree(x4,x2))) -> lookup#2(x6,x4)
+    lookup#2(x2,Node(Nil(),NilTree())) -> False()
+    lookup#2(x10,Node(Cons(x8,x6),ConsTree(x4,x2))) ->
+      ite2#3(leqNat#2(x10,x8),lookup#2(x10,x4),lookup#2(x10,Node(x6,x2)))
+    lookup#2(x6,Node(Cons(x4,x2),NilTree())) -> False()
+    anyEq#2(x2,Nil()) -> False()
+    anyEq#2(x6,Cons(x4,x2)) -> ite#3(eqNat#2(x6,x4),anyEq#2(x6,x2))
+    ite2#3(True(),x48,x56) -> x48
+    ite2#3(False(),x48,x56) -> x56
+    ite#3(True(),x4) -> True()
+    ite#3(False(),x4) -> x4
+    eqNat#2(0(),0()) -> True()
+    eqNat#2(S(x20),0()) -> False()
+    eqNat#2(S(x4),S(x2)) -> eqNat#2(x4,x2)
+    eqNat#2(0(),S(x20)) -> False()
+    leqNat#2(x8,0()) -> True()
+    leqNat#2(S(x4),S(x2)) -> leqNat#2(x4,x2)
+    leqNat#2(0(),S(x16)) -> False()
+    main(x2,x1) -> lookup#2(x2,x1))
+

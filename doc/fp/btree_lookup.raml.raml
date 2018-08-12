@@ -1,0 +1,21 @@
+type bool = True | False;;
+type tree = Leaf of int list | Node of  int list * tree list;;
+
+let rec append l1 l2 =
+  match l1 with
+    | [] -> l2
+    | x::xs -> x::(append xs l2);;
+
+let rec anyEq nr ys = match ys with
+   | [] -> False
+   | x::xs -> if nr = x then True else anyEq nr xs;;
+
+let rec lookup n node = match node with
+   | Leaf(xs) -> anyEq n xs
+   | Node(nrs,tss) -> match nrs with
+      | [] -> False
+      | nr::ns -> match tss with
+             | t::ts -> if n <= nr then lookup n t else lookup n (Node(ns,ts))
+        | [] -> False
+;;
+()

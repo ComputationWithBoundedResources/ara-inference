@@ -1,0 +1,17 @@
+
+
+type 'a closure = Lam1 of 'a closure * 'a closure | Lam2 | Lam3 of 'a ;;
+
+let rec apply c a = match c with
+  Lam1(f,g) -> apply f (apply g a) | Lam2 -> a | Lam3(x) -> x :: a ;;
+
+let comp f g = Lam1(f,g);;
+
+let rev2 l =
+  let rec walk = function
+    | [] -> Lam2
+    | x :: xs -> comp (walk xs) (Lam3 x)
+in
+  apply (walk l) [];;
+
+rev2 [1;2;3]

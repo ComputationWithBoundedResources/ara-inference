@@ -1,0 +1,13 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x2 x32 x10 x6 x1)
+(RULES
+    rmap#2(Nil(),x2) -> x2
+    rmap#2(Cons(x32,x10),x6) -> rmap#2(x10,Cons(x32,x6))
+    map#2(Nil()) -> Nil()
+    map#2(Cons(x32,x6)) -> Cons(x32,map#2(x6))
+    main(x1) -> map#2(rmap#2(x1,Nil())))
+

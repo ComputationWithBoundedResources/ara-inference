@@ -70,8 +70,6 @@ let rec mult n m = match n with
    | 0 -> 0
    | S(x) -> S(plus (mult x m) m)
 ;;
-type bool = True | False
-;;
 type 'a option = None | Some of 'a
 ;;
 type 'a list = Nil | Cons of 'a * 'a list
@@ -81,30 +79,44 @@ type nat = 0 | S of nat
 type Unit = Unit
 ;;
 type ('a,'b) pair = Pair of 'a * 'b
+;;
+type bool = True | False
+;;
+type tree = Leaf of nat list
+          | Node of  nat list * tree list
+;;
+let rec append l1 l2 =
+  match l1 with
+    | Nil()-> l2
+    | Cons(x,xs) -> Cons(x,(append xs l2))
+;;
+let rec filterLeq nr xs = match xs with
+  | Nil()-> Nil
+  | Cons(x,xs) -> ite (leqNat nr x) (Cons(x,filterLeq nr xs)) (filterLeq nr xs)
+;;
+type exception =  Invalid_Tree
+;;
+let rec takeWhileLeq nr tree = match tree with
+  | Leaf(data) -> data
+  | Node(nrs,tss) ->
+     (match nrs with
+      | Cons(up,rest) ->
+         (match rest with
+          | Nil ->
+             (match tss with
+              | Nil()-> error Invalid_Tree
+              | Cons(tLeq,lastTree) ->
+                 (match lastTree with
+                  | Nil()-> error Invalid_Tree
+                  | Cons(tGt,empty) -> ite (leqNat nr up)
+                               (append (takeWhileLeq nr tLeq) (filterLeq nr (takeWhileLeq nr tGt)))
+                               (Nil)))
+          | Cons(unused,unused') ->
+             (match tss with
+              | Nil()-> error Invalid_Tree
+              | Cons(t,ts) -> ite (leqNat nr up)
+                                  (append (takeWhileLeq nr t) (takeWhileLeq nr (Node(rest,ts))))
+                                  (Nil)))
+      | Nil()-> Nil)
 
-;;
-let comp f g = fun z -> f (g z)
-;;
-let rev1 l =
-  let rec walk xyz = match xyz with
-    | Nil -> (fun ys -> ys)
-    | Cons(x,xs) -> comp (walk xs) (fun ys -> Cons(x,ys))
-  in walk l Nil
-
-;;
-type 'a closure = Lam1 of 'a closure * 'a closure | Lam2 | Lam3 of 'a
-;;
-let rec apply c a = match c with
-  | Lam1(f,g) -> apply f (apply g a) | Lam2 -> a | Lam3(x) -> Cons(x,a)
-;;
-let comp f g = Lam1(f,g)
-;;
-let rev2 l =
-  let rec walk xyz = match xyz with
-    | Nil()-> Lam2
-    | Cons(x,xs) -> comp (walk xs) Lam3(x)
-in
-  apply (walk l) Nil
-;;
-let main = rev2 (rev1 (Cons(S(0),Cons(S(S(0)),Cons(S(S(S(0))),Nil)))))
 ;;

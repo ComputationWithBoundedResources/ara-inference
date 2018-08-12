@@ -1,5 +1,5 @@
 
-FILES=`find . -name "*.raml"`
+FILES=`find . -name "btree_takewhile.raml.raml"`
 
 dtUnit="type Unit = Unit
 

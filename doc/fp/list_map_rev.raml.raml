@@ -25,8 +25,21 @@ let rec map f l =
       (f x)::ys
 
 
+(* The usual list rev_map function. *)
+let map_rev f l =
+  let rec rmap l acc =
+    match l with
+      | [] -> acc
+      | x::xs ->
+	let acc' = (f x)::acc in
+	rmap  xs acc'
+  in
+  rmap l []
+
+
 let _ =
-  let f = fun c -> c * (c*c); Raml.tick 1.0 in
-  let x = [1;2;3;1;3;3] in
-  map f x
+  let f x = let _ = Raml.tick 1.0 in x*x*x in
+  let g x = x+2 in
+  let h x = x in
+  map h (map_rev h [2;3;4;4;5;5;5])
 

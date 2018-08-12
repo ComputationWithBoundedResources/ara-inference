@@ -1,0 +1,43 @@
+type bool = True | False;;
+type tree = Leaf of int list | Node of  int list * tree list;;
+
+let rec append l1 l2 =
+  match l1 with
+    | [] -> l2
+    | x::xs -> x::(append xs l2);;
+
+let rec filterLeq nr xs = match xs with
+  | [] -> []
+  | (x::xs) -> if nr <= x
+                  then
+                    (x::filterLeq nr xs)
+                  else
+                    (filterLeq nr xs)
+;;
+exception Invalid_Tree
+;;
+let rec takeWhileLeq nr tree = match tree with
+  | Leaf(data) -> data
+  | Node(nrs,tss) ->
+     (match nrs with
+      | (up::[]) ->
+         (match tss with
+          | [] -> raise Invalid_Tree
+          | (tLeq::lastTree) ->
+             (match lastTree with
+              | [] -> raise Invalid_Tree
+              | (tGt::empty) -> if nr <= up
+                             then
+                               append (takeWhileLeq nr tLeq) (filterLeq nr (takeWhileLeq nr tGt))
+                             else
+                               []))
+      | (up::nrs') ->
+         (match tss with
+          | [] -> raise Invalid_Tree
+          | (t::ts) -> if nr <= up
+                      then append (takeWhileLeq nr t) (takeWhileLeq nr (Node(nrs',ts)))
+                       else [])
+      | [] -> [])
+
+;;
+()

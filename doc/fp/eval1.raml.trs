@@ -1,0 +1,27 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x9 x10 x11 x2 x1 x4 x3 x8 x16 x20)
+(RULES
+    cond_eval_e_1(Triple(x9,x10,x11)) -> x9
+    eval#1(Eadd(x2,x1)) -> plus#2(eval#1(x2),eval#1(x1))
+    eval#1(Emult(x2,x1)) -> mult#2(eval#1(x2),eval#1(x1))
+    eval#1(Ediv(x2,x1)) -> cond_eval_e_1(div_mod#2(eval#1(x2),eval#1(x1)))
+    eval#1(Econst(x1)) -> x1
+    mult#2(0(),x2) -> 0()
+    mult#2(S(x4),x2) -> S(plus#2(mult#2(x4,x2),x2))
+    cond_div_mod_n_m_2(Triple(x4,x3,x2),x1) -> Triple(plus#2(S(0()),x4),x3,x1)
+    cond_div_mod_n_m(Pair(0(),x2),x1) -> Triple(0(),x1,x2)
+    cond_div_mod_n_m(Pair(S(x3),x2),x1) -> cond_div_mod_n_m_2(div_mod#2(S(x3)
+                                                                       ,x2)
+                                                             ,x2)
+    div_mod#2(x8,x4) -> cond_div_mod_n_m(Pair(minus'#2(x8,x4),x4),x8)
+    plus#2(x8,0()) -> x8
+    plus#2(x4,S(x2)) -> S(plus#2(x4,x2))
+    minus'#2(0(),x16) -> 0()
+    minus'#2(S(x20),0()) -> S(x20)
+    minus'#2(S(x4),S(x2)) -> minus'#2(x4,x2)
+    main(x20) -> eval#1(x20))
+

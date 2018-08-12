@@ -1,0 +1,17 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x1 x2 x8 x16 x4 x12)
+(RULES
+    eval#1(Nat(x1)) -> x1
+    eval#1(Add(x2,x1)) -> add#2(eval#1(x2),eval#1(x1))
+    eval#1(Sub(x2,x1)) -> sub#2(eval#1(x2),eval#1(x1))
+    sub#2(x8,Zero()) -> x8
+    sub#2(Zero(),Succ(x16)) -> Zero()
+    sub#2(Succ(x4),Succ(x2)) -> sub#2(x4,x2)
+    add#2(Zero(),x8) -> x8
+    add#2(Succ(x4),x2) -> Succ(add#2(x4,x2))
+    main(x12) -> eval#1(x12))
+

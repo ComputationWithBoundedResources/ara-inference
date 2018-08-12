@@ -70,7 +70,7 @@ let rec mult n m = match n with
    | 0 -> 0
    | S(x) -> S(plus (mult x m) m)
 ;;
-type bool = True | False
+type 'a option = None | Some of 'a
 ;;
 type 'a list = Nil | Cons of 'a * 'a list
 ;;
@@ -84,28 +84,58 @@ type ('a,'b) pair = Pair of 'a * 'b
  * Resource Aware ML *
  * * * * * * * * * * *
  *
- * * *  Use Cases * *
+ * * *  Use Cases  * *
  *
  * File:
- *   example/list_map.raml
+ *   examples/LogicAndCodes.raml
  *
  * Author:
- *   Jan Hoffmann, Shu-Chun Weng (S(S(0))014)
+ *   Ankush Das (S(S(0))015)
  *
  * Description:
- *   Some variations of list map.
+ *   The third section (“Logic and Codes“) from the OCaml tutorial
+ *   "99 Problems (solved) in OCaml":
+ *     https://ocaml.org/learn/tutorials/99problems.html
  *
  *)
+;;
+type bool = True | False
+;;
+type bool_expr = Var of nat
+               | Not of bool_expr
+               | And of bool_expr * bool_expr
+               | Or of bool_expr * bool_expr
+;;
+type Exception = Invalid | Not_found
 
 ;;
-(* The usual list map function. *)
-let rec map f l =
-  match l with
-    | Nil()-> Nil
-    | Cons(x,xs) ->
-      let ys = map f xs in
-      Cons(f x,ys)
+let lnot b = match b with
+  | True -> False
+  | False -> True
+;;
+let land a b = match a with
+           | False -> False
+           | True -> b
+;;
+let lor a b = match a with
+  | True -> True
+  | False -> b
+
+;;
+let rec eval2 a val_a b val_b xyz = match xyz with
+		| Var(x) -> (ite (eqNat x a) val_a (ite (eqNat x b) val_b (error Invalid)))
+    | Not(e) ->  lnot (eval2 a val_a b val_b e)
+    | And(e1, e2) -> land (eval2 a val_a b val_b e1) (eval2 a val_a b val_b e2)
+    | Or(e1, e2) -> lor (eval2 a val_a b val_b e1) (eval2 a val_a b val_b e2)
+;;
+
+let table2 a b expr =
+    Cons(Triple(True,  True,  eval2 a True  b True  expr),
+    Cons(Triple(True,  False, eval2 a True  b False expr),
+    Cons(Triple(False, True,  eval2 a False b True  expr),
+    Cons(Triple(False, False, eval2 a False b False expr),Nil))))
 
 ;;
 
-let main xs = let f x = mult x (mult x x) in map f xs;;
+
+let main a b expr = table2 a b expr;;

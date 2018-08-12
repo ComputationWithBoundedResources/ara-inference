@@ -46,6 +46,10 @@ let ite b th el = match b with
    | True()-> th
    | False()-> el
 ;;
+let ite2 b th el = match b with
+   | True()-> th
+   | False()-> el
+;;
 let minus n m =
   let rec minus' m n = match m with
         | 0 -> 0
@@ -70,42 +74,39 @@ let rec mult n m = match n with
    | 0 -> 0
    | S(x) -> S(plus (mult x m) m)
 ;;
-type bool = True | False
+type 'a option = None | Some of 'a
 ;;
 type 'a list = Nil | Cons of 'a * 'a list
 ;;
+
+type 'a treelist = NilTree | ConsTree of 'a * 'a treelist
+;;
+
 type nat = 0 | S of nat
 ;;
 type Unit = Unit
 ;;
 type ('a,'b) pair = Pair of 'a * 'b
-
-(* * * * * * * * * * *
- * Resource Aware ML *
- * * * * * * * * * * *
- *
- * * *  Use Cases * *
- *
- * File:
- *   example/list_map.raml
- *
- * Author:
- *   Jan Hoffmann, Shu-Chun Weng (S(S(0))014)
- *
- * Description:
- *   Some variations of list map.
- *
- *)
-
 ;;
-(* The usual list map function. *)
-let rec map f l =
-  match l with
-    | Nil()-> Nil
-    | Cons(x,xs) ->
-      let ys = map f xs in
-      Cons(f x,ys)
+type bool = True | False
+;;
+type tree = Leaf of nat list
+          | Node of nat list * tree treelist
+;;
+let rec anyEq nr ys = match ys with
+   | Nil()-> False
+   | Cons(x,xs) -> ite (eqNat nr x) True() (anyEq nr xs)
+;;
+let rec lookup n node = match node with
+   | Leaf(xs) -> anyEq n xs
+   | Node(nrs,tss) -> match nrs with
+      | Nil()-> (match tss with
+                    | ConsTree(tGt,empty) -> lookup n tGt
+                    | NilTree -> False)
+      | Cons(nr,ns) -> match tss with
+             | ConsTree(t,ts) -> ite2 (leqNat n nr) (lookup n t) (lookup n (Node(ns,ts)))
+             | NilTree()-> False
 
 ;;
 
-let main xs = let f x = mult x (mult x x) in map f xs;;
+

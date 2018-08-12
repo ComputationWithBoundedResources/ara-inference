@@ -86,36 +86,22 @@ let rec mult n1 n2 =
       add n (mult n n2)
 
 ;;
-let rec eval expr =
-  match expr with
-    | Nat(n) -> n
-    | Add(e1,e2) -> (let n1 = eval e1
-                     in match n1 with
-	                      | Zero()-> eval e2
-	                      | Succ(n) -> Succ(eval (Add (Nat(n), e2)) ))
-    | Sub(e1,e2) -> let n2 = eval e2
-                    in match n2 with
-	                     | Zero()-> eval e1
-	                     | Succ(m) -> let n1 = eval e1
-                                    in match n1 with
-		                                   | Zero()-> Zero
-		                                   | Succ(n) -> eval (Sub (Nat(n), Nat(m)))
-    ;;
+let eval_simpl expr =
+  let rec eval expr =
+    match expr with
+      | Nat(n) -> n
+      | Add(e1,e2) ->
+	let n1 = eval e1 in
+	let n2 = eval e2 in
+	add n1 n2
+      | Sub(e1,e2) ->
+	let n1 = eval e1 in
+	let n2 = eval e2 in
+	sub n1 n2
+  in
+  eval expr
 
-(* let rec nat_to_int n =
- *   match n with
- *     | Zero()-> Zero
- *     | Succ(n) ->
- *       let i = nat_to_int n in
- *       plus i Succ(Zero)
- *
- * ;;
- * let main =
- *   let one =  Nat (Succ(Zero)) in
- *   let two1 = Nat (Succ (Succ (Zero))) in
- *   let two2 = Nat (Succ (Succ (Zero))) in
- *   let two3 = Nat (Succ (Succ (Zero))) in
- *   let two4 = Nat (Succ (Succ (Zero))) in
- *   let n = eval (Sub ((Add (Add (two1,two2), Add (two3, one))), two4)) in
- * 	nat_to_int n
- * ;; *)
+;;
+
+let main e = eval_simpl e
+          ;;

@@ -3,21 +3,13 @@
     INNERMOST)
 
 (VAR
-    x1 x2 x13 x8 x27 x25 x17 x36 x10 x6 x4)
+    x2 x5 x4 x1)
 (RULES
-    f#1(x1) -> mult#2(x1,mult#2(x1,x1))
-    rmap1#2(Nil(),x2) -> x2
-    rmap1#2(Cons(x13,Nil()),x8) -> Cons(f#1(x13),x8)
-    rmap1#2(Cons(x27,Cons(x2,x25)),x17) -> rmap1#2(x25
-                                                  ,Cons(plus#2(x2,S(S(0())))
-                                                       ,Cons(f#1(x27),x17)))
-    rmap#2(Nil(),x2) -> x2
-    rmap#2(Cons(x36,x10),x6) -> rmap#2(x10,Cons(x36,x6))
     map#2(Nil()) -> Nil()
-    map#2(Cons(x36,x6)) -> Cons(x36,map#2(x6))
+    map#2(Cons(x2,x5)) -> Cons(mult#2(x2,mult#2(x2,x2)),map#2(x5))
     mult#2(0(),x2) -> 0()
     mult#2(S(x4),x2) -> S(plus#2(mult#2(x4,x2),x2))
     plus#2(x4,0()) -> x4
     plus#2(x4,S(x2)) -> S(plus#2(x4,x2))
-    main(x1) -> map#2(rmap#2(rmap1#2(x1,Nil()),Nil())))
+    main(x1) -> map#2(x1))
 

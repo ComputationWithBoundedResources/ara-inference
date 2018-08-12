@@ -122,19 +122,7 @@ let lor a b = match a with
   | False -> b
 
 ;;
-let rec eval2 a val_a b val_b xyz = match xyz with
-		| Var(x) -> (ite (eqNat x a) val_a (ite (eqNat x b) val_b (error Invalid)))
-    | Not(e) ->  lnot (eval2 a val_a b val_b e)
-    | And(e1, e2) -> land (eval2 a val_a b val_b e1) (eval2 a val_a b val_b e2)
-    | Or(e1, e2) -> lor (eval2 a val_a b val_b e1) (eval2 a val_a b val_b e2)
-;;
-let table2 a b expr =
-    Cons(Triple(True,  True,  eval2 a True  b True  expr),
-    Cons(Triple(True,  False, eval2 a True  b False expr),
-    Cons(Triple(False, True,  eval2 a False b True  expr),
-    Cons(Triple(False, False, eval2 a False b False expr),Nil))))
 
-;;
 let rec assoc k l =
 	match l with
 	| Nil()-> error Not_found

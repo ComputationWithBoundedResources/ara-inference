@@ -107,5 +107,36 @@ let rec map f l =
       Cons(f x,ys)
 
 ;;
+(* The usual list rev_map function. *)
+let map_rev f l =
+  let rec rmap l acc =
+    match l with
+      | Nil()-> acc
+      | Cons(x,xs) -> let acc' = Cons(f x,acc) in
+	                    rmap  xs acc'
+  in rmap l Nil
 
-let main xs = let f x = mult x (mult x x) in map f xs;;
+;;
+(* Iteratively apply two functional arguments. *)
+let map_rev2 f1 f2 l =
+
+  let rec rmap1 l acc =
+    match l with
+      | Nil()-> acc
+      | Cons(x,xs) -> rmap2 xs (Cons(f1 x,acc))
+
+  and rmap2 l acc =
+    match l with
+      | Nil()-> acc
+      | Cons(x,xs) -> rmap1 xs (Cons(f2 x,acc))
+  in
+  rmap1 l Nil
+
+;;
+let main xs =
+  let f x = mult x (mult x x) in
+  let g x = plus x S(S(0)) in
+  let h x = x in
+  let map_f_g = map_rev2 f g in
+  map h (map_rev h (map_f_g xs))
+;;

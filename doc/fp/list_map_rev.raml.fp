@@ -107,5 +107,19 @@ let rec map f l =
       Cons(f x,ys)
 
 ;;
+(* The usual list rev_map function. *)
+let map_rev f l =
+  let rec rmap l acc =
+    match l with
+      | Nil()-> acc
+      | Cons(x,xs) -> let acc' = Cons(f x,acc) in
+	                    rmap  xs acc'
+  in rmap l Nil
 
-let main xs = let f x = mult x (mult x x) in map f xs;;
+;;
+let main xs =
+  let f x = mult x (mult x x) in
+  let g x = plus x S(S(0)) in
+  let h x = x in
+  map h (map_rev h xs)
+;;

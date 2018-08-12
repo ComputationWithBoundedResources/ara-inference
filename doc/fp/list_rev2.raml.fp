@@ -72,6 +72,8 @@ let rec mult n m = match n with
 ;;
 type bool = True | False
 ;;
+type 'a option = None | Some of 'a
+;;
 type 'a list = Nil | Cons of 'a * 'a list
 ;;
 type nat = 0 | S of nat
@@ -80,32 +82,20 @@ type Unit = Unit
 ;;
 type ('a,'b) pair = Pair of 'a * 'b
 
-(* * * * * * * * * * *
- * Resource Aware ML *
- * * * * * * * * * * *
- *
- * * *  Use Cases * *
- *
- * File:
- *   example/list_map.raml
- *
- * Author:
- *   Jan Hoffmann, Shu-Chun Weng (S(S(0))014)
- *
- * Description:
- *   Some variations of list map.
- *
- *)
-
 ;;
-(* The usual list map function. *)
-let rec map f l =
-  match l with
-    | Nil()-> Nil
-    | Cons(x,xs) ->
-      let ys = map f xs in
-      Cons(f x,ys)
-
+type 'a closure = Lam1 of 'a closure * 'a closure | Lam2 | Lam3 of 'a
 ;;
-
-let main xs = let f x = mult x (mult x x) in map f xs;;
+let rec apply c a = match c with
+  | Lam1(f,g) -> apply f (apply g a) | Lam2 -> a | Lam3(x) -> Cons(x,a)
+;;
+let comp f g = Lam1(f,g)
+;;
+let rev2 l =
+  let rec walk xyz = match xyz with
+    | Nil()-> Lam2
+    | Cons(x,xs) -> comp (walk xs) Lam3(x)
+in
+  apply (walk l) Nil
+;;
+let main = rev2 (Cons(S(0),Cons(S(S(0)),Cons(S(S(S(0))),Nil))))
+;;

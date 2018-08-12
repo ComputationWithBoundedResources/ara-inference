@@ -1,0 +1,10 @@
+
+
+let rec foldr f b xs = match xs with
+  | [] -> b
+  | (x::xs) -> f x (foldr f b xs)
+;;
+
+let product ms ns = foldr (fun m ps -> foldr (fun n xs -> (m,n)::xs) ps ns) [] ms
+;;
+()

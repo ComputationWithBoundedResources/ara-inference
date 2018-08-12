@@ -1,0 +1,14 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x8 x12 x40 x14 x56 x6 x3 x2 x1)
+(RULES
+    foldr#3(x8,x12,Nil()) -> x12
+    foldr#3(product_ms_ns_2(x40),x14,Cons(x56,x6)) ->
+      Cons(Pair(x40,x56),foldr#3(product_ms_ns_2(x40),x14,x6))
+    foldr#3(product_ms_ns(x3),Nil(),Cons(x2,x1)) ->
+      foldr#3(product_ms_ns_2(x2),foldr#3(product_ms_ns(x3),Nil(),x1),x3)
+    main(x2,x1) -> foldr#3(product_ms_ns(x1),Nil(),x2))
+

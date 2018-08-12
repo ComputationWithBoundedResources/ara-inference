@@ -1,0 +1,15 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x4 x3 x2 x1 x8 x12 x5)
+(RULES
+    walk#1(Nil()) -> walk_xs()
+    walk#1(Cons(x4,x3)) -> comp_f_g(walk#1(x3),walk_xs_3(x4))
+    comp_f_g#1(comp_f_g(x4,walk_xs_3(x3)),walk_xs_3(x2),x1) ->
+      comp_f_g#1(x4,walk_xs_3(x3),Cons(x2,x1))
+    comp_f_g#1(walk_xs(),walk_xs_3(x8),x12) -> Cons(x8,x12)
+    main(Nil()) -> Nil()
+    main(Cons(x4,x5)) -> comp_f_g#1(walk#1(x5),walk_xs_3(x4),Nil()))
+

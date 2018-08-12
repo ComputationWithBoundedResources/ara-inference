@@ -1,0 +1,15 @@
+type nat = Zero | S of nat;;
+type bool = True | False ;;
+
+let rec even x =
+  match x with
+  | Zero -> True
+  | S(x') -> odd x'
+and odd x =
+  match x with
+  | Zero -> False
+  | S(x') -> even x'
+;;
+
+let main x = even x ;;
+()

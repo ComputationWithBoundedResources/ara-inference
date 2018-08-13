@@ -18,6 +18,7 @@ let rec lookup n node = match node with
       | [] -> raise Invalid_Tree
       | nr::ns -> match tss with
              | t::ts -> if n <= nr then lookup n t else lookup n (Node(ns,ts))
-        | [] -> raise Invalid_Tree
+             | [] -> raise Invalid_Tree
 ;;
 ()
+

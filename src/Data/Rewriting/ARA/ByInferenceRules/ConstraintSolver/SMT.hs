@@ -9,9 +9,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Aug 12 19:20:41 2018 (+0200)
+-- Last-Updated: Mon Aug 13 22:37:58 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1990
+--     Update #: 2008
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -305,10 +305,13 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
             let isConstant = null . lhsSig
             let recCtrSigs = filter isRecursive ctrSigs
             let nonRecCtrSigs = filter (not . isRecursive) ctrSigs
-
-            let shiftConstr = concatMap (shiftConstraints recCtrSigs nonRecCtrSigs)
+            let isLower = lowerbound ops || isJust (lowerboundArg ops)
+            let shiftConstr = concatMap (shiftConstraints isLower recCtrSigs nonRecCtrSigs)
                               (zip [0..] aSigs ++ zip [0..] cfSigs)
             addHeuristics vecLen shiftConstr
+
+            let growthConstraints = map (toGrowBoundConstraints ops) (zip [0..] aSigs ++ zip [0..] cfSigs)
+            addConstructorGrowthConstraints ops vecLen growthConstraints
 
 
   -- set cf groups to ==0 or >0
@@ -400,25 +403,30 @@ ctrArgNotAllZero _ = []
 
 
 shiftConstraints :: (Eq s, Eq sDt, Show s) =>
-                    [Signature (s,ACost Int,Bool,Bool) (sDt, [ACost Int])]
+                    Bool
+                 -> [Signature (s,ACost Int,Bool,Bool) (sDt, [ACost Int])]
                  -> [Signature (s,ACost Int,Bool,Bool) (sDt, [ACost Int])]
                  -> (Int, ASignatureSig s dt)
                  -> [([(ADatatype String Int, Heuristic (ADatatype String Int))],
                       (ACostCondition Int, Heuristic (ADatatype String Int)))]
-shiftConstraints recCtrs nonRecCtrs (nr, Signature (n,_,False,isCf) _ _) = []
-shiftConstraints recCtrs nonRecCtrs (nr, Signature (n,_,_,isCf) [] _) = []
-shiftConstraints recCtrs nonRecCtrs sig@(nr, Signature (n,_,True,isCf) lhs rhs)
-  | null (lhsSig (snd sig)) = []
+shiftConstraints isLower recCtrs nonRecCtrs (nr, Signature (n,_,False,isCf) _ _) = []
+shiftConstraints False recCtrs nonRecCtrs (nr, Signature (n,_,_,isCf) [] _) = []
+shiftConstraints isLower recCtrs nonRecCtrs sig@(nr, Signature (n,_,True,isCf) lhs rhs)
+  | null (lhsSig (snd sig)) = [([],(sigRefCst isCf nr, Zero))] -- One (sigRefRet isCf "" nr)))]
   | forceInterl && length lhsDts < 2 =
       throw $ FatalException $
       "Not enough parameter types for interleaving! Constructor: " ++ show n
   | length lhsCount == 1 =
     [(zipWith (curry toShiftPar) [0..] lhsBools,
                              (sigRefCst isCf nr, Diamond (sigRefRet isCf "" nr)))]
-  | otherwise =                 -- take the first to recursive occurrences for
+  | otherwise =                 -- take the first two recursive occurrences for
                                 -- interleaving
-      [([(sigRefRet isCf "" nr, Interleaving (sigRefParam isCf "" nr (head lhsNrs2))
-        (sigRefParam isCf "" nr (head (tail lhsNrs2))))], (sigRefCst isCf nr, Zero))]
+      [([(sigRefRet isCf "" nr,
+           (Interleaving isLower (sigRefParam isCf "" nr (head lhsNrs2))
+             (sigRefParam isCf "" nr (head (tail lhsNrs2)))))]
+       , (sigRefCst isCf nr, if isLower
+                             then One (sigRefRet isCf "" nr)
+                             else Zero))]
   where ctrSig = fromJust $ find ((==n) . fst4 . lhsRootSym) (recCtrs ++ nonRecCtrs)
         rhsDt = fst (rhsSig ctrSig)
         lhsDts = map fst (lhsSig ctrSig)

@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sun Aug 12 19:20:09 2018 (+0200)
+-- Last-Updated: Mon Aug 13 22:24:11 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1641
+--     Update #: 1661
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -780,7 +780,11 @@ addHeuristics vecLen = mapM_ addHeuristics'
         addHeur (this, Diamond other) = do
           assertions <>= [(head this, Eq, head other)]
           vars <>+= [head this, head other]
-        addHeur (this, Interleaving other1 other2) = do
+        addHeur (this, Interleaving needrev other1' other2') = do
+          let other1 | needrev = reverse other2'
+                     | otherwise = other1'
+          let other2 | needrev = reverse other1'
+                     | otherwise = other2'
           let fun (acc,p1,p2) t
                 | length p1 + length p2 <= vecLen =
                     (acc ++ [(head p1, Eq, "0")] ++ [(head p2, Eq, "0")] , tail p1, tail p2)
@@ -794,6 +798,15 @@ addHeuristics vecLen = mapM_ addHeuristics'
           vars <>+= other1 ++ other2 ++ this
         addHeur (this, Zero) = do
           assertions <>= map (\x -> (x, Eq, "0")) this
+          vars <>+= this
+        addHeur (this, One qs) = do
+          let sumVars = T.concat $ fromListBy return (this++qs)
+          let sumQs = T.concat $ fromListBy return qs
+          let eqZero x = "(= " +++ x +++ " 0)"
+          let gtZero x = "(> " +++ x +++ " 0)"
+          let ctr t = "(or " +++ eqZero sumVars +++ " " +++
+                "(and (= 1 " +++ t +++ ") "+++ gtZero sumQs +++ "))"
+          assertionsStr <>= map ctr this
           vars <>+= this
 
 

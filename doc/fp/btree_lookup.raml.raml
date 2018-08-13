@@ -10,12 +10,14 @@ let rec anyEq nr ys = match ys with
    | [] -> False
    | x::xs -> if nr = x then True else anyEq nr xs;;
 
+exception Invalid_Tree;;
+
 let rec lookup n node = match node with
    | Leaf(xs) -> anyEq n xs
    | Node(nrs,tss) -> match nrs with
-      | [] -> False
+      | [] -> raise Invalid_Tree
       | nr::ns -> match tss with
              | t::ts -> if n <= nr then lookup n t else lookup n (Node(ns,ts))
-        | [] -> False
+        | [] -> raise Invalid_Tree
 ;;
 ()

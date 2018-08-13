@@ -97,15 +97,17 @@ let rec anyEq nr ys = match ys with
    | Nil()-> False
    | Cons(x,xs) -> ite (eqNat nr x) True() (anyEq nr xs)
 ;;
+type Exception = Invalid_Tree;;
+
 let rec lookup n node = match node with
    | Leaf(xs) -> anyEq n xs
    | Node(nrs,tss) -> match nrs with
       | Nil()-> (match tss with
                     | ConsTree(tGt,empty) -> lookup n tGt
-                    | NilTree -> False)
+                    | NilTree -> error Invalid_Tree)
       | Cons(nr,ns) -> match tss with
              | ConsTree(t,ts) -> ite2 (leqNat n nr) (lookup n t) (lookup n (Node(ns,ts)))
-             | NilTree()-> False
+             | NilTree()-> error Invalid_Tree
 
 ;;
 

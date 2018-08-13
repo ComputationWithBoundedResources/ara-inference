@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Aug 11 13:29:08 2018 (+0200)
+-- Last-Updated: Sun Aug 12 19:20:09 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1637
+--     Update #: 1641
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -809,7 +809,7 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
             mapM_ (setMaxOfCosts baseNr) constrNames
             if isJust (lowerboundArg args) || lowerbound args
               then do mapM_ (setMaxOfParamsLower baseNr) constrNames
-                      mapM_ (kGeq1 baseNr) constrNames
+                      -- mapM_ (kGeq1 baseNr) constrNames
               else mapM_ (setMaxOfParamsUpper baseNr) constrNames
         ) [1..vecLen]
 
@@ -850,7 +850,6 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
           assertions <>= constr
 
         setMaxOfParamsLower baseNr (ctrName,isCf,paramLen,ctrType)
-          -- INFO commented following line in
           | not (directArgumentFilter args) = return ()
           | paramLen == 0 = return ()
           | otherwise = do

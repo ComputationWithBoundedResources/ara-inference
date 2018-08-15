@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:19:36 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Oct 20 08:22:03 2017 (+0200)
+-- Last-Updated: Wed Aug 15 10:18:58 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 92
+--     Update #: 94
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -66,6 +66,7 @@ data ArgumentOptions = ArgumentOptions
     , smtSolver               :: SMTSolver
     , findStrictRules         :: Maybe Int
     , directArgumentFilter    :: Bool
+    , nrOfRules               :: Maybe Int    -- value not to set, only to pass through system
     } deriving (Show, Eq)
 
 

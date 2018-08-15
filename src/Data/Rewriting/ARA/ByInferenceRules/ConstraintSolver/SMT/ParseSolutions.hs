@@ -9,7 +9,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 19
+--     Update #: 20
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -86,12 +86,12 @@ unsolveable = do
 timeout :: Parser a
 timeout = do
   _ <- string "timeout"
-  throw $ TimeoutException "The smt solver ran in a timeout."
+  fail "The smt solver ran in a timeout."
 
 timeoutMinismt :: Parser a
 timeoutMinismt = do
   _ <- string "unusual termination"
-  throw $ TimeoutException "The smt solver ran in a timeout."
+  fail "The smt solver ran in a timeout."
 
 solutionMinismt :: Parser [(String, Int)]
 solutionMinismt = do

@@ -8,9 +8,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Fri Oct 20 08:27:03 2017 (+0200)
+-- Last-Updated: Wed Aug 15 10:19:13 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 324
+--     Update #: 325
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -79,6 +79,7 @@ defaultOptions = ArgumentOptions {
                  , smtSolver = Z3
                  , findStrictRules = Nothing
                  , directArgumentFilter = False
+                 , nrOfRules = Nothing
                  }
 
 -- |This function defines the options, the function to be called, when

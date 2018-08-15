@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Sat Aug 11 12:18:17 2018 (+0200)
+-- Last-Updated: Wed Aug 15 10:24:59 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1259
+--     Update #: 1261
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -189,23 +189,24 @@ main = E.handle (void <$> errorFun Nothing) $ do
           else return probParse
 
     -- Find out SCCs
+  let args' = args { nrOfRules = Just $ length (allRules $ TP.rules prob)}
   let reachability = analyzeReachability prob
-  (prove, infTrees) <- analyzeProblem args reachability prob
+  (prove, infTrees) <- analyzeProblem args' reachability prob
 
   mBigO <- E.handle (errorFun $ Just $ "\n\n" <> show (prettyAraProblem (problem prove))) $ do
-    when (verbose args) $ print (prettyProve prove)
+    when (verbose args') $ print (prettyProve prove)
 
     -- Solve cost constraints
     let cond = conditions prove
     let probSig = signatures (problem prove)
 
-    when (isNothing probSig && shift args) $
+    when (isNothing probSig && shift args') $
       E.throw $ FatalException "Shift requires signature information in input TRS."
 
 
     -- Solve datatype constraints
     (sigs, cfSigs, valsNs, vals, baseCtrs, cfBaseCtrs, bigO, (strictRls, weakRls)) <-
-      solveProblem args (fromJust probSig) cond (signatureMap prove) (costFreeSigs prove)
+      solveProblem args' (fromJust probSig) cond (signatureMap prove) (costFreeSigs prove)
 
 
     let line = P.text "\n"
@@ -231,7 +232,7 @@ main = E.handle (void <$> errorFun Nothing) $ do
                                        else (acc, (rn,rule):rns)
 
 
-    when (printInfTree args) $ do
+    when (printInfTree args') $ do
       let grpBy f = groupBy ((==) `on` f) -- . sortBy (compare `on` f)
       let printInfTrees xs = line P.$+$ P.text n P.$+$ P.text (replicate (length n) '-')
                              P.$+$ P.nest 2 (foldl (P.$+$) P.empty docs)
@@ -250,7 +251,7 @@ main = E.handle (void <$> errorFun Nothing) $ do
 
 
     -- print solution
-    if lowerbound args || isJust (lowerboundArg args)
+    if lowerbound args' || isJust (lowerboundArg args')
       then putStrLn $ "BEST_CASE(Omega(n^" ++ show bigO ++ "),?)\n"
       else putStrLn $ "WORST_CASE(?,O(n^" ++ show bigO ++ "))\n"
 
@@ -260,11 +261,11 @@ main = E.handle (void <$> errorFun Nothing) $ do
 
     print (P.text "Solution:\n" <> P.text "---------\n")
     print $ P.vcat $
-      zipWith (\nr x -> (if printInfTree args
+      zipWith (\nr x -> (if printInfTree args'
                         then P.nest 2 $ P.int nr <> P.colon
                         else P.empty)
                         P.<+> prettyAraSignature' x) [0..]
-      (if printInfTree args
+      (if printInfTree args'
         then sigs
         else filter (\x -> not (null mainFun) || not (isMainSig x)) $
              sortBy (compare `on` fst4 . lhsRootSym) (nub sigs))
@@ -272,12 +273,12 @@ main = E.handle (void <$> errorFun Nothing) $ do
     -- Cost free signatures
     print (P.text "\n\nCost Free Signatures:\n" <> P.text "---------------------\n")
     print $ P.vcat $
-      zipWith (\nr x -> (if printInfTree args
+      zipWith (\nr x -> (if printInfTree args'
                          then P.nest 2 $ P.int nr <> P.colon
                          else P.empty)
                         P.<+> prettyAraSignature' x) [0..]
 
-      ( if printInfTree args
+      ( if printInfTree args'
         then cfSigs
         else sortBy (compare `on` fst4 . lhsRootSym) (nub cfSigs))
 
@@ -291,7 +292,7 @@ main = E.handle (void <$> errorFun Nothing) $ do
       else print (line <>
              P.text "\nBase Constructors:\n------------------"  P.$+$ P.empty P.$+$
              (P.vcat (map prettyAraSignature'
-                    (if printInfTree args
+                    (if printInfTree args'
                      then baseCtrs
                      else sortBy (compare `on` fst4 . lhsRootSym) (nub baseCtrs))))
              <> line)
@@ -301,12 +302,12 @@ main = E.handle (void <$> errorFun Nothing) $ do
                P.text "\n-------------------------------------------"
                P.$+$ P.empty P.$+$
                (P.vcat (map prettyAraSignature'
-                      (if printInfTree args
+                      (if printInfTree args'
                        then cfBaseCtrs
                        else sortBy (compare `on` fst4 . lhsRootSym) (nub cfBaseCtrs))))
                <> line)
 
-    when (isJust $ findStrictRules args) $ do
+    when (isJust $ findStrictRules args') $ do
       putStrLn $ "Strict Rules: " ++ show strictRls
       putStrLn $ "Weak Rules: " ++ show weakRls
 
@@ -319,7 +320,7 @@ main = E.handle (void <$> errorFun Nothing) $ do
 
 
   let bigO = maybe "1" (("n^"++) . show ) mBigO in
-    if lowerbound args || isJust (lowerboundArg args)
+    if lowerbound args' || isJust (lowerboundArg args')
       then putStrLn $ "\n\nBEST_CASE(Omega(" ++ bigO ++ "),?)"
       else putStrLn $ "\n\nWORST_CASE(?,O(" ++ bigO ++ "))"
 

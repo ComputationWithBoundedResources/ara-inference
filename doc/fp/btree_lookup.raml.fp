@@ -103,11 +103,9 @@ let rec lookup n node = match node with
    | Leaf(xs) -> anyEq n xs
    | Node(nrs,tss) -> match nrs with
       | Nil()-> (match tss with
-                    | ConsTree(tGt,empty) -> lookup n tGt
-                    | NilTree -> error Invalid_Tree)
+                    | ConsTree(tGt,empty) -> lookup n tGt)
       | Cons(nr,ns) -> match tss with
              | ConsTree(t,ts) -> ite2 (leqNat n nr) (lookup n t) (lookup n (Node(ns,ts)))
-             | NilTree()-> error Invalid_Tree
 
 ;;
 

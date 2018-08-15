@@ -9,9 +9,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Aug 13 22:37:58 2018 (+0200)
+-- Last-Updated: Wed Aug 15 10:37:12 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2008
+--     Update #: 2036
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -65,9 +65,9 @@ import           Data.Rewriting.Typed.Problem
 import           Data.Rewriting.Typed.Rule
 import           Data.Rewriting.Typed.Signature
 
-
 import           Control.Arrow                                                                  hiding
                                                                                                  ((+++))
+import           Control.Concurrent
 import           Control.Exception                                                              as E
 import           Control.Lens                                                                   hiding
                                                                                                  (use)
@@ -77,7 +77,7 @@ import           Control.Monad.State
 import           Control.Parallel.Strategies
 import           Data.Function
                                                                                                  (on)
-
+import           Data.IORef
 import           Data.List
 import qualified Data.Map.Strict                                                                as M
 import           Data.Maybe
@@ -104,16 +104,20 @@ use args =
   where  logic
            | shift args = "QF_LIA"
            | otherwise = "QF_NIA"
-         timeo= timeout args
+         timeo = ((*) mul . fromIntegral) <$> timeout args
+         mul | allowCf args = max 0.5 $ min 0.80 (1-ruleWeight * nrRules)
+             | otherwise = max 0.5 $ min 0.95 (1-ruleWeight * nrRules)
+         nrRules = fromIntegral $ fromMaybe 6 (nrOfRules args)
+         ruleWeight = 0.0070    -- in percent!
 
-z3 :: T.Text -> Maybe Int -> SMTProblem
+z3 :: T.Text -> Maybe Double -> SMTProblem
 z3 logic timeo =
   emptySMTProblem "z3" logic declareAsConst True
   (["-T:" `T.append` T.pack (show $ fromJust timeo) | isJust timeo ] ++ ["-smt2"])
   parseZ3
 
 
-minismt :: T.Text -> Maybe Int -> SMTProblem
+minismt :: T.Text -> Maybe Double -> SMTProblem
 minismt logic timeo =
   emptySMTProblem "minismt" logic declareAsFun False
   (["-t " `T.append` T.pack (show $ fromJust timeo) | isJust timeo ] ++ ["-v2", "-m", "-neg"])
@@ -132,6 +136,19 @@ emptySMTProblem name logic declFun getVals =
 
 declareAsConst n = "(declare-const " +++ n +++ " Int)\n"
 declareAsFun n = "(declare-fun " +++ n +++ " () Int)\n"
+
+doFork :: IO (Either a b) -> IO (IORef (ThreadState a b), ThreadId)
+doFork f = do
+  ref <- newIORef NotReady
+  threadId <- forkIO (f >>= writeIORef ref . Ready)
+  return (ref,threadId)
+
+data ThreadState a b = NotReady | Ready (Either a b)
+
+
+instance Functor (ThreadState a) where
+  fmap f NotReady   = NotReady
+  fmap f (Ready ei) = Ready $ fmap f ei
 
 
 solveProblem :: (Eq s, Eq sDt, Ord s, Show s, Show dt, Ord dt, Show f, Show v) =>
@@ -160,7 +177,7 @@ solveProblem ops probSigs conds aSigs cfSigs = do
     sequenceA $
     parMap
       rpar -- with heuristics
-      (\nr -> E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = True}) probSigs conds aSigs cfSigs nr) probShift))
+      (\nr -> doFork $ E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = True}) probSigs conds aSigs cfSigs nr) probShift))
       (if lowerbound ops
          then [1]
          else (if isLower
@@ -173,21 +190,26 @@ solveProblem ops probSigs conds aSigs cfSigs = do
       rpar
       (\nr ->
          if shift ops
-           then return $ Left $ FatalException "Shift disabled. Should not be called." -- just here to ensure it is not evaluated
-           else E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = False}) probSigs conds aSigs cfSigs nr) probNoShift))
+           then doFork $ return $ Left $ FatalException "Shift disabled. Should not be called." -- just here to ensure it is not evaluated
+           else doFork $ E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = False}) probSigs conds aSigs cfSigs nr) probNoShift))
       (if lowerbound ops
          then [1]
          else (if isLower
                  then reverse
                  else id)
                 vecLens)
-  let getSol ((x, h):xs) =
-        case x of
-          Left e ->
-            if null xs
-              then throw e
-              else getSol xs
-          Right x -> x
+  let getSol xss@(((xIoRef,_), h):xs) = do
+        xState <- readIORef xIoRef
+        case xState of
+          NotReady -> yield >> getSol xss
+          -- threadDelay
+          Ready x ->
+            case x of
+              Left e ->
+                if null xs
+                  then throw e
+                  else getSol xs
+              Right x -> return x
   let ls h nh
         | shift ops = [h]
         | isLower = [h, nh]
@@ -197,7 +219,7 @@ solveProblem ops probSigs conds aSigs cfSigs = do
            then filter snd
            else id) $
         concat $ zipWith ls (zip solsHeur (repeat True)) (zip sols (repeat False))
-  return $ getSol allSols
+  getSol allSols
 
 baseCtrSigDef x y = fst4 (lhsRootSym x) == fst4 (lhsRootSym y) &&
                     getDt (rhsSig x) == getDt (rhsSig y)
@@ -424,6 +446,7 @@ shiftConstraints isLower recCtrs nonRecCtrs sig@(nr, Signature (n,_,True,isCf) l
       [([(sigRefRet isCf "" nr,
            (Interleaving isLower (sigRefParam isCf "" nr (head lhsNrs2))
              (sigRefParam isCf "" nr (head (tail lhsNrs2)))))]
+         ++ map ((\p -> (p, Zero)) . sigRefParam isCf "" nr) lhsRest
        , (sigRefCst isCf nr, if isLower
                              then One (sigRefRet isCf "" nr)
                              else Zero))]
@@ -436,6 +459,7 @@ shiftConstraints isLower recCtrs nonRecCtrs sig@(nr, Signature (n,_,True,isCf) l
         lhsNrs2
           | forceInterl = [0,1] -- take the first two
           | otherwise = take 2 lhsNrs
+        lhsRest = map fst (filter (not.snd) $ zip [0..] lhsBools) ++ if forceInterl then [2..length (lhsSig (snd sig))] else drop 2 lhsNrs
         toShiftPar (parNr, isRec)
           | isRec = (sigRefParam isCf "" nr parNr, Shift (sigRefRet isCf "" nr))
           | otherwise = (sigRefParam isCf "" nr parNr, Zero)

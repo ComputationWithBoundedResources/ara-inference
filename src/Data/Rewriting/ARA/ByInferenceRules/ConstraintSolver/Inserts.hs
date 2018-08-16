@@ -8,9 +8,9 @@
 -- Created: Tue May 24 13:30:55 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Aug 16 15:46:07 2018 (+0200)
+-- Last-Updated: Thu Aug 16 17:29:15 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 144
+--     Update #: 145
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -121,9 +121,6 @@ insertIntoSigCtr :: (Show s, Show dt) =>
                  -> [ASignatureSig String dt]
 insertIntoSigCtr args sigs vecLen m (Signature (n,k,b,isCf) lhs (ActualCost _ retDt rhs)) =
   -- rictr_15_0_div'
-  trace ("re: " ++ show (retDt, "r" ++ cf' ++
-                                "(ctr_"++ cf ++ show n ++ "_" ++ show 0 ++ ")"))
-
   map (\idx ->
 
          Signature (show n ++ "_" ++ removeApostrophes (show retDt),

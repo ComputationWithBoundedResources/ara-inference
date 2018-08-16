@@ -9,9 +9,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Aug 16 15:46:06 2018 (+0200)
+-- Last-Updated: Thu Aug 16 17:27:18 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2038
+--     Update #: 2045
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -432,7 +432,7 @@ shiftConstraints :: (Eq s, Eq sDt, Show s) =>
                  -> [([(ADatatype String Int, Heuristic (ADatatype String Int))],
                       (ACostCondition Int, Heuristic (ADatatype String Int)))]
 shiftConstraints isLower recCtrs nonRecCtrs (nr, Signature (n,_,False,isCf) _ _) = []
-shiftConstraints False recCtrs nonRecCtrs (nr, Signature (n,_,_,isCf) [] _) = []
+shiftConstraints False recCtrs nonRecCtrs (nr, Signature (n,_,True,isCf) [] _) = []
 shiftConstraints isLower recCtrs nonRecCtrs sig@(nr, Signature (n,_,True,isCf) lhs rhs)
   | null (lhsSig (snd sig)) = [([],(sigRefCst isCf nr, Zero))] -- One (sigRefRet isCf "" nr)))]
   | forceInterl && length lhsDts < 2 =

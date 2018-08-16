@@ -7,9 +7,9 @@
 -- Created: Tue May 24 11:48:32 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 16:43:31 2017 (+0200)
+-- Last-Updated: Thu Aug 16 15:05:07 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 274
+--     Update #: 275
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -57,8 +57,7 @@ import           Data.Rewriting.Typed.Signature
 
 import           Control.Arrow
 import           Control.Exception                                             (throw)
-import           Control.Lens                                                  hiding
-                                                                                (use)
+import           Control.Lens                                                  hiding (use)
 import           Control.Monad
 import           Control.Monad.State
 import           Data.Function                                                 (on)
@@ -142,17 +141,17 @@ fromEncoding str
       let typeName = takeWhile (/= '_') (drop 5 str)
           rest = drop (9+length typeName) str
       in "p_cf(ctr_" ++ typeName ++ "_cf_" ++
-         replFirstComma (convertFromSMTString (map remUnderscore rest))
+         replFirstComma (map remUnderscore $ convertFromSMTString rest)
          ++ ")"
   | head str == 'p' && "ctr" `isInfixOf` str =          -- exp.: pctr_A_cons_1_1
       let typeName = takeWhile (/= '_') (drop 5 str)
           rest = drop (6+length typeName) str
       in "p(ctr_" ++ typeName ++ "_" ++
-         replFirstComma (convertFromSMTString (map remUnderscore rest))
+         replFirstComma (map remUnderscore $ convertFromSMTString rest)
          ++ ")"
   | head str == 'p' && "cf" `isInfixOf` str =           -- exp.: p_cf2_0
       "p_cf(" ++
-      convertFromSMTString (map remUnderscore (drop 4 str))
+      map remUnderscore (convertFromSMTString (drop 4 str))
       ++ ")"
   | head str == 'p' =                                   -- exp.: p6_0
       "p(" ++ map remUnderscore (tail str) ++ ")"

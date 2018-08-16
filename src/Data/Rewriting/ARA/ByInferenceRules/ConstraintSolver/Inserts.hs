@@ -8,9 +8,9 @@
 -- Created: Tue May 24 13:30:55 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon May  8 17:00:32 2017 (+0200)
+-- Last-Updated: Thu Aug 16 15:00:02 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 130
+--     Update #: 138
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -58,8 +58,7 @@ import           Data.Rewriting.Typed.Signature
 
 import           Control.Arrow
 import           Control.Exception                                             (throw)
-import           Control.Lens                                                  hiding
-                                                                                (use)
+import           Control.Lens                                                  hiding (use)
 import           Control.Monad
 import           Control.Monad.State
 import           Data.Function                                                 (on)
@@ -75,7 +74,7 @@ import           Text.PrettyPrint                                              h
 
 insertIntoSigs :: [ASignatureSig s dt] -> [Data Vector] -> [ASignatureSig s dt]
 insertIntoSigs acc dt =
-  -- trace ("m: " ++ show m) $
+  trace ("m: " ++ show m) $
   map (insertIntoSig m) (zip [0..] acc)
   where m = M.fromList $ map (\(Data l v) -> (l,v)) dt
 
@@ -121,7 +120,9 @@ insertIntoSigCtr :: (Show s, Show dt) =>
                  -> ASignatureSig s dt
                  -> [ASignatureSig String dt]
 insertIntoSigCtr args sigs vecLen m (Signature (n,k,b,isCf) lhs (ActualCost _ retDt rhs)) =
+  trace ("n: " ++ show n) $
   map (\idx ->
+
          Signature (show n ++ "_" ++ removeApostrophes (show retDt),
                     insertIntoCstCtr m ("k" ++ cf' ++ "(ctr_" ++ cf ++ show n ++ "_" ++
                                            show idx ++ ")", k), b,isCf)

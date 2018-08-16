@@ -8,9 +8,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Aug 15 10:19:13 2018 (+0200)
+-- Last-Updated: Thu Aug 16 15:11:38 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 325
+--     Update #: 328
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -42,17 +42,20 @@ module Data.Rewriting.ARA.ByInferenceRules.CmdLineArguments.Parse
 import           Data.Rewriting.ARA.ByInferenceRules.CmdLineArguments.Type
 import           Data.Rewriting.ARA.Exception
 
-import           Control.Exception.Base                                    (throw)
-import           Data.Foldable                                             (foldlM)
-import           Data.Function                                             (on)
-import           Data.List                                                 (sortBy)
-import           Data.Maybe                                                (fromJust,
-                                                                            isJust,
-                                                                            isNothing)
-import qualified Data.Text                                                 as T
+import           Control.Arrow                                                 (first)
+import           Control.Exception.Base                                        (throw)
+import           Data.Foldable                                                 (foldlM)
+import           Data.Function                                                 (on)
+import           Data.List                                                     (sortBy)
+import           Data.Maybe                                                    (fromJust,
+                                                                                isJust,
+                                                                                isNothing)
+import qualified Data.Text                                                     as T
 import           System.Console.GetOpt
-import           System.Environment                                        (getArgs,
-                                                                            getProgName)
+import           System.Environment                                            (getArgs,
+                                                                                getProgName)
+
+import           Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT.Type
 
 -- |These are the default options. They are used, if the
 -- options do not get set specifically.
@@ -134,7 +137,7 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
                        [(v,[])] -> return (T.dropEnd 1 c,v)
                        _  -> throw $ FatalException $
                              "Cannot parse --ctr-args argument: " ++ show str
-               args <- mapM readNr vals
+               args <- map (first convertToSMTStringText) <$> mapM readNr vals
                return $ opts { constructorArgSelection = args ++ constructorArgSelection opts })
      "LIST")
 

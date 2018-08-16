@@ -8,9 +8,9 @@
 -- Created: Tue May 24 13:30:55 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Aug 16 15:00:02 2018 (+0200)
+-- Last-Updated: Thu Aug 16 15:16:07 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 138
+--     Update #: 139
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -74,7 +74,7 @@ import           Text.PrettyPrint                                              h
 
 insertIntoSigs :: [ASignatureSig s dt] -> [Data Vector] -> [ASignatureSig s dt]
 insertIntoSigs acc dt =
-  trace ("m: " ++ show m) $
+  -- trace ("m: " ++ show m) $
   map (insertIntoSig m) (zip [0..] acc)
   where m = M.fromList $ map (\(Data l v) -> (l,v)) dt
 

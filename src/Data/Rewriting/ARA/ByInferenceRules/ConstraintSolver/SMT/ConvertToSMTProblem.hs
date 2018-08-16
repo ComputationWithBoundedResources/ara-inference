@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Aug 13 22:24:11 2018 (+0200)
+-- Last-Updated: Thu Aug 16 15:15:49 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1661
+--     Update #: 1665
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -462,7 +462,7 @@ selectOneArgumentPerConstructor args vecLen params = do
   mapM_ (addFixedArgumentConstrs vars) (constructorArgSelection args)
 
   where addFixedArgumentConstrs vars (name, nr) = do
-          let vars' = filter ((==name) . snd . T.breakOnEnd "_") vars
+          let vars' = filter (T.isSuffixOf name) vars
           when (null vars') $
             throw $ FatalException $ "Contructor \"" ++ T.unpack name ++
               "\" either not found or does not need at least two arguments" ++

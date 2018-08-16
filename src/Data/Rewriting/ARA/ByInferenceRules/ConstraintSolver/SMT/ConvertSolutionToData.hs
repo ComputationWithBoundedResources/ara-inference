@@ -7,9 +7,9 @@
 -- Created: Tue May 24 11:48:32 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Aug 16 15:05:07 2018 (+0200)
+-- Last-Updated: Thu Aug 16 15:50:28 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 275
+--     Update #: 284
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -87,7 +87,7 @@ convertToData vecLen m =
         map toVector                          -- sort: [[v1_X, v2_X,...], ...]
         $ groupBy ((==) `on` sortFun . fst)   -- group same vars
         $ sortBy (compare `on` sortFun . fst) -- sort for grouping same vars
-        $ M.toList mVs
+        $ map (first convertFromSMTString) $ M.toList mVs
       fromList = map (uncurry Data)
       nsData = fromList ns
   in
@@ -128,7 +128,7 @@ replFirstComma = replCommaNr 1
 fromEncoding       :: String -> String
 fromEncoding str
   | head str == 'v' = fromEncoding (drop 3 str)         -- exp.: v1_k_cf2 ...recurse!
-  | "rictr" `isInfixOf` str = str
+  | "rictr" `isInfixOf` str = str  -- exp.: v3_rictr_15_1_div_PRIME_
   | take 5 str == "kctr_" && "cf_" `isInfixOf` str =    -- exp.: kctr_NAT_cf_cons_2
       "k_cf(" ++ tail str ++ ")"
   | take 4 str == "k_cf" = "k_cf(" ++ drop 4 str ++ ")" -- exp.: k_cf2
@@ -141,17 +141,17 @@ fromEncoding str
       let typeName = takeWhile (/= '_') (drop 5 str)
           rest = drop (9+length typeName) str
       in "p_cf(ctr_" ++ typeName ++ "_cf_" ++
-         replFirstComma (map remUnderscore $ convertFromSMTString rest)
+         replFirstComma (map remUnderscore rest)
          ++ ")"
   | head str == 'p' && "ctr" `isInfixOf` str =          -- exp.: pctr_A_cons_1_1
       let typeName = takeWhile (/= '_') (drop 5 str)
           rest = drop (6+length typeName) str
       in "p(ctr_" ++ typeName ++ "_" ++
-         replFirstComma (map remUnderscore $ convertFromSMTString rest)
+         replFirstComma (map remUnderscore rest)
          ++ ")"
   | head str == 'p' && "cf" `isInfixOf` str =           -- exp.: p_cf2_0
       "p_cf(" ++
-      map remUnderscore (convertFromSMTString (drop 4 str))
+      map remUnderscore (drop 4 str)
       ++ ")"
   | head str == 'p' =                                   -- exp.: p6_0
       "p(" ++ map remUnderscore (tail str) ++ ")"

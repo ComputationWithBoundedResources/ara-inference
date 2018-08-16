@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:14 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Aug 16 15:15:49 2018 (+0200)
+-- Last-Updated: Thu Aug 16 15:25:55 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1665
+--     Update #: 1666
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -852,14 +852,14 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
           let constr = foldl constrFun [] rs
           assertions <>= constr
 
-        setMaxOfCosts baseNr (ctrName,isCf,_,ctrType) = do
+        setMaxOfCosts baseNr (ctrName,isCf,paramLen,ctrType) = do
           let baseCf = if isCf && separateBaseCtr args then ctrType ++ "_cf_" else ctrType ++ "_"
           let var :: ACostCondition Int
               var = AVariableCondition $
                     "kctr_" ++ baseCf ++ T.unpack (convertToSMTText ctrName) ++ "_"
                     ++ show baseNr
           let k = head (fromCostCond var)
-          let constr = [("1",Geq,k)]
+          let constr = if isLower && paramLen == 0 then [("0",Eq,k)] else [("1",Geq,k)]
           assertions <>= constr
 
         setMaxOfParamsLower baseNr (ctrName,isCf,paramLen,ctrType)
@@ -892,6 +892,8 @@ setBaseCtrMaxValues args sigs vecLen constrNames =
             constr
           assertions <>= -- trace ("constr': " ++ show constr')
             constr'
+        isLower = isJust (lowerboundArg args) || lowerbound args
+
 
 addCfGroupsConstraints :: (Monad m) =>
                          Int

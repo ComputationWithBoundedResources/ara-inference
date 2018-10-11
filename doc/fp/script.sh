@@ -1,5 +1,5 @@
 
-FILES=`find . -name "product.raml.raml"`
+FILES=`find . -name "avanzini_original.raml.raml"`
 
 dtUnit="type Unit = Unit
 

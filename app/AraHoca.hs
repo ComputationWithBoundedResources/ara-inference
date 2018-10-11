@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Aug 15 10:24:59 2018 (+0200)
+-- Last-Updated: Wed Aug 29 08:22:31 2018 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1261
+--     Update #: 1266
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -318,11 +318,11 @@ main = E.handle (void <$> errorFun Nothing) $ do
   putStrLn     "---------------------------------\n"
   print $ prettyAraProblem (problem prove)
 
-
+  putStrLn "\n"
   let bigO = maybe "1" (("n^"++) . show ) mBigO in
     if lowerbound args' || isJust (lowerboundArg args')
-      then putStrLn $ "\n\nBEST_CASE(Omega(" ++ bigO ++ "),?)"
-      else putStrLn $ "\n\nWORST_CASE(?,O(" ++ bigO ++ "))"
+      then putStrLn $ "BEST_CASE(Omega(" ++ bigO ++ "),?)"
+      else putStrLn $ maybe "MAYBE" (\bigO -> "WORST_CASE(?,O(n^" ++ show bigO ++ "))\n") mBigO
 
 
 errorFun :: Maybe String -> ProgException -> IO (Maybe a)

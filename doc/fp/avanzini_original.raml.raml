@@ -1,0 +1,19 @@
+(* let comp f g = fun z -> f (g z);;
+ *
+ * let rec walk xs =
+ *   match xs with
+ *   | [] -> (fun z -> z)
+ *   | x::ys -> comp (walk ys) (fun z -> x::z) ;;
+ *
+ * let rev l = walk l [] ;;
+ *
+ * let main l = rev l ;; *)
+
+
+let comp f g = fun z -> f (g z);;
+let rec walk xs = match xs with
+  | [] -> (fun z -> z)
+  | x::ys -> comp (walk ys) (fun z -> x::z);;
+let reverse xs = walk xs [];;
+
+

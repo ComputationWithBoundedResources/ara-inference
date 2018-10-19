@@ -1,0 +1,23 @@
+
+(* flatten example from 'Static Determination of Quantitative Resource Usage for Higher-Order Programs' by Jost et. al. *)
+
+type btree = Leaf of int | Node of btree*btree;;
+let cons x xs = x::xs ;;
+
+let rec dfsAcc g t acc =
+  match t with
+  | Leaf(x) -> g x acc
+  | Node(t1,t2) -> dfsAcc g t2 (dfsAcc g t1 acc)
+;;
+
+
+let rec revApp l acc =
+  match l with
+  | [] -> acc
+  | y::ys -> revApp ys (y::acc)
+;;
+
+let flatten t = revApp (dfsAcc cons t []) []
+;;
+
+let main t = flatten t;;

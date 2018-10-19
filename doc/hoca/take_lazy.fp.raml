@@ -1,0 +1,13 @@
+let rec take_l n xs =
+  match force xs with
+  | [] -> []
+  | x::xs' ->
+     match n with
+     | Zero -> []
+     | S(n') -> x::take_l n' xs'
+;;
+
+let rec zeros = lazy Zero:: zeros
+;;
+
+let main n zeros = take_l n zeros;;

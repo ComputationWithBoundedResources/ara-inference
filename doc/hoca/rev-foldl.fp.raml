@@ -1,0 +1,14 @@
+(* Richard Bird: Introduction to functional programming using Haskell, Section 7.2 *)
+
+let rec foldl f z xs =
+  match xs with
+  | [] -> z
+  | x::xs' -> foldl f (f z x) xs'
+;;
+
+let prefix xs x = x::xs;;
+
+let rev = foldl prefix [];;
+
+let main l = rev l;;
+

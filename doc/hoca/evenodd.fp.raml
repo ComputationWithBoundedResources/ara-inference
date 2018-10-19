@@ -1,0 +1,12 @@
+type nat = Zero | S of nat;;
+
+let evenodd x =
+  let rec even x =
+    match x with
+    | Zero -> true
+    | S(x') -> odd x'
+  and odd x =
+    match x with
+    | Zero -> false
+    | S(x') -> even x'
+  in even x;;

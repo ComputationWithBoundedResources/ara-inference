@@ -1,0 +1,15 @@
+let comp f g x = f (g x) ;;
+
+(* rev :: list -> list *)
+let rev l =
+  (* walk :: list -> (list -> list) *)
+  let rec walk xs =
+    match xs with
+    | [] -> (fun x -> x)
+    | x::xs' ->
+       comp (walk xs') (fun ys -> x::ys)
+  in walk l []
+;;
+
+let main l = rev l;;
+

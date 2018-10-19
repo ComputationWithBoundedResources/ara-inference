@@ -1,0 +1,74 @@
+type nat = Zero | S of nat | M of nat;;
+
+(* max : nat -> nat -> nat *)
+let rec max x y =
+  match x with
+  | Zero -> y
+  | S(x') ->
+     match y with
+     | Zero -> x
+     | S(y') -> S(max x' y')
+;;
+
+(* plus : nat -> nat -> nat *)
+let rec plus x y =
+  match x with
+  | Zero -> y
+  | S(x') -> S(plus x' y)
+;;
+
+(* minus : nat -> nat -> nat *)
+let rec minus x y =
+  match x with
+  | Zero -> Zero
+  | S(x') ->
+     match y with
+     | Zero -> x
+     | S(y') -> minus x' y'
+;;
+
+(* foldl: (nat -> nat -> nat) -> nat -> nat list -> nat *)
+let rec foldl f z xs =
+  match xs with
+  | [] -> z
+  | x::xs' -> foldl f (f z x) xs'
+;;
+
+(* maxlist : int list -> int *)
+let maxlist = foldl max Zero ;;
+
+exception Scanr_error;;
+
+(* scanr: (nat -> nat -> nat) -> nat -> nat list -> nat list *)
+let rec scanr f z xs =
+  match xs with
+  | [] -> z::[]
+  | x::xs' ->
+     match scanr f z xs' with
+     | [] -> raise Scanr_error
+     | y::ys -> f x y:: (y::ys)
+;;
+
+let mms l =
+  (* f x y == max Zero (plus x y) *)
+  let rec f x y =
+    match x with
+    | Zero ->
+       (match y with
+        | Zero -> Zero
+        | M(y') -> Zero
+        | S(y') -> y)
+    | M(x') ->
+       (match y with
+        | Zero -> Zero
+        | M(y') -> Zero
+        | S(y') -> minus y x')
+    | S(x') ->
+       (match y with
+        | Zero -> x
+        | M(y') -> minus x y'
+        | S(y') -> plus x y)
+  in maxlist (scanr f Zero l)
+;;
+
+let main input = mms input;;

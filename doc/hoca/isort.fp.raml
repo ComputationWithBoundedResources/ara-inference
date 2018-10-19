@@ -1,0 +1,28 @@
+type nat = Zero | S of nat;;
+
+let rec leq x y =
+  match x with
+    | Zero -> true
+    | S(x') ->
+       match y with
+       | Zero -> false
+       | S(y') -> leq x' y'
+;;
+let rec insert ord x ys =
+  match ys with
+  | [] -> x::[]
+  | y::ys' ->
+     match ord x y with
+     | true -> x::(y::ys')
+     | false -> y::insert ord x ys'
+;;
+let rec sort ord ys =
+  match ys with
+  | [] -> []
+  | y::ys' ->
+     insert ord y (sort ord ys')
+;;
+
+let main ys = sort leq ys;;
+
+

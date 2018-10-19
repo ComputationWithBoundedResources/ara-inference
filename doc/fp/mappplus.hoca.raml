@@ -1,0 +1,17 @@
+type nat = Zero | S of nat;;
+
+let rec map f xs =
+  match xs with
+  | [] -> []
+  | x::xs' -> f x:: map f xs'
+;;
+
+let rec plus x y =
+  match x with
+  | Zero -> y
+  | S(x') -> S(plus x' y)
+;;
+
+let main x l =  map (plus x) l ;;
+
+

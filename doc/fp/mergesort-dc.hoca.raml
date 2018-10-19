@@ -1,0 +1,102 @@
+type nat = Zero | S of nat;;
+
+let rec mapL f xs =
+  match xs with
+  | [] -> []
+  | x::xs' -> f x:: mapL f xs'
+;;
+
+let rec length xs =
+  match xs with
+  | [] -> Zero
+  | x::xs' -> S(length xs')
+;;
+
+let rec leq x y =
+  match x with
+    | Zero -> true
+    | S(x') ->
+       match y with
+       | Zero -> false
+       | S(y') -> leq x' y'
+;;
+
+let const f x = f;;
+
+let rec halve x =
+  match x with
+  | Zero -> Zero
+  | S(x') ->
+     match x' with
+     | Zero -> S(Zero)
+     | S(x'') -> S(halve x'')
+;;
+
+exception Tail_error_empty_list;;
+exception Head_error_empty_list;;
+
+let tail l =
+  match l with
+  | [] -> raise Tail_error_empty_list
+  | l::ls -> ls
+;;
+
+let head l =
+  match l with
+  | [] -> raise Head_error_empty_list
+  | l::ls -> l
+;;
+
+let rec take n l =
+  match n with
+  | Zero -> []
+  | S(n') -> head l:: take n' (tail l)
+;;
+
+let rec drop n l =
+  match n with
+  | Zero -> l
+  | S(n') -> drop n' (tail l)
+;;
+
+
+let divideAndConquer isDivisible solve divide combine initial =
+  let rec dc pb =
+    match isDivisible pb with
+    | false -> solve pb
+    | true -> combine pb (mapL dc (divide pb))
+  in dc initial
+;;
+
+let rec merge ys zs =
+  match ys with
+  | [] -> zs
+  | y::ys' ->
+     match zs with
+     | [] -> ys
+     | z::zs' ->
+	match leq y z with
+	| true -> y::merge ys' zs
+	| false -> z::merge ys zs'
+;;
+
+let mergesort =
+  let divisible ys =
+    match ys with
+    | [] -> false
+    | y::ys' ->
+       match ys' with
+       | [] -> false
+       | y'::ys'' -> true
+  and divide ys =
+    let n = halve (length ys)
+    in take n ys:: (drop n ys :: [])
+  and combine p =
+    match p with
+    | l1::p' ->
+       match p' with
+       | l2::p'' -> merge l1 l2
+  in divideAndConquer divisible (fun ys -> ys) divide (const combine)
+;;
+
+let main zs = mergesort zs;;

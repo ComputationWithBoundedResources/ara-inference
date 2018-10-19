@@ -1,0 +1,13 @@
+type nat = Zero | S of nat;;
+
+let rec iter f g x =
+  match x with
+  | Zero -> g
+  | S(x') -> f (iter f g x')
+;;
+let compS f z = f (S(z))
+;;
+let id y = y
+;;
+
+let main n = iter compS id n Zero;;

@@ -1,0 +1,48 @@
+let rec zipwith_l f xs ys =
+  lazy (match force xs with
+	| [] -> []
+	| x::xs' ->
+	   match force ys with
+	   | [] -> []
+	   | y::ys' -> f x y:: zipwith_l f xs' ys')
+;;
+
+let rec plus x y =
+  match x with
+  | Zero -> y
+  | S(x') -> S(plus x' y)
+;;
+
+let tail_l xs =
+  match force xs with
+  | [] -> Error_empty_list
+  | x::xs' -> xs'
+;;
+
+let rec nth_l n xs =
+  match force xs with
+  | [] -> Error_nth_l
+  | x::xs' ->
+     match n with
+     | Zero -> x
+     | S(n') -> nth_l n' xs'
+;;
+
+let fix f =
+  let rec x = lazy (force (f x))
+  in x
+;;
+
+let rec take_l n xs =
+  match force xs with
+  | [] -> []
+  | x::xs' ->
+     match n with
+     | Zero -> []
+     | S(n') -> x::take_l n' xs'
+;;
+
+let rec fibs = lazy Zero :: lazy 1 :: zipwith_l plus fibs (tail_l fibs)
+;;
+
+take_l n fibs

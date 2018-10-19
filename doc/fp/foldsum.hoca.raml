@@ -1,0 +1,27 @@
+type nat = Zero | S of nat;;
+
+let rec foldr f z xs =
+  match xs with
+  | [] -> z
+  | x::xs' -> f x (foldr f z xs')
+;;
+
+let rec plus x y =
+  match x with
+  | Zero -> y
+  | S(x') -> S(plus x' y)
+;;
+
+let rec mapF f xs =
+  match xs with
+  | [] -> []
+  | x::xs' -> f x:: mapF f xs'
+;;
+
+let comp f g z = f (g z)
+;;
+
+let id x = x
+;;
+
+let main l = foldr comp id (mapF plus l) Zero;;

@@ -1,0 +1,13 @@
+
+type 'a xx = E | Z of 'a xx | O of 'a xx;;
+
+let rec flip x =
+  match x with
+  | E -> E
+  | Z(x') -> O(flip x')
+  | O(x') -> Z(flip x')
+;;
+
+let main w = flip w;;
+
+

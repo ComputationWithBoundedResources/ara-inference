@@ -1,3 +1,9 @@
+type 'a option = None | Some of 'a;;
+type nat = 0 | S of nat;;
+type 'a list = Nil | Cons of 'a * 'a list ;;
+type 'a listL = NilL | ConsL of 'a * 'a listL ;;
+
+
 let rec zipwith_l f xs ys =
   lazy (match force xs with
 	| NilL -> NilL
@@ -5,24 +11,24 @@ let rec zipwith_l f xs ys =
 	   match force ys with
 	   | NilL -> NilL
 	   | ConsL(y,ys') -> ConsL(f x y, zipwith_l f xs' ys'))
-;; 
+;;
 
-let rec plus x y = 
+let rec plus x y =
   match x with
   | 0 -> y
   | S(x') -> S(plus x' y)
-;;	      
+;;
 
 let tail_l xs =
   match force xs with
   | NilL -> Error_empty_list
   | ConsL(x,xs') -> xs'
-;;		     
-    
+;;
+
 let rec nth_l n xs =
   match force xs with
   | NilL -> Error_nth_l
-  | ConsL(x,xs') -> 
+  | ConsL(x,xs') ->
      match n with
      | 0 -> x
      | S(n') -> nth_l n' xs'
@@ -40,9 +46,9 @@ let rec take_l n xs =
      match n with
      | 0 -> Nil
      | S(n') -> Cons(x,take_l n' xs')
-;;		    
-     
-let rec fibs = lazy ConsL(0, lazy ConsL(S(0), zipwith_l plus fibs (tail_l fibs)))
-;; 
+;;
 
-take_l n fibs  
+let rec fibs = lazy ConsL(0, lazy ConsL(S(0), zipwith_l plus fibs (tail_l fibs)))
+;;
+
+let main n = take_l n fibs  ;;

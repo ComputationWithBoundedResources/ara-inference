@@ -1,3 +1,9 @@
+type nat = 0 | S of nat
+;;
+
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+
 let rec map f xs = 
   match xs with
   | Nil -> Nil 
@@ -10,7 +16,8 @@ let rec plus x y =
   | S(x') -> S(plus x' y)
 ;;	      
 
-  map (plus x) l
+let mapplus l x = map (plus x) l
+;;  
 
 
     

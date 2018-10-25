@@ -1,6 +1,11 @@
-type nat = Zero | S of nat;;
-type 'a maybe = Nothing | Just of 'a;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
 
+type nat = Zero | S of nat
+;;
+
+type 'a option = None | Some of 'a
+;;
 
 let rec plus x y =
   match x with
@@ -19,35 +24,34 @@ let square x = mult x x
 
 let rec unfoldr f z =
   match f z with
-  | Nothing -> []
-  | Just(z') -> z'::unfoldr f z'
+  | None -> Nil
+  | Some(z') -> Cons(z',unfoldr f z')
 ;;
 
 let countdown m =
   match m with
-  | Zero -> Nothing
-  | S(m') -> Just(m')
+  | Zero -> None
+  | S(m') -> Some(m')
 ;;
 
 let enum n =
   match n with
-  | Zero -> []
-  | S(n') -> n:: unfoldr countdown n
+  | Zero -> Nil
+  | S(n') -> Cons(n, unfoldr countdown n)
 ;;
 
 let rec map f xs =
   match xs with
-  | [] -> []
-  | x::xs' -> f x:: map f xs'
+  | Nil -> Nil
+  | Cons(x,xs') -> Cons(f x, map f xs')
 ;;
 
 let rec sum xs =
   match xs with
-  | [] -> Zero
-  | x::xs' -> plus x (sum xs')
+  | Nil -> Zero
+  | Cons(x,xs') -> plus x (sum xs')
 ;;
 
 let sum_sqs n = sum (map square (enum n))
 ;;
-
-let main n = sum_sqs n;;
+()

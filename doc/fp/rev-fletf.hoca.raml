@@ -1,7 +1,10 @@
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+
 let rec foldr f z xs =
   match xs with
-  | [] -> z
-  | x::xs' -> f x (foldr f z xs')
+  | Nil -> z
+  | Cons(x,xs') -> f x (foldr f z xs')
 ;;
 
 let fleft op e xs =
@@ -9,7 +12,6 @@ let fleft op e xs =
   in foldr step (fun u -> u) xs e
 ;;
 
-let rev = fleft (fun xs x -> x::xs) []
+let rev l = fleft (fun xs x -> Cons(x,xs)) Nil l
 ;;
-
-let main l = rev l;;
+()

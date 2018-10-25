@@ -1,8 +1,10 @@
-type nat = Zero | S of nat;;
+
+type nat = Zero | S of nat
+;;
 
 let pred x =
   match x with
-  | S(y) -> y
   | Zero -> Zero
+  | S(x') -> x'
 ;;
-let main x = pred x;;
+()

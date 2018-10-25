@@ -1,27 +1,36 @@
-type nat = Zero | S of nat;;
+type nat = Zero | S of nat
+;;
+
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+
+type bool = False | True
+;;
 
 let rec leq x y =
   match x with
-    | Zero -> true
+    | Zero -> True
     | S(x') ->
        match y with
-       | Zero -> false
+       | Zero -> False
        | S(y') -> leq x' y'
 ;;
 let rec insert ord x ys =
   match ys with
-  | [] -> x::[]
-  | y::ys' ->
+  | Nil -> Cons(x,Nil)
+  | Cons(y,ys') ->
      match ord x y with
-     | true -> x::(y::ys')
-     | false -> y::insert ord x ys'
+     | True -> Cons(x,Cons(y,ys'))
+     | False -> Cons(y,insert ord x ys')
 ;;
 let rec fold f z xs =
   match xs with
-  | [] -> z
-  | x::xs' -> f x (fold f z xs')
+  | Nil -> z
+  | Cons(x,xs') -> f x (fold f z xs')
 ;;
 
-let main ys = fold (insert leq) [] ys;;
+let isort ys = fold (insert leq) Nil ys
+;;
+()
 
 

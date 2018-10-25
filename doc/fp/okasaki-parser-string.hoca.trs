@@ -1,0 +1,9 @@
+
+(STRATEGY
+    INNERMOST)
+
+(VAR
+    x2623)
+(RULES
+    main(x2623) -> bind_p_f#5(x2623))
+

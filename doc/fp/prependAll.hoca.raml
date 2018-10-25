@@ -1,0 +1,36 @@
+(*
+map f [] = [];
+map f (x:xs) = (f x) : (map f xs);
+
+append [] ys = ys;
+append (x:xs) ys = x : (append xs ys);
+
+prependAll xs ys = map (append xs) ys;
+*)
+
+let rec map f xs =
+  match xs with
+  | [] -> []
+  | x :: xs' -> (f x) :: map f xs'
+;;
+
+
+let rec append xs ys =
+  match xs with
+  | [] -> ys
+  | x :: xs' -> x :: (append xs' ys)
+;;
+
+let prependAll xs ys = map (append xs) ys
+;;
+
+let l1 = [1;2] in
+let l2 = [[3;4]] in
+prependAll l1 l2
+;;
+
+(*
+
+A bound for prependAll could not be derived. The linear program is infeasible.
+
+*)

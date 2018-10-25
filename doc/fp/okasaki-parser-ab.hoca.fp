@@ -1,3 +1,15 @@
+
+type bool = True | False;;
+
+type nat = 0 | S of nat;;
+
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+
+type char = SLASH | DOT | MINUS | GT | LPAREN | RPAREN | SPACE | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z | Unit;;
+
+type 'a res = ParseSuccess of 'a * char list | ParseFail of nat;;
+
 let rec max x y =
   match x with
   | 0 -> y
@@ -12,7 +24,7 @@ let not b =
   | True -> False
   | False -> True
 ;;
-  
+
 let eqChar x y =
   match x with
   | A -> (match y with
@@ -27,7 +39,7 @@ let eqChar x y =
 	  | A -> False
 	  | B -> False
 	  | C -> True)
-;;	   
+;;
 (* let eqChar x y = *)
 (*   match x with *)
 (*   | SLASH -> (match y with  *)
@@ -1153,9 +1165,9 @@ let eqChar x y =
 (*            | Y -> False *)
 (*            | Z -> True) *)
 (* ;; *)
-	
+
 let isAlphaChar x =
-  match x with 
+  match x with
   | SLASH -> False
   | DOT -> False
   | MINUS -> False
@@ -1190,11 +1202,11 @@ let isAlphaChar x =
   | Y -> True
   | Z -> True
 ;;
-  
-(* 
-  type 'a parser = 'a SuccCont -> FailCont -> Token list -> Line -> Ans 
+
+(*
+  type 'a parser = 'a SuccCont -> FailCont -> Token list -> Line -> Ans
   type FailCont = Line -> Ans
-  type 'a SuccCont = 'a -> FailCont -> Token list -> Line -> Ans 
+  type 'a SuccCont = 'a -> FailCont -> Token list -> Line -> Ans
 
 *)
 
@@ -1202,7 +1214,7 @@ let runParser p str = (force p) (fun a fc tl ln -> ParseSuccess(a,tl)) (fun ln -
 
 (* return: 'a -> 'a parser *)
 let return x = lazy (fun sc -> sc x) ;;
-  
+
 (* fail : 'a parser *)
 let fail = lazy (fun sc fc ts n -> fc n) ;;
 
@@ -1213,30 +1225,29 @@ let bind p f = lazy (fun sc -> (force p) (fun x -> (force (f x)) sc));;
 (* alt : 'a parser -> 'a parser -> 'a parser *)
 let alt p q  =
   lazy
-    (fun sc fc ts n -> 
+    (fun sc fc ts n ->
      let fcp np = (force q) sc (fun nq -> fc (max np nq)) ts n
      in (force p) sc fcp ts n)
-;;	  
-  
+;;
+
 (* any : Token parser *)
-let any = lazy (fun sc fc ts n -> 
+let any = lazy (fun sc fc ts n ->
 		match ts with
 		| Nil -> fc n
 		| Cons(t,ts') -> sc t fc ts' S(n))
-;;			
+;;
 
 let eos = lazy (fun sc fc ts n ->
 		match ts with
 		| Nil -> sc Unit fc ts n
 		| Cons(t,ts') -> fc n)
-;;	       
-  
-  
-  
-(* seq : ('a -> 'b -> 'c) -> 'a parser -> 'b parser -> 'c parser *)  
+;;
+
+
+(* seq : ('a -> 'b -> 'c) -> 'a parser -> 'b parser -> 'c parser *)
 let seq f p q = bind p (fun a -> bind q (fun b -> return (f a b)));;
-	       
-(* bind : 'a parser -> 'b parser -> 'b parser *)  
+
+(* bind : 'a parser -> 'b parser -> 'b parser *)
 let bind' p q = bind p (fun x -> q);;
 
 (* filter : 'a parser -> ('a -> bool) -> 'a parser *)
@@ -1245,12 +1256,12 @@ let filter p f = bind p (fun x ->
 			 | True -> return x
 			 | False -> fail)
 ;;
-  
+
 (* char : char -> char parser *)
 let char c = filter any (eqChar c)
 ;;
 
-(* char : Char parser *)  
+(* char : Char parser *)
 let alphaChar = filter any isAlphaChar
 ;;
 
@@ -1262,30 +1273,30 @@ let rec string cs =
 
 (* maybe :: 'a parser -> ('a option) parser   *)
 let maybe p =
-  let someP = bind p (fun r -> return Some(r)) 
+  let someP = bind p (fun r -> return Some(r))
   in alt someP (return None)
 ;;
-  
+
 let rec many p =
   bind (maybe p)
        (fun ro ->
 	match ro with
 	| None -> return Nil
 	| Some(r) -> bind (many p) (fun rs -> return Cons(r,rs)))
-;;       
-      
+;;
+
 let many1 p = seq (fun r rs -> Cons(r,rs)) p (many p)
-;; 
+;;
 
 let followedBy p q = seq (fun rp rq -> rp) p q
-;;			 
+;;
 let lexeme p = bind p (fun r -> bind' (alt (char SPACE) (return SPACE)) (return r))
 ;;
 
 let between pl pr p = bind' pl (bind p (fun r -> bind' pr (return r)))
-;;			    
+;;
 let parens = between (lexeme (char LPAREN)) (lexeme (char RPAREN))
-;;		     
+;;
 
 (* let rec pExp = *)
 (*   let pVar = many1 alphaChar *)
@@ -1300,11 +1311,11 @@ let parens = between (lexeme (char LPAREN)) (lexeme (char RPAREN))
 (* ;; *)
 
 (* promote : 'a parser parser -> 'a parser *)
-let promote p = bind p (fun q -> q)  
+let promote p = bind p (fun q -> q)
 ;;
-	     
+
 let parser = bind' (char A) (bind' (char B) eos);;
 
-  
-  runParser parser input
-		 
+
+let main input = runParser parser input;;
+

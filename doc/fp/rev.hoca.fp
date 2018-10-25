@@ -1,3 +1,6 @@
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+
 let rec append xs ys = 
   match xs with 
   | Nil -> ys
@@ -9,5 +12,3 @@ let rec rev xs =
   | Nil -> Nil
   | Cons(x,xs') -> append (rev xs') Cons(x,Nil)
 ;;			  
-
-  rev l

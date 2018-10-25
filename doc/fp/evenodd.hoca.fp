@@ -1,3 +1,6 @@
+type nat = 0 | S of nat;;
+type bool = True | False ;;
+
 let rec even x =
   match x with
   | 0 -> True
@@ -6,4 +9,7 @@ and odd x =
   match x with
   | 0 -> False
   | S(x') -> even x'
-in even x
+;;
+
+let main x = even x ;;
+  

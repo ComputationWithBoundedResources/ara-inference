@@ -1,3 +1,15 @@
+
+type bool = True | False;;
+
+type nat = 0 | S of nat;;
+
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+
+type char = SLASH | DOT | MINUS | GT | LPAREN | RPAREN | SPACE | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z | Unit;;
+
+type 'a res = ParseSuccess of 'a * char list | ParseFail of nat;;
+
 let rec max x y =
   match x with
   | 0 -> y
@@ -21,12 +33,12 @@ let eqChar x y =
 	  | A -> False
 	  | B -> False
 	  | C -> True)
-;;	   
-  
-(* 
-  type 'a parser = 'a SuccCont -> FailCont -> Token list -> Line -> Ans 
+;;
+
+(*
+  type 'a parser = 'a SuccCont -> FailCont -> Token list -> Line -> Ans
   type FailCont = Line -> Ans
-  type 'a SuccCont = 'a -> FailCont -> Token list -> Line -> Ans 
+  type 'a SuccCont = 'a -> FailCont -> Token list -> Line -> Ans
 
 *)
 
@@ -34,51 +46,51 @@ let runParser p str = (force p) (fun a fc tl ln -> ParseSuccess(a,tl)) (fun ln -
 
 (* return: 'a -> 'a parser *)
 let return x = lazy (fun sc -> sc x) ;;
-  
+
 (* fail : 'a parser *)
 let fail = lazy (fun sc fc ts n -> fc n) ;;
 
 (* bind : 'a parser -> ('a -> 'b parser) -> 'b parser *)
 let bind p f = lazy (fun sc -> (force p) (fun x -> (force (f x)) sc));;
 let bind2 p f = lazy (fun sc -> (force p) (fun x -> (force (f x)) sc));;
-let bind3 p f = lazy (fun sc -> (force p) (fun x -> (force (f x)) sc));;  
-  
+let bind3 p f = lazy (fun sc -> (force p) (fun x -> (force (f x)) sc));;
+
 
 (* alt : 'a parser -> 'a parser -> 'a parser *)
 let alt p q  =
   lazy
-    (fun sc fc ts n -> 
+    (fun sc fc ts n ->
      let alt_fail np = (force q) sc (fun nq -> fc (max np nq)) ts n
      in (force p) sc alt_fail ts n)
-;;	  
-  
+;;
+
 (* any : Token parser *)
-let any = lazy (fun sc fc ts n -> 
+let any = lazy (fun sc fc ts n ->
 		match ts with
 		| Nil -> fc n
 		| Cons(t,ts') -> sc t fc ts' S(n))
-;;			
+;;
 
 let eos = lazy (fun sc fc ts n ->
 		match ts with
 		| Nil -> sc Unit fc ts n
 		| Cons(t,ts') -> fc n)
-;;	       
-  
-  
+;;
+
+
 (* filter : 'a parser -> ('a -> bool) -> 'a parser *)
 let filter p f = bind p (fun x ->
 			 match f x with
 			 | True -> return x
 			 | False -> fail)
 ;;
-  
+
 (* char : char -> char parser *)
 let char c = filter any (eqChar c)
 ;;
 
 (* promote : 'a parser parser -> 'a parser *)
-let promote p = bind2 p (fun q -> q)  
+let promote p = bind2 p (fun q -> q)
 ;;
 
 let rec pas p =
@@ -87,5 +99,6 @@ let rec pas p =
 ;;
 
 let parser = promote (pas eos);;
-  runParser parser input
-		 
+
+let main input = runParser parser input;;
+

@@ -1,23 +1,31 @@
-type nat = Zero | S of nat;;
+type nat = Zero | S of nat
+;;
 
-let rec mapL f xs =
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+
+type bool = True | False
+;;
+
+
+let rec map f xs =
   match xs with
-  | [] -> []
-  | x::xs' -> f x:: mapL f xs'
+  | Nil -> Nil
+  | Cons(x,xs') -> Cons(f x, map f xs')
 ;;
 
 let rec length xs =
   match xs with
-  | [] -> Zero
-  | x::xs' -> S(length xs')
+  | Nil -> Zero
+  | Cons(x,xs') -> S(length xs')
 ;;
 
 let rec leq x y =
   match x with
-    | Zero -> true
+    | Zero -> True
     | S(x') ->
        match y with
-       | Zero -> false
+       | Zero -> False
        | S(y') -> leq x' y'
 ;;
 
@@ -32,25 +40,25 @@ let rec halve x =
      | S(x'') -> S(halve x'')
 ;;
 
-exception Tail_error_empty_list;;
-exception Head_error_empty_list;;
+exception Error
 
+;;
 let tail l =
   match l with
-  | [] -> raise Tail_error_empty_list
-  | l::ls -> ls
+  | Nil -> raise Error
+  | Cons(l,ls) -> ls
 ;;
 
 let head l =
   match l with
-  | [] -> raise Head_error_empty_list
-  | l::ls -> l
+  | Nil -> raise Error
+  | Cons(l,ls) -> l
 ;;
 
 let rec take n l =
   match n with
-  | Zero -> []
-  | S(n') -> head l:: take n' (tail l)
+  | Zero -> Nil
+  | S(n') -> Cons(head l, take n' (tail l))
 ;;
 
 let rec drop n l =
@@ -63,40 +71,41 @@ let rec drop n l =
 let divideAndConquer isDivisible solve divide combine initial =
   let rec dc pb =
     match isDivisible pb with
-    | false -> solve pb
-    | true -> combine pb (mapL dc (divide pb))
+    | False -> solve pb
+    | True -> combine pb (map dc (divide pb))
   in dc initial
 ;;
 
 let rec merge ys zs =
   match ys with
-  | [] -> zs
-  | y::ys' ->
+  | Nil -> zs
+  | Cons(y,ys') ->
      match zs with
-     | [] -> ys
-     | z::zs' ->
+     | Nil -> ys
+     | Cons(z,zs') ->
 	match leq y z with
-	| true -> y::merge ys' zs
-	| false -> z::merge ys zs'
+	| True -> Cons(y,merge ys' zs)
+	| False -> Cons(z,merge ys zs')
 ;;
 
-let mergesort =
+let mergesort zs =
   let divisible ys =
     match ys with
-    | [] -> false
-    | y::ys' ->
+    | Nil -> False
+    | Cons(y,ys') ->
        match ys' with
-       | [] -> false
-       | y'::ys'' -> true
+       | Nil -> False
+       | Cons(y',ys'') -> True
   and divide ys =
     let n = halve (length ys)
-    in take n ys:: (drop n ys :: [])
+    in Cons(take n ys, Cons(drop n ys,Nil))
   and combine p =
     match p with
-    | l1::p' ->
+    | Nil -> raise Error
+    | Cons(l1,p') ->
        match p' with
-       | l2::p'' -> merge l1 l2
-  in divideAndConquer divisible (fun ys -> ys) divide (const combine)
+       | Cons(l2,p'') -> merge l1 l2
+       | Nil -> raise Error
+  in divideAndConquer divisible (fun ys -> ys) divide (const combine) zs
 ;;
-
-let main zs = mergesort zs;;
+()

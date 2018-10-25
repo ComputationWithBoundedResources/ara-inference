@@ -1,6 +1,11 @@
 
 (* flatten example from 'Static Determination of Quantitative Resource Usage for Higher-Order Programs' by Jost et. al. *)
 
+type 'a tree = Leaf of 'a | Node of 'a tree * 'a tree
+;;
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+
 let cons x xs = Cons(x,xs) ;;
   
 let rec dfsAcc g t acc =
@@ -18,5 +23,3 @@ let rec revApp l acc =
 
 let flatten t = revApp (dfsAcc cons t Nil) Nil
 ;;
-
-  flatten t

@@ -1,36 +1,40 @@
 (* from Sereni: Size-Change Termination of Higher-Order Functional Programs; PRG-RR-04-20 *)
 
+type nat = Zero | S of nat;;
+type 'a tree = Leaf of 'a | Node of 'a tree * 'a tree
+;;
+
 let fix f =
-  let rec x = lazy (force (f x))
+  let rec x = lazy (Lazy.force (f x))
   in x
 ;;
 
 let rec min a b =
   match a with
-  | 0 -> 0
+  | Zero -> Zero
   | S(a') ->
      match b with
-     | 0 -> 0
+     | Zero -> Zero
      | S(b') -> S(min a' b')
 ;;
 
-let fst p = match p with | P(a,b) -> a
-and snd p = match p with | P(a,b) -> b
-;;				       
-  
+let fst p = match p with | (a,b) -> a
+and snd p = match p with | (a,b) -> b
+;;
+
 let rec rpm t m =
   match t with
-  | Leaf(x) -> lazy P((lazy Leaf(force m)), (lazy x))
+  | Leaf(x) -> lazy (lazy(Leaf(Lazy.force m)), (lazy x))
   | Node(t1,t2) ->
-     let p1 = force (rpm t1 m)
-     and p2 = force (rpm t2 m)
-     in lazy P((lazy Node(force (fst p1), force (fst p2))), 
-	       (lazy (min (force (snd p1)) (force (snd p2)))))
+     let p1 = Lazy.force (rpm t1 m)
+     and p2 = Lazy.force (rpm t2 m)
+     in lazy ((lazy (Node(Lazy.force (fst p1), Lazy.force (fst p2)))),
+	       (lazy (min (Lazy.force (snd p1)) (Lazy.force (snd p2)))))
 ;;
 
 let repmin t =
-  let f p = rpm t (lazy (force (snd (force p)))) in
-  force (fst (force (fix f)))
+  let f p = rpm t (lazy (Lazy.force (snd (Lazy.force p)))) in
+  Lazy.force (fst (Lazy.force (fix f)))
 ;;
 
-  repmin t
+let main t = repmin t;;

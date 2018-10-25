@@ -1,3 +1,7 @@
+type nat = Zero | S of nat;;
+
+let force x = x;;
+
 let rec take_l n xs =
   match force xs with
   | [] -> []

@@ -1,8 +1,17 @@
+type Unit = Unit
+;;
 
-type 'a option = None | Some of 'a;;
-type nat = 0 | S of nat;;
-type 'a list = Nil | Cons of 'a * 'a list ;;
+type nat = 0 | S of nat
+;;
 
+type 'a list = Nil | Cons of 'a * 'a list
+;;
+
+type ('a,'b) pair = Pair of 'a * 'b
+;;
+
+type 'a option = None | Some of 'a
+;;
 
 let rec plus x y =
   match x with
@@ -69,11 +78,10 @@ let liftM2 f m1 m2 = bind m1 (fun r1 -> bind m2 (fun r2 -> return (f r1 r2)))
 let memoM m v =
   let lookupM = liftM (find v) get
   and insertM a = modify (fun c -> Cons(Pair(v,a),c))
-  in bind lookupM
+  in bind lookupM return
 	  (fun r ->
 	   match r with
-	   | None -> bind (m v)
-			  (fun a -> bind' (insertM a) (return a))
+	   | None -> bind (m v) (fun a -> bind' (insertM a) (return a))
 	   | Some(a) -> return a)
 ;;
 
@@ -89,5 +97,3 @@ let rec fibM n =
 
 let fib n = evalState (fibM n) Nil
 ;;
-
-let main n = fib n;;

@@ -1,10 +1,14 @@
+
+type nat = Zero | S of nat;;
+
+
 let rec zipwith_l f xs ys =
   lazy (match force xs with
 	| [] -> []
 	| x::xs' ->
 	   match force ys with
 	   | [] -> []
-	   | y::ys' -> f x y:: zipwith_l f xs' ys')
+	   | y::ys' -> f x y :: zipwith_l f xs' ys')
 ;;
 
 let rec plus x y =
@@ -42,7 +46,7 @@ let rec take_l n xs =
      | S(n') -> x::take_l n' xs'
 ;;
 
-let rec fibs = lazy Zero :: lazy 1 :: zipwith_l plus fibs (tail_l fibs)
+let rec fibs = lazy (Zero :: lazy (S(x) :: zipwith_l plus fibs (tail_l fibs)))
 ;;
 
-take_l n fibs
+let main n = take_l n fibs;;

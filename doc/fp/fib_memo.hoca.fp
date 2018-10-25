@@ -1,7 +1,9 @@
-type Unit = Unit
+type unit = Unit
 ;;
 
-type nat = 0 | S of nat
+type bool = True | False;;
+
+type nat = Zero | S of nat
 ;;
 
 type 'a list = Nil | Cons of 'a * 'a list
@@ -15,19 +17,19 @@ type 'a option = None | Some of 'a
 
 let rec plus x y =
   match x with
-  | 0 -> y
+  | Zero -> y
   | S(x') -> S(plus x' y)
 ;;
 
 let rec equal x y =
   match x with
-  | 0 ->
+  | Zero ->
      (match y with
-      | 0 -> True
+      | Zero -> True
       | S(y') -> False)
   | S(x') ->
      (match y with
-      | 0 -> False
+      | Zero -> False
       | S(y') -> equal x' y')
 ;;
 
@@ -78,19 +80,20 @@ let liftM2 f m1 m2 = bind m1 (fun r1 -> bind m2 (fun r2 -> return (f r1 r2)))
 let memoM m v =
   let lookupM = liftM (find v) get
   and insertM a = modify (fun c -> Cons(Pair(v,a),c))
-  in bind lookupM return
+  in bind lookupM
 	  (fun r ->
 	   match r with
-	   | None -> bind (m v) (fun a -> bind' (insertM a) (return a))
+	   | None -> bind (m v)
+			  (fun a -> bind' (insertM a) (return a))
 	   | Some(a) -> return a)
 ;;
 
 let rec fibM n =
   match n with
-  | 0 -> return S(0)
+  | Zero -> return (S(Zero))
   | S(n') ->
      match n' with
-     | 0 -> return S(0)
+     | Zero -> return (S(Zero))
      | S(n'') ->
 	liftM2 plus (memoM fibM n') (memoM fibM n'')
 ;;

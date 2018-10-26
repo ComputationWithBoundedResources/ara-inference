@@ -1,7 +1,7 @@
 
 type bool = True | False;;
 
-type nat = 0 | S of nat;;
+type nat = Zero | S of nat;;
 
 type 'a list = Nil | Cons of 'a * 'a list
 ;;
@@ -12,10 +12,10 @@ type 'a res = ParseSuccess of 'a * char list | ParseFail of nat;;
 
 let rec max x y =
   match x with
-  | 0 -> y
+  | Zero -> y
   | S(x') ->
      match y with
-     | 0 -> x
+     | Zero -> x
      | S(y') -> S(max x' y')
 ;;
 
@@ -1210,7 +1210,7 @@ let isAlphaChar x =
 
 *)
 
-let runParser p str = (force p) (fun a fc tl ln -> ParseSuccess(a,tl)) (fun ln -> ParseFail(ln)) str 0;;
+let runParser p str = (force p) (fun a fc tl ln -> ParseSuccess(a,tl)) (fun ln -> ParseFail(ln)) str Zero;;
 
 (* return: 'a -> 'a parser *)
 let return x = lazy (fun sc -> sc x) ;;

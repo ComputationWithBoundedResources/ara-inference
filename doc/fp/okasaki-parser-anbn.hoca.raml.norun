@@ -42,7 +42,7 @@ let eqChar x y =
 
 *)
 
-let runParser p str = (force p) (fun a fc tl ln -> ParseSuccess(a,tl)) (fun ln -> ParseFail(ln)) str Zero;;
+let runParser p str = (Lazy.force p) (fun a fc tl ln -> ParseSuccess(a,tl)) (fun ln -> ParseFail(ln)) str Zero;;
 
 (* return: 'a -> 'a parser *)
 let return x = lazy (fun sc -> sc x) ;;
@@ -51,17 +51,17 @@ let return x = lazy (fun sc -> sc x) ;;
 let fail = lazy (fun sc fc ts n -> fc n) ;;
 
 (* bind : 'a parser -> ('a -> 'b parser) -> 'b parser *)
-let bind p f = lazy (fun sc -> (force p) (fun x -> (force (f x)) sc));;
-let bind2 p f = lazy (fun sc -> (force p) (fun x -> (force (f x)) sc));;
-let bind3 p f = lazy (fun sc -> (force p) (fun x -> (force (f x)) sc));;
+let bind p f = lazy (fun sc -> (Lazy.force p) (fun x -> (Lazy.force (f x)) sc));;
+let bind2 p f = lazy (fun sc -> (Lazy.force p) (fun x -> (Lazy.force (f x)) sc));;
+let bind3 p f = lazy (fun sc -> (Lazy.force p) (fun x -> (Lazy.force (f x)) sc));;
 
 
 (* alt : 'a parser -> 'a parser -> 'a parser *)
 let alt p q  =
   lazy
     (fun sc fc ts n ->
-     let alt_fail np = (force q) sc (fun nq -> fc (max np nq)) ts n
-     in (force p) sc alt_fail ts n)
+     let alt_fail np = (Lazy.force q) sc (fun nq -> fc (max np nq)) ts n
+     in (Lazy.force p) sc alt_fail ts n)
 ;;
 
 (* any : Token parser *)

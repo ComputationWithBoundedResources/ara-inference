@@ -1,0 +1,129 @@
+
+module BigIntsMult;
+
+type BigInt = List<Int>;
+
+def Int word_size() = 10; // (* use 2147483648 = 2^31 for OCaml's '32 bit' ints *)
+
+def Pair<Int, Int> split(Int n) = Pair(n % word_size(), ceil(float(n/word_size())));
+
+
+def BigInt of_int(Int n) = Cons(n,Nil);
+
+
+def Bool is_int(BigInt b) =
+    case b {
+    Nil => True;
+    Cons(n,ns) => case ns {
+        Nil => True;
+        Cons(_,_) => False;
+    };
+};
+
+def Maybe<Int> to_int_opt(BigInt b) =
+    case b {
+    Nil => Just(0);
+    Cons(n,ns) => case ns {
+        Nil => Just(n);
+        Cons(_,_) => Nothing;
+    };
+};
+
+
+// adding an int to a bigint
+def BigInt add_int(BigInt b, Int n) =
+    if n == 0
+    then b
+        else case b {
+                Nil => Cons(n, Nil);
+                Cons(m,ms) => case split(n+m) {
+                    Pair(r,d) => Cons(r,add_int(ms,d));
+                };
+            };
+
+
+// adding two bigints
+
+def BigInt add_carry(BigInt b, BigInt c, Int carry) =
+    case b {
+    Nil => add_int(c,carry);
+    Cons(n,ns) => case c {
+        Nil => add_int(b, carry);
+        Cons(m,ms) =>
+        let (Int sum) = n+m+carry in
+        case split(sum) {
+            Pair(r, d) => Cons(r, add_carry(ns,ms,d));
+        };
+    };
+};
+
+
+def BigInt add(BigInt b, BigInt c) = add_carry(b, c, 0);
+
+
+// multiplying with an int
+
+
+def BigInt mult_int_carry(BigInt b, Int n, Int carry) =
+    case b {
+    Nil => if carry == 0 then Nil else Cons(carry,Nil);
+    Cons(m,ms) => case split((n*m) + carry) {
+        Pair(r,d) => Cons(r,mult_int_carry(ms, n, d));
+    };
+};
+
+def BigInt mult_int(BigInt b, Int n) = mult_int_carry(b, n, 0);
+
+
+//   let rec append b c =
+//     match b with
+//     | [] -> c
+//     | x::xs -> x::(append xs c)
+//   in
+
+def List<Int> append(List<Int> l1, List<Int> l2) =
+    case l1 {
+    Nil => l2;
+    Cons(x,xs) => Cons(x, append(xs, l2));
+};
+
+
+//   let rec zeros b =
+//     match b with
+//     | [] -> []
+//     | x::xs -> 0::(zeros xs)
+//   in
+
+def List<Int> zeros(BigInt b) =
+    case b {
+    Nil => Nil;
+    Cons(x,xs) => Cons(0,zeros(xs));
+};
+
+
+//   let rec mult b c acc =
+//     match b with
+//     | [] -> acc
+//     | n::ns ->
+//       let acc = add acc (mult_int c n) in
+//       mult ns (0::c) acc
+//   in
+
+def BigInt mult_acc(BigInt b, BigInt c, BigInt acc) =
+    case b {
+    Nil => acc;
+    Cons(n,ns) =>
+    let (BigInt acc) = add(acc,mult_int(c,n)) in
+    mult_acc(ns,Cons(0,c),acc);
+};
+
+
+// multiplying two bigints
+def BigInt mult(BigInt b, BigInt c) = mult_acc(b, c, zeros(append(b, c)));
+
+
+def BigInt start(BigInt b, BigInt c) = mult(b,c);
+
+
+{
+}

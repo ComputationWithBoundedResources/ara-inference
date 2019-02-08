@@ -1,0 +1,52 @@
+
+module Calculator;
+
+data Nat = Zero | Succ(Nat);
+
+data Expr =
+    Nat(Nat)
+    | Add(Expr, Expr)
+    | Sub(Expr, Expr);
+
+def Nat add(Nat n1, Nat n2) =
+    case n1 {
+    Zero => n2;
+    Succ(n) => Succ(add(n,n2));
+};
+
+def Nat sub(Nat n1, Nat n2) =
+    case n2 {
+    Zero => n1;
+    Succ(n2P) => case n1 {
+        Zero => Zero;
+        Succ(n1P) => sub(n1P, n2P);
+    };
+};
+
+
+def Nat mult(Nat n1, Nat n2) =
+    case n1 {
+    Zero => Zero;
+    Succ(n) => add(n,mult(n,n2));
+};
+
+
+def Nat eval(Expr expr) =
+    case expr {
+    Nat(n) => n;
+    Add(e1,e2) => case eval(e1) {
+        Zero => eval(e2);
+        Succ(n) => Succ(eval(Add(Nat(n), e2)));
+    };
+    Sub(e1,e2) => case eval(e2) {
+        Zero => eval(e1);
+        Succ(m) => case eval(e1) {
+            Zero => Zero;
+            Succ(n) => eval(Sub(Nat(n), Nat(m)));
+        };
+    };
+};
+
+{
+
+}

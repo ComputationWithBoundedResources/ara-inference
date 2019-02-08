@@ -1,0 +1,30 @@
+
+module AvanziniOriginal;
+
+// Higher order not supported, only partially defined functions:
+// seehttp://docs.abs-models.org/#sec:partially-defined-functions
+
+// let comp f g = fun z -> f (g z);;
+def List<A> comp<A>(f, g)(A z) = f(g(z));
+
+
+def List<A> walk(List<A> xs) =
+    case xs {
+    Nil => Nil;
+    Cons(x,ys) =>
+    comp(walk(ys), (List<A> z) => Cons(x, z));
+};
+
+// | Nil()-> (fun z -> z)
+// | Cons(x,ys) -> comp (walk ys) (fun z -> Cons(x,z));;
+
+def List<A> reverse(List<A> xs) = walk(xs,Nil);
+
+def List<A> main(List<A> xs) = reverse(xs);
+
+
+{ // Main
+
+}
+
+

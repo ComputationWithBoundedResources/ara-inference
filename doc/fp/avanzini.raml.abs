@@ -1,0 +1,89 @@
+
+module AvanziniRaml;
+
+data A = A;
+
+
+// let rec append l1 l2 =
+//   match l1 with
+//     | [] -> l2
+//     | x::xs -> x::(append xs l2)
+
+def List<A> append(List<A> l1, List<A> l2) =
+    case l1 {
+    Nil => l2;
+    Cons(x,xs) => Cons(x,append(xs, l2));
+};
+
+// let rec partition f l =
+//   match l with
+//     | [] -> ([],[])
+//     | x::xs ->
+//       let (cs,bs) = partition f xs in
+//       if f x then
+//  (cs,x::bs)
+//       else
+//  (x::cs,bs)
+
+
+def Pair<List<A>,List<A>> partition(f)(List<A> l) =
+    case l {
+    Nil => Pair(Nil, Nil);
+    Cons(x,xs) => case partition(xs) { //  For recursion inside the body of a partially defined
+                                       //  function, omit the function parameter list.
+        Pair(cs,bs) => if (f(x)) then Pair(cs, Cons(x,bs)) else Pair(Cons(x,cs),bs);
+    };
+
+};
+
+
+// let rec quicksort gt = function
+//   | [] -> []
+//   | x::xs ->
+//       let ys, zs = partition (gt x) xs in
+//       append (quicksort gt ys) (x :: (quicksort gt zs))
+
+def List<A> quicksort(gt)(List<A> l) =
+    case l {
+    Nil => Nil;
+    Cons(x,xs) =>
+    let (Pair<List<A>, List<A>> pair) = partition(gt(x), xs)
+    in
+    case pair {
+        Pair(ys,zs) => append(quicksort(ys), Cons(x,quicksort(zs)));
+    };
+};
+
+
+// let comp f x g = fun z -> f x (g z)
+
+def List<A> comp(f,g)(List<A> x, A z) = f(x,g(z));
+
+
+// let rec walk f xs =
+//   match xs with
+//     | [] -> (fun z ->  z)
+//     | x::ys -> match x with
+//  | Left _ -> fun y -> comp (walk f) ys (fun z -> x::z) y
+//  | Right l ->
+//    let x' = Right (quicksort f l) in
+//    fun y -> comp (walk f) ys (fun z -> x'::z) y
+
+def List<A> id(List<A> z) = z;
+
+def List<A> left(w,f)(List<A> ys, A y) = comp(w,f,ys,y);
+
+def List<A> walk(f)(List<A> xs) =
+    case xs {
+    Nil => id;                  // Anonymous functions seem not to work :-/
+    Cons(x,ys) => case x {
+        Left(unused) => ((A y) => left(walk(f), z => Cons(x,z), ys, y));
+        // Right(l) ->
+    };
+};
+
+// let rev_sort f l = walk f l []
+
+{                               // Main
+// let _ = rev_sort (fun a b -> a <= b) [Right [3;2;1]; Right [2;1;0;-1]; Left 1; Left 2; Left 3; Right []]
+}

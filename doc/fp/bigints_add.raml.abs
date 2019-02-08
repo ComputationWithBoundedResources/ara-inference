@@ -1,0 +1,67 @@
+
+module BigIntsAdd;
+
+type BigInt = List<Int>;
+
+def Int word_size() = 10; // (* use 2147483648 = 2^31 for OCaml's '32 bit' ints *)
+
+def Pair<Int, Int> split(Int n) = Pair(n % word_size(), ceil(float(n/word_size())));
+
+
+def BigInt of_int(Int n) = Cons(n,Nil);
+
+
+def Bool is_int(BigInt b) =
+    case b {
+    Nil => True;
+    Cons(n,ns) => case ns {
+        Nil => True;
+        Cons(_,_) => False;
+    };
+};
+
+def Maybe<Int> to_int_opt(BigInt b) =
+    case b {
+    Nil => Just(0);
+    Cons(n,ns) => case ns {
+        Nil => Just(n);
+        Cons(_,_) => Nothing;
+    };
+};
+
+
+// adding an int to a bigint
+def BigInt add_int(BigInt b, Int n) =
+    if n == 0
+    then b
+    else case b {
+            Nil => Cons(n, Nil);
+            Cons(m,ms) => case split(n+m) {
+                Pair(r,d) => Cons(r,add_int(ms,d));
+            };
+        };
+
+
+// adding two bigints
+
+def BigInt add_carry(BigInt b, BigInt c, Int carry) =
+    case b {
+    Nil => add_int(c,carry);
+    Cons(n,ns) => case c {
+        Nil => add_int(b, carry);
+        Cons(m,ms) =>
+        let (Int sum) = n+m+carry in
+        case split(sum) {
+            Pair(r, d) => Cons(r, add_carry(ns,ms,d));
+        };
+    };
+};
+
+
+def BigInt add(BigInt b, BigInt c) = add_carry(b, c, 0);
+
+def BigInt start(BigInt b, BigInt c) = add(b,c);
+
+{
+
+}

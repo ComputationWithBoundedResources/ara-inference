@@ -1,0 +1,36 @@
+
+module BTreeLookup;
+
+data Tree = Leaf(List<Int>) | Node(List<Int>,List<Tree>);
+
+def List<Int> append(List<Int> l1, List<Int> l2) =
+    case l1 {
+    Nil => l2;
+    Cons(x,xs) => Cons(x, append(xs, l2));
+};
+
+def Bool anyEq(Int nr, List<Int> ys) =
+    case ys {
+    Nil => False;
+    Cons(x,xs) => if nr == x then True else anyEq(nr,xs);
+};
+
+// exception Invalid_Tree;
+
+def Bool lookupBTree(Int n, Tree node) =
+    case node {
+    Leaf(xs) => anyEq(n, xs);
+    Node(nrs,tss) => case nrs {
+        // Nil => throw Invalid_Tree;
+        Cons(nr,ns) => case tss {
+            // Nil => throw Invalid_Tree;
+            Cons(t,ts) => if n <= nr then lookupBTree(n, t) else lookupBTree(n, Node(ns,ts));
+        };
+    };
+};
+
+def Bool start(Int n, Tree node) = lookupBTree(n, node);
+
+{
+
+}

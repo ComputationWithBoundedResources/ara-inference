@@ -46,7 +46,7 @@ let rec take_l n xs =
      | S(n') -> x::take_l n' xs'
 ;;
 
-let rec fibs = lazy (Zero :: lazy (S(x) :: zipwith_l plus fibs (tail_l fibs)))
+let rec fibs = lazy (Zero :: lazy (S(Zero) :: zipwith_l plus fibs (tail_l fibs)))
 ;;
 
 let main n = take_l n fibs;;

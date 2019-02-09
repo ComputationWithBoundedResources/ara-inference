@@ -1,0 +1,67 @@
+module Eval1;
+
+data Var = Var(Int);
+
+def Bool eq_var(Var v1, Var v2) = v1 == v2;
+
+data Fun = Fun(Int);
+
+def Bool eq_fun(Fun f1, Fun f2) = f1 == f2;
+
+data Exp = Eadd(Exp,Exp)
+    | Emult(Exp,Exp)
+    | Ediv(Exp, Exp)
+    | Econst(Int)
+    | Evar(Int, Exp)
+    | Elet(Var, Exp, Exp)
+    | Eapp(Fun,Exp);
+
+
+def Int error() = -1;
+
+// exception DivByZero;
+
+def Int eval(Exp e) =
+    case e {
+    Eadd(e1,e2) => eval(e1) + eval(e2);
+    Emult(e1, e2) => eval(e1) * eval(e2);
+    Ediv(e1, e2) => case eval(e2) {
+        n2 => if (n2 == 0)
+            then error() // throw DivByZero                // Cannot be used in functional code! bottom?
+            else truncate(eval(e1) / eval(e2));
+    };
+    Econst(n) => n;
+};
+
+// Implementation using maybe
+
+def Maybe<Int> bind(f)(Exp e1, Exp e2) =
+    case evalMaybe(e1) {
+    Nothing => Nothing;
+    Just(n1) => case evalMaybe(e2) {
+        Just(n2) => Just(f(n1,n2));
+        Nothing => Nothing;
+    };
+};
+
+def Int plus(Int a, Int b) = a + b;
+def Int div(Int a, Int b) = truncate(a / b);
+def Int times(Int a, Int b) = a * b;
+
+def Maybe<Int> evalMaybe(Exp e) =
+    case e {
+    Eadd(e1,e2) => bind(plus)(e1,e2);
+    Emult(e1, e2) => bind(times)(e1,e2);
+    Ediv(e1, e2) => bind(div)(e1,e2);
+    Econst(n) => Just(n);
+};
+
+
+{
+
+}
+
+// let e = Elet(Var 1,Econst 0, Eadd(Econst 1,Econst 1)) in
+// eval2 e
+
+//     ;; ()

@@ -1,0 +1,96 @@
+
+module FibLList;
+
+data Nat = Zero | S(Nat);
+
+// No lazy evaluation in abs!!!
+
+def List<A> zipwith_l<A>(f)(List<A> xs, List<A> ys) =
+    case xs {
+    Nil => Nil;
+    Cons(x,xsP) => case ys {
+        Nil => Nil;
+        Cons(y,ysP) => Cons(f(x,y), zipwith_l(xsP,ysP));
+    };
+};
+
+
+// let rec plus x y =
+//   match x with
+//   | Zero -> y
+//   | S(x') -> S(plus x' y)
+// ;;
+
+def Nat plus(Nat x, Nat y) =
+    case x {
+    Zero => y;
+    S(xP) => S(plus(xP,y));
+};
+
+
+// let tail_l xs =
+//   match Lazy.force xs with
+//   | [] -> Error_empty_list
+//   | x::xs' -> xs'
+// ;;
+
+def List<A> tail_l<A>(List<A> xs) =
+    case xs {
+    Nil => Nil;
+    Cons(x,xsP) => xsP;
+};
+
+// let rec nth_l n xs =
+//   match Lazy.force xs with
+//   | [] -> Error_nth_l
+//   | x::xs' ->
+//      match n with
+//      | Zero -> x
+//      | S(n') -> nth_l n' xs'
+// ;;
+
+def A nth_l<A>(Nat n, List<A> xs) =
+    case xs {
+    // Nil => throw error;
+    Cons(x,xsP) => case n {
+        Zero => x;
+        S(nP) => nth_l(nP, xs);
+    };
+
+};
+
+// let fix f =
+//   let rec x = lazy (Lazy.force (f x))
+//   in x
+// ;;
+
+
+// let rec take_l n xs =
+//   match Lazy.force xs with
+//   | [] -> []
+//   | x::xs' ->
+//      match n with
+//      | Zero -> []
+//      | S(n') -> x::take_l n' xs'
+// ;;
+
+def List<A> take_l<A>(Nat n, List<A> xs) =
+    case xs {
+    Nil => Nil;
+    Cons(x,xsP) => case n {
+        Zero => Nil;
+        S(nP) => Cons(x,take_l(nP, xsP));
+    };
+};
+
+
+// let rec fibs = lazy (Zero :: lazy (S(x) :: zipwith_l plus fibs (tail_l fibs)))
+// ;;
+
+def List<Nat> fibs() = Cons(Zero, Cons(S(Zero), zipwith_l(plus)(fibs(), tail_l(fibs()))));
+
+def List<Nat> start(Nat n) = take_l(n, fibs());
+
+{
+
+}

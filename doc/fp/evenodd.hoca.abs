@@ -1,0 +1,20 @@
+
+module EvenOdd;
+
+data Nat = Zero | S(Nat);
+
+def Bool even(Nat x) =
+    case x {
+    Zero => True;
+    S(xP) => odd(xP);
+};
+
+def Bool odd(Nat x) =
+    case x {
+    Zero => False;
+    S(xP) => even(xP);
+};
+
+{
+
+}

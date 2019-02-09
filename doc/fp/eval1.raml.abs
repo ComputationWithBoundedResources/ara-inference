@@ -1,0 +1,35 @@
+
+module Eval1;
+
+data Var = Var(Int);
+
+def Bool eq_var(Var v1, Var v2) = v1 == v2;
+
+data Fun = Fun(Int);
+
+def Bool eq_fun(Fun f1, Fun f2) = f1 == f2;
+
+data Exp = Eadd(Exp,Exp)
+    | Emult(Exp,Exp)
+    | Ediv(Exp, Exp)
+    | Econst(Int)
+    | Evar(Int, Exp)
+    | Elet(Var, Exp, Exp)
+    | Eapp(Fun,Exp);
+
+def Int eval(Exp e) =
+    case e {
+    Eadd(e1,e2) => eval(e1) + eval(e2);
+    Emult(e1, e2) => eval(e1) * eval(e2);
+    Ediv(e1, e2) => truncate(eval(e1) / eval(e2));
+    Econst(n) => n;
+};
+
+{
+
+}
+
+// let e = Elet(Var 1,Econst 0, Eadd(Econst 1,Econst 1)) in
+// eval1 e
+
+//     ;; ()

@@ -1,0 +1,26 @@
+
+module LogicAndCodes2;
+
+data BoolExpr =
+    Var(Int)
+    | Not(BoolExpr)
+    | And(BoolExpr, BoolExpr)
+    | Or(BoolExpr, BoolExpr);
+
+exception Invalid;
+
+
+def Bool eval2(Int a, Bool valA, Int b, Bool valB, BoolExpr expr) =
+    case expr {
+    Var(x) => if x == a then valA else if x==b
+                        then valB else False; // should be BOTTOM: throw Invalid;
+    Not(e) => not(eval2(a, valA, b, valB, e));
+    And(e1, e2) => eval2(a, valA, b, valB , e1) && eval2(a, valA, b, valB, e2);
+    Or(e1,e2) => eval2(a,valA,b,valB, e1) || eval2(a,valA, b, valB, e2);
+};
+
+def Bool start(Int a, Bool valA, Int b, Bool valB, BoolExpr expr) = eval2(a,valA,b,valB, expr);
+
+{
+
+}

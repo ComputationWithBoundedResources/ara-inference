@@ -1,0 +1,20 @@
+
+module Rev;
+
+def List<A> append<A>(List<A> xs, List<A> ys) =
+    case xs {
+    Nil => ys;
+    Cons(x,xsP) => Cons(x, append(xsP, ys));
+};
+
+def List<A> rev<A>(List<A> xs) =
+    case xs {
+    Nil => Nil;
+    Cons(x,xsP) => append(rev(xsP), Cons(x,Nil));
+};
+
+def List<A> start<A>(List<A> xs) = rev(xs);
+
+{
+
+}

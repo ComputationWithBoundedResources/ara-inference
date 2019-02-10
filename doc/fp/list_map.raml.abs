@@ -1,0 +1,16 @@
+
+module ListMap;
+
+// The usual list map function
+def List<A> mapList<A>(f)(List<A> l) =
+    case l {
+    Nil => Nil;
+    Cons(x,xs) => Cons(f(x), map(xs));
+};
+
+def List<A> start<A>(f)(List<A> l) = map(f);
+
+{
+
+}
+

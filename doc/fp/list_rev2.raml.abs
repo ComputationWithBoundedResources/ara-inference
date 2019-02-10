@@ -1,0 +1,37 @@
+
+module ListRev2;
+
+
+data Closure<A> = Lam1(Closure<A>, Closure<A>) | Lam2 | Lam3(A);
+
+// let rec apply c a = match c with
+//   Lam1(f,g) -> apply f (apply g a) | Lam2 -> a | Lam3(x) -> x :: a ;;
+
+def List<A> apply<A>(Closure<A> c, List<A> a) =
+    case c {
+    Lam1(f,g) => apply(f, apply(g,a));
+    Lam2 => a;
+    Lam3(x) => Cons(x,a);
+};
+
+def Closure<A> comp<A>(Closure<A> f, Closure<A> g) = Lam1(f,g);
+
+// let rev2 l =
+//   let rec walk = function
+//     | [] -> Lam2
+//     | x :: xs -> comp (walk xs) (Lam3 x)
+// in
+//   apply (walk l) [];;
+
+def Closure<A> walk<A>(List<A> l) =
+    case l {
+    Nil => Lam2;
+    Cons(x,xs) => comp(walk(xs),Lam3(x));
+};
+
+
+def List<A> rev2<A>(List<A> l) = apply(walk(l), Nil);
+
+{
+
+}

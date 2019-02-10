@@ -1,0 +1,20 @@
+
+module MAppPlus;
+
+data Nat = Zero | S(Nat);
+
+def Nat plus(Nat x, Nat y) =
+    case x {
+    Zero => y;
+    S(xP) => S(plus(xP, y));
+};
+
+// def Nat mapplus(List<Nat> l, Nat x) = map(plus(x))(l);
+def List<Nat> mapplus(List<Nat> l, Nat x) = map((Nat y) => plus(x,y))(l);
+
+def List<Nat> start(List<Nat> l, Nat x) = mapplus(l,x);
+
+{
+
+}
+

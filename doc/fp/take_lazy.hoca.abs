@@ -1,0 +1,27 @@
+
+module TakeLazy;
+
+data Nat = Zero | S(Nat);
+
+
+// Lazyness removed, as not supported by abs!
+def List<A> take_l<A>(Nat n, List<A> xs) =
+    case xs {
+    Nil => Nil;
+    Cons(x,xsP) => case n {
+        Zero => Nil;
+        S(nP) => Cons(x, take_l(nP, xsP));
+    };
+};
+
+
+def List<Nat> zeros() = Cons(Zero, zeros());
+
+// let main n zeros = take_l n zeros;;
+
+// def List<Nat> start(Nat n, List<Nat> zeros) =  take_l(n,zeros);
+def List<Nat> start(Nat n) =  take_l(n,zeros());
+
+{
+
+}

@@ -1,0 +1,22 @@
+// (* Richard Bird: Introduction to functional programming using Haskell, Section 7.2 *)
+
+module RevFoldl;
+
+
+def Acc foldlP<A,Acc>(f)(Acc z, List<A> xs) =
+    case xs {
+    Nil => z;
+    Cons(x,xsP) => foldlP(f(z,x), xsP);
+};
+
+
+def List<A> prefix<A>(List<A> xs, A x) = Cons(x,xs);
+
+def List<A> rev<A>(List<A> l) = foldlP(prefix)(Nil, l);
+
+def List<A> start<A>(List<A> l) = rev(l);
+
+
+{
+
+}

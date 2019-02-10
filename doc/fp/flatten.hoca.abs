@@ -1,0 +1,21 @@
+module Flatten;
+
+data Tree<A> = Leaf(A) | Node(Tree<A>, Tree<A>);
+
+def List<A> cons<A>(A x, List<A> xs) = Cons(x,xs);
+
+// higher order constructs are not supported!
+let (List<A> -> List<A>) comp<A>(f, g)(A x) = f(g(x));
+
+// let rec walk t =
+//   match t with
+//   | Leaf(x) -> cons x
+//   | Node(t1,t2) -> comp (walk t1) (walk t2)
+// ;;
+
+// let flatten t = walk t Nil
+// ;;
+
+{
+
+}

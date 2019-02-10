@@ -1,0 +1,32 @@
+
+module ListRev1;
+
+
+// let comp f g = fun z -> f (g z);;
+
+// def B comp<A, B>(f,g)() = (A z) => f(g(z)); // Error
+def B comp<A, B>(f,g)(A z) = f(g(z));
+
+// let rev1 l =
+//   let rec walk = function
+//   [] -> (fun ys -> ys)
+//     | x :: xs -> comp (walk xs) (fun ys -> x :: ys)
+//   in walk l [];;
+
+def A id<A>(A x) = x;
+
+def List<A> walk<A>(List<A> l) =
+    case l {
+    Nil => id;
+    Cons(x,xs) => comp((walk(xs)), ((List<A> ys) => Cons(x, ys)));
+}
+
+def List<A> rev1<A>(List<A> l) = walk(l, Nil);
+
+
+def List<A> start<A>(List<A> l) = rev1(l);
+
+{
+
+
+}

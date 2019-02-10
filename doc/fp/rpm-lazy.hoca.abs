@@ -1,0 +1,67 @@
+
+
+// (* from Sereni: Size-Change Termination of Higher-Order Functional Programs; PRG-RR-04-20 *)
+
+module RpmLazy;
+
+data Nat = Zero | S(Nat);
+data Tree<A> = Leaf(A) | Node(Tree<A>, Tree<A>);
+
+// let fix f =
+//   let rec x = lazy (Lazy.force (f x))
+//   in x
+// ;;
+
+def A fix<A>(f)() = f(fix());
+
+
+def Nat minNat(Nat a, Nat b) =
+    case a {
+    Zero => Zero;
+    S(aP) => case b {
+        Zero => Zero;
+        S(bP) => S(min(aP, bP));
+    };
+};
+
+// let rec rpm t m =
+//   match t with
+//   | Leaf(x) -> lazy (lazy(Leaf(Lazy.force m)), (lazy x))
+//   | Node(t1,t2) ->
+//      let p1 = Lazy.force (rpm t1 m)
+//      and p2 = Lazy.force (rpm t2 m)
+//      in lazy ((lazy (Node(Lazy.force (fst p1), Lazy.force (fst p2)))),
+// 	       (lazy (min (Lazy.force (snd p1)) (Lazy.force (snd p2)))))
+// ;;
+
+def Pair<Tree<B>, Nat> rpm<B>(Tree<Nat> t, B m) =
+    case t {
+    Leaf(x) => Pair(Leaf(m), x);
+    Node(t1, t2) =>
+    let (Pair<Tree<B>,Nat> p1) = rpm(t1,m) in
+    let (Pair<Tree<B>,Nat> p2) = rpm(t2,m) in
+    Pair(Node(fst(p1),fst(p2)), minNat(snd(p1), snd(p2)));
+};
+
+
+// let repmin t =
+//   let f p = rpm t (lazy (Lazy.force (snd (Lazy.force p)))) in
+//   Lazy.force (fst (Lazy.force (fix f)))
+// ;;
+
+def Pair<Tree<B>, Nat> f<A, B>(Tree<Nat> t, Pair<A, B> p) = rpm(t, snd(p));
+
+
+// No higher-order constructors suppored by abs!
+def Nat repmin<A>(Tree<Nat> t) = fst(fix((A x) => f(t,x))());
+
+// def Nat repmin(Tree<Nat> t) =
+//     case rpm(t, snd())
+//     fst((fix(rpm(t,snd(p)))()));
+
+
+// let main t = repmin t;;
+
+{
+
+}

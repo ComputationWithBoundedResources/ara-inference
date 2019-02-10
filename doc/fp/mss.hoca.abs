@@ -1,0 +1,73 @@
+
+module Mss;
+
+data Nat = Zero | S(Nat) | M(Nat);
+
+// (* max : nat -> nat -> nat *)
+def Nat max(Nat x, Nat y) =
+    case x {
+    Zero => y;
+    S(xP) => case y {
+        Zero => x;
+        S(yP) => S(max(xP,yP));
+    };
+};
+
+// (* plus : nat -> nat -> nat *)
+def Nat plus(Nat x, Nat y) =
+    case x {
+    Zero => y;
+    S(xP) => S(plus(xP, y));
+};
+
+// (* minus : nat -> nat -> nat *)
+def Nat minus(Nat x, Nat y) =
+    case x {
+    Zero => Zero;
+    S(xP) => case y {
+        Zero => x;
+        S(yP) => minus(xP, yP);
+    };
+};
+
+// (* maxlist : int list -> int *)
+def Nat maxlist(List<Nat> l) = foldl(max)(Zero, l);
+
+exception Error;
+
+// (* scanr: (nat -> nat -> nat) -> nat -> nat list -> nat list *)
+def List<Nat> scanr(f)(Nat z, List<Nat> xs) =
+    case xs {
+    Nil => Cons(z, Nil);
+    Cons(x, xsP) => case scanr(z,xsP) {
+        Nil => Nil; // should be BOTTOM: raise Error;
+        Cons(y, ys) => Cons(f(x,y), Cons(y, ys));
+    };
+};
+
+
+def Nat f(Nat x, Nat y) =
+    case x {
+    Zero => case y {
+        Zero => Zero;
+        M(yP) => Zero;
+        S(yP) => y;
+    };
+    M(xP) => case y {
+        Zero => Zero;
+        M(yP) => Zero;
+        S(yP) => minus(y,xP);
+    };
+    S(xP) => case y {
+        Zero => x;
+        M(yP) => minus(x,yP);
+        S(yP)  => plus(x,y);
+    };
+};
+
+def Nat mms(List<Nat> l) =  maxlist(scanr(f)(Zero, l));
+
+
+{
+
+}

@@ -1,0 +1,34 @@
+
+module PrependAll;
+
+
+// def List<A> append<A>(List<A> l1, List<A> l2) =
+//     case l1 {
+//     Nil => l2;
+//     Cons(x,xs) => Cons(x, append(xs, l2));
+// };
+
+
+// def List<List<A>> prependAll<A>(List<A> xs, List<List<A>> ys) = map((List<A> s) => append(xs,s))(ys);
+
+
+// let rec append xs ys =
+//   match xs with
+//   | [] -> ys
+//   | x :: xs' -> x :: (append xs' ys)
+// ;;
+
+def List<A> append<A>(List<A> xs, List<A> ys) =
+    case xs {
+    Nil => ys;
+    Cons(x,xsP) => Cons(x, append(xsP, ys));
+};
+
+def List<List<A>> prependAll(List<A> xs, List<List<A>> ys) = map((List<A> bs) => append(xs,bs))(ys);
+
+
+def List<List<A>> start(List<A> xs, List<List<A>> ys) = prependAll(xs,ys);
+
+{
+
+}

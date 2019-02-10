@@ -1,0 +1,15 @@
+module ListMapRev;
+
+def List<A> rmap<A>(f)(List<A> l, List<A> acc) =
+    case l {
+    Nil => acc;
+    Cons(x,xs) => rmap(xs,Cons(f(x), acc));
+};
+
+
+def List<A> start<A>(f)(List<A> l, List<A> acc) = rmap(f)(l,acc);
+
+
+{
+
+}

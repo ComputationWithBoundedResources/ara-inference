@@ -1,0 +1,33 @@
+
+module ListMapRev2;
+
+// The usual list rev_map function.
+def List<A> rmap<A>(f)(List<A> l, List<A> acc) =
+    case l {
+    Nil => acc;
+    Cons(x,xs) => rmap(xs, Cons(f(x),acc));
+};
+
+def List<A> map_rev<A>(f)(List<A> l) = rmal(l,Nil);
+
+
+def List<A> rmap1<A>(f1,f2)(List<A> l, List<A> acc) =
+    case l {
+    Nil => acc;
+    Cons(x,xs) => rmap2(f1,f2)(xs, Cons(f1(x), acc));
+};
+
+def List<A> rmap2<A>(f1,f2)(List<A> l, List<A> acc) =
+    case l {
+    Nil => acc;
+    Cons(x,xs) => rmap1(f1,f2)(xs, Cons(f2(x),acc));
+};
+
+
+// Iteratively apply two functional arguments.
+def List<A> map_rev2(f1, f2)(List<A> l) = rmap1(l, Nil);
+
+
+{
+
+}

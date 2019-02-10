@@ -1,0 +1,39 @@
+
+module ISortFold;
+
+data Nat = Zero | S(Nat);
+
+def Bool leq(Nat x, Nat y) =
+    case x {
+    Zero => True;
+    S(xP) => case y {
+        Zero => False;
+        S(yP) => leq(xP,yP);
+    };
+};
+
+def List<Nat> insert(ord)(Nat x, List<Nat> ys) =
+    case ys {
+    Nil => Cons(x,Nil);
+    Cons(y,ysP) => case ord(x,y) {
+        True => Cons(x,Cons(y,ysP));
+        False => Cons(y, insert(x,ysP));
+    };
+};
+
+def List<Nat> fold(f)(Nat z, List<Nat> xs) =
+    case xs {
+    Nil => z;
+    Cons(x,xsP) => f(x, fold(z, xsP));
+};
+
+// Higher order not allowed
+// def List<Nat> isort(List<Nat> ys) = fold(insert(leq))(Nil, ys); // Error insert(leq)
+def List<Nat> isort(List<Nat> ys) = fold((Nat x, Nat y) => insert(leq)(x,y))(Nil, ys);
+
+// def List<Nat> start(List<Nat> ys) = isort(ys);
+
+{
+
+}
+

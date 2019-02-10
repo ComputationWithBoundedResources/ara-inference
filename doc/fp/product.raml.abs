@@ -1,0 +1,18 @@
+
+module Product;
+
+// Already defined!
+// let rec foldr f b xs = match xs with
+//   | [] -> b
+//   | (x::xs) -> f x (foldr f b xs)
+// ;;
+
+// let product ms ns = foldr (fun m ps -> foldr (fun n xs -> (m,n)::xs) ps ns) [] ms;;
+
+def List<Pair<A,B>> productP<A,B>(List<A> ms, List<B> ns) =
+    foldr((A m, List<A> ps) => foldr((B n, List<A> xs) => Cons(Pair(m,n), xs))(ps, ns))(Nil, ms);
+
+
+{
+
+}

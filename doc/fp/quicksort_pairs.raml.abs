@@ -1,0 +1,39 @@
+
+module QuicksortPairs;
+
+def List<A> append<A>(List<A> l1, List<A> l2) =
+    case l1 {
+    Nil => l2;
+    Cons(x,xs) => Cons(x, append(xs,l2));
+};
+
+def Pair<List<A>, List<A>> partition<A>(f)(List<A> l) =
+    case l {
+    Nil => Pair(Nil, Nil);
+    Cons(x,xs) => case partition(xs) {
+        Pair(cs,bs) => if f(x) then Pair(cs,Cons(x,bs)) else Pair(Cons(x,cs),bs);
+    };
+};
+
+def List<A> quicksort<A>(gt)(List<A> l) =
+    case l {
+    Nil => Nil;
+    Cons(x,xs) => case partition((A y) => gt(x,y))(xs) {
+        Pair(ys,zs) => append(quicksort(ys), Cons(x,quicksort(zs)));
+    };
+};
+
+def Bool compare(Pair<Int,Int> a, Pair<Int,Int> b) =
+    case Pair(a,b) {
+    Pair(Pair(a1,a2), Pair(b1,b2)) => if a1 != b1 then a1 < b1 else a2 <= b2;
+
+};
+
+def List<Pair<Int,Int>> quicksort_list(List<Pair<Int,Int>> l) = quicksort(compare)(l);
+
+def List<Pair<Int,Int>> start(List<Pair<Int,Int>> l) = quicksort_list(l);
+
+{
+
+}
+

@@ -1,0 +1,25 @@
+
+module Id;
+
+data Nat = Zero | S(Nat);
+
+def B iter<A,B>(f, g)(Nat x) =
+    case x {
+    Zero => g;
+    S(xP) => f(iter(xP));
+};
+
+def B compS<B>(f)(Nat z) = f(S(z));
+
+def A id<A>(A y) = y;
+
+// type A as function?
+// An error occurred during compilation:
+// null
+def Nat iterid<A>(Nat n) =
+    let (A f) = iter(compS, id)(n)
+    in f(Zero);
+
+{
+
+}

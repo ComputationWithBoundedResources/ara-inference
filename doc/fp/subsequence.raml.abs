@@ -1,0 +1,107 @@
+
+module Subsequence;
+
+
+// (* Returns the first line of zeros *)
+def List<Int> firstline<A>(List<A> l) =
+    case l {
+    Nil => Nil;
+    Cons(x,xs) => Cons(0, firstline(xs));
+};
+
+// (* computes a new line according to the recursive definition above
+//  * y is the element of the second list
+//  * lastline the the previously computed line in the matrix
+//  * l contains elements of the first list *)
+
+def Int head_or_zero(List<Int> l) =
+    case l {
+    Nil => 0;
+    Cons(x,xs) => x;
+};
+
+// let rec newline y lastline l =
+//   match l with
+//     | []     -> []
+//     | (x::xs) ->
+//       match lastline with
+//         | [] -> []
+//         | belowVal::lastline' ->
+// 	  let nl = newline y lastline' xs in
+//           let rightVal = head_or_zero nl in
+//           let diagVal =  head_or_zero lastline' in
+//           let elem =
+// 	    if (x:int) = y then
+// 	      diagVal+1
+// 	    else
+// 	      max belowVal rightVal
+//           in
+// 	  elem::nl
+
+def List<Int> newline(Int y, List<Int> lastline, List<Int> l) =
+    case l {
+    Nil => Nil;
+    Cons(x,xs) => case lastline {
+        Nil => Nil;
+        Cons(belowVal, lastlineP) =>
+        let (List<Int> nl) = newline(y, lastlineP, xs) in
+        let (Int rightVal) = head_or_zero(nl) in
+        let (Int diagVal) = head_or_zero(lastlineP) in
+        let (Int elem) = if x==y then diagVal + 1 else max(belowVal, rightVal) in
+                                                           Cons(elem, nl);
+    };
+};
+
+
+// (* computes the table of lengths *)
+// let rec lcstable l1 l2 =
+//   match l1 with
+//     | [] -> [firstline l2]
+//     | x::xs ->
+//       let m = lcstable xs l2 in
+//       match m with
+//         | [] -> []
+//         | l::ls -> (newline x l l2)::l::ls
+
+def List<List<Int>> lcstable(List<Int> l1, List<Int> l2) =
+    case l1 {
+    Nil => Cons(firstline(l2), Nil);
+    Cons(x,xs) =>
+    let (List<List<Int>> m) = lcstable(xs,l2) in
+    case m {
+        Nil => Nil;
+        Cons(l,ls) => Cons(newline(x,l,l2),Cons(l,ls));
+    };
+};
+
+
+// (* computes the length of the longest common subsequence *)
+// let rec lcs l1 l2 =
+//   let m = lcstable l1 l2 in
+//   match m with
+//     | [] -> 0
+//     | l1::_ ->
+//       match l1 with
+//         | [] -> 0
+//         | len::_ -> len
+
+// (* computes the length of the longest common subsequence *)
+def Int lcs(List<Int> l1, List<Int> l2) =
+    let (List<List<Int>> m) = lcstable(l1, l2) in
+    case m {
+    Nil => 0;
+    Cons(l1,_) => case l1 {
+        Nil => 0;
+        Cons(len,_) => len;
+    };
+};
+
+// let _ = lcs l1 l2
+
+def Int start(List<Int> l1, List<Int> l2) = lcs(l1,l2);
+
+
+{
+
+}
+

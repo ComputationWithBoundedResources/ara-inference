@@ -1,0 +1,150 @@
+
+module MergesortDc;
+
+data Nat = Zero | S(Nat);
+
+def Nat lengthNat<A>(List<A> xs) =
+    case xs {
+    Nil => Zero;
+    Cons(x,xsP) => S(lengthNat(xsP));
+};
+
+def Bool leq(Nat x, Nat y) =
+    case x {
+    Zero => True;
+    S(xP) => case y {
+        Zero => False;
+        S(yP) => leq(xP, yP);
+    };
+};
+
+
+def A const<A, B>(A f, B x) = f;
+// let const f x = f;;
+
+def Nat halve(Nat x) =
+    case x {
+    Zero => Zero;
+    S(xP) => case xP {
+        Zero => S(Zero);
+        S(xPP) => S(halve(xPP));
+    };
+};
+
+exception Error;
+
+// Already defined:
+// def List<A> tail<A>(List<A> l) =
+//     case l {
+//     Nil => Nil; // should be BOTTOM: throw Error;
+//     Cons(l,ls) => ls;
+// };
+
+// def A head<A>(List<A> l) =
+//     case l {
+//     Cons(l,ls) => l;
+// };
+
+def List<A> takeNat<A>(Nat n, List<A> l) =
+    case n {
+    Zero => Nil;
+    S(nP) => Cons(head(l), takeNat(nP, tail(l)));
+};
+
+
+def List<A> drop<A>(Nat n, List<A> l) =
+    case n {
+    Zero => l;
+    S(nP) => drop(nP, tail(l));
+};
+
+
+// let divideAndConquer isDivisible solve divide combine initial =
+//   let rec dc pb =
+//     match isDivisible pb with
+//     | False -> solve pb
+//     | True -> combine pb (map dc (divide pb))
+//   in dc initial
+// ;;
+
+def List<A> divideAndConquer<A>(isDivisible, solve, divide, combine)(List<A> initial) =
+    if isDivisible(initial) then solve(pb) else combine(pb)(map(divideAndConquer(intial), divide(pb)));
+
+
+// let rec merge ys zs =
+//   match ys with
+//   | Nil -> zs
+//   | Cons(y,ys') ->
+//      match zs with
+//      | Nil -> ys
+//      | Cons(z,zs') ->
+// 	match leq y z with
+// 	| True -> Cons(y,merge ys' zs)
+// 	| False -> Cons(z,merge ys zs')
+// ;;
+
+def List<Nat> merge(List<Nat> ys, List<Nat> zs) =
+    case ys {
+    Nil => zs;
+    Cons(y, ysP) => case zs {
+        Nil => ys;
+        Cons(z,zsP) => case leq(y,z) {
+            True => Cons(y, merge(ysP, zs));
+            False => Cons(z, merge(ys,zsP));
+        };
+    };
+};
+
+// let mergesort zs =
+//   let divisible ys =
+//     match ys with
+//     | Nil -> False
+//     | Cons(y,ys') ->
+//        match ys' with
+//        | Nil -> False
+//        | Cons(y',ys'') -> True
+//   and divide ys =
+//     let n = halve (length ys)
+//     in Cons(take n ys, Cons(drop n ys,Nil))
+//   and combine p =
+//     match p with
+//     | Nil -> raise Error
+//     | Cons(l1,p') ->
+//        match p' with
+//        | Cons(l2,p'') -> merge l1 l2
+//        | Nil -> raise Error
+//   in divideAndConquer divisible (fun ys -> ys) divide (const combine) zs
+// ;;
+// ()
+
+def Bool divisible<A>(List<A> ys) =
+    case ys {
+    Nil => False;
+    Cons(y,ysP) => case ysP {
+        Nil => False;
+        Cons(_,_) => True;
+    };
+};
+
+def List<List<Nat>> divide(List<Nat> ys) =
+    let (Nat n) = halve(lengthNat(ys))
+    in Cons(takeNat(n,ys), Cons(drop(n, ys), Nil));
+
+
+def List<Nat> combine(List<List<Nat>> p) =
+    case p {
+    Nil => Nil; // Should be be BOTTOM: throw Error;
+    Cons(l1, pP) => case pP {
+        Nil => Nil; // Should be be BOTTOM: throw Error;
+        Cons(l2, pPP) => merge(l1, l2);
+    };
+};
+
+def A id<A>(A x) = x;
+
+def List<Nat> mergesort(List<Nat> zs) = divideAndConquer(divisible, id, divide, const(combine))(zs);
+
+
+{
+
+}

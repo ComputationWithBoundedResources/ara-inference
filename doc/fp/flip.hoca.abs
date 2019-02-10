@@ -1,0 +1,17 @@
+
+module Flip;
+
+data XX<A> = E | Z(XX<A>) | O(XX<A>);
+
+def XX<A> flip<A>(XX<A>  x) =
+    case x {
+    E => E;
+    Z(y) => O(flip(y));
+    O(y) => Z(flip(y));
+};
+
+def XX<A> start<A>(XX<A> w) = flip(w);
+
+{
+
+}

@@ -1,0 +1,24 @@
+
+module RevDl;
+
+def B comp<A,B>(f, g)(A x) = f(g(x)) ;
+
+def A id<A>(A x) = x;
+
+
+//(* walk :: list -> (list -> list) *)
+def B walk<A,B>(List<A> xs) =
+    case xs {
+    Nil => id;                  // Higher-order constructs are not supported by abs!
+    Cons(x, xsP) => ((A a) => comp(wal(xsP), ((List<A> ys) => Cons(x,ys)))(a));
+};
+
+
+// (* rev :: list -> list *)
+// def List<A> rev<A>(List<A> l) =
+
+//   in walk l Nil
+
+{
+
+}

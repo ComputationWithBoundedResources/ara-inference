@@ -1,0 +1,59 @@
+
+module Mergesort;
+
+def Pair<List<A>, List<A>> split<A>(List<A> l) =
+    case l {
+    Nil => Pair(Nil,Nil);
+    Cons(x1, xs) => case xs {
+        Nil => Pair(Cons(x1,Nil), Nil);
+        Cons(x2,xsP) => case split(xsP) {
+            Pair(l1, l2) => Pair(Cons(x1, l1), Cons(x2, l2));
+        };
+    };
+};
+
+def List<A> merge<A>(compare)(List<A> l1, List<A> l2) =
+    case l1 {
+    Nil => l2;
+    Cons(x,xs) => case l2 {
+        Nil => Cons(x,xs);
+        Cons(y,ys) => if compare(x,y) then Cons(x,merge(xs,l2)) else Cons(y,merge(l1,ys));
+    };
+};
+
+
+def List<A> mergesort<A>(compare)(Int logL, List<L> l) =
+    if logL == 0
+    then ((List<A> unsued) => Nil) // Higher order not supported!
+        else ((List<A> logLP) =>  case l {
+                Nil => Nil; // Should be BOTTOM; raise Not_found
+                Cons(x1,xs) => case xs {
+                    Nil => Cons(x1, Nil);
+                    Cons(x2, xsP) => case split(l) {
+                        Pair(l1,l2) => merge(compare)(mergesort(logLP, l1), mergesort(logLP, l2));
+                    };
+                };
+            };
+            );
+
+// let rec compare_list (l1:int list) l2 =
+//   match l1 with
+//     | [] -> true
+//     | x::xs ->
+//       match l2 with
+//  | [] -> false
+//  | y::ys ->
+//    if x = y then
+//      compare_list xs ys
+//    else
+//      x <= y
+
+// let mergesort_list = mergesort compare_list
+
+// ;;
+
+// mergesort (>) (Rnat.of_int 6) [1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17]
+
+{
+
+}

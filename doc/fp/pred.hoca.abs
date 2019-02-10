@@ -1,0 +1,13 @@
+
+module Pred;
+
+data Nat = Zero | S(Nat);
+
+def Nat pred(Nat x) =
+    case x {
+    Zero => Zero;
+    S(xP) => xP;
+};
+{
+
+}

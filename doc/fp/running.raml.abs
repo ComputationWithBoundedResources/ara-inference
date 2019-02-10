@@ -1,0 +1,101 @@
+
+
+module Running;
+
+def List<A> append<A>(List<A> l1, List<A> l2) =
+    case l1 {
+    Nil => l2;
+    Cons(x,xs) => Cons(x, append(xs,l2));
+};
+
+def Pair<List<A>, List<A>> partition<A>(f)(List<A> l) =
+    case l {
+    Nil => Pair(Nil, Nil);
+    Cons(x,xs) => case partition(xs) {
+        Pair(cs,bs) => if f(x) then Pair(cs,Cons(x,bs)) else Pair(Cons(x,cs),bs);
+    };
+};
+
+def List<A> quicksort<A>(gt)(List<A> l) =
+    case l {
+    Nil => Nil;
+    Cons(x,xs) => case partition((A y) => gt(x,y))(xs) {
+        Pair(ys,zs) => append(quicksort(ys), Cons(x,quicksort(zs)));
+    };
+};
+
+exception Inv_arg;
+
+// type ('a,'b) ablist =
+//     Acons of 'a * ('a,'b) ablist
+//   | Bcons of 'b * ('a,'b) ablist
+//   | Nill
+
+data ABList<A,B> = ACons(ABList<A, Pair<A,B>>)
+    | BCons(ABList<B, Pair<A,B>>)
+    | Nill;
+
+
+// let rec abmap f g abs =
+//   match abs with
+//   | Acons (a,abs') -> Acons(f a, abmap f g abs')
+//   | Bcons (b,abs') -> Bcons(g b, abmap f g abs')
+//   | Nill -> Nill
+
+def ABList<A,B> abmap<A,B>(f,g)(ABList<A,B> abs) =
+    case abs {
+    ACons(a, absP) => ACons(f(a), abmap(absP));
+    BCons(b, absP) => BCons(g(b), abmap(absP));
+};
+
+def A id<A>(A x) = x;
+
+// let asort gt abs =
+//   abmap (quicksort gt) (fun x -> x) abs
+
+def ABList<A,B> asort<A,B>(gt)(ABList<A,B> abs) =
+    abmap((List<A> xs) => quicksort(gt)(xs), id)(abs);
+
+// let asort' gt abs =
+//   abmap (quicksort gt) (fun _ -> raise Inv_arg) abs
+
+def A err<A>(A x) = throw Exception; // should be BOTTOM! not possible in functional code
+
+def ABList<A,B> asortP<A,B>(gt)(ABList<A,B> abs) =
+    abmap((List<A> xs) => quicksort(gt)(xs), err)(abs);
+
+// let rec abfoldr f g acc abs =
+//   match abs with
+//   | Acons (a,abs') ->
+//      let acc' = abfoldr f g acc abs' in
+//      f a acc'
+//   | Bcons (b,abs') ->
+//      let acc' = abfoldr f g acc abs' in
+//      g b acc'
+//   | Nill ->
+//      acc
+
+def ABList<A,B> abfoldr<A,B>(f,g)(ABList<A,B> acc, ABList<A,B> abs) =
+    case abs {
+    ACons(a, absP) => f(a,abfoldr(acc,absP));
+    BCons(b, absP) => g(b,abfoldr(acc,absP));
+    Nill => acc;
+};
+
+
+// let cons_all abs =
+//   let f x y =
+//     let fa = fun x acc -> raise Not_found in
+//     let fb = fun b acc -> Bcons(b+x,acc) in
+//     abfoldr fa fb Nill y
+//   in
+//   let g x y = Bcons (x,y) in
+//   abfoldr f g Nill abs
+
+// def ABList<A,B> consAll(ABList<A,B> abs) =
+// .... exceptions not available in functional codle!
+
+{
+
+}
+

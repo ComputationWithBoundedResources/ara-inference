@@ -1,0 +1,55 @@
+
+module LogicAndCodes1;
+
+data BoolExpr =
+    Var(Int)
+    | Not(BoolExpr)
+    | And(BoolExpr, BoolExpr)
+    | Or(BoolExpr, BoolExpr);
+
+
+exception Not_found;
+
+def Bool assoc(Int k, List<Pair<Int,Bool>> l) =
+    case l {
+    Nil => False; // Should be BOTTOM, e.g. throw Not_found;
+    Cons(x,xs) => case x {
+        Pair(a,b) => if a==k then b else assoc(k,xs);
+    };
+};
+
+def List<A> aux<A>(List<A> acc, List<A> l) =
+    case l {
+    Nil => acc;
+    Cons(h, t) => aux(Cons(h,acc), t);
+};
+
+def List<A> rev<A>(List<A> list) = aux(Nil, list);
+
+def List<A> concat<A>(List<A> l1, List<A> l2) =
+    case l1 {
+    Nil => l2;
+    Cons(x,xs) => Cons(x, concat(xs, l2));
+};
+
+def Bool eval(List<Pair<Int, Bool>> valVars, BoolExpr e) =
+    case e {
+    Var(x) => assoc(x,valVars);
+    Not(e) => not(eval(valVars, e));
+    And(e1,e2) => eval(valVars, e1) && eval(valVars, e2);
+    Or(e1,e2) => eval(valVars,e1) || eval(valVars, e2);
+};
+
+def List<Pair<List<Pair<Int,Bool>>,Bool>> tableMake(List<Pair<Int, Bool>> valVars, List<Int> vars, BoolExpr expr) =
+    case vars {
+    Nil => Cons(Pair(rev(valVars), eval(valVars, expr)), Nil);
+    Cons(v,tl) => concat(tableMake(Cons(Pair(v, True), valVars), tl, expr),
+         tableMake(Cons(Pair(v,False),valVars), tl, expr));
+};
+
+
+def List<Pair<List<Pair<Int,Bool>>,Bool>> start(List<Pair<Int, Bool>> valVars, List<Int> vars, BoolExpr expr) = tableMake(valVars, vars, expr);
+
+{
+
+}

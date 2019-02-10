@@ -1,0 +1,33 @@
+
+module Isort;
+
+def Bool compare_list (List<Int> l1, List<Int> l2) =
+    case l1 {
+    Nil => True;
+    Cons(x,xs) => case l2 {
+        Nil => False;
+        Cons(y,ys) => if x==y then compare_list(xs,ys) else x < y;
+    };
+};
+
+def Bool le(Int i1, Int i2) = i1 <= i2;
+
+
+def List<Int> insert(le)(Int x, List<Int> l) =
+    case l {
+    Nil => Cons(x, Nil);
+    Cons(y, ys) => if le(y, x) then Cons(y,insert(x, ys)) else Cons(x, Cons(y, ys));
+};
+
+
+def List<Int> isort(le)(List<Int> l) =
+    case l {
+    Nil => Nil;
+    Cons(x,xs) => insert(le)(x, isort(xs));
+};
+
+def List<Int> start(List<Int> l) = isort(le)(l);
+
+{
+
+}

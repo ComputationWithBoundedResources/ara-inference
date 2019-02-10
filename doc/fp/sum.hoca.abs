@@ -1,0 +1,24 @@
+
+module Sum;
+
+data Nat = Zero | S(Nat);
+
+def Nat fold(f)(Nat z, List<Nat> xs) =
+    case xs {
+    Nil => z;
+    Cons(x,xsP) => f(x, fold(z,xsP));
+};
+
+def Nat plus(Nat x, Nat y) =
+    case x {
+    Zero => y;
+    S(xP) => S(plus(xP, y));
+};
+
+def Nat sum(List<Nat> l) = fold(plus)(Zero, l);
+
+def Nat start(List<Nat> l) = sum(l);
+
+{
+
+}

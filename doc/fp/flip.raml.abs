@@ -1,0 +1,17 @@
+
+module Flip;
+
+data BString = E | Z(BString)| O(BString);
+
+def BString flip(BString x) =
+    case x{
+    E => E;
+    Z(xP) => O(flip(xP));
+    O(xP) => Z(flip(xP));
+};
+
+
+def BString start(BString x) = flip(x);
+{
+
+}

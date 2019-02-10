@@ -1,0 +1,36 @@
+
+module Foldsum;
+
+data Nat = Zero | S(Nat);
+
+// Returns a function!
+def B foldrFun<A,B>(f,z)(A xs) =
+    case xs {
+    Nil => z;
+    Cons(x,xsP) => f(x, foldrFun(xsP));
+};
+
+def Nat plus(Nat x, Nat y) =
+    case x {
+    Zero => y;
+    S(xP) => S(plus(xP, y));
+};
+
+// Already defined
+// let rec map f xs =
+//   match xs with
+//   | Nil -> Nil
+//   | Cons(x,xsP) -> Cons(f x, map f xsP)
+// ;;
+
+def B comp<A,B>(f, g)(A z) = f (g( z));
+
+def A id<A>(A x) = x;
+
+// Error: No higher order constructs possible in abs :-/
+def Nat foldsum(List<Nat> l) = (foldrFun(comp, id)(map(plus, l)))(Zero);
+
+
+{
+
+}

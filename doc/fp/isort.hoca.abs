@@ -1,0 +1,36 @@
+
+module Isort;
+
+data Nat = Zero | S(Nat);
+
+def Bool leq(Nat x, Nat y) =
+    case x {
+    Zero => True;
+    S(xP) => case y {
+        Zero => False;
+        S(yP) => leq(xP, yP);
+    };
+};
+
+def List<Nat> insert(ord)(Nat x, List<Nat> ys) =
+    case ys {
+    Nil => Cons(x,Nil);
+    Cons(y,ysP) => case ord(x,y) {
+        True => Cons(x, Cons(y, ysP));
+        False => Cons(y, insert(x,ysP));
+    };
+};
+
+def List<Nat> sort(ord)(List<Nat> ys) =
+    case ys {
+    Nil => Nil;
+    Cons(y, ysP) => insert(ord)(y, sort(ysP));
+};
+
+def List<Nat> start(List<Nat> ys) = sort(leq)(ys);
+
+{
+
+}
+
+

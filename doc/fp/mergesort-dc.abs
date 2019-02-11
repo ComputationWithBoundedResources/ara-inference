@@ -144,6 +144,8 @@ def A id<A>(A x) = x;
 
 def List<Nat> mergesort(List<Nat> zs) = divideAndConquer(divisible, id, divide, const(combine))(zs);
 
+def List<Nat> start(List<Nat> zs) = mergesort(zs);
+
 
 {
 

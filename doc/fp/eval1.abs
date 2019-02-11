@@ -25,6 +25,8 @@ def Int eval(Exp e) =
     Econst(n) => n;
 };
 
+def Int start(Exp e) = eval(e);
+
 {
 
 }

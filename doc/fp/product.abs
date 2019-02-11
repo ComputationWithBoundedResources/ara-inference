@@ -13,6 +13,8 @@ def List<Pair<A,B>> productP<A,B>(List<A> ms, List<B> ns) =
     foldr((A m, List<A> ps) => foldr((B n, List<A> xs) => Cons(Pair(m,n), xs))(ps, ns))(Nil, ms);
 
 
+def List<Pair<A,B>> start<A,B>(List<A> ms, List<B> ns) = productP(ms,ns);
+
 {
 
 }

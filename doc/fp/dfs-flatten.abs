@@ -33,6 +33,8 @@ def List<A> revApp<A>(List<A> l, List<A> acc) =
 
 def List<A> flatten<A>(Tree<A> t) = revApp(dfsAcc(cons)(t, Nil), Nil);
 
+def List<A> start<A>(Tree<A> t) = flatten(t);
+
 {                               // Main
 
 }

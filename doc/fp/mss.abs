@@ -67,6 +67,8 @@ def Nat f(Nat x, Nat y) =
 
 def Nat mms(List<Nat> l) =  maxlist(scanr(f)(Zero, l));
 
+def Nat start(List<Nat> l) = mms(l);
+
 
 {
 

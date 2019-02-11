@@ -32,6 +32,8 @@ def Closure<A> walk<A>(List<A> l) =
 
 def List<A> rev2<A>(List<A> l) = apply(walk(l), Nil);
 
+def List<A> start<A>(List<A> l) = rev2(l);
+
 {
 
 }

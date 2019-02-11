@@ -14,11 +14,12 @@ def B compS<B>(f)(Nat z) = f(S(z));
 def A id<A>(A y) = y;
 
 // type A as function?
-// An error occurred during compilation:
-// null
 def Nat iterid<A>(Nat n) =
     let (A f) = iter(compS, id)(n)
     in f(Zero);
+
+
+def Nat start(Nat n) = iterid(n);
 
 {
 

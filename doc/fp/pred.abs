@@ -8,6 +8,9 @@ def Nat pred(Nat x) =
     Zero => Zero;
     S(xP) => xP;
 };
+
+def Nat start(Nat x) = pred(x);
+
 {
 
 }

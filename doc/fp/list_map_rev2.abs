@@ -27,6 +27,7 @@ def List<A> rmap2<A>(f1,f2)(List<A> l, List<A> acc) =
 // Iteratively apply two functional arguments.
 def List<A> map_rev2(f1, f2)(List<A> l) = rmap1(l, Nil);
 
+def List<A> start(f1, f2)(List<A> l) = map_rev(f1,f2)(l);
 
 {
 

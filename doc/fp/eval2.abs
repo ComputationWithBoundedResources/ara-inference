@@ -57,6 +57,8 @@ def Maybe<Int> evalMaybe(Exp e) =
 };
 
 
+def Maybe<Int> start(Exp e) = evalMaybe(e);
+
 {
 
 }

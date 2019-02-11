@@ -44,6 +44,9 @@ def Nat sum(List<Nat> xs) =
 
 def Nat sum_sqs(Nat n) = sum(map(square)(enum(n)));
 
+def Nat start(Nat n) = sum_sqs(n);
+
+
 {
 
 }

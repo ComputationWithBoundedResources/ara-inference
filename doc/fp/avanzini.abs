@@ -84,6 +84,9 @@ def List<A> walk(f)(List<A> xs) =
 
 // let rev_sort f l = walk f l []
 
-{                               // Main
+
 // let _ = rev_sort (fun a b -> a <= b) [Right [3;2;1]; Right [2;1;0;-1]; Left 1; Left 2; Left 3; Right []]
+
+
+{                               // Main
 }

@@ -1,4 +1,3 @@
-
 module MAppPlus;
 
 data Nat = Zero | S(Nat);
@@ -15,6 +14,5 @@ def List<Nat> mapplus(List<Nat> l, Nat x) = map((Nat y) => plus(x,y))(l);
 def List<Nat> start(List<Nat> l, Nat x) = mapplus(l,x);
 
 {
-
 }
 

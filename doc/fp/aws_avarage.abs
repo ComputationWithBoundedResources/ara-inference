@@ -59,7 +59,7 @@ def Triple<List<A>,List<A>,List<A>> partition<A>(gt)(Triple<List<A>,List<A>,List
 def Pair<List<A>, List<A>> quicksort<A>(gt)(List<A> acc, List<A> l) =
     case l {
     Nil => Pair(Nil, acc);
-    Cons(x,xs) => case (partition(gt(x))(Triple(Nil,Nil,acc), xs)) {
+    Cons(x,xs) => case (partition((Int sid2, List<A> acc) => gt(x,sid2, acc))(Triple(Nil,Nil,acc), xs)) {
         Triple(ys,zs,accP) => case quicksort(accP,ys) {
             Pair(l1,accPP) => case quicksort(accPP,zs) {
                 Pair(l2, accPPP) => Pair(append(Cons(x,l1),l2), accPPP);
@@ -131,6 +131,7 @@ def List<Int> sortStudents(List<Int> studentIds, List<Int> courseIds) =
 //     | x::xs -> (f x) :: (map f xs)
 
 // let make_table student_ids course_ids =
+
 
 //   let rec mk_table sids cids =
 //     match sids with

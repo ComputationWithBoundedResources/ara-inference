@@ -92,8 +92,13 @@ def ABList<A,B> abfoldr<A,B>(f,g)(ABList<A,B> acc, ABList<A,B> abs) =
 //   let g x y = Bcons (x,y) in
 //   abfoldr f g Nill abs
 
+def ABList<A,B> f(A x, B y) =
+    abfoldr((A x, Pair<A,B> acc) => error
+        // .... exceptions not available in functional codle!
+        // , )
+
 // def ABList<A,B> consAll(ABList<A,B> abs) =
-// .... exceptions not available in functional codle!
+
 
 {
 

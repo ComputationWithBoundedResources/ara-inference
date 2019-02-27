@@ -17,6 +17,14 @@ def Bool anyEq(Int nr, List<Int> ys) =
 
 // exception Invalid_Tree;
 
+data Err = Err(String) | NotUsed ;
+
+def A bottom<A>(A unused, Err err) =
+    case err {
+    NotUsed => bottom(unused, Err(""));
+};
+
+
 def Bool lookupBTree(Int n, Tree node) =
     case node {
     Leaf(xs) => anyEq(n, xs);

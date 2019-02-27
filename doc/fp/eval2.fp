@@ -1,5 +1,5 @@
 
-let rec leqNat x y =
+let rec leqNat y x =
   match y with
   | 0 -> True
   | S(y') -> match x with
@@ -16,11 +16,11 @@ let rec eqNat x y =
             | 0 -> False
 ;;
 let rec geqNat x y =
-  match x with
-   | 0 -> False
-   | S(x') -> match y with
-              | 0 -> True
-              | S(y') -> geqNat x' y'
+  match y with
+  | 0 -> True
+  | S(y') -> (match x with
+             | 0 -> False
+             | S(x') -> geqNat x' y')
 ;;
 let rec ltNat x y =
   match y with

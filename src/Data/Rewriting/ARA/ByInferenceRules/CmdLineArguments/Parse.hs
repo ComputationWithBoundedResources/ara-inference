@@ -8,9 +8,9 @@
 -- Created: Thu Sep  4 12:21:55 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Aug 16 15:11:38 2018 (+0200)
+-- Last-Updated: Mon Apr  8 10:00:19 2019 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 328
+--     Update #: 330
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -67,6 +67,7 @@ defaultOptions = ArgumentOptions {
                  , uniqueConstrFuns = False
                  , separateBaseCtr = False
                  , tempFilePath = "/tmp"
+                 , noHeur = False
                  , helpText = False
                  , keepFiles = False
                  , printInfTree = False
@@ -106,6 +107,10 @@ options = sortBy (compare `on` (\(Option c _ _ _) -> c))
   , Option ['a'] ["allow-cf"]
   (NoArg (\opts -> return $ opts { allowCf = True }))
   "Allow cost-free signatures. [Default: False]"
+
+  , Option [] ["no-heur"]
+  (NoArg (\opts -> return $ opts { noHeur = True }))
+  "Do not use heuristics. [Default: False]"
 
 
   , Option [] ["verbose"]

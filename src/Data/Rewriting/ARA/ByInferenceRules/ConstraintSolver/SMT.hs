@@ -9,9 +9,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Aug 16 17:27:18 2018 (+0200)
+-- Last-Updated: Mon Apr  8 09:56:20 2019 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2045
+--     Update #: 2047
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -177,7 +177,10 @@ solveProblem ops probSigs conds aSigs cfSigs = do
     sequenceA $
     parMap
       rpar -- with heuristics
-      (\nr -> doFork $ E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = True}) probSigs conds aSigs cfSigs nr) probShift))
+      (\nr ->
+         if noHeur ops
+         then  doFork $ return $ Left $ FatalException "No heuristics." -- just here to ensure it is not evaluated
+         else doFork $ E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = True}) probSigs conds aSigs cfSigs nr) probShift))
       (if lowerbound ops
          then [1]
          else (if isLower

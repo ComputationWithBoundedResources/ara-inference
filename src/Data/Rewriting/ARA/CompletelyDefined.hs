@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP                 #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 -- CompletelyDefined.hs ---
 --
@@ -10,7 +11,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 487
+--     Update #: 586
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -70,87 +71,65 @@ import qualified Control.Exception                                          as E
 import           Data.Rewriting.ARA.Exception
 
 
-mkCompletelyDefinedConds :: (Ord f, Read v, Eq f, Eq v, Show f, Show dt, Eq dt, Show v) =>
-                            Prove f v f dt dt f
+mkCompletelyDefinedConds :: (Ord f, Read f, Read v, Eq f, Eq v, Show f, Show dt, Eq dt, Read dt, Show v) =>
+                            Bool -> Prove f v f dt dt f
                          -> Prove f v f dt dt f
-mkCompletelyDefinedConds prove =
-  -- trace ("grRls: " ++ show grRls)
-  -- trace ("defSyms: " ++ show defSyms)
-  -- trace ("allSyms: " ++ show allSyms)
-  -- trace ("ctrSyms: " ++ show ctrSyms)
-  -- trace ("lhss: " ++ show lhssChlds) $
-  -- trace ("ctrArities: " ++ show ctrArities)
-  -- trace ("nRules: " ++ show nRules)
-  -- trace ("ctrArities: " ++ show ctrArities)
-  -- undefined
-  -- trace ("nSigs: " ++ show (addSig <$> signatures p))
-  -- undefined
-  -- p { rules = (rules p) { strictRules = strictRules (rules p) ++ concat nRules }
-  --   , datatypes = addDt <$> datatypes p
-  --   , signatures = addSig <$> signatures p
-  --   }
-  -- undefined
-
-  -- E.throw $ if null (concat nRules) then FatalException "YES" else FatalException "NO"
-  -- E.throw $ if any (>2) ctrArities then FatalException "YES" else FatalException "NO"
-
-  prove { conditions = nCond, signatureMap = nSigM }
+mkCompletelyDefinedConds btmRuleInsteadOfConstraints prove =
+  if btmRuleInsteadOfConstraints
+  then
+  prove {
+    problem = (problem prove)
+              { rules = (rules (problem prove)) { strictRules = strictRules (rules $ problem prove) ++ nRules }
+              , signatures = nSignatures
+              },
+      conditions = conditions prove,
+      signatureMap = nSigM -- signatureMap prove
+    }
+  else
+  prove {
+  problem = (problem prove)
+            { rules = (rules (problem prove)) { strictRules = strictRules (rules $ problem prove) ++ nRules }
+            , signatures = nSignatures
+            },
+    conditions = nCond,
+    signatureMap = nSigM
+  }
 
 
-  where -- addDt = (++ [Datatype (read (show rhsBtmSym))
-        --               [ Constructor (read $ show rhsBtmSym) []]])
-        -- addSig = (++ [Signature (read (show rhsBtmSym)) [] (read (show rhsBtmSym))])
+  where btm nr = Fun (btmF nr) []
+        btmRules = map (\nr -> Rule (Fun (btmF nr) []) (Fun (btmF nr) [])) [0..length complDefRules-1]
+        botSig = map (\nr -> Signature (btmF nr,ACost 0,True, False) [] (read $ show anyTypeSym, [ACost 0])) [0..length complDefRules-1]
+        btmF nr = read $ show ("BOTTOM" ++ show nr)
+        nSignatures =
+          (botSig ++) <$>
+          signatures (problem prove)
+         where Signature _ _ (rDt, _) = maybe (error "no signatures") head (signatures $ problem prove)
+
         p = problem prove
-        (nCond, nSigM) = foldl mkSigCond (conditions prove, signatureMap prove) (concat nRules)
+
+        complDefRules = snd $ foldl' (\(nr, acc) f -> let (nr', xs) = mkCompletelyDefined' nr f in (nr', acc++xs)) (0,[]) (zip defSyms lhssChlds)
+
+        nRules | btmRuleInsteadOfConstraints = btmRules -- complDefRules ++ btmRules
+               | otherwise = complDefRules
+
+        (nCond, nSigM) | btmRuleInsteadOfConstraints = (conditions prove, signatureMap prove)
+                       | otherwise = foldl mkSigCond (conditions prove, signatureMap prove) nRules
         mkSigCond acc@(cond,sigs) (Rule (Fun _ lhss) (Fun f _))
           | not (null varParamNrs) = (cond',sigs')
           | otherwise = acc
 
-            -- foldl (mkSigCond' f) acc (zip [0..] lhss)
-
           where (nr,sigs') =
                   case find ((== f) . fst4 . lhsRootSym . fst3 . snd) (zip [0..] sigs) of
-                    Nothing     -> -- trace ("nsig: " ++ show nSig)
-                                   (length sigs, sigs ++ nSig)
+                    Nothing     -> (length sigs, sigs ++ nSig)
                     Just (nr,_) -> (nr, sigs)
-                sig = getDefSymSignatureByName' (fromJust $ signatures p) f
-                nCondDt pNr = -- trace ("nCond p(" ++ show nr ++ "," ++ show pNr ++") == 0")
-                  (SigRefParam "" nr pNr, Eq, 0)
-                nSig = [(Signature (f,ACost (Vector1 0),False, False)
-                        (map (\dt -> ActualCost False dt (ACost 0)) pDts)
-                        (ActualCost False rDt (ACost 0))
-                        ,-1, "to make completely defined")]
+                sig = getDefSymSignatureByName' (fromMaybe [] nSignatures) f
+                nCondDt pNr = (SigRefParam "" nr pNr, Eq, 0)
+                nSig = [(Signature (f,ACost (Vector1 0),False, False) (map (\dt -> ActualCost False dt (ACost 0)) pDts) (ActualCost False rDt (ACost 0)) ,-1, "to make completely defined")]
                 pDts = map fst $ lhsSig sig
                 rDt = fst $ rhsSig sig
-
-                cond' = cond { dtConditionsInt = dtConditionsInt cond
-                               ++ map nCondDt varParamNrs }
+                cond' = cond { dtConditionsInt = dtConditionsInt cond ++ map nCondDt varParamNrs }
                 varParamNrs :: [Int]
                 varParamNrs = map fst $ filter (hasVars . return . snd) (zip [0..] lhss)
-
-        -- mkSigCond' f (cond,sigs) (pNr,lhs) = case lhs of
-        --   Var _    ->
-        --     trace ("nCond: " ++ show ((nr, pNr::Int) , Eq, 0))
-        --     ( cond { dtConditionsInt = dtConditionsInt cond ++ nCond}
-        --     , sigs'
-        --     )
-        --   Fun f' [] -> case arity f of
-        --     Just chLen -> foldl (mkSigCond' f') (cond,sigs)
-        --       (zip [0..] (replicate chLen (Var undefined)))
-        --   Fun f' ch -> foldl (mkSigCond' f') (cond,sigs) (zip [0..] ch)
-
-        --   where (nr,sigs') =
-        --           case find ((== f) . fst4 . lhsRootSym . fst3 . snd) (zip [0..] sigs) of
-        --             Nothing     -> (length sigs, sigs' ++ nSig)
-        --             Just (nr,_) -> (nr, sigs)
-        --         sig = getDefSymSignatureByName' (fromJust $ signatures p) f
-        --         nCond = [(SigRefParam "" (nr::Int) (pNr::Int) , Eq, 0)]
-        --         nSig = [(Signature (f,ACost (Vector1 0),False, False)
-        --                 (map (\dt -> ActualCost False dt (ACost 0)) pDts)
-        --                 (ActualCost False rDt (ACost 0))
-        --                , -1, "to make completely defined")]
-        --         pDts = map fst $ lhsSig sig
-        --         rDt = fst $ rhsSig sig
 
         isVar Var{} = True
         isVar _     = False
@@ -171,13 +150,19 @@ mkCompletelyDefinedConds prove =
         funSyms (Rule lhs rhs) = funSymsTerm lhs ++ funSymsTerm rhs
         funSymsTerm (Fun f ch) = f : concatMap funSymsTerm ch
         funSymsTerm (Var _)    = []
-        allSyms = nub $ concatMap funSyms rls
+        allSyms = nub $ concatMap funSyms rls ++ map fst dtTerms
         ctrSyms = filter (`notElem` defSyms) allSyms
 
         defTerms t@(Fun f ch) = (f, t) : concatMap defTerms ch
         defTerms t@(Var v)    = []
 
-        allTerms = concatMap (\(Rule lhs rhs) -> defTerms lhs ++ defTerms rhs) rls
+        defCtrs (Constructor (f,_) ch) = (f, Fun f (replicate (length ch) (Var $ read $ show "x")))
+        -- _ :: [Datatype (dt, [ACost Int]) (f, ACost Int)] -> [a]
+        dtTerms = maybe [] (concatMap (\(Datatype _ ctrs) -> map defCtrs ctrs)) (datatypes p)
+
+        allTerms =
+          trace ("dtTerms: " ++ show dtTerms)
+          concatMap (\(Rule lhs rhs) -> defTerms lhs ++ defTerms rhs) rls ++ dtTerms
         arity f = case find ((== f).fst) allTerms of
           Nothing           -> Nothing -- must be a variable
           Just (_,Fun _ ch) -> Just $ length ch
@@ -188,16 +173,14 @@ mkCompletelyDefinedConds prove =
         rootTermChlds (Rule _ _)          = error "not possible"
         lhssChlds = map (map rootTermChlds) grRls
 
-        ctrArities = catMaybes $ map arity ctrSyms
-        nRules = map mkCompletelyDefined' (zip defSyms lhssChlds)
-        -- mkCompletelyDefined' :: [[Term f v]] -> [Rule f v]
-        mkCompletelyDefined' (f,lhss) =
+        ctrArities = mapMaybe arity ctrSyms
+
+        mkCompletelyDefined' nrStart (f,lhss) =
           let maxDepthF (Var x)    = 0
               maxDepthF (Fun _ ch) = 1 + maximum (0:map maxDepthF ch)
               maxDepth = maximum $ concatMap (map maxDepthF) lhss
               maxDepths = map (maximum . map maxDepthF) (transpose lhss)
-              arityFuns = -- Var "x" :
-                concat (zipWith zipAritiesToFun ctrArities ctrSyms)
+              arityFuns = concat (zipWith zipAritiesToFun ctrArities ctrSyms)
 
               paramLen = length (head lhss)
               ctrCombs0 =  combsTerm arityFuns (length $ filter not paramVars)
@@ -214,12 +197,14 @@ mkCompletelyDefinedConds prove =
               hasVarsBelRoot = any hasVars . map chld
                 where chld (Fun _ ch) = ch
                       chld _          = []
-              mkRule params = Rule (Fun f params) (Fun  f [])
+              mkRule nr params = Rule (Fun f params) (btm nr) -- (Fun  f [])
               isVar Var{} = True
               isVar _     = False
               paramVars = map (all isVar) $ transpose lhss
               mkDummyVar True nr = [Var $ read $ show $ "x" ++ show nr]
               mkDummyVar False _ = [Fun f []]
+
+              ruleDefs = mergeVars (length ctrSyms) paramVars filteredParams
 
           in -- trace ("\n\nf: " ++ show f) $
              -- -- trace ("lhss: " ++ show lhss) $
@@ -235,7 +220,7 @@ mkCompletelyDefinedConds prove =
              -- trace ("filteredParams: " ++ show (filteredParams)) $
              -- trace ("length filteredParams: " ++ show (length filteredParams)) $
              -- trace ("maxDepth: " ++ show maxDepth)
-             -- trace ("merged: " ++ show (mergeVars (length ctrSyms) paramVars filteredParams))
+             -- trace ("merged: " ++ show (mergeVars (length ctrSyms) paramVars filteredParams)) $
              -- trace ("merged: " ++ show (map mkRule $ mergeVars (length ctrSyms) paramVars
              --                            filteredParams)) $
 
@@ -246,9 +231,12 @@ mkCompletelyDefinedConds prove =
              --           (mergeVars (length ctrSyms) paramVars filteredParams))) $
 
              if and paramVars
-             then []            -- only variables (no need for constraints)
+             then (nrStart, [])            -- only variables (no need for constraints)
              else -- map mkRule (zipWith mkDummyVar paramVars [1..]) ++
-                  map mkRule (mergeVars (length ctrSyms) paramVars filteredParams)
+               -- trace ("res: " ++ show (map mkRule (mergeVars (length ctrSyms) paramVars filteredParams)))
+               -- trace ("res 2 : " ++ show (mergeVars (length ctrSyms) paramVars filteredParams))
+
+                  foldl' (\(nr,acc) f -> (nr+1, acc ++ [mkRule nr f])) (nrStart, []) ruleDefs
 
 mergeVars :: (Show f, Show v, Read v, Eq v, Eq f) => Int -> [Bool] -> [[Term f v]] -> [[Term f v]]
 mergeVars _ _ [] = -- trace ("empty mergeVars []" )

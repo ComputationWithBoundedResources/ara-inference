@@ -6,11 +6,13 @@
 
 (SIGNATURES
   minus :: Nat x Nat -> Nat
+  main :: Nat x Nat -> Nat
 )
 
 (RULES
   minus(x, 0) -> x
   minus(s(x), s(y)) -> minus(x, y)
+  main(x,y) -> minus(x,y)
 )
 (COMMENT
 )

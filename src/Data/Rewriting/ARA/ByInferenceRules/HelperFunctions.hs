@@ -7,9 +7,9 @@
 -- Created: Fri Oct 10 15:46:17 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Jul 24 23:58:59 2018 (+0200)
+-- Last-Updated: Mon Apr  8 18:57:41 2019 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 137
+--     Update #: 143
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -64,7 +64,7 @@ anyTypeSym = "__ANY_TYPE__"
 
 -- | @getSignatureByName sigs sigName@ checks all signatures defined in @sigs@
 -- and searches for the one with the name @sigName@.
-getSignatureByNameAndType :: (Show sDt, Eq s, Eq sDt) =>
+getSignatureByNameAndType :: (Show s, Show sDt, Eq s, Eq sDt) =>
                              [SignatureSig s sDt] -> s -> sDt
                           -> Maybe (SignatureSig s sDt)
 getSignatureByNameAndType sigs sig dt
@@ -73,11 +73,9 @@ getSignatureByNameAndType sigs sig dt
 
 -- | @getSignatureByName sigs sigName@ checks all signatures defined in @sigs@
 -- and searches for the one with the name @sigName@.
-getDefSymSignatureByName :: (Eq s) =>
+getDefSymSignatureByName :: (Show s, Eq s) =>
                             [SignatureSig s sDt] -> s -> Maybe (SignatureSig s sDt)
-getDefSymSignatureByName sigs sig =
-  find (\(Signature (n,_,isCtr,_) _ _) -> -- not isCtr &&
-         n == sig) sigs
+getDefSymSignatureByName sigs sig = find (\(Signature (n,_,isCtr,_) _ _) -> n == sig) sigs
 
 
 -- | @getSignatureByName' sigs sigName@ finds the signature with the name
@@ -87,7 +85,8 @@ getSignatureByNameAndType' :: (Show s, Eq s, Show sDt, Eq sDt) =>
                               [SignatureSig s sDt] -> s -> sDt -> SignatureSig s sDt
 getSignatureByNameAndType' sigs sigName dt
   | filter (/= '"') (show dt) == anyTypeSym = getDefSymSignatureByName' sigs sigName
-  | otherwise = fromMaybe (throw $ FatalException $ "Cannot find signature for " ++ show sigName ++ "with type " ++ show dt)
+  | take 6 (filter (/= '"') (show sigName)) == "BOTTOM" = getDefSymSignatureByName' sigs sigName
+  | otherwise = fromMaybe (throw $ FatalException $ "Cannot find signature for " ++ show sigName ++ " with type " ++ show dt)
                 (getSignatureByNameAndType sigs sigName dt)
 
 -- | @getSignatureByName sigs sigName@ checks all signatures defined in @sigs@

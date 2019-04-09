@@ -7,9 +7,9 @@
 -- Created: Thu Sep  4 12:19:36 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Aug 15 10:18:58 2018 (+0200)
+-- Last-Updated: Mon Apr  8 09:49:45 2019 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 94
+--     Update #: 95
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -50,6 +50,7 @@ data ArgumentOptions = ArgumentOptions
     , minVectorLength         :: Int
     , uniqueConstrFuns        :: Bool
     , separateBaseCtr         :: Bool
+    , noHeur                  :: Bool
     , helpText                :: Bool
     , tempFilePath            :: FilePath
     , keepFiles               :: Bool

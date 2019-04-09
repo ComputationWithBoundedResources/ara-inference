@@ -9,9 +9,9 @@
 -- Created: Fri Sep  5 00:00:04 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Jul 25 15:34:10 2018 (+0200)
+-- Last-Updated: Tue Apr  9 22:53:15 2019 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 2873
+--     Update #: 2901
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -77,7 +77,7 @@ import           Text.PrettyPrint
 
 
 analyzeProblem :: forall f v dt . (Eq f, Ord f, Ord dt, Eq v, Eq dt, Read v, Ord v,
-                                   Show v, Show dt, Show f) =>
+                                   Show v, Show dt, Show f, Read f, Read dt) =>
                   ArgumentOptions
                -> [(f,Integer)]
                -> Problem f v f dt dt f
@@ -87,6 +87,8 @@ analyzeProblem args reachability prob =
   if null (allRules $ rules prob)
    then throw (FatalException "No rewrite rules could be parsed. There is nothing to do.")
    else do let sp0 = checkLhsRules (startingProve args (convertProblem prob))
+
+
                cond0 = conditions sp0
 
                sp = sp0 { conditions = ACondition
@@ -125,10 +127,8 @@ analyzeProblem args reachability prob =
            when (verbose args) $
              print (text "Starting Proves:" $+$ prettyProve sp)
 #endif
-
            let -- solution :: Prove f v f dt dt cn -- the final solution
-               solution = (\x -> x { provenInfTreeNodes = provenInfTreeNodes x }) $
-                          analyzeProve Nothing [sp]
+               solution = (\x -> x { provenInfTreeNodes = provenInfTreeNodes x }) (analyzeProve Nothing [sp])
 
            let snd6 (_,x,_,_,_,_) = x
 
@@ -142,10 +142,8 @@ analyzeProblem args reachability prob =
              print (text "Solution Inference:" $+$ prettyProve solution)
 #endif
 
-           let solution' | (lowerbound args || isJust (lowerboundArg args)) &&
-                           not (lowerboundNoComplDef args) = mkCompletelyDefinedConds solution
-                         | otherwise = solution
-           return (solution', inferenceTrees)
+
+           return (solution, inferenceTrees)
 
    where analyzeProve :: Maybe (Prove f v f dt dt f) -> [Prove f v f dt dt f] -> Prove f v f dt dt f
          analyzeProve oldProve [] = throw $ WarningException $
@@ -199,11 +197,16 @@ convertProblem prob' =
 
 -- | @startingProve prob'@ generates default starting points of the inference
 -- trees for the input problem @prob'@.
-startingProve :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v, Ord v, Read v, Ord f) =>
+startingProve :: (Eq v, Eq f, Eq dt, Show dt, Show f, Show v, Ord v, Read v, Ord f, Read f, Read dt) =>
                  ArgumentOptions -> ProblemSig f v f dt dt f -> Prove f v f dt dt f
 startingProve args prob' =
-  (insertConstraints args . updateDatatypesChildCost . createCtrSig) prove0
+  (insertConstraints args . updateDatatypesChildCost . createCtrSig) proveCD
   where prove0 = Prove [] [] 1 prob' [] [] (ACondition [] [] [] [] []) 0 []
+
+        proveCD | (lowerbound args || isJust (lowerboundArg args)) && not (lowerboundNoComplDef args) = mkCompletelyDefinedConds False prove0
+                --  | lowerbound args || isJust (lowerboundArg args) = mkCompletelyDefinedConds True prove0
+                | otherwise = prove0
+
 
 -- | This function takes a list of proves and checks it for the finished and
 --   successful proves. It either returns a successful prove, or fails.

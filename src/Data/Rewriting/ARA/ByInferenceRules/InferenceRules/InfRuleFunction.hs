@@ -8,9 +8,9 @@
 -- Created: Mon Sep 15 15:05:19 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Jul 25 16:04:21 2018 (+0200)
+-- Last-Updated: Mon May 13 21:10:35 2019 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1298
+--     Update #: 1315
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -78,6 +78,7 @@ import           Data.List                                                      
                                                                                  sortBy,
                                                                                  transpose)
 import           Data.Maybe
+import qualified Data.Text                                                      as Txt
 import           Text.PrettyPrint
 
 import           Debug.Trace
@@ -128,8 +129,8 @@ function args reachability noCfDefSyms (prob, cfsigs, asigs, nr, conds,
 
         fRules = filter (\r -> funName (lhs r) == f) allRls
 
-
-        sigSCCNr name = snd $ head $ filter ((== name) . fst) reachability
+        sigSCCNr name | Txt.isPrefixOf (Txt.pack "BOTTOM") (Txt.pack $ filter (/= '"') $ show name) = 0
+                      | otherwise = snd $ head $ filter ((== name) . fst) reachability
         isInSCCOfStartSig
           | allowLowerSCC args = sigSCCNr f <= sigSCCNr fn
           | otherwise = sigSCCNr f == sigSCCNr fn

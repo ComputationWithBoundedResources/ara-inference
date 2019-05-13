@@ -11,7 +11,7 @@
 -- Package-Requires: ()
 -- Last-Updated:
 --           By:
---     Update #: 586
+--     Update #: 587
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -161,7 +161,7 @@ mkCompletelyDefinedConds btmRuleInsteadOfConstraints prove =
         dtTerms = maybe [] (concatMap (\(Datatype _ ctrs) -> map defCtrs ctrs)) (datatypes p)
 
         allTerms =
-          trace ("dtTerms: " ++ show dtTerms)
+          -- trace ("dtTerms: " ++ show dtTerms)
           concatMap (\(Rule lhs rhs) -> defTerms lhs ++ defTerms rhs) rls ++ dtTerms
         arity f = case find ((== f).fst) allTerms of
           Nothing           -> Nothing -- must be a variable

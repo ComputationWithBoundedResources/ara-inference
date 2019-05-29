@@ -1,7 +1,10 @@
+(GOAL COMPLEXITY)
+(STARTTERM CONSTRUCTOR-BASED)
+(STRATEGY INNERMOST)
 
 
-(STRATEGY
-    INNERMOST)
+
+  
 
 (VAR
     e n m nr x xs tGt tLeq up nrs t ts data)

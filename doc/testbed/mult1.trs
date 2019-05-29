@@ -1,3 +1,6 @@
+(GOAL COMPLEXITY)
+(STARTTERM CONSTRUCTOR-BASED)
+(STRATEGY INNERMOST)
 (COMMENT: 0(n^3), does not work with polynomial interpretations)
 (VAR x y)
 (DATATYPES

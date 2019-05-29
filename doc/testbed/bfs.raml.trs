@@ -1,3 +1,6 @@
+(GOAL COMPLEXITY)
+(STARTTERM CONSTRUCTOR-BASED)
+(STRATEGY INNERMOST)
 (VAR @a @as @futurequeue @queue @sofar @t @t' @t1 @t2 @toreverse @ts @x @x'1 @x'2 @x'3 @xs @y @y'1 @y'2 @y'3)
 
 (DATATYPES

@@ -1,3 +1,6 @@
+(GOAL COMPLEXITY)
+(STARTTERM CONSTRUCTOR-BASED)
+(STRATEGY INNERMOST)
 
 (VAR
     @'@9 @a @b @breadth@1 @breadth@2 @breadth@7 @breadth@8 @children@3 @children@4 @children@5 @children@6 @copyover@1 @copyover@2 @dequeue@1 @dequeue@2 @dequeue@3 @dequeue@4 @elem @inq @l @l1 @l2 @outq @queue @queue' @x @xs @y @ys @z)

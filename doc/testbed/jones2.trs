@@ -1,3 +1,6 @@
+(GOAL COMPLEXITY)
+(STARTTERM CONSTRUCTOR-BASED)
+(STRATEGY INNERMOST)
 (VAR a b c k l x )
 
 (DATATYPES a = µX. < empty, cons(X,X) >

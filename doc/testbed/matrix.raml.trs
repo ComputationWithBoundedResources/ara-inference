@@ -1,3 +1,6 @@
+(GOAL COMPLEXITY)
+(STARTTERM CONSTRUCTOR-BASED)
+(STRATEGY INNERMOST)
 (VAR
     acc base l l1 l2 line ls m m' m1 m2 m3 mm ms x xs xss y ys)
 

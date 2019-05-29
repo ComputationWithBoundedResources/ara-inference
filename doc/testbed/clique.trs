@@ -1,3 +1,6 @@
+(GOAL COMPLEXITY)
+(STARTTERM CONSTRUCTOR-BASED)
+(STRATEGY INNERMOST)
 (VAR E K S u u2 v v2 )
 
 (DATATYPES a = µX. < tt, ff, nil, dd(X,X) >

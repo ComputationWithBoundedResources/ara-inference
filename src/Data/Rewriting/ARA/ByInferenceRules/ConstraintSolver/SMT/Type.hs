@@ -9,9 +9,9 @@
 -- Created: Sun May 22 19:09:57 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Thu Aug 16 15:01:30 2018 (+0200)
+-- Last-Updated: Wed May 29 12:07:48 2019 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 131
+--     Update #: 134
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -97,20 +97,21 @@ infixl 5 +++
 replList' :: [(T.Text, T.Text)]
 replList' = replList
   where replList :: [(T.Text, T.Text)]
-        replList = [ ("#", "_HASHTAG_")
-                   , (":", "_COLON_")
-                   , ("+", "_PLUS_")
-                   , ("*", "_TIMES_")
-                   , ("/", "_DIV_")
-                   , ("\\", "_BS_")
-                   , ("'", "_PRIME_")
-                   , (";", "_SEMICOLON_")
-                   , ("[", "_LBRA_")
-                   , ("]", "_RBRA_")
-                   , ("(", "_LPAREN_")
-                   , (")", "_RPAREN_")
-                   , ("=", "_EQ_")
-                   , ("@", "_AT_")
+        replList = [ ("#",  "sym_HASHTAG_")
+                   , (":",  "sym_COLON_")
+                   , ("+",  "sym_PLUS_")
+                   , ("*",  "sym_TIMES_")
+                   , ("/",  "sym_DIV_")
+                   , ("\\", "sym_BS_")
+                   , ("'",  "sym_PRIME_")
+                   , (";",  "sym_SEMICOLON_")
+                   , ("[",  "sym_LBRA_")
+                   , ("]",  "sym_RBRA_")
+                   , ("(",  "sym_LPAREN_")
+                   , (")",  "sym_RPAREN_")
+                   , ("=",  "sym_EQ_")
+                   , ("@",  "sym_AT_")
+                   , (" ",  "sym_SPACE_")
                    ]
 
 dropChars :: [Char]

@@ -8,9 +8,9 @@
 -- Created: Wed Nov  2 15:34:35 2016 (+0100)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Tue Jul 24 23:54:15 2018 (+0200)
+-- Last-Updated: Wed May 29 11:18:58 2019 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 61
+--     Update #: 64
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -56,14 +56,15 @@ import           Text.PrettyPrint.ANSI.Leijen
 
 import           Debug.Trace
 
-type St f v s sDt = (Problem f v f String String f, M.Map f Int, [f])
+type St f v s sDt = (Problem f v f String String f, M.Map f Int, [f],[f])
 
 inferTypesAndSignature :: (Pretty f, Pretty v, Ord f, Show f, Eq f) =>
-                          Problem f v s sDt dt f
-                       -> Problem f v f String String f
-inferTypesAndSignature prob =
-  (^._1) $ execState infer (prob { datatypes = Nothing
-                                 , signatures = Nothing},M.empty,[])
+                          [f] -> Problem f v s sDt dt f -> Problem f v f String String f
+inferTypesAndSignature mustFuns prob =
+  let res = execState infer (prob { datatypes = Nothing , signatures = Nothing},M.empty,[], mustFuns)
+  in
+    -- trace ("RES: " ++ show mustFuns)
+    res ^._1
 
 infer :: (Pretty f, Pretty v, Show f, Ord f) => State (St f v s sDt) ()
 infer = do
@@ -75,9 +76,16 @@ getProblem = do
   st <- get
   return (st^._1)
 
+getMustFunctionSymbols :: State (St f v s sDt) [f]
+getMustFunctionSymbols = do
+  st <- get
+  return (st^._4)
+
+
 inferSigs :: (Pretty f, Pretty v, Show f, Ord f, Eq f) => State (St f v s sDt) ()
 inferSigs = do
   p <- getProblem
+  mustFuns <- getMustFunctionSymbols
   let syms = nub $ symbols p
 
   let termColl m (Var v) = m
@@ -94,18 +102,19 @@ inferSigs = do
   let ruls = allRules (rules p)
   let paramLen = foldl termColl M.empty (map lhs ruls ++ map rhs ruls)
 
-  let definedFuns = nub $ map ((\(Fun f _) -> f). lhs) ruls
+  let definedFuns = nub $ mustFuns ++ map ((\(Fun f _) -> f). lhs) ruls
   let getSig f =
         let pLen = M.findWithDefault 0 f paramLen
         in Signature f (replicate pLen "A") "A"
 
   let definedFunsSigs = map getSig definedFuns
 
-  (pr , ma, fs) <- get
+  (pr , ma, fs, mustFuns) <- get
 
-  put (pr { signatures = Just definedFunsSigs },
-       paramLen,
-       filter (`notElem` definedFuns) syms)
+  put (pr { signatures = Just definedFunsSigs }
+      , paramLen
+      , filter (`notElem` definedFuns) syms
+      , mustFuns)
 
   -- modify $ _1 %~ (\x -> x { signatures = Just definedFunsSigs })
   -- modify $ _2 .~ paramLen

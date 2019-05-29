@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed Aug 29 08:22:31 2018 (+0200)
+-- Last-Updated: Wed May 29 11:08:07 2019 (+0200)
 --           By: Manuel Schneckenreither
---     Update #: 1266
+--     Update #: 1267
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -162,7 +162,7 @@ main = E.handle (void <$> errorFun Nothing) $ do
 
   -- if no types given, infer them
   let probParse = if isNothing (datatypes probFile) || isNothing (signatures probFile)
-        then inferTypesAndSignature probFile
+        then inferTypesAndSignature [] probFile
         else probFile
 
   -- possibly add main function

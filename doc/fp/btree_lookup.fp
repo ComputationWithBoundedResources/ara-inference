@@ -1,25 +1,30 @@
 
-let rec leqNat y x =
-  match y with
-  | 0 -> True
-  | S(y') -> (match x with
-            | S(x') -> leqNat x' y'
+let rec leqNat x y =
+  match x with
+  | 0 -> (match y with
+          | 0 -> True
+          | S(y') -> False)
+  | S(x') -> (match y with
+            | S(y') -> leqNat x' y'
             | 0 -> False)
 ;;
 let rec eqNat x y =
-  match y with
-  | 0 -> (match x with
+  match x with
+  | 0 -> (match y with
       | 0 -> True
-      | S(x') -> False)
-  | S(y') -> (match x with
-            | S(x') -> eqNat x' y'
-            | 0 -> False)
+      | S(y') -> False)
+  | S(x') -> (match y with
+              | 0 -> False
+              | S(y') -> eqNat x' y')
 ;;
 let rec geqNat x y =
-  match y with
-  | 0 -> True
-  | S(y') -> (match x with
-             | 0 -> False
+  match x with
+  | 0 -> (match y with
+          | 0 -> True
+          | S(y') -> False
+         )
+  | S(x') -> (match y with
+             | 0 -> True
              | S(x') -> geqNat x' y')
 ;;
 let rec ltNat x y =
@@ -107,9 +112,9 @@ let rec lookup n node = match node with
                                           | NilTree -> lookup n tGt
                                           | ConsTree(x,y) -> error)
                  | NilTree -> error)
-      | Cons(nr,ns) -> match tss with
+      | Cons(nr,ns) -> (match tss with
              | ConsTree(t,ts) -> ite2 (leqNat n nr) (lookup n t) (lookup n (Node(ns,ts)))
-             | NilTree -> error
+             | NilTree -> error)
 ;;
 
 

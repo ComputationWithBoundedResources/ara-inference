@@ -4,7 +4,6 @@
 
 
 
-  
 
 (VAR
     e n m nr x xs tGt tLeq up nrs t ts data)
@@ -16,16 +15,16 @@
     BTree = µX.< Node(ListNat,ListBTree) >)
 (RULES
 
-    ite(True, t, e)  ->= t
-    ite(False, t, e) ->= e
-    leq(0,0)         ->= True
-    leq(S(n), 0)     ->= False
-    leq(0,S(m))      ->= True
-    leq(S(n),S(m))   ->= leq(n,m)
-    eq(0,0)         ->= True
-    eq(S(n), 0)     ->= False
-    eq(0,S(m))      ->= False
-    eq(S(n),S(m))   ->= eq(n,m)
+    ite(True, t, e)  -> t
+    ite(False, t, e) -> e
+    leq(0,0)         -> True
+    leq(S(n), 0)     -> False
+    leq(0,S(m))      -> True
+    leq(S(n),S(m))   -> leq(n,m)
+    eq(0,0)         -> True
+    eq(S(n), 0)     -> False
+    eq(0,S(m))      -> False
+    eq(S(n),S(m))   -> eq(n,m)
 
     anyEq(nr,NilNat) -> False
     anyEq(nr,ConsNat(x,xs)) -> ite(eq(nr,x),True,anyEq(nr,xs))

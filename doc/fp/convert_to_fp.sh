@@ -1,5 +1,5 @@
 
-FILES=`find . -name "avanzini_original.raml.raml"`
+FILES=`find . -name "btree_lookup.raml"`
 
 dtUnit="type Unit = Unit
 
@@ -37,11 +37,11 @@ let snd x =
 "
 
 geqleqeq="
-let rec leqNat y x =
-  match y with
+let rec leqNat x y =
+  match x with
   | 0 -> True
-  | S(y') -> (match x with
-            | S(x') -> leqNat x' y'
+  | S(x') -> (match y with
+            | S(y') -> leqNat x' y'
             | 0 -> False)
 
 let rec eqNat x y =
@@ -54,18 +54,18 @@ let rec eqNat x y =
             | 0 -> False)
 
 let rec geqNat x y =
-  match y with
-  | 0 -> True
-  | S(y') -> (match x with
-             | 0 -> False
+  match x with
+  | 0 -> False
+  | S(x') -> (match y with
+             | 0 -> True
              | S(x') -> geqNat x' y')
 
 let rec ltNat x y =
-  match y with
-   | 0 -> False
-   | S(y') -> (match x with
-        | 0 -> True
-        | S(x') -> ltNat x' y')
+  match x with
+   | 0 -> True
+   | S(x') -> (match y with
+        | 0 -> False
+        | S(y') -> ltNat x' y')
 
 let rec gtNat x y =
   match x with

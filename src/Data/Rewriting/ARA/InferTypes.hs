@@ -8,9 +8,9 @@
 -- Created: Wed Nov  2 15:34:35 2016 (+0100)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed May 29 11:18:58 2019 (+0200)
+-- Last-Updated: Sun Oct 27 18:26:56 2019 (+0100)
 --           By: Manuel Schneckenreither
---     Update #: 64
+--     Update #: 65
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -61,10 +61,9 @@ type St f v s sDt = (Problem f v f String String f, M.Map f Int, [f],[f])
 inferTypesAndSignature :: (Pretty f, Pretty v, Ord f, Show f, Eq f) =>
                           [f] -> Problem f v s sDt dt f -> Problem f v f String String f
 inferTypesAndSignature mustFuns prob =
-  let res = execState infer (prob { datatypes = Nothing , signatures = Nothing},M.empty,[], mustFuns)
-  in
+  let res = execState infer (prob {datatypes = Nothing, signatures = Nothing}, M.empty, [], mustFuns)
+   in res ^. _1
     -- trace ("RES: " ++ show mustFuns)
-    res ^._1
 
 infer :: (Pretty f, Pretty v, Show f, Ord f) => State (St f v s sDt) ()
 infer = do

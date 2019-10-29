@@ -6,3 +6,4 @@
 /.emacs.desktop.lock
 /tags
 /doc/fp/gen/
+/stack.yaml.lock

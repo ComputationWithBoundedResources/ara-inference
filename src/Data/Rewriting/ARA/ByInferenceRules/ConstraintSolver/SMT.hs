@@ -9,9 +9,9 @@
 -- Created: Sat May 21 13:53:19 2016 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Mon Apr  8 09:56:20 2019 (+0200)
+-- Last-Updated: Tue Oct 29 16:13:21 2019 (+0100)
 --           By: Manuel Schneckenreither
---     Update #: 2047
+--     Update #: 2053
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -38,6 +38,7 @@
 
 module Data.Rewriting.ARA.ByInferenceRules.ConstraintSolver.SMT
     ( solveProblem
+    , defaultMainCheck
     ) where
 
 
@@ -96,6 +97,10 @@ import           Text.ParserCombinators.Parsec                                  
 import           Text.PrettyPrint                                                               hiding
                                                                                                  (empty)
 
+defaultMainCheck :: String -> Bool
+defaultMainCheck n = take 4 (filter (/= '"') $ show n) == "main"
+
+
 use :: ArgumentOptions -> SMTProblem
 use args =
   case smtSolver args of
@@ -151,16 +156,16 @@ instance Functor (ThreadState a) where
   fmap f (Ready ei) = Ready $ fmap f ei
 
 
-solveProblem :: (Eq s, Eq sDt, Ord s, Show s, Show dt, Ord dt, Show f, Show v) =>
-             ArgumentOptions
-             -> [SignatureSig s sDt]
-             -> ACondition f v Int Int
-             -> ASigs dt s
-             -> CfSigs dt s
-             -> IO ([ASignatureSig s dt], [ASignatureSig s dt], [Data Int], M.Map String Vector
-                  , [ASignatureSig String dt], [ASignatureSig String dt], Int
-                  , ([Rule f v],[Rule f v]))
-solveProblem ops probSigs conds aSigs cfSigs = do
+solveProblem ::
+     (Eq s, Eq sDt, Ord s, Show s, Show dt, Ord dt, Show f, Show v)
+  => ArgumentOptions
+  -> (s -> Bool)
+  -> [SignatureSig s sDt]
+  -> ACondition f v Int Int
+  -> ASigs dt s
+  -> CfSigs dt s
+  -> IO ([ASignatureSig s dt], [ASignatureSig s dt], [Data Int], M.Map String Vector, [ASignatureSig String dt], [ASignatureSig String dt], Int, ([Rule f v], [Rule f v]))
+solveProblem ops isMain probSigs conds aSigs cfSigs = do
   let maxNrVec = maxVectorLength ops
   let minNrVec = minVectorLength ops
   let eqZero
@@ -179,8 +184,8 @@ solveProblem ops probSigs conds aSigs cfSigs = do
       rpar -- with heuristics
       (\nr ->
          if noHeur ops
-         then  doFork $ return $ Left $ FatalException "No heuristics." -- just here to ensure it is not evaluated
-         else doFork $ E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = True}) probSigs conds aSigs cfSigs nr) probShift))
+           then doFork $ return $ Left $ FatalException "No heuristics." -- just here to ensure it is not evaluated
+           else doFork $ E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = True}) isMain probSigs conds aSigs cfSigs nr) probShift))
       (if lowerbound ops
          then [1]
          else (if isLower
@@ -194,14 +199,14 @@ solveProblem ops probSigs conds aSigs cfSigs = do
       (\nr ->
          if shift ops
            then doFork $ return $ Left $ FatalException "Shift disabled. Should not be called." -- just here to ensure it is not evaluated
-           else doFork $ E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = False}) probSigs conds aSigs cfSigs nr) probNoShift))
+           else doFork $ E.handle handler (Right <$> evalStateT (solveProblem' (ops {shift = False}) isMain probSigs conds aSigs cfSigs nr) probNoShift))
       (if lowerbound ops
          then [1]
          else (if isLower
                  then reverse
                  else id)
                 vecLens)
-  let getSol xss@(((xIoRef,_), h):xs) = do
+  let getSol xss@(((xIoRef, _), h):xs) = do
         xState <- readIORef xIoRef
         case xState of
           NotReady -> yield >> getSol xss
@@ -231,6 +236,7 @@ baseCtrSigDef x y = fst4 (lhsRootSym x) == fst4 (lhsRootSym y) &&
 solveProblem' :: (Num a, Ord a, Show a, Show a1, Show s, Eq s, Ord s, Eq sDt,
                   Show dt, Eq dt, Ord dt, Show f, Show v) =>
                  ArgumentOptions
+              -> (s -> Bool)
               -> [SignatureSig s sDt]
               -> ACondition f v a a1
               -> ASigs dt s
@@ -240,7 +246,7 @@ solveProblem' :: (Num a, Ord a, Show a, Show a1, Show s, Eq s, Ord s, Eq sDt,
                                        M.Map String Vector, [ASignatureSig String dt],
                                        [ASignatureSig String dt], Int,
                                        ([Rule f v], [Rule f v]))
-solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
+solveProblem' ops isMain probSigs conds aSigsTxt cfSigsTxt vecLen' = do
 
   let lowerb = lowerbound ops || isJust (lowerboundArg ops)
 
@@ -257,18 +263,18 @@ solveProblem' ops probSigs conds aSigsTxt cfSigsTxt vecLen' = do
   let constr = nubBy baseCtrSigDef $ filter (thd4 . lhsRootSym) (aSigs++cfSigs)
 
   when lowerb $ do
-    let retEqZero = concatMap retDefFunToZero (zip [0..] aSigs ++ zip [0..] cfSigs)
+    let retEqZero = concatMap (retDefFunToZero isMain) (zip [0..] aSigs ++ zip [0..] cfSigs)
     addRetEqZeroConstraints vecLen retEqZero
     addAnyNonZeroConstraints vecLen' nonZeroDts -- including 0, thus vecLen'
     let minNrArgs | isJust (lowerboundArg ops) = fromJust (lowerboundArg ops)
                   | otherwise = 1
 
     -- for main function
-    let mainArgNotAllZeroConstr = concatMap mainArgNotAllZero (zip [0..] aSigs)
+    let mainArgNotAllZeroConstr = concatMap (mainArgNotAllZero isMain) (zip [0..] aSigs)
     mapM_ (addArgNotAllZeroConstr False vecLen minNrArgs) mainArgNotAllZeroConstr
 
     -- and constructors
-    let ctrArgNotAllZeroConstr = concatMap ctrArgNotAllZero (zip [0..] aSigs)
+    let ctrArgNotAllZeroConstr = concatMap (ctrArgNotAllZero isMain) (zip [0..] aSigs)
     let baseParamsList = map (baseParams ops probSigs vecLen) constr
     if directArgumentFilter ops
       then mapM_ (addArgNotAllZeroConstr True vecLen 1) ctrArgNotAllZeroConstr
@@ -398,33 +404,28 @@ constantToZero (nr, Signature (n,_,True,False) [] rhs) = [SigRefCst nr]
 constantToZero (nr, Signature (n,_,True,True) [] rhs)  = [SigRefCstCf nr]
 constantToZero _                                       = []
 
-retDefFunToZero (nr, Signature (n,_,False,False) _ _)
-  | take 4 (filter (/='"') $ show n) == "main" = [SigRefRet "" nr]
+retDefFunToZero :: (f -> Bool) -> (Int, Signature (f, b, Bool, Bool) dt) -> [ADatatype String Int]
+retDefFunToZero isMain (nr, Signature (n, _, False, False) _ _)
+  | isMain n = [SigRefRet "" nr]
   | otherwise = []
-retDefFunToZero _                                     = []
+retDefFunToZero _ _ = []
 
 nonZeroDatatypes (nr, Signature (n,_,isCtr,False) lhs rhs) =
   zipWith (curry nonZeroParam) [0..] lhs ++ [ nonZeroRet | isCtr]
   where nonZeroParam (pNr,_) = SigRefParam "" nr pNr
         nonZeroRet = SigRefRet "" nr
 
-mainArgNotAllZero :: (Show t, Show s) =>
-              (Int, Signature (s, t2, Bool,Bool) t)
-           -> [(Int,T.Text,[ADatatype String Int])]
-mainArgNotAllZero (nr, Signature (n,_,False,False) lhs rhs)
-  | take 4 (filter (/='"') $ show n) == "main" =
-      [(nr,convertToSMTStringText n,map (SigRefParam "" nr) [0..length lhs-1])]
+mainArgNotAllZero :: (Show t, Show s) => (s -> Bool) -> (Int, Signature (s, t2, Bool, Bool) t) -> [(Int, T.Text, [ADatatype String Int])]
+mainArgNotAllZero isMain (nr, Signature (n, _, False, False) lhs rhs)
+  | isMain n = [(nr, convertToSMTStringText n, map (SigRefParam "" nr) [0 .. length lhs - 1])]
   | otherwise = []
-mainArgNotAllZero _ = []
+mainArgNotAllZero _ _ = []
 
-ctrArgNotAllZero :: (Show t, Show s) =>
-              (Int, Signature (s, t2, Bool,Bool) t)
-           -> [(Int,T.Text,[ADatatype String Int])]
-ctrArgNotAllZero (nr, Signature (n,_,True,_) lhs rhs) =
-  [(nr, name, map (SigRefParam "" nr) [0..length lhs-1])
-  | name /= "main"]
-  where name = convertToSMTStringText n
-ctrArgNotAllZero _ = []
+ctrArgNotAllZero :: (Show t, Show s) => (s -> Bool) -> (Int, Signature (s, t2, Bool, Bool) t) -> [(Int, T.Text, [ADatatype String Int])]
+ctrArgNotAllZero isMain (nr, Signature (n, _, True, _) lhs rhs) = [(nr, name, map (SigRefParam "" nr) [0 .. length lhs - 1]) | not (isMain n)]
+  where
+    name = convertToSMTStringText n
+ctrArgNotAllZero _ _ = []
 
 
 shiftConstraints :: (Eq s, Eq sDt, Show s) =>

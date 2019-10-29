@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed May 29 11:08:01 2019 (+0200)
+-- Last-Updated: Tue Oct 29 16:15:08 2019 (+0100)
 --           By: Manuel Schneckenreither
---     Update #: 1035
+--     Update #: 1039
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -162,8 +162,7 @@ main =
 
          -- Solve datatype constraints
          (sigs, cfSigs, valsNs, vals, baseCtrs, cfBaseCtrs, bigO, (strictRls, weakRls)) <-
-           solveProblem args' (fromJust probSig) cond (signatureMap prove) (costFreeSigs prove)
-
+           solveProblem args' defaultMainCheck (fromJust probSig) cond (signatureMap prove) (costFreeSigs prove)
 
          let line = text "\n"
          let documentsIT :: [(String, Doc)]
@@ -266,7 +265,6 @@ main =
          when (isJust $ findStrictRules args') $ do
            putStrLn $ "Strict Rules: " ++ show strictRls
            putStrLn $ "Weak Rules: " ++ show weakRls
-
 
          ) (\(e :: ProgException) ->
               case e of

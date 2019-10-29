@@ -9,9 +9,9 @@
 -- Created: Thu Sep  4 10:19:05 2014 (+0200)
 -- Version:
 -- Package-Requires: ()
--- Last-Updated: Wed May 29 11:08:07 2019 (+0200)
+-- Last-Updated: Tue Oct 29 16:13:32 2019 (+0100)
 --           By: Manuel Schneckenreither
---     Update #: 1267
+--     Update #: 1268
 -- URL:
 -- Doc URL:
 -- Keywords:
@@ -206,7 +206,7 @@ main = E.handle (void <$> errorFun Nothing) $ do
 
     -- Solve datatype constraints
     (sigs, cfSigs, valsNs, vals, baseCtrs, cfBaseCtrs, bigO, (strictRls, weakRls)) <-
-      solveProblem args' (fromJust probSig) cond (signatureMap prove) (costFreeSigs prove)
+      solveProblem args' defaultMainCheck (fromJust probSig) cond (signatureMap prove) (costFreeSigs prove)
 
 
     let line = P.text "\n"

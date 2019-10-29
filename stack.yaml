@@ -9,48 +9,9 @@ packages:
 - ../hoca/
 system-ghc: false
 extra-deps:
-- StateVar-1.1.1.0
-- adjunctions-4.4
-- ansi-terminal-0.8.0.4
-- ansi-wl-pprint-0.6.8.2
-- base-compat-0.10.4
-- base-orphans-0.8
-- bifunctors-5.5.3
-- cabal-doctest-1.0.6
-- call-stack-0.1.0
-- cmdargs-0.10.20
-- colour-2.3.4
-- comonad-5.0.4
-- contravariant-1.5
-- distributive-0.6
-- dlist-0.8.0.4
-- exceptions-0.10.0
-- fgl-5.6.0.0
-- free-5.1
-- graphviz-2999.20.0.2
-- hashable-1.2.7.0
-- invariant-0.5.1
-- kan-extensions-5.2
-- lens-4.17
-- monad-parallel-0.7.2.3
-- multiset-0.3.4
-- parallel-3.2.2.0
-- polyparse-1.12
-- primitive-0.6.4.0
-- profunctors-5.3
-- random-1.1
-- reflection-2.1.4
-- semigroupoids-5.3.1
-- semigroups-0.18.5
-- tagged-0.8.6
-- temporary-1.3
-- term-rewriting-0.2.1.1
-- th-abstraction-0.2.8.0
-- transformers-base-0.4.5.2
-- transformers-compat-0.6.2
-- union-find-array-0.1.0.2
-- unordered-containers-0.2.9.0
-- vector-0.12.0.1
-- void-0.7.2
-- wl-pprint-text-1.2.0.0
-resolver: ghc-8.4.1
+- graphviz-2999.20.0.3@sha256:cde383c356bc41136ed53cd27e0800f46dbd2185600dd0de18d66d5c49739d94,7677
+- term-rewriting-0.4.0.2@sha256:5412f6aa29c5756634ee30e8df923c83ab9f012a4b8797c460af3d7078466764,2740
+- union-find-array-0.1.0.2@sha256:38c2dfbae3de48d8962f202ec5c4d6323ac767d6838b85e8d340c3608d6c0f21,1406
+
+resolver: lts-13.20 # ghc-8.6.5
+# resolver: ghc-8.4.1

@@ -210,7 +210,7 @@ startingProve args prob' =
 
 -- | This function takes a list of proves and checks it for the finished and
 --   successful proves. It either returns a successful prove, or fails.
-getSolution    :: (Monad m) => [Prove f v f dt dt f] -> m (Prove f v f dt dt f)
+getSolution    :: MonadFail m => [Prove f v f dt dt f] -> m (Prove f v f dt dt f)
 getSolution [] = fail "No prove was found."
 getSolution (p:ps) =
     case p of

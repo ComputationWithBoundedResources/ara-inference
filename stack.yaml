@@ -9,9 +9,8 @@ packages:
 - ../hoca/
 system-ghc: false
 extra-deps:
-- graphviz-2999.20.0.3@sha256:cde383c356bc41136ed53cd27e0800f46dbd2185600dd0de18d66d5c49739d94,7677
-- term-rewriting-0.4.0.2@sha256:5412f6aa29c5756634ee30e8df923c83ab9f012a4b8797c460af3d7078466764,2740
-- union-find-array-0.1.0.2@sha256:38c2dfbae3de48d8962f202ec5c4d6323ac767d6838b85e8d340c3608d6c0f21,1406
+- graphviz-2999.20.0.4
+- term-rewriting-0.4.0.2
+- union-find-array-0.1.0.2
 
-resolver: lts-13.20 # ghc-8.6.5
-# resolver: ghc-8.4.1
+resolver: lts-16.1

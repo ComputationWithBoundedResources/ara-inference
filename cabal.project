@@ -1,0 +1,5 @@
+packages:
+  ../ara
+  ../term-rewriting-ext
+  ../term-rewriting-applicative
+  ../hoca
